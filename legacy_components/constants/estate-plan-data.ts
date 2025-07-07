@@ -1,0 +1,837 @@
+import {
+  AssetCategory,
+  PropertyType,
+  FinancialAccountType,
+  InsurancePolicyType,
+} from '../types/enums';
+
+import type { AnyEnhancedAsset } from '../types/assets';
+import type {
+  FamilyMember,
+  LegalRole,
+  HealthcareDirective,
+  Beneficiary,
+  Professional,
+  EmergencyContact,
+} from '../types/people';
+import type { Trust } from '../types/trusts';
+
+// Trusts in the Estate Plan
+export const ESTATE_PLAN_TRUSTS: Trust[] = [
+  {
+    id: 'trust-ncrt-001',
+    name: 'Nicholas Coleman Revocable Trust',
+    type: 'revocable',
+    taxId: 'XX-XXXXXXX',
+    dateCreated: '2024-01-15',
+    grantor: 'Nicholas Lynn Coleman',
+    trustees: [
+      {
+        name: 'Nicholas Lynn Coleman',
+        type: 'primary',
+        powers: ['Full control and management of trust assets'],
+        startDate: '2024-01-15',
+      },
+      {
+        name: 'Kelsey Fey Brown',
+        type: 'successor',
+        powers: ['Full control upon grantor incapacity or death'],
+        orderOfSuccession: 1,
+      },
+      {
+        name: 'Arvest Trust Company',
+        type: 'successor',
+        powers: ['Corporate trustee powers'],
+        orderOfSuccession: 2,
+      },
+    ],
+    beneficiaries: [
+      {
+        name: 'Kelsey Fey Brown',
+        type: 'primary',
+        relationship: 'Spouse',
+        percentage: 100,
+        conditions: 'Marital Trust and Bypass Trust provisions',
+      },
+    ],
+    purpose: 'Primary estate planning vehicle to avoid probate and manage assets',
+    isActive: true,
+  },
+  {
+    id: 'trust-kbrt-001',
+    name: 'Kelsey Brown Revocable Trust',
+    type: 'revocable',
+    taxId: 'XX-XXXXXXX',
+    dateCreated: '2024-01-15',
+    grantor: 'Kelsey Fey Brown',
+    trustees: [
+      {
+        name: 'Kelsey Fey Brown',
+        type: 'primary',
+        powers: ['Full control and management of trust assets'],
+        startDate: '2024-01-15',
+      },
+      {
+        name: 'Nicholas Lynn Coleman',
+        type: 'successor',
+        powers: ['Full control upon grantor incapacity or death'],
+        orderOfSuccession: 1,
+      },
+      {
+        name: 'Arvest Trust Company',
+        type: 'successor',
+        powers: ['Corporate trustee powers'],
+        orderOfSuccession: 2,
+      },
+    ],
+    beneficiaries: [
+      {
+        name: 'Nicholas Lynn Coleman',
+        type: 'primary',
+        relationship: 'Spouse',
+        percentage: 100,
+        conditions: 'Marital Trust and Bypass Trust provisions',
+      },
+    ],
+    purpose: "Primary estate planning vehicle for Kelsey's assets",
+    isActive: true,
+  },
+  {
+    id: 'trust-kgt-001',
+    name: 'Kathleen Geeslin Trust',
+    type: 'irrevocable',
+    taxId: 'XX-XXXXXXX',
+    dateCreated: '2018-06-01',
+    grantor: 'Kathleen Geeslin (Deceased)',
+    trustees: [
+      {
+        name: 'Nicholas Lynn Coleman',
+        type: 'primary',
+        powers: ['Investment and distribution decisions'],
+        startDate: '2023-01-01',
+      },
+      {
+        name: 'Christopher William Coleman',
+        type: 'co-trustee',
+        powers: ['Investment and distribution decisions'],
+        startDate: '2023-01-01',
+      },
+    ],
+    beneficiaries: [
+      {
+        name: 'Nicholas Lynn Coleman',
+        type: 'primary',
+        relationship: 'Son',
+        percentage: 50,
+      },
+      {
+        name: 'Christopher William Coleman',
+        type: 'primary',
+        relationship: 'Son',
+        percentage: 50,
+      },
+    ],
+    purpose: "Inherited trust from mother's estate",
+    isActive: true,
+  },
+];
+
+// Enhanced Assets with Trust Ownership
+export const ESTATE_PLAN_ASSETS: AnyEnhancedAsset[] = [
+  // Real Estate
+  {
+    id: 'ea-re-001',
+    name: '2211 NW Willow, Bentonville, AR',
+    category: AssetCategory.REAL_ESTATE,
+    value: 746400,
+    ownership: {
+      type: 'trust',
+      trustId: 'trust-ncrt-001',
+      percentage: 50,
+      notes: '50% owned by Nicholas Coleman Trust, 50% by Kelsey Brown Trust',
+    },
+    propertyType: PropertyType.SINGLE_FAMILY,
+    address: '2211 NW Willow, Bentonville, AR 72712',
+    mortgageBalance: 384189.16,
+    monthlyRent: 0,
+    annualPropertyTax: 8500,
+    annualInsurance: 2400,
+    lastAppraisalDate: '2023-06-01',
+    lastAppraisalValue: 746400,
+    notes: 'Primary residence, transferred to trusts via Warranty Deed',
+  },
+  {
+    id: 'ea-re-002',
+    name: '3 Rio Vista Circle, Hardy, AR',
+    category: AssetCategory.REAL_ESTATE,
+    value: 115100,
+    ownership: {
+      type: 'joint',
+      owners: {
+        nick: { percentage: 50, isPrimary: true },
+        other: {
+          'Kit Coleman': { percentage: 50, isPrimary: false },
+        },
+      },
+      survivorshipRights: true,
+      tenancyType: 'joint_tenancy',
+      notes:
+        "Joint ownership with Kit Coleman (Nick's brother) - Joint Tenancy with right of survivorship",
+    },
+    propertyType: PropertyType.RESIDENTIAL,
+    address: '3 Rio Vista Circle, Hardy, AR 72542',
+    mortgageBalance: 0,
+    monthlyRent: 0,
+    annualPropertyTax: 1200,
+    annualInsurance: 800,
+    lastAppraisalDate: '2023-01-01',
+    lastAppraisalValue: 115100,
+    notes:
+      "Joint ownership with Kit Coleman (Nick's brother), needs succession planning and potential LLC formation for liability protection",
+  },
+  {
+    id: 'ea-re-003',
+    name: 'Pemiscot Farmland (Bubbas, LLC)',
+    category: AssetCategory.REAL_ESTATE,
+    value: 750000,
+    ownership: {
+      type: 'business',
+      businessId: 'ea-bi-005',
+      owners: {
+        nick: { percentage: 50, isPrimary: true },
+        other: {
+          'Kit Coleman': { percentage: 50, isPrimary: false },
+        },
+      },
+      survivorshipRights: false,
+      notes:
+        'Owned by Bubbas, LLC (50% Nick Coleman, 50% Kit Coleman) - LLC provides liability protection for farmland operations',
+    },
+    propertyType: PropertyType.OTHER,
+    address: 'Pemiscot County, Missouri',
+    mortgageBalance: 0,
+    monthlyRent: 5000,
+    annualPropertyTax: 3500,
+    annualInsurance: 1500,
+    lastAppraisalDate: '2023-01-01',
+    lastAppraisalValue: 750000,
+    notes:
+      'Owned by Bubbas, LLC - Farmland generating $5,000/month rental income with liability protection through LLC structure',
+  },
+  {
+    id: 'ea-re-004',
+    name: 'Blytheville Lot',
+    category: AssetCategory.REAL_ESTATE,
+    value: 50000,
+    ownership: {
+      type: 'joint',
+      owners: {
+        nick: { percentage: 50, isPrimary: true },
+        other: {
+          'Kit Coleman': { percentage: 50, isPrimary: false },
+        },
+      },
+      survivorshipRights: true,
+      tenancyType: 'joint_tenancy',
+      notes:
+        "Joint ownership with Kit Coleman (Nick's brother) - Joint Tenancy with right of survivorship",
+    },
+    propertyType: PropertyType.LAND,
+    address: 'Blytheville, AR',
+    mortgageBalance: 0,
+    monthlyRent: 0,
+    annualPropertyTax: 500,
+    annualInsurance: 0,
+    lastAppraisalDate: '2023-01-01',
+    lastAppraisalValue: 50000,
+    notes:
+      "Joint ownership with Kit Coleman (Nick's brother) - Vacant lot, considering sale or development",
+  },
+
+  // Business Interests
+  {
+    id: 'ea-bi-001',
+    name: 'Nicholas L. Coleman, Attorney at Law, PLLC',
+    category: AssetCategory.BUSINESS_INTEREST,
+    value: 250000,
+    ownership: {
+      type: 'trust',
+      trustId: 'trust-ncrt-001',
+      percentage: 100,
+      notes: 'Professional law practice',
+    },
+    businessType: 'LLC',
+    businessName: 'Nicholas L. Coleman, Attorney at Law, PLLC',
+    taxId: 'XX-XXXXXXX',
+    percentageOwned: 100,
+    valuationMethod: 'income_approach',
+    valuationDate: '2023-12-31',
+    annualRevenue: 450000,
+    annualProfit: 225000,
+    notes: 'Estate planning law practice, key person risk',
+  },
+  {
+    id: 'ea-bi-002',
+    name: 'LexMed, LLC',
+    category: AssetCategory.BUSINESS_INTEREST,
+    value: 150000,
+    ownership: {
+      type: 'trust',
+      trustId: 'trust-ncrt-001',
+      percentage: 100,
+      notes: 'Medical consulting business',
+    },
+    businessType: 'LLC',
+    businessName: 'LexMed, LLC',
+    taxId: 'XX-XXXXXXX',
+    percentageOwned: 100,
+    valuationMethod: 'asset_approach',
+    valuationDate: '2023-12-31',
+    annualRevenue: 180000,
+    annualProfit: 120000,
+    notes: 'Medical legal consulting',
+  },
+  {
+    id: 'ea-bi-003',
+    name: 'Willow Consulting, LLC',
+    category: AssetCategory.BUSINESS_INTEREST,
+    value: 100000,
+    ownership: {
+      type: 'trust',
+      trustId: 'trust-kbrt-001',
+      percentage: 100,
+      notes: "Kelsey's consulting business",
+    },
+    businessType: 'LLC',
+    businessName: 'Willow Consulting, LLC',
+    taxId: 'XX-XXXXXXX',
+    percentageOwned: 100,
+    valuationMethod: 'income_approach',
+    valuationDate: '2023-12-31',
+    annualRevenue: 150000,
+    annualProfit: 100000,
+    notes: 'Business consulting services',
+  },
+  {
+    id: 'ea-bi-004',
+    name: 'Pollard-Geeslin Holding Company',
+    category: AssetCategory.BUSINESS_INTEREST,
+    value: 2000000,
+    ownership: {
+      type: 'trust',
+      trustId: 'trust-ncrt-001',
+      percentage: 50,
+      notes: 'Joint ownership with Christopher Coleman',
+    },
+    businessType: 'C_CORP',
+    businessName: 'Pollard-Geeslin Holding Company C-Corp',
+    taxId: 'XX-XXXXXXX',
+    percentageOwned: 50,
+    valuationMethod: 'market_approach',
+    valuationDate: '2023-12-31',
+    annualRevenue: 500000,
+    annualProfit: 300000,
+    notes: 'Family holding company, inherited from Kathleen Geeslin',
+  },
+  {
+    id: 'ea-bi-005',
+    name: 'Bubbas, LLC',
+    category: AssetCategory.BUSINESS_INTEREST,
+    value: 750000,
+    ownership: {
+      type: 'joint',
+      owners: {
+        nick: { percentage: 50, isPrimary: true },
+        other: {
+          'Kit Coleman': { percentage: 50, isPrimary: false },
+        },
+      },
+      survivorshipRights: false,
+      tenancyType: 'tenants_in_common',
+      notes:
+        "Joint ownership with Kit Coleman (Nick's brother) - LLC formed for real estate liability protection",
+    },
+    businessType: 'LLC',
+    businessName: 'Bubbas, LLC',
+    taxId: 'XX-XXXXXXX',
+    percentageOwned: 50,
+    valuationMethod: 'asset_approach',
+    valuationDate: '2024-01-01',
+    annualRevenue: 60000,
+    annualProfit: 45000,
+    notes:
+      'Family LLC formed to hold Pemiscot Farmland for liability protection and estate planning benefits',
+  },
+
+  // Financial Accounts - Trust Owned
+  {
+    id: 'ea-fa-001',
+    name: 'Northwestern Mutual Solo 401(k)',
+    category: AssetCategory.FINANCIAL_ACCOUNT,
+    value: 194435.36,
+    ownership: {
+      type: 'trust',
+      trustId: 'trust-ncrt-001',
+      percentage: 100,
+      notes: 'Coleman Law Firm retirement plan',
+    },
+    accountType: FinancialAccountType.RETIREMENT_401K,
+    institution: 'Northwestern Mutual',
+    accountNumber: '****1281',
+    interestRate: 0,
+    maturityDate: undefined,
+    beneficiaries: {
+      primary: [
+        { id: 'ben-001', name: 'Kelsey Fey Brown', relationship: 'spouse', percentage: 100 },
+      ],
+    },
+    notes: 'Law firm 401(k) plan',
+  },
+  {
+    id: 'ea-fa-002',
+    name: 'Wells Fargo Brokerage (Geeslin Trust)',
+    category: AssetCategory.FINANCIAL_ACCOUNT,
+    value: 1924661.43,
+    ownership: {
+      type: 'trust',
+      trustId: 'trust-kgt-001',
+      percentage: 50,
+      notes: "Nick's share of inherited trust assets",
+    },
+    accountType: FinancialAccountType.INVESTMENT_BROKERAGE,
+    institution: 'Wells Fargo',
+    accountNumber: '****1022',
+    interestRate: 0,
+    maturityDate: undefined,
+    beneficiaries: {
+      primary: [
+        {
+          id: 'lr-003',
+          name: 'Nicholas Coleman Revocable Trust',
+          relationship: 'trust',
+          percentage: 100,
+        },
+      ],
+    },
+    notes: 'Inherited investment account',
+  },
+
+  // Insurance Policies
+  {
+    id: 'ea-ip-001',
+    name: 'Northwestern Mutual Life Insurance',
+    category: AssetCategory.INSURANCE_POLICY,
+    value: 3461.67,
+    ownership: {
+      type: 'trust',
+      trustId: 'trust-ncrt-001',
+      percentage: 100,
+      notes: 'Whole life policy',
+    },
+    policyType: InsurancePolicyType.LIFE,
+    insurer: 'Northwestern Mutual',
+    policyNumber: '****3413',
+    coverageAmount: 37395,
+    premium: { amount: 250, frequency: 'monthly' },
+    deductible: 0,
+    beneficiaries: {
+      primary: [
+        { id: 'ben-001', name: 'Kelsey Fey Brown', relationship: 'spouse', percentage: 100 },
+      ],
+    },
+    expirationDate: undefined,
+    notes: '90 Life policy with cash value',
+  },
+  {
+    id: 'ea-ip-002',
+    name: 'Northwestern Mutual Disability Insurance',
+    category: AssetCategory.INSURANCE_POLICY,
+    value: 0,
+    ownership: {
+      type: 'trust',
+      trustId: 'trust-ncrt-001',
+      percentage: 100,
+      notes: 'Disability income protection',
+    },
+    policyType: InsurancePolicyType.DISABILITY,
+    insurer: 'Northwestern Mutual',
+    policyNumber: '****4309',
+    coverageAmount: 62412, // Annual benefit (5201 * 12)
+    premium: { amount: 1152.65, frequency: 'annually' },
+    deductible: 0,
+    beneficiaries: {
+      primary: [
+        { id: 'lr-003', name: 'Nicholas Lynn Coleman', relationship: 'other', percentage: 100 },
+      ],
+    },
+    expirationDate: undefined,
+    notes: 'Non-cancellable disability income, $5,201/month benefit',
+  },
+];
+
+// Family Members
+export const ESTATE_PLAN_FAMILY_MEMBERS: FamilyMember[] = [
+  {
+    id: 'fm-001',
+    name: 'Kelsey Fey Brown',
+    relationship: 'spouse',
+    dateOfBirth: '1985-06-15',
+    isMinor: false,
+    isDependent: false,
+    contactInfo: {
+      primaryPhone: '(479) 555-0001',
+      email: 'kelsey@example.com',
+      preferredContact: 'phone',
+      address: {
+        street1: '2211 NW Willow',
+        city: 'Bentonville',
+        state: 'AR',
+        zipCode: '72712',
+      },
+    },
+    notes: 'Primary beneficiary and successor trustee',
+  },
+  {
+    id: 'fm-002',
+    name: 'Christopher William Coleman',
+    relationship: 'sibling',
+    dateOfBirth: '1983-03-22',
+    isMinor: false,
+    isDependent: false,
+    contactInfo: {
+      primaryPhone: '(479) 555-0002',
+      email: 'chris@example.com',
+      preferredContact: 'email',
+    },
+    notes: 'Brother, successor agent and co-owner of family properties',
+  },
+  {
+    id: 'fm-003',
+    name: 'Yvonne Louise Westfall',
+    relationship: 'other',
+    isMinor: false,
+    isDependent: false,
+    notes: 'First choice guardian for future minor children',
+  },
+  {
+    id: 'fm-004',
+    name: 'Joy Bonady Shepherd',
+    relationship: 'other',
+    isMinor: false,
+    isDependent: false,
+    notes: 'Final successor guardian for future minor children',
+  },
+];
+
+// Legal Roles
+export const ESTATE_PLAN_LEGAL_ROLES: LegalRole[] = [
+  {
+    id: 'lr-001',
+    roleType: 'executor',
+    personId: 'fm-001',
+    personName: 'Kelsey Fey Brown',
+    isPrimary: true,
+    specificPowers: [
+      'Probate estate administration',
+      'Pay debts and taxes',
+      'Distribute assets per will',
+      'Sell real estate if needed',
+      'Handle legal proceedings',
+    ],
+    compensation: {
+      type: 'none',
+      details: 'Spouse serving without compensation',
+    },
+    notes: 'Primary executor of pour-over will',
+  },
+  {
+    id: 'lr-002',
+    roleType: 'executor',
+    personId: 'corp-001',
+    personName: 'Arvest Trust Company',
+    isPrimary: false,
+    orderOfPrecedence: 2,
+    specificPowers: ['Full executor powers', 'Corporate fiduciary services'],
+    compensation: {
+      type: 'percentage',
+      amount: 2,
+      details: 'Standard corporate trustee fees',
+    },
+    notes: 'Successor corporate executor',
+  },
+  {
+    id: 'lr-003',
+    roleType: 'trustee',
+    personId: 'self',
+    personName: 'Nicholas Lynn Coleman',
+    isPrimary: true,
+    specificPowers: [
+      'Full control of trust assets',
+      'Amend or revoke trust',
+      'Investment decisions',
+      'Distribution decisions',
+    ],
+    compensation: {
+      type: 'none',
+    },
+    notes: 'Initial trustee of revocable trust',
+  },
+  {
+    id: 'lr-004',
+    roleType: 'successor_trustee',
+    personId: 'fm-001',
+    personName: 'Kelsey Fey Brown',
+    isPrimary: false,
+    orderOfPrecedence: 1,
+    specificPowers: [
+      'Full trustee powers upon incapacity or death',
+      "Cannot amend trust after grantor's death",
+    ],
+    compensation: {
+      type: 'none',
+      details: 'Spouse serving without compensation',
+    },
+    notes: 'First successor trustee',
+  },
+  {
+    id: 'lr-005',
+    roleType: 'power_of_attorney',
+    personId: 'fm-001',
+    personName: 'Kelsey Fey Brown',
+    isPrimary: true,
+    specificPowers: [
+      'Banking and financial transactions',
+      'Real estate transactions',
+      'Tax matters',
+      'Digital assets',
+      'Business operations',
+      'Investment decisions',
+    ],
+    startDate: '2024-01-15',
+    endConditions: 'Death of principal or revocation',
+    notes: 'Durable financial power of attorney',
+  },
+  {
+    id: 'lr-006',
+    roleType: 'power_of_attorney',
+    personId: 'fm-002',
+    personName: 'Christopher William Coleman',
+    isPrimary: false,
+    orderOfPrecedence: 2,
+    specificPowers: ['Same powers as primary agent'],
+    startDate: '2024-01-15',
+    endConditions: 'Death of principal or revocation',
+    notes: 'Successor financial agent',
+  },
+  {
+    id: 'lr-007',
+    roleType: 'guardian',
+    personId: 'fm-003',
+    personName: 'Yvonne Louise Westfall',
+    isPrimary: true,
+    specificPowers: [
+      'Physical custody of minor children',
+      'Educational decisions',
+      'Medical decisions',
+      'Daily care',
+    ],
+    notes: 'First choice guardian for future minor children',
+  },
+];
+
+// Healthcare Directives
+export const ESTATE_PLAN_HEALTHCARE_DIRECTIVES: HealthcareDirective[] = [
+  {
+    id: 'hd-001',
+    type: 'healthcare_proxy',
+    personId: 'fm-001',
+    personName: 'Kelsey Fey Brown',
+    isPrimary: true,
+    dateCreated: '2024-01-15',
+    lastUpdated: '2024-01-15',
+  },
+  {
+    id: 'hd-002',
+    type: 'healthcare_proxy',
+    personId: 'fm-002',
+    personName: 'Christopher William Coleman',
+    isPrimary: false,
+    dateCreated: '2024-01-15',
+    lastUpdated: '2024-01-15',
+  },
+  {
+    id: 'hd-003',
+    type: 'living_will',
+    decisions: {
+      lifeSustaining: 'discontinue',
+      artificialNutrition: 'discontinue',
+      painManagement: 'Provide comfort care and pain management',
+      organDonation: false,
+      bodyDisposition: 'burial',
+    },
+    religiousPreferences: 'None specified',
+    additionalInstructions:
+      'Withhold artificial nutrition and hydration in terminal, end-stage, or permanent vegetative state',
+    dateCreated: '2024-01-15',
+    lastUpdated: '2024-01-15',
+  },
+];
+
+// Beneficiaries
+export const ESTATE_PLAN_BENEFICIARIES: Beneficiary[] = [
+  {
+    id: 'ben-001',
+    name: 'Kelsey Fey Brown',
+    relationship: 'spouse',
+    percentage: 100,
+    isPrimary: true,
+    isContingent: false,
+    perStirpes: false,
+    contactInfo: {
+      primaryPhone: '(479) 555-0001',
+      email: 'kelsey@example.com',
+      preferredContact: 'phone',
+    },
+    notes: 'Primary beneficiary of all trust assets',
+  },
+  {
+    id: 'ben-002',
+    name: 'Future Descendants',
+    relationship: 'child',
+    isPrimary: false,
+    isContingent: true,
+    contingentTo: 'ben-001',
+    perStirpes: true,
+    notes: 'Contingent beneficiaries through Bypass Trust',
+  },
+  {
+    id: 'ben-003',
+    name: 'Christopher William Coleman',
+    relationship: 'sibling',
+    isPrimary: false,
+    isContingent: true,
+    contactInfo: {
+      primaryPhone: '(479) 555-0002',
+      email: 'chris@example.com',
+      preferredContact: 'email',
+    },
+    notes: 'Contingent beneficiary of Coleman Family Property if no descendants',
+  },
+];
+
+// Professional Team
+export const ESTATE_PLAN_PROFESSIONALS: Professional[] = [
+  {
+    id: 'prof-001',
+    name: 'Estate Planning Attorney',
+    type: 'estate_attorney',
+    firm: 'Estate Law Firm',
+    specializations: ['Estate Planning', 'Trust Administration', 'Tax Planning'],
+    contactInfo: {
+      primaryPhone: '(479) 555-1000',
+      email: 'attorney@estatelaw.com',
+      preferredContact: 'email',
+      address: {
+        street1: '123 Legal Plaza',
+        city: 'Bentonville',
+        state: 'AR',
+        zipCode: '72712',
+      },
+    },
+    yearsExperience: 20,
+    isPreferredProvider: true,
+    notes: 'Primary estate planning counsel',
+  },
+  {
+    id: 'prof-002',
+    name: 'Arvest Trust Company',
+    type: 'other',
+    firm: 'Arvest Bank',
+    specializations: ['Trust Administration', 'Wealth Management', 'Fiduciary Services'],
+    contactInfo: {
+      primaryPhone: '(479) 555-2000',
+      email: 'trust@arvest.com',
+      preferredContact: 'phone',
+      address: {
+        street1: '608 SW 8th Street',
+        city: 'Bentonville',
+        state: 'AR',
+        zipCode: '72712',
+      },
+    },
+    isPreferredProvider: true,
+    notes: 'Corporate trustee and executor',
+  },
+  {
+    id: 'prof-003',
+    name: 'Financial Advisor',
+    type: 'financial_advisor',
+    firm: 'Wells Fargo Advisors',
+    specializations: ['Investment Management', 'Retirement Planning', 'Trust Investments'],
+    contactInfo: {
+      primaryPhone: '(479) 555-3000',
+      email: 'advisor@wellsfargo.com',
+      preferredContact: 'phone',
+    },
+    credentials: ['CFP', 'ChFC'],
+    yearsExperience: 15,
+    isPreferredProvider: true,
+    notes: 'Manages trust investment accounts',
+  },
+  {
+    id: 'prof-004',
+    name: 'CPA/Tax Preparer',
+    type: 'accountant',
+    firm: 'Tax & Accounting Services',
+    title: 'CPA',
+    specializations: ['Estate Tax', 'Trust Taxation', 'Business Tax'],
+    contactInfo: {
+      primaryPhone: '(479) 555-4000',
+      email: 'cpa@taxservices.com',
+      preferredContact: 'email',
+    },
+    credentials: ['CPA'],
+    yearsExperience: 18,
+    isPreferredProvider: true,
+    notes: 'Handles all tax matters for estate and trusts',
+  },
+];
+
+// Emergency Contacts
+export const ESTATE_PLAN_EMERGENCY_CONTACTS: EmergencyContact[] = [
+  {
+    id: 'ec-001',
+    name: 'Kelsey Fey Brown',
+    relationship: 'spouse',
+    contactType: 'primary',
+    contactInfo: {
+      primaryPhone: '(479) 555-0001',
+      secondaryPhone: '(479) 555-0011',
+      email: 'kelsey@example.com',
+      preferredContact: 'phone',
+    },
+    priority: 1,
+    availability: '24/7',
+    medicalAuthority: true,
+    canMakeDecisions: true,
+    languages: ['English'],
+    notes: 'Primary emergency contact and healthcare decision maker',
+  },
+  {
+    id: 'ec-002',
+    name: 'Christopher William Coleman',
+    relationship: 'sibling',
+    contactType: 'secondary',
+    contactInfo: {
+      primaryPhone: '(479) 555-0002',
+      email: 'chris@example.com',
+      preferredContact: 'phone',
+    },
+    priority: 2,
+    availability: '24/7',
+    medicalAuthority: true,
+    canMakeDecisions: true,
+    languages: ['English'],
+    notes: 'Brother and successor healthcare agent',
+  },
+];

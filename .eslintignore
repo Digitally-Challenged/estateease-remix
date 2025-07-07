@@ -1,0 +1,23 @@
+# Legacy code - not in use
+legacy_components/
+
+# Build outputs
+build/
+public/build/
+.cache/
+
+# Dependencies
+node_modules/
+
+# Environment files
+.env
+.env.*
+
+# Database files
+*.db
+*.db-journal
+*.db-shm
+*.db-wal
+
+# Test results
+test-*.md
