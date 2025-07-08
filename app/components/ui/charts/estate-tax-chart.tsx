@@ -2,6 +2,7 @@ import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 import { ChartContainer } from './chart-container';
 import { ChartTooltip } from './chart-tooltip';
 import { CHART_COLORS } from './chart-colors';
+import { formatCurrency } from '~/utils/format';
 
 interface EstateTaxProjectionPoint {
   year: number;
@@ -21,22 +22,13 @@ interface EstateTaxChartProps {
  * Displays projected net worth, exemptions, and tax liability
  */
 export function EstateTaxChart({ data, height = 300 }: EstateTaxChartProps) {
-  const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(value);
-  };
-
   const formatYAxis = (value: number) => {
     if (value >= 1000000) {
       return `$${(value / 1000000).toFixed(1)}M`;
     } else if (value >= 1000) {
       return `$${(value / 1000).toFixed(0)}K`;
     }
-    return `$${value}`;
+    return formatCurrency(value);
   };
 
   return (

@@ -106,8 +106,8 @@ export default function Dashboard() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-gray-900">Welcome back, Nicholas</h1>
-        <p className="text-gray-600">Here&apos;s an overview of your estate planning portfolio.</p>
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Welcome back, Nicholas</h1>
+        <p className="text-gray-600 dark:text-gray-400">Here&apos;s an overview of your estate planning portfolio.</p>
       </div>
 
       {/* Stats Grid */}
@@ -117,17 +117,17 @@ export default function Dashboard() {
           return (
             <Card key={stat.title}>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium text-gray-600">
+                <CardTitle className="text-sm font-medium text-gray-600 dark:text-gray-400">
                   {stat.title}
                 </CardTitle>
-                <Icon className="h-4 w-4 text-gray-600" />
+                <Icon className="h-4 w-4 text-gray-600 dark:text-gray-400" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold text-gray-900">{stat.value}</div>
+                <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">{stat.value}</div>
                 <p className={`text-xs ${
-                  stat.changeType === 'positive' ? 'text-green-600' :
-                  stat.changeType === 'negative' ? 'text-red-600' :
-                  'text-gray-600'
+                  stat.changeType === 'positive' ? 'text-green-600 dark:text-green-400' :
+                  stat.changeType === 'negative' ? 'text-red-600 dark:text-red-400' :
+                  'text-gray-600 dark:text-gray-400 dark:text-gray-500'
                 }`}>
                   {stat.change} from last month
                 </p>
@@ -145,17 +145,17 @@ export default function Dashboard() {
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <button className="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 text-left transition-colors">
-              <h3 className="font-medium text-gray-900">Add New Asset</h3>
-              <p className="text-sm text-gray-600 mt-1">Record a new property, account, or investment</p>
+            <button className="p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 text-left transition-colors">
+              <h3 className="font-medium text-gray-900 dark:text-gray-100">Add New Asset</h3>
+              <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">Record a new property, account, or investment</p>
             </button>
-            <button className="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 text-left transition-colors">
-              <h3 className="font-medium text-gray-900">Update Beneficiaries</h3>
-              <p className="text-sm text-gray-600 mt-1">Modify trust and account beneficiaries</p>
+            <button className="p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 text-left transition-colors">
+              <h3 className="font-medium text-gray-900 dark:text-gray-100">Update Beneficiaries</h3>
+              <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">Modify trust and account beneficiaries</p>
             </button>
-            <button className="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 text-left transition-colors">
-              <h3 className="font-medium text-gray-900">Schedule Review</h3>
-              <p className="text-sm text-gray-600 mt-1">Book a meeting with your estate planning team</p>
+            <button className="p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 text-left transition-colors">
+              <h3 className="font-medium text-gray-900 dark:text-gray-100">Schedule Review</h3>
+              <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">Book a meeting with your estate planning team</p>
             </button>
           </div>
         </CardContent>
@@ -170,14 +170,14 @@ export default function Dashboard() {
         <CardContent>
           <div className="space-y-4">
             {recentAssets.map((asset) => (
-              <div key={asset.id} className="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+              <div key={asset.id} className="flex items-center justify-between p-4 border border-gray-200 dark:border-gray-700 rounded-lg">
                 <div>
-                  <h3 className="font-medium text-gray-900">{asset.name}</h3>
-                  <p className="text-sm text-gray-600">{asset.category}</p>
+                  <h3 className="font-medium text-gray-900 dark:text-gray-100">{asset.name}</h3>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">{asset.category}</p>
                 </div>
                 <div className="text-right">
-                  <p className="font-medium text-gray-900">{formatCurrency(asset.value)}</p>
-                  <p className="text-sm text-green-600">Active</p>
+                  <p className="font-medium text-gray-900 dark:text-gray-100">{formatCurrency(asset.value)}</p>
+                  <p className="text-sm text-green-600 dark:text-green-400">Active</p>
                 </div>
               </div>
             ))}
@@ -191,7 +191,7 @@ export default function Dashboard() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center">
-              <Activity className="h-5 w-5 text-blue-600 mr-2" />
+              <Activity className="h-5 w-5 text-blue-600 dark:text-blue-400 mr-2" />
               Net Worth Trend
             </CardTitle>
             <CardDescription>Your net worth over the past 6 months</CardDescription>
@@ -205,7 +205,7 @@ export default function Dashboard() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center">
-              <PieChart className="h-5 w-5 text-green-600 mr-2" />
+              <PieChart className="h-5 w-5 text-green-600 dark:text-green-400 mr-2" />
               Asset Allocation
             </CardTitle>
             <CardDescription>Distribution of your assets by category</CardDescription>
@@ -229,7 +229,7 @@ export default function Dashboard() {
                 <div key={trust.id} className="flex justify-between items-center">
                   <span className="text-sm font-medium">{trust.name}</span>
                   <span className={`text-sm ${
-                    trust.type === 'revocable' ? 'text-green-600' : 'text-blue-600'
+                    trust.type === 'revocable' ? 'text-green-600 dark:text-green-400' : 'text-blue-600 dark:text-blue-400'
                   }`}>
                     {trust.type}
                   </span>

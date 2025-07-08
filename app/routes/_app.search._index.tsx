@@ -206,14 +206,14 @@ export default function SearchResults() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200">
+      <div className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center space-x-4">
             <Link
               to="/"
-              className="flex items-center space-x-2 text-gray-600 hover:text-gray-900"
+              className="flex items-center space-x-2 text-gray-600 dark:text-gray-400 dark:text-gray-500 hover:text-gray-900 dark:hover:text-gray-100 dark:text-gray-100"
             >
               <ArrowLeft className="h-5 w-5" />
               <span>Back to Dashboard</span>
@@ -233,15 +233,15 @@ export default function SearchResults() {
         <div className="flex gap-8">
           {/* Sidebar - Filters */}
           <div className="w-64 flex-shrink-0">
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <div className="bg-white dark:bg-gray-900 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
               <div className="flex items-center space-x-2 mb-4">
-                <Filter className="h-5 w-5 text-gray-400" />
-                <h3 className="font-semibold text-gray-900">Filters</h3>
+                <Filter className="h-5 w-5 text-gray-400 dark:text-gray-500" />
+                <h3 className="font-semibold text-gray-900 dark:text-gray-100">Filters</h3>
               </div>
 
               {/* Type filters */}
               <div className="space-y-3 mb-6">
-                <h4 className="text-sm font-medium text-gray-700">Type</h4>
+                <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300">Type</h4>
                 {[
                   { value: 'asset', label: 'Assets', count: typeBreakdown.asset || 0 },
                   { value: 'trust', label: 'Trusts', count: typeBreakdown.trust || 0 },
@@ -253,17 +253,17 @@ export default function SearchResults() {
                       type="checkbox"
                       checked={appliedFilters.types.includes(value)}
                       onChange={(e) => handleTypeFilter(value, e.target.checked)}
-                      className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                      className="rounded border-gray-300 dark:border-gray-600 text-blue-600 dark:text-blue-400 focus:ring-blue-500"
                     />
-                    <span className="text-sm text-gray-700 flex-1">{label}</span>
-                    <span className="text-xs text-gray-400">({count})</span>
+                    <span className="text-sm text-gray-700 dark:text-gray-300 flex-1">{label}</span>
+                    <span className="text-xs text-gray-400 dark:text-gray-500">({count})</span>
                   </label>
                 ))}
               </div>
 
               {/* Sort options */}
               <div className="space-y-3">
-                <h4 className="text-sm font-medium text-gray-700">Sort by</h4>
+                <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300">Sort by</h4>
                 {[
                   { value: 'relevance', label: 'Relevance' },
                   { value: 'title', label: 'Name' },
@@ -275,8 +275,8 @@ export default function SearchResults() {
                     onClick={() => handleSort(value)}
                     className={`flex items-center justify-between w-full text-left px-2 py-1 rounded text-sm ${
                       appliedFilters.sortBy === value
-                        ? 'bg-blue-50 text-blue-700'
-                        : 'text-gray-700 hover:bg-gray-50'
+                        ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300'
+                        : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 dark:bg-gray-900'
                     }`}
                   >
                     <span>{label}</span>
@@ -294,13 +294,13 @@ export default function SearchResults() {
               {query && (
                 <div className="flex items-center justify-between mb-4">
                   <div>
-                    <h1 className="text-2xl font-bold text-gray-900">
+                    <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
                       Search Results
                     </h1>
-                    <p className="text-gray-600 mt-1">
+                    <p className="text-gray-600 dark:text-gray-400 dark:text-gray-500 mt-1">
                       {totalCount} result{totalCount !== 1 ? 's' : ''} for &ldquo;{query}&rdquo;
                       {performance.searchTime && (
-                        <span className="text-gray-400 ml-2">
+                        <span className="text-gray-400 dark:text-gray-500 ml-2">
                           ({performance.searchTime}ms)
                         </span>
                       )}
@@ -312,30 +312,30 @@ export default function SearchResults() {
 
             {/* Results */}
             {error ? (
-              <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
-                <div className="text-red-600 font-medium mb-2">Search Error</div>
-                <div className="text-red-700">{error}</div>
+              <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-700 rounded-lg p-6 text-center">
+                <div className="text-red-600 dark:text-red-400 font-medium mb-2">Search Error</div>
+                <div className="text-red-700 dark:text-red-300">{error}</div>
               </div>
             ) : !query ? (
-              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-12 text-center">
-                <Search className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-gray-900 mb-2">
+              <div className="bg-white dark:bg-gray-900 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-12 text-center">
+                <Search className="h-12 w-12 text-gray-400 dark:text-gray-500 mx-auto mb-4" />
+                <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">
                   Search EstateEase
                 </h3>
-                <p className="text-gray-600">
+                <p className="text-gray-600 dark:text-gray-400 dark:text-gray-500">
                   Find assets, trusts, family members, and professionals quickly and easily.
                 </p>
               </div>
             ) : totalCount === 0 ? (
-              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-12 text-center">
-                <Search className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-gray-900 mb-2">
+              <div className="bg-white dark:bg-gray-900 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-12 text-center">
+                <Search className="h-12 w-12 text-gray-400 dark:text-gray-500 mx-auto mb-4" />
+                <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">
                   No results found
                 </h3>
-                <p className="text-gray-600 mb-4">
+                <p className="text-gray-600 dark:text-gray-400 dark:text-gray-500 mb-4">
                   We couldn&apos;t find anything matching &ldquo;{query}&rdquo;
                 </p>
-                <div className="text-sm text-gray-500">
+                <div className="text-sm text-gray-500 dark:text-gray-400 dark:text-gray-500">
                   <p>Try:</p>
                   <ul className="list-disc list-inside mt-2 space-y-1">
                     <li>Checking your spelling</li>
@@ -348,7 +348,7 @@ export default function SearchResults() {
             ) : (
               <div className="space-y-6">
                 {(Object.entries(groupedResults) as [string, SearchResult[]][]).map(([type, typeResults]) => (
-                  <div key={type} className="bg-white rounded-lg shadow-sm border border-gray-200">
+                  <div key={type} className="bg-white dark:bg-gray-900 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
                     <SearchResultsGroup 
                       type={type as 'asset' | 'trust' | 'family' | 'professional'} 
                       results={typeResults}

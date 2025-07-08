@@ -62,8 +62,8 @@ function BeneficiariesContent() {
     return (
       <div className="space-y-6">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Beneficiary Management</h1>
-          <p className="text-gray-600 mt-2">Manage primary and contingent beneficiaries</p>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Beneficiary Management</h1>
+          <p className="text-gray-600 dark:text-gray-400 dark:text-gray-500 mt-2">Manage primary and contingent beneficiaries</p>
         </div>
         <ErrorDisplay
           error={error}
@@ -80,15 +80,15 @@ function BeneficiariesContent() {
       <div className="space-y-6">
         <div className="flex justify-between items-start">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Beneficiary Management</h1>
-            <p className="text-gray-600 mt-2">Manage primary and contingent beneficiaries</p>
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Beneficiary Management</h1>
+            <p className="text-gray-600 dark:text-gray-400 dark:text-gray-500 mt-2">Manage primary and contingent beneficiaries</p>
           </div>
         </div>
         <Card className="text-center py-8">
           <CardContent>
-            <Users className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">No beneficiaries assigned</h3>
-            <p className="text-gray-600 mb-4">
+            <Users className="h-12 w-12 text-gray-400 dark:text-gray-500 mx-auto mb-4" />
+            <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">No beneficiaries assigned</h3>
+            <p className="text-gray-600 dark:text-gray-400 dark:text-gray-500 mb-4">
               Add beneficiaries to ensure your estate is distributed according to your wishes
             </p>
             <Button onClick={() => navigate('/beneficiaries/new')}>
@@ -107,7 +107,7 @@ function BeneficiariesContent() {
       render: (beneficiary) => (
         <div>
           <p className="font-medium">{beneficiary?.name}</p>
-          <p className="text-sm text-gray-600">{beneficiary?.relationship}</p>
+          <p className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">{beneficiary?.relationship}</p>
         </div>
       )
     },
@@ -152,7 +152,7 @@ function BeneficiariesContent() {
           <Button
             size="sm"
             variant="ghost"
-            className="text-red-600 hover:text-red-700"
+            className="text-red-600 dark:text-red-400 hover:text-red-700 dark:text-red-300"
           >
             <Trash2 className="h-4 w-4" />
           </Button>
@@ -169,8 +169,8 @@ function BeneficiariesContent() {
       {/* Header */}
       <div className="flex justify-between items-start">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Beneficiary Management</h1>
-          <p className="text-gray-600 mt-2">Manage primary and contingent beneficiaries</p>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Beneficiary Management</h1>
+          <p className="text-gray-600 dark:text-gray-400 dark:text-gray-500 mt-2">Manage primary and contingent beneficiaries</p>
         </div>
         <Button asChild>
           <Link to="/beneficiaries/new">
@@ -185,15 +185,15 @@ function BeneficiariesContent() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Primary Beneficiaries</CardTitle>
-            <UserCheck className="h-4 w-4 text-gray-600" />
+            <UserCheck className="h-4 w-4 text-gray-600 dark:text-gray-400 dark:text-gray-500" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{primaryBeneficiaries.length}</div>
             <div className="mt-2">
               {primaryTotal === 100 ? (
-                <p className="text-sm text-green-600">✓ 100% allocated</p>
+                <p className="text-sm text-green-600 dark:text-green-400">✓ 100% allocated</p>
               ) : (
-                <p className="text-sm text-orange-600">
+                <p className="text-sm text-orange-600 dark:text-orange-400">
                   {primaryTotal}% allocated ({100 - primaryTotal}% remaining)
                 </p>
               )}
@@ -204,19 +204,19 @@ function BeneficiariesContent() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Contingent Beneficiaries</CardTitle>
-            <UserPlus className="h-4 w-4 text-gray-600" />
+            <UserPlus className="h-4 w-4 text-gray-600 dark:text-gray-400 dark:text-gray-500" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{contingentBeneficiaries.length}</div>
             <div className="mt-2">
               {contingentTotal === 100 ? (
-                <p className="text-sm text-green-600">✓ 100% allocated</p>
+                <p className="text-sm text-green-600 dark:text-green-400">✓ 100% allocated</p>
               ) : contingentBeneficiaries.length > 0 ? (
-                <p className="text-sm text-orange-600">
+                <p className="text-sm text-orange-600 dark:text-orange-400">
                   {contingentTotal}% allocated
                 </p>
               ) : (
-                <p className="text-sm text-gray-600">None assigned</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">None assigned</p>
               )}
             </div>
           </CardContent>
@@ -225,15 +225,15 @@ function BeneficiariesContent() {
 
       {/* Warnings */}
       {primaryTotal !== 100 && primaryBeneficiaries.length > 0 && (
-        <Card className="border-orange-200 bg-orange-50">
+        <Card className="border-orange-200 dark:border-orange-700 bg-orange-50 dark:bg-orange-900/20">
           <CardHeader>
-            <CardTitle className="text-orange-800 flex items-center">
+            <CardTitle className="text-orange-800 dark:text-orange-200 flex items-center">
               <AlertCircle className="h-5 w-5 mr-2" />
               Primary Beneficiary Allocation Warning
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-orange-700">
+            <p className="text-orange-700 dark:text-orange-300">
               Your primary beneficiary allocation totals {primaryTotal}%. 
               For proper estate distribution, this should equal 100%.
             </p>
@@ -259,8 +259,8 @@ function BeneficiariesContent() {
           </CardHeader>
           <CardContent>
             <DataTable
-              data={primaryBeneficiaries}
-              columns={columns}
+              data={primaryBeneficiaries.filter(Boolean).map(b => ({ ...b })) as Record<string, unknown>[]}
+              columns={columns as unknown as Column<Record<string, unknown>>[]}
               sortable={true}
             />
           </CardContent>
@@ -278,8 +278,8 @@ function BeneficiariesContent() {
           </CardHeader>
           <CardContent>
             <DataTable
-              data={contingentBeneficiaries}
-              columns={columns}
+              data={contingentBeneficiaries.filter(Boolean).map(b => ({ ...b })) as Record<string, unknown>[]}
+              columns={columns as unknown as Column<Record<string, unknown>>[]}
               sortable={true}
             />
           </CardContent>
@@ -306,14 +306,14 @@ function BeneficiariesContent() {
                   {trust.beneficiaries && trust.beneficiaries.length > 0 ? (
                     <div className="space-y-2">
                       {trust.beneficiaries.map((beneficiary, index) => beneficiary ? (
-                        <div key={beneficiary.id || `beneficiary-${index}`} className="flex items-center justify-between text-sm">
+                        <div key={`beneficiary-${index}`} className="flex items-center justify-between text-sm">
                           <span>{beneficiary.name}</span>
-                          <span className="text-gray-600">{beneficiary.percentage || 0}%</span>
+                          <span className="text-gray-600 dark:text-gray-400 dark:text-gray-500">{beneficiary.percentage || 0}%</span>
                         </div>
                       ) : null)}
                     </div>
                   ) : (
-                    <p className="text-sm text-gray-500">No beneficiaries assigned to this trust</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400 dark:text-gray-500">No beneficiaries assigned to this trust</p>
                   )}
                 </div>
               ) : null)}

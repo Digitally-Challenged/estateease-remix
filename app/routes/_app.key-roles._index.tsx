@@ -72,8 +72,8 @@ function KeyRolesContent() {
     return (
       <div className="space-y-6">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Key Appointments</h1>
-          <p className="text-gray-600 mt-2">Manage executors, trustees, and other key roles</p>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Key Appointments</h1>
+          <p className="text-gray-600 dark:text-gray-400 dark:text-gray-500 mt-2">Manage executors, trustees, and other key roles</p>
         </div>
         <ErrorDisplay
           error={error}
@@ -114,8 +114,8 @@ function KeyRolesContent() {
       {/* Header */}
       <div className="flex justify-between items-start">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Key Appointments</h1>
-          <p className="text-gray-600 mt-2">Manage executors, trustees, and other key roles for your estate</p>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Key Appointments</h1>
+          <p className="text-gray-600 dark:text-gray-400 dark:text-gray-500 mt-2">Manage executors, trustees, and other key roles for your estate</p>
         </div>
         <Button disabled>
           <Plus className="h-4 w-4 mr-2" />
@@ -125,18 +125,18 @@ function KeyRolesContent() {
 
       {/* Missing Roles Alert */}
       {missingRoles.length > 0 && (
-        <Card className="border-orange-200 bg-orange-50">
+        <Card className="border-orange-200 dark:border-orange-700 bg-orange-50 dark:bg-orange-900/20">
           <CardHeader>
-            <CardTitle className="text-orange-800 flex items-center">
+            <CardTitle className="text-orange-800 dark:text-orange-200 flex items-center">
               <AlertCircle className="h-5 w-5 mr-2" />
               Missing Key Appointments
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-orange-700 mb-4">
+            <p className="text-orange-700 dark:text-orange-300 mb-4">
               The following critical roles have not been assigned:
             </p>
-            <ul className="list-disc list-inside space-y-1 text-orange-700">
+            <ul className="list-disc list-inside space-y-1 text-orange-700 dark:text-orange-300">
               {missingRoles.map(({ roleType, roleName }) => (
                 <li key={roleType}>{roleName}</li>
               ))}
@@ -161,10 +161,10 @@ function KeyRolesContent() {
           const hasAssignment = assignments.length > 0;
           
           return (
-            <Card key={roleType} className={hasAssignment ? "" : "border-gray-200 bg-gray-50"}>
+            <Card key={roleType} className={hasAssignment ? "" : "border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900"}>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">{roleName}</CardTitle>
-                <Icon className={`h-4 w-4 ${hasAssignment ? "text-gray-600" : "text-gray-400"}`} />
+                <Icon className={`h-4 w-4 ${hasAssignment ? "text-gray-600 dark:text-gray-400 dark:text-gray-500" : "text-gray-400 dark:text-gray-500"}`} />
               </CardHeader>
               <CardContent>
                 {hasAssignment ? (
@@ -179,7 +179,7 @@ function KeyRolesContent() {
                     ) : null)}
                   </div>
                 ) : (
-                  <p className="text-sm text-gray-500">Not assigned</p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400 dark:text-gray-500">Not assigned</p>
                 )}
               </CardContent>
             </Card>
@@ -205,13 +205,13 @@ function KeyRolesContent() {
                 return (
                   <div key={roleType} className="border-b pb-4 last:border-b-0 last:pb-0">
                     <div className="flex items-center space-x-2 mb-3">
-                      <Icon className="h-5 w-5 text-gray-600" />
+                      <Icon className="h-5 w-5 text-gray-600 dark:text-gray-400 dark:text-gray-500" />
                       <h3 className="font-medium">{roleName}</h3>
                     </div>
                     
                     <div className="space-y-3 ml-7">
                       {roles.map((role) => role ? (
-                        <div key={role.id} className="bg-gray-50 rounded-lg p-4">
+                        <div key={role.id} className="bg-gray-50 dark:bg-gray-900 rounded-lg p-4">
                           <div className="flex items-start justify-between mb-2">
                             <div>
                               <p className="font-medium">{role.personName}</p>
@@ -232,8 +232,8 @@ function KeyRolesContent() {
                           
                           {role.specificPowers && role.specificPowers.length > 0 && (
                             <div className="mt-3">
-                              <p className="text-sm font-medium text-gray-700 mb-1">Specific Powers:</p>
-                              <ul className="list-disc list-inside text-sm text-gray-600">
+                              <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Specific Powers:</p>
+                              <ul className="list-disc list-inside text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">
                                 {role.specificPowers.map((power, idx) => (
                                   <li key={idx}>{power}</li>
                                 ))}
@@ -243,7 +243,7 @@ function KeyRolesContent() {
                           
                           {role.compensation && role.compensation.type !== 'none' && (
                             <div className="mt-3">
-                              <p className="text-sm text-gray-600">
+                              <p className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">
                                 <span className="font-medium">Compensation:</span> {role.compensation.type}
                                 {role.compensation.amount && ` - $${role.compensation.amount}`}
                               </p>
@@ -252,7 +252,7 @@ function KeyRolesContent() {
                           
                           {role.notes && (
                             <div className="mt-3">
-                              <p className="text-sm text-gray-600">{role.notes}</p>
+                              <p className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">{role.notes}</p>
                             </div>
                           )}
                         </div>
@@ -280,7 +280,7 @@ function KeyRolesContent() {
               {familyMembers.map((member) => member ? (
                 <div key={member.id} className="border rounded-lg p-3">
                   <p className="font-medium">{member.name}</p>
-                  <p className="text-sm text-gray-600">{member.relationship}</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">{member.relationship}</p>
                   {member.legalRoles && member.legalRoles.length > 0 && (
                     <div className="mt-2">
                       {member.legalRoles.map((role) => (

@@ -84,8 +84,8 @@ function HealthcareDirectivesContent() {
     return (
       <div className="space-y-6">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Healthcare Directives</h1>
-          <p className="text-gray-600 mt-2">Manage your medical wishes and healthcare decisions</p>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Healthcare Directives</h1>
+          <p className="text-gray-600 dark:text-gray-400 dark:text-gray-500 mt-2">Manage your medical wishes and healthcare decisions</p>
         </div>
         <ErrorDisplay
           error={error}
@@ -119,8 +119,8 @@ function HealthcareDirectivesContent() {
       {/* Header */}
       <div className="flex justify-between items-start">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Healthcare Directives</h1>
-          <p className="text-gray-600 mt-2">Manage your medical wishes and healthcare decisions</p>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Healthcare Directives</h1>
+          <p className="text-gray-600 dark:text-gray-400 dark:text-gray-500 mt-2">Manage your medical wishes and healthcare decisions</p>
         </div>
         <Button asChild>
           <Link to="/healthcare-directives/new">
@@ -144,15 +144,15 @@ function HealthcareDirectivesContent() {
               <div 
                 key={item.name} 
                 className={`flex items-center space-x-3 p-3 rounded-lg border ${
-                  item.completed ? 'border-green-200 bg-green-50' : 'border-gray-200'
+                  item.completed ? 'border-green-200 dark:border-green-700 bg-green-50 dark:bg-green-900/20' : 'border-gray-200 dark:border-gray-700'
                 }`}
               >
                 {item.completed ? (
-                  <CheckCircle className="h-5 w-5 text-green-600" />
+                  <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-400" />
                 ) : (
-                  <AlertCircle className="h-5 w-5 text-gray-400" />
+                  <AlertCircle className="h-5 w-5 text-gray-400 dark:text-gray-500" />
                 )}
-                <span className={item.completed ? 'font-medium' : 'text-gray-600'}>
+                <span className={item.completed ? 'font-medium' : 'text-gray-600 dark:text-gray-400 dark:text-gray-500'}>
                   {item.name}
                 </span>
               </div>
@@ -178,38 +178,38 @@ function HealthcareDirectivesContent() {
               <div key={directive.id} className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <p className="text-sm font-medium text-gray-700 mb-1">Life Sustaining Treatment</p>
+                    <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Life Sustaining Treatment</p>
                     {getDecisionBadge(directive.decisions?.lifeSustaining)}
                   </div>
                   <div>
-                    <p className="text-sm font-medium text-gray-700 mb-1">Artificial Nutrition</p>
+                    <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Artificial Nutrition</p>
                     {getDecisionBadge(directive.decisions?.artificialNutrition)}
                   </div>
                 </div>
                 
                 {directive.decisions?.painManagement && (
                   <div>
-                    <p className="text-sm font-medium text-gray-700 mb-1">Pain Management Instructions</p>
-                    <p className="text-sm text-gray-600">{directive.decisions.painManagement}</p>
+                    <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Pain Management Instructions</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">{directive.decisions.painManagement}</p>
                   </div>
                 )}
                 
                 {directive.religiousPreferences && (
                   <div>
-                    <p className="text-sm font-medium text-gray-700 mb-1">Religious Preferences</p>
-                    <p className="text-sm text-gray-600">{directive.religiousPreferences}</p>
+                    <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Religious Preferences</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">{directive.religiousPreferences}</p>
                   </div>
                 )}
                 
                 {directive.additionalInstructions && (
                   <div>
-                    <p className="text-sm font-medium text-gray-700 mb-1">Additional Instructions</p>
-                    <p className="text-sm text-gray-600">{directive.additionalInstructions}</p>
+                    <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Additional Instructions</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">{directive.additionalInstructions}</p>
                   </div>
                 )}
                 
                 <div className="flex items-center justify-between pt-4 border-t">
-                  <p className="text-sm text-gray-500">
+                  <p className="text-sm text-gray-500 dark:text-gray-400 dark:text-gray-500">
                     Last updated: {new Date(directive.lastUpdated).toLocaleDateString()}
                   </p>
                   <Button size="sm" variant="ghost" asChild>
@@ -267,15 +267,15 @@ function HealthcareDirectivesContent() {
           <CardContent>
             {directivesByType['dnr'] && directivesByType['dnr'].length > 0 ? (
               <div className="space-y-2">
-                <CheckCircle className="h-12 w-12 text-green-600 mx-auto" />
-                <p className="text-center text-green-600 font-medium">DNR Order Active</p>
-                <p className="text-sm text-gray-600 text-center">
+                <CheckCircle className="h-12 w-12 text-green-600 dark:text-green-400 mx-auto" />
+                <p className="text-center text-green-600 dark:text-green-400 font-medium">DNR Order Active</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500 text-center">
                   Last updated: {new Date(directivesByType['dnr'][0]?.lastUpdated || '').toLocaleDateString()}
                 </p>
               </div>
             ) : (
               <div className="text-center py-4">
-                <p className="text-gray-600 mb-4">No DNR order on file</p>
+                <p className="text-gray-600 dark:text-gray-400 dark:text-gray-500 mb-4">No DNR order on file</p>
                 <Button size="sm" variant="outline" asChild>
                   <Link to="/healthcare-directives/new?type=dnr">Create DNR Order</Link>
                 </Button>
@@ -297,22 +297,22 @@ function HealthcareDirectivesContent() {
               <div className="space-y-2">
                 {directivesByType['organ_donation'][0]?.decisions?.organDonation ? (
                   <>
-                    <CheckCircle className="h-12 w-12 text-green-600 mx-auto" />
-                    <p className="text-center text-green-600 font-medium">Registered Organ Donor</p>
+                    <CheckCircle className="h-12 w-12 text-green-600 dark:text-green-400 mx-auto" />
+                    <p className="text-center text-green-600 dark:text-green-400 font-medium">Registered Organ Donor</p>
                   </>
                 ) : (
                   <>
-                    <AlertCircle className="h-12 w-12 text-gray-400 mx-auto" />
-                    <p className="text-center text-gray-600 font-medium">Not an Organ Donor</p>
+                    <AlertCircle className="h-12 w-12 text-gray-400 dark:text-gray-500 mx-auto" />
+                    <p className="text-center text-gray-600 dark:text-gray-400 dark:text-gray-500 font-medium">Not an Organ Donor</p>
                   </>
                 )}
-                <p className="text-sm text-gray-600 text-center">
+                <p className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500 text-center">
                   Last updated: {new Date(directivesByType['organ_donation'][0]?.lastUpdated || '').toLocaleDateString()}
                 </p>
               </div>
             ) : (
               <div className="text-center py-4">
-                <p className="text-gray-600 mb-4">No organ donation preference recorded</p>
+                <p className="text-gray-600 dark:text-gray-400 dark:text-gray-500 mb-4">No organ donation preference recorded</p>
                 <Button size="sm" variant="outline" asChild>
                   <Link to="/healthcare-directives/new?type=organ_donation">Set Preference</Link>
                 </Button>
@@ -336,7 +336,7 @@ function HealthcareDirectivesContent() {
               {familyMembers.map((member) => member ? (
                 <div key={member.id} className="border rounded-lg p-3">
                   <p className="font-medium">{member.name}</p>
-                  <p className="text-sm text-gray-600">{member.relationship}</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">{member.relationship}</p>
                   {member.healthcareRoles && member.healthcareRoles.some(role => role.type === 'healthcare_proxy') && (
                     <Badge variant="default" className="mt-2">Current Proxy</Badge>
                   )}

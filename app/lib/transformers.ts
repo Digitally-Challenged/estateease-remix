@@ -149,10 +149,19 @@ export function transformDatabaseAsset(dbAsset: DatabaseAsset): AnyEnhancedAsset
         category: AssetCategory.FINANCIAL_ACCOUNT,
         accountType: assetDetails.accountType || FinancialAccountType.CHECKING,
         institution: assetDetails.institution || '',
-        accountNumber: assetDetails.accountNumber || '',
+        institutionName: dbAsset.institution_name || assetDetails.institutionName || '',
+        accountNumber: dbAsset.account_number || assetDetails.accountNumber || '',
+        routingNumber: dbAsset.routing_number || assetDetails.routingNumber || '',
         interestRate: assetDetails.interestRate,
         maturityDate: assetDetails.maturityDate,
-        beneficiaries: assetDetails.beneficiaries
+        beneficiaries: assetDetails.beneficiaries,
+        details: {
+          ...assetDetails,
+          institutionName: dbAsset.institution_name || assetDetails.institutionName || '',
+          accountType: dbAsset.account_type || assetDetails.accountType || '',
+          accountNumber: dbAsset.account_number || assetDetails.accountNumber || '',
+          routingNumber: dbAsset.routing_number || assetDetails.routingNumber || ''
+        }
       } as FinancialAccount;
       
     case 'INSURANCE_POLICY':
@@ -180,7 +189,10 @@ export function transformDatabaseAsset(dbAsset: DatabaseAsset): AnyEnhancedAsset
         valuationMethod: assetDetails.valuationMethod || 'income_approach',
         valuationDate: assetDetails.valuationDate || new Date().toISOString(),
         annualRevenue: assetDetails.annualRevenue,
-        annualProfit: assetDetails.annualProfit
+        annualProfit: assetDetails.annualProfit,
+        incorporationType: dbAsset.incorporation_type || assetDetails.incorporationType,
+        stateOfIncorporation: dbAsset.state_of_incorporation || assetDetails.stateOfIncorporation,
+        ein: dbAsset.ein || assetDetails.ein
       } as BusinessInterest;
       
     case 'VEHICLE':
@@ -303,6 +315,9 @@ export function transformAssetToDatabase(asset: Partial<AnyEnhancedAsset>): {
       if (business.valuationDate) assetDetails.valuationDate = business.valuationDate;
       if (business.annualRevenue !== undefined) assetDetails.annualRevenue = business.annualRevenue;
       if (business.annualProfit !== undefined) assetDetails.annualProfit = business.annualProfit;
+      if (business.incorporationType) assetDetails.incorporationType = business.incorporationType;
+      if (business.stateOfIncorporation) assetDetails.stateOfIncorporation = business.stateOfIncorporation;
+      if (business.ein) assetDetails.ein = business.ein;
       break;
     }
       

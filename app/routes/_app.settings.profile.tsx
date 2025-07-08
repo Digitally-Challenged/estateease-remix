@@ -21,8 +21,8 @@ export default function ProfileSettings() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-gray-900">Profile Settings</h1>
-        <p className="text-gray-600">Manage your personal information and account details</p>
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Profile Settings</h1>
+        <p className="text-gray-600 dark:text-gray-400 dark:text-gray-500">Manage your personal information and account details</p>
       </div>
 
       {/* Personal Information */}
@@ -41,7 +41,7 @@ export default function ProfileSettings() {
                 required
               >
                 <div className="relative">
-                  <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                  <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 dark:text-gray-500" />
                   <Input
                     type="text"
                     name="firstName"
@@ -67,7 +67,7 @@ export default function ProfileSettings() {
                 required
               >
                 <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 dark:text-gray-500" />
                   <Input
                     type="email"
                     name="email"
@@ -81,7 +81,7 @@ export default function ProfileSettings() {
                 label="Phone Number"
               >
                 <div className="relative">
-                  <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                  <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 dark:text-gray-500" />
                   <Input
                     type="tel"
                     name="phone"
@@ -95,7 +95,7 @@ export default function ProfileSettings() {
                 label="Date of Birth"
               >
                 <div className="relative">
-                  <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                  <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 dark:text-gray-500" />
                   <Input
                     type="date"
                     name="dateOfBirth"
@@ -109,7 +109,7 @@ export default function ProfileSettings() {
                 label="City, State"
               >
                 <div className="relative">
-                  <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                  <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 dark:text-gray-500" />
                   <Input
                     type="text"
                     name="location"
@@ -141,20 +141,20 @@ export default function ProfileSettings() {
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <h4 className="text-sm font-medium text-gray-700 mb-1">Primary Residence</h4>
-              <p className="text-gray-900">Portland, Oregon</p>
+              <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Primary Residence</h4>
+              <p className="text-gray-900 dark:text-gray-100">Portland, Oregon</p>
             </div>
             <div>
-              <h4 className="text-sm font-medium text-gray-700 mb-1">Marital Status</h4>
-              <p className="text-gray-900">Married</p>
+              <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Marital Status</h4>
+              <p className="text-gray-900 dark:text-gray-100">Married</p>
             </div>
             <div>
-              <h4 className="text-sm font-medium text-gray-700 mb-1">Number of Children</h4>
-              <p className="text-gray-900">2</p>
+              <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Number of Children</h4>
+              <p className="text-gray-900 dark:text-gray-100">2</p>
             </div>
             <div>
-              <h4 className="text-sm font-medium text-gray-700 mb-1">Estate Plan Last Updated</h4>
-              <p className="text-gray-900">January 2024</p>
+              <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Estate Plan Last Updated</h4>
+              <p className="text-gray-900 dark:text-gray-100">January 2024</p>
             </div>
           </div>
         </CardContent>
@@ -170,19 +170,19 @@ export default function ProfileSettings() {
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            <div className="flex items-center justify-between py-3 border-b border-gray-200">
+            <div className="flex items-center justify-between py-3 border-b border-gray-200 dark:border-gray-700">
               <div>
-                <h4 className="font-medium text-gray-900">Email Notifications</h4>
-                <p className="text-sm text-gray-600">Receive updates about your estate planning</p>
+                <h4 className="font-medium text-gray-900 dark:text-gray-100">Email Notifications</h4>
+                <p className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">Receive updates about your estate planning</p>
               </div>
               <Button variant="outline" size="sm">
                 Configure
               </Button>
             </div>
-            <div className="flex items-center justify-between py-3 border-b border-gray-200">
+            <div className="flex items-center justify-between py-3 border-b border-gray-200 dark:border-gray-700">
               <div>
-                <h4 className="font-medium text-gray-900">Two-Factor Authentication</h4>
-                <p className="text-sm text-gray-600">Add an extra layer of security</p>
+                <h4 className="font-medium text-gray-900 dark:text-gray-100">Two-Factor Authentication</h4>
+                <p className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">Add an extra layer of security</p>
               </div>
               <Button variant="outline" size="sm">
                 Enable
@@ -190,8 +190,8 @@ export default function ProfileSettings() {
             </div>
             <div className="flex items-center justify-between py-3">
               <div>
-                <h4 className="font-medium text-gray-900">Data Export</h4>
-                <p className="text-sm text-gray-600">Download all your estate planning data</p>
+                <h4 className="font-medium text-gray-900 dark:text-gray-100">Data Export</h4>
+                <p className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">Download all your estate planning data</p>
               </div>
               <Button variant="outline" size="sm">
                 Export

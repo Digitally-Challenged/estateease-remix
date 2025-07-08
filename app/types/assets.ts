@@ -53,7 +53,9 @@ export interface FinancialAccount extends BaseAsset {
   category: AssetCategory.FINANCIAL_ACCOUNT;
   accountType: FinancialAccountType;
   institution: string;
+  institutionName?: string; // New field for database consistency
   accountNumber: string;
+  routingNumber?: string; // New field for ACH transfers
   interestRate?: number;
   maturityDate?: string;
   beneficiaries?: {
@@ -97,6 +99,9 @@ export interface BusinessInterest extends BaseAsset {
   valuationDate: string;
   annualRevenue?: number;
   annualProfit?: number;
+  incorporationType?: string;
+  stateOfIncorporation?: string;
+  ein?: string;
 }
 
 export interface Vehicle extends BaseAsset {

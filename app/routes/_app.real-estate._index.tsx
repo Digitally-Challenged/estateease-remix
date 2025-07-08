@@ -23,8 +23,8 @@ export default function RealEstateOverview() {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
       currency: 'USD',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
     }).format(amount);
   };
 
@@ -57,8 +57,8 @@ export default function RealEstateOverview() {
       {/* Header */}
       <div className="flex justify-between items-start">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Real Estate Portfolio</h1>
-          <p className="text-gray-600">Manage and track your property investments</p>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Real Estate Portfolio</h1>
+          <p className="text-gray-600 dark:text-gray-400 dark:text-gray-500">Manage and track your property investments</p>
         </div>
         <Button asChild>
           <Link to="/real-estate/new">
@@ -72,14 +72,14 @@ export default function RealEstateOverview() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-gray-600">
+            <CardTitle className="text-sm font-medium text-gray-600 dark:text-gray-400 dark:text-gray-500">
               Total Portfolio Value
             </CardTitle>
-            <DollarSign className="h-4 w-4 text-gray-600" />
+            <DollarSign className="h-4 w-4 text-gray-600 dark:text-gray-400 dark:text-gray-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-gray-900">{formatCurrency(totalValue)}</div>
-            <p className="text-xs text-gray-600">
+            <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">{formatCurrency(totalValue)}</div>
+            <p className="text-xs text-gray-600 dark:text-gray-400 dark:text-gray-500">
               Across {realEstateAssets.length} properties
             </p>
           </CardContent>
@@ -87,14 +87,14 @@ export default function RealEstateOverview() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-gray-600">
+            <CardTitle className="text-sm font-medium text-gray-600 dark:text-gray-400 dark:text-gray-500">
               Average Property Value
             </CardTitle>
-            <BarChart3 className="h-4 w-4 text-gray-600" />
+            <BarChart3 className="h-4 w-4 text-gray-600 dark:text-gray-400 dark:text-gray-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-gray-900">{formatCurrency(averageValue)}</div>
-            <p className="text-xs text-gray-600">
+            <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">{formatCurrency(averageValue)}</div>
+            <p className="text-xs text-gray-600 dark:text-gray-400 dark:text-gray-500">
               Per property
             </p>
           </CardContent>
@@ -102,14 +102,14 @@ export default function RealEstateOverview() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-gray-600">
+            <CardTitle className="text-sm font-medium text-gray-600 dark:text-gray-400 dark:text-gray-500">
               Property Types
             </CardTitle>
-            <Building2 className="h-4 w-4 text-gray-600" />
+            <Building2 className="h-4 w-4 text-gray-600 dark:text-gray-400 dark:text-gray-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-gray-900">{Object.keys(propertyTypes).length}</div>
-            <p className="text-xs text-gray-600">
+            <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">{Object.keys(propertyTypes).length}</div>
+            <p className="text-xs text-gray-600 dark:text-gray-400 dark:text-gray-500">
               Different categories
             </p>
           </CardContent>
@@ -128,14 +128,14 @@ export default function RealEstateOverview() {
               {Object.entries(propertyTypes).map(([type, data]) => (
                 <div key={type} className="flex items-center justify-between">
                   <div>
-                    <p className="font-medium text-gray-900">{type}</p>
-                    <p className="text-sm text-gray-600">
+                    <p className="font-medium text-gray-900 dark:text-gray-100">{type}</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">
                       {data.count} {data.count === 1 ? 'property' : 'properties'}
                     </p>
                   </div>
                   <div className="text-right">
-                    <p className="font-semibold text-gray-900">{formatCurrency(data.value)}</p>
-                    <p className="text-sm text-gray-600">
+                    <p className="font-semibold text-gray-900 dark:text-gray-100">{formatCurrency(data.value)}</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">
                       {((data.value / totalValue) * 100).toFixed(1)}% of portfolio
                     </p>
                   </div>
@@ -155,8 +155,8 @@ export default function RealEstateOverview() {
         <CardContent>
           {realEstateAssets.length === 0 ? (
             <div className="text-center py-12">
-              <Building2 className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-              <p className="text-gray-600 mb-4">No properties added yet</p>
+              <Building2 className="h-12 w-12 text-gray-400 dark:text-gray-500 mx-auto mb-4" />
+              <p className="text-gray-600 dark:text-gray-400 dark:text-gray-500 mb-4">No properties added yet</p>
               <Button asChild>
                 <Link to="/real-estate/new">
                   <Plus className="h-4 w-4 mr-2" />
@@ -174,19 +174,19 @@ export default function RealEstateOverview() {
                 return (
                   <div
                     key={asset.id}
-                    className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+                    className="flex items-center justify-between p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 dark:bg-gray-900 transition-colors"
                   >
                     <div className="flex items-start space-x-4">
-                      <Icon className="h-10 w-10 text-gray-600 mt-1" />
+                      <Icon className="h-10 w-10 text-gray-600 dark:text-gray-400 dark:text-gray-500 mt-1" />
                       <div className="flex-1">
-                        <h3 className="font-medium text-gray-900">{asset.name}</h3>
+                        <h3 className="font-medium text-gray-900 dark:text-gray-100">{asset.name}</h3>
                         {address && (
-                          <div className="flex items-center text-sm text-gray-600 mt-1">
+                          <div className="flex items-center text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500 mt-1">
                             <MapPin className="h-3 w-3 mr-1" />
                             <span>{address}</span>
                           </div>
                         )}
-                        <div className="flex items-center space-x-4 mt-2 text-sm text-gray-600">
+                        <div className="flex items-center space-x-4 mt-2 text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">
                           <span>Ownership: {asset.ownership.type}</span>
                           {'propertyType' in asset && asset.propertyType && (
                             <span>Type: {asset.propertyType}</span>
@@ -195,7 +195,7 @@ export default function RealEstateOverview() {
                       </div>
                     </div>
                     <div className="text-right">
-                      <p className="font-semibold text-gray-900">{formatCurrency(asset.value)}</p>
+                      <p className="font-semibold text-gray-900 dark:text-gray-100">{formatCurrency(asset.value)}</p>
                       <div className="flex space-x-2 mt-2">
                         <Button variant="link" size="sm" asChild>
                           <Link to={`/real-estate/${asset.id}`}>

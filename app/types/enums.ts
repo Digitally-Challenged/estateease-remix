@@ -214,6 +214,33 @@ export enum BusinessStructureType {
 }
 
 /**
+ * Business incorporation types for estate planning.
+ * Used to specify the legal structure of business entities.
+ * Important for tax treatment, liability, and succession planning.
+ * 
+ * @enum {string}
+ * @example
+ * // For a business asset with incorporation details
+ * const business = {
+ *   category: AssetCategory.BUSINESS_INTEREST,
+ *   incorporation_type: IncorporationType.LLC,
+ *   state_of_incorporation: 'DE'
+ * }
+ */
+export enum IncorporationType {
+  /** Limited Liability Company */
+  LLC = 'LLC',
+  /** S Corporation - pass-through taxation */
+  S_CORP = 'S_CORP',
+  /** C Corporation - traditional corporation */
+  C_CORP = 'C_CORP',
+  /** General or Limited Partnership */
+  PARTNERSHIP = 'PARTNERSHIP',
+  /** Individual business ownership */
+  SOLE_PROPRIETORSHIP = 'SOLE_PROPRIETORSHIP'
+}
+
+/**
  * Types of vehicles and transportation assets.
  * Used in the `assets` table when `category` is VEHICLE.
  * Relevant for valuation, insurance coverage, and estate distribution.
@@ -411,43 +438,6 @@ export enum BusinessType {
   OTHER = 'OTHER'
 }
 
-/**
- * Types of digital assets requiring special estate planning consideration.
- * Used for assets that exist primarily in digital form.
- * Critical for ensuring access and transfer of digital wealth and accounts.
- * 
- * @enum {string}
- * @example
- * // For cryptocurrency holdings
- * const cryptoWallet = {
- *   category: AssetCategory.FINANCIAL_ACCOUNT,
- *   asset_type: FinancialAccountType.CRYPTO,
- *   digital_asset_type: DigitalAssetType.CRYPTOCURRENCY,
- *   description: 'Hardware wallet with Bitcoin and Ethereum'
- * }
- */
-export enum DigitalAssetType {
-  /** Bitcoin, Ethereum, and other digital currencies */
-  CRYPTOCURRENCY = 'CRYPTOCURRENCY',
-  /** Digital photos, videos, music libraries, e-books */
-  DIGITAL_MEDIA = 'DIGITAL_MEDIA',
-  /** Internet domain names with commercial value */
-  DOMAIN_NAMES = 'DOMAIN_NAMES',
-  /** Patents, copyrights, trademarks, trade secrets */
-  INTELLECTUAL_PROPERTY = 'INTELLECTUAL_PROPERTY',
-  /** Non-fungible tokens and digital collectibles */
-  NFT = 'NFT',
-  /** Email, cloud storage, subscription services */
-  ONLINE_ACCOUNTS = 'ONLINE_ACCOUNTS',
-  /** Paid software, SaaS subscriptions, digital tools */
-  SOFTWARE_LICENSES = 'SOFTWARE_LICENSES',
-  /** Business or personal social media with monetary value */
-  SOCIAL_MEDIA_ACCOUNTS = 'SOCIAL_MEDIA_ACCOUNTS',
-  /** Websites, blogs, online businesses */
-  WEBSITE = 'WEBSITE',
-  /** Other digital assets requiring estate planning */
-  OTHER = 'OTHER'
-}
 
 /**
  * Types of documents essential for estate planning and administration.

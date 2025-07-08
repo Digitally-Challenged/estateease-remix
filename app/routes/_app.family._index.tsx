@@ -49,19 +49,19 @@ export default function FamilyOverview() {
   const getRelationshipColor = (relationship: string) => {
     switch (relationship.toLowerCase()) {
       case 'spouse': return 'bg-pink-100 text-pink-800';
-      case 'sibling': return 'bg-blue-100 text-blue-800';
-      case 'parent': return 'bg-green-100 text-green-800';
-      case 'child': return 'bg-yellow-100 text-yellow-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'sibling': return 'bg-blue-100 text-blue-800 dark:text-blue-200';
+      case 'parent': return 'bg-green-100 text-green-800 dark:text-green-200';
+      case 'child': return 'bg-yellow-100 text-yellow-800 dark:text-yellow-200';
+      default: return 'bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200';
     }
   };
 
   const getProfessionalTypeColor = (type: string) => {
     switch (type) {
       case 'estate_attorney': return 'bg-purple-100 text-purple-800';
-      case 'financial_advisor': return 'bg-green-100 text-green-800';
-      case 'accountant': return 'bg-blue-100 text-blue-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'financial_advisor': return 'bg-green-100 text-green-800 dark:text-green-200';
+      case 'accountant': return 'bg-blue-100 text-blue-800 dark:text-blue-200';
+      default: return 'bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200';
     }
   };
 
@@ -69,53 +69,53 @@ export default function FamilyOverview() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-gray-900">Family & Professional Team</h1>
-        <p className="text-gray-600">Comprehensive directory of family members, professional team, and emergency contacts</p>
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Family & Professional Team</h1>
+        <p className="text-gray-600 dark:text-gray-400 dark:text-gray-500">Comprehensive directory of family members, professional team, and emergency contacts</p>
       </div>
 
       {/* Summary Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-gray-600">Family Members</CardTitle>
-            <Heart className="h-4 w-4 text-red-600" />
+            <CardTitle className="text-sm font-medium text-gray-600 dark:text-gray-400 dark:text-gray-500">Family Members</CardTitle>
+            <Heart className="h-4 w-4 text-red-600 dark:text-red-400" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-gray-900">{familyMembers.length}</div>
-            <p className="text-xs text-gray-600">Including spouse and siblings</p>
+            <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">{familyMembers.length}</div>
+            <p className="text-xs text-gray-600 dark:text-gray-400 dark:text-gray-500">Including spouse and siblings</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-gray-600">Professional Team</CardTitle>
-            <UserCheck className="h-4 w-4 text-blue-600" />
+            <CardTitle className="text-sm font-medium text-gray-600 dark:text-gray-400 dark:text-gray-500">Professional Team</CardTitle>
+            <UserCheck className="h-4 w-4 text-blue-600 dark:text-blue-400" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-gray-900">{professionals.length}</div>
-            <p className="text-xs text-gray-600">Attorney, advisor, CPA, trustee</p>
+            <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">{professionals.length}</div>
+            <p className="text-xs text-gray-600 dark:text-gray-400 dark:text-gray-500">Attorney, advisor, CPA, trustee</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-gray-600">Emergency Contacts</CardTitle>
-            <AlertTriangle className="h-4 w-4 text-yellow-600" />
+            <CardTitle className="text-sm font-medium text-gray-600 dark:text-gray-400 dark:text-gray-500">Emergency Contacts</CardTitle>
+            <AlertTriangle className="h-4 w-4 text-yellow-600 dark:text-yellow-400" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-gray-900">{emergencyContacts.length}</div>
-            <p className="text-xs text-gray-600">24/7 availability</p>
+            <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">{emergencyContacts.length}</div>
+            <p className="text-xs text-gray-600 dark:text-gray-400 dark:text-gray-500">24/7 availability</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-gray-600">Legal Roles</CardTitle>
-            <Shield className="h-4 w-4 text-green-600" />
+            <CardTitle className="text-sm font-medium text-gray-600 dark:text-gray-400 dark:text-gray-500">Legal Roles</CardTitle>
+            <Shield className="h-4 w-4 text-green-600 dark:text-green-400" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-gray-900">{legalRoles.length}</div>
-            <p className="text-xs text-gray-600">Across all estate functions</p>
+            <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">{legalRoles.length}</div>
+            <p className="text-xs text-gray-600 dark:text-gray-400 dark:text-gray-500">Across all estate functions</p>
           </CardContent>
         </Card>
       </div>
@@ -124,7 +124,7 @@ export default function FamilyOverview() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center">
-            <Heart className="h-5 w-5 text-red-600 mr-2" />
+            <Heart className="h-5 w-5 text-red-600 dark:text-red-400 mr-2" />
             Family Members
           </CardTitle>
           <CardDescription>Core family members and their roles in estate planning</CardDescription>
@@ -136,10 +136,10 @@ export default function FamilyOverview() {
               const memberHealthcareRoles = getHealthcareRolesByPerson(member.id);
               
               return (
-                <div key={member.id} className="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 transition-colors">
+                <div key={member.id} className="border border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:bg-gray-50 dark:hover:bg-gray-800 dark:bg-gray-900 transition-colors">
                   <div className="flex items-start justify-between mb-3">
                     <div>
-                      <h3 className="text-lg font-medium text-gray-900">{member.name}</h3>
+                      <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">{member.name}</h3>
                       <Badge className={getRelationshipColor(member.relationship)}>
                         {member.relationship.charAt(0).toUpperCase() + member.relationship.slice(1)}
                       </Badge>
@@ -156,19 +156,19 @@ export default function FamilyOverview() {
                   {member.contactInfo && (
                     <div className="space-y-2 mb-4">
                       {member.contactInfo.primaryPhone && (
-                        <div className="flex items-center text-sm text-gray-600">
+                        <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
                           <Phone className="h-4 w-4 mr-2" />
                           {formatPhone(member.contactInfo.primaryPhone)}
                         </div>
                       )}
                       {member.contactInfo.email && (
-                        <div className="flex items-center text-sm text-gray-600">
+                        <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
                           <Mail className="h-4 w-4 mr-2" />
                           {member.contactInfo.email}
                         </div>
                       )}
                       {member.contactInfo.address && (
-                        <div className="flex items-center text-sm text-gray-600">
+                        <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
                           <MapPin className="h-4 w-4 mr-2" />
                           {member.contactInfo.address.city}, {member.contactInfo.address.state}
                         </div>
@@ -179,11 +179,11 @@ export default function FamilyOverview() {
                   {/* Legal Roles */}
                   {(memberLegalRoles.length > 0 || memberHealthcareRoles.length > 0) && (
                     <div className="border-t pt-3">
-                      <h4 className="text-sm font-medium text-gray-700 mb-2">Estate Planning Roles</h4>
+                      <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Estate Planning Roles</h4>
                       <div className="space-y-1">
                         {memberLegalRoles.map((role) => (
                           <div key={role.id} className="flex items-center justify-between text-sm">
-                            <span className="text-gray-900 capitalize">{role.roleType.replace('_', ' ')}</span>
+                            <span className="text-gray-900 dark:text-gray-100 capitalize">{role.roleType.replace('_', ' ')}</span>
                             <Badge variant="outline" className="text-xs">
                               {role.isPrimary ? 'Primary' : `Order ${role.orderOfPrecedence || 'N/A'}`}
                             </Badge>
@@ -191,7 +191,7 @@ export default function FamilyOverview() {
                         ))}
                         {memberHealthcareRoles.map((directive) => (
                           <div key={directive.id} className="flex items-center justify-between text-sm">
-                            <span className="text-gray-900 capitalize">{directive.type.replace('_', ' ')}</span>
+                            <span className="text-gray-900 dark:text-gray-100 capitalize">{directive.type.replace('_', ' ')}</span>
                             <Badge variant="outline" className="text-xs">
                               {directive.isPrimary ? 'Primary' : 'Secondary'}
                             </Badge>
@@ -203,7 +203,7 @@ export default function FamilyOverview() {
 
                   {member.notes && (
                     <div className="border-t pt-3 mt-3">
-                      <p className="text-sm text-gray-600">{member.notes}</p>
+                      <p className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">{member.notes}</p>
                     </div>
                   )}
                 </div>
@@ -217,7 +217,7 @@ export default function FamilyOverview() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center">
-            <UserCheck className="h-5 w-5 text-blue-600 mr-2" />
+            <UserCheck className="h-5 w-5 text-blue-600 dark:text-blue-400 mr-2" />
             Professional Team
           </CardTitle>
           <CardDescription>Estate planning professionals and their specializations</CardDescription>
@@ -225,11 +225,11 @@ export default function FamilyOverview() {
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {professionals.map((professional) => (
-              <div key={professional.id} className="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 transition-colors">
+              <div key={professional.id} className="border border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:bg-gray-50 dark:hover:bg-gray-800 dark:bg-gray-900 transition-colors">
                 <div className="flex items-start justify-between mb-3">
                   <div>
-                    <h3 className="text-lg font-medium text-gray-900">{professional.name}</h3>
-                    <p className="text-sm text-gray-600">{professional.firm}</p>
+                    <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">{professional.name}</h3>
+                    <p className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">{professional.firm}</p>
                   </div>
                   <div className="flex flex-col space-y-1">
                     <Badge className={getProfessionalTypeColor(professional.type)}>
@@ -244,10 +244,10 @@ export default function FamilyOverview() {
                 {/* Specializations */}
                 {professional.specializations && professional.specializations.length > 0 && (
                   <div className="mb-3">
-                    <h4 className="text-sm font-medium text-gray-700 mb-1">Specializations</h4>
+                    <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Specializations</h4>
                     <div className="flex flex-wrap gap-1">
                       {professional.specializations.map((spec, index) => (
-                        <span key={index} className="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded">
+                        <span key={index} className="text-xs bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 px-2 py-1 rounded">
                           {spec}
                         </span>
                       ))}
@@ -258,19 +258,19 @@ export default function FamilyOverview() {
                 {/* Contact Information */}
                 <div className="space-y-2 mb-3">
                   {professional.contactInfo.primaryPhone && (
-                    <div className="flex items-center text-sm text-gray-600">
+                    <div className="flex items-center text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">
                       <Phone className="h-4 w-4 mr-2" />
                       {formatPhone(professional.contactInfo.primaryPhone)}
                     </div>
                   )}
                   {professional.contactInfo.email && (
-                    <div className="flex items-center text-sm text-gray-600">
+                    <div className="flex items-center text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">
                       <Mail className="h-4 w-4 mr-2" />
                       {professional.contactInfo.email}
                     </div>
                   )}
                   {professional.contactInfo.address && (
-                    <div className="flex items-center text-sm text-gray-600">
+                    <div className="flex items-center text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">
                       <MapPin className="h-4 w-4 mr-2" />
                       {professional.contactInfo.address.city}, {professional.contactInfo.address.state}
                     </div>
@@ -281,13 +281,13 @@ export default function FamilyOverview() {
                 <div className="border-t pt-3 flex items-center justify-between text-sm">
                   <div>
                     {professional.credentials && professional.credentials.length > 0 && (
-                      <span className="text-gray-600">
+                      <span className="text-gray-600 dark:text-gray-400 dark:text-gray-500">
                         {professional.credentials.join(', ')}
                       </span>
                     )}
                   </div>
                   {professional.yearsExperience && (
-                    <span className="text-gray-500">
+                    <span className="text-gray-500 dark:text-gray-400 dark:text-gray-500">
                       {professional.yearsExperience} years exp.
                     </span>
                   )}
@@ -295,7 +295,7 @@ export default function FamilyOverview() {
 
                 {professional.notes && (
                   <div className="border-t pt-3 mt-3">
-                    <p className="text-sm text-gray-600">{professional.notes}</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">{professional.notes}</p>
                   </div>
                 )}
               </div>
@@ -308,7 +308,7 @@ export default function FamilyOverview() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center">
-            <AlertTriangle className="h-5 w-5 text-yellow-600 mr-2" />
+            <AlertTriangle className="h-5 w-5 text-yellow-600 dark:text-yellow-400 mr-2" />
             Emergency Contacts
           </CardTitle>
           <CardDescription>Priority contacts for medical and legal emergencies</CardDescription>
@@ -318,28 +318,28 @@ export default function FamilyOverview() {
             {emergencyContacts
               .sort((a, b) => a.priority - b.priority)
               .map((contact) => (
-                <div key={contact.id} className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+                <div key={contact.id} className="flex items-center justify-between p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 dark:bg-gray-900 transition-colors">
                   <div className="flex items-center space-x-4">
-                    <div className="flex items-center justify-center w-8 h-8 bg-yellow-100 text-yellow-800 rounded-full text-sm font-medium">
+                    <div className="flex items-center justify-center w-8 h-8 bg-yellow-100 text-yellow-800 dark:text-yellow-200 rounded-full text-sm font-medium">
                       {contact.priority}
                     </div>
                     <div>
-                      <h3 className="text-lg font-medium text-gray-900">{contact.name}</h3>
-                      <p className="text-sm text-gray-600 capitalize">{contact.relationship} • {contact.contactType}</p>
+                      <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">{contact.name}</h3>
+                      <p className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500 capitalize">{contact.relationship} • {contact.contactType}</p>
                       {contact.availability && (
-                        <p className="text-xs text-gray-500">Available: {contact.availability}</p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400 dark:text-gray-500">Available: {contact.availability}</p>
                       )}
                     </div>
                   </div>
                   
                   <div className="text-right">
                     <div className="space-y-1">
-                      <div className="flex items-center text-sm text-gray-600">
+                      <div className="flex items-center text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">
                         <Phone className="h-4 w-4 mr-2" />
                         {formatPhone(contact.contactInfo.primaryPhone)}
                       </div>
                       {contact.contactInfo.email && (
-                        <div className="flex items-center text-sm text-gray-600">
+                        <div className="flex items-center text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">
                           <Mail className="h-4 w-4 mr-2" />
                           {contact.contactInfo.email}
                         </div>

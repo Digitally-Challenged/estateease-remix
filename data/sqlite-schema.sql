@@ -327,6 +327,58 @@ CREATE TABLE IF NOT EXISTS assets (
 -- AUDIT AND TRACKING
 -- =============================================
 
+-- Documents table for storing document metadata
+CREATE TABLE IF NOT EXISTS documents (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    document_id TEXT NOT NULL UNIQUE,
+    user_id INTEGER NOT NULL,
+    
+    -- Document info
+    name TEXT NOT NULL,
+    original_filename TEXT NOT NULL,
+    file_path TEXT NOT NULL, -- Relative path to file on disk
+    file_size INTEGER NOT NULL,
+    file_type TEXT NOT NULL,
+    mime_type TEXT NOT NULL,
+    
+    -- Categorization
+    category TEXT NOT NULL,
+    description TEXT,
+    
+    -- Related entity (optional)
+    related_entity_type TEXT, -- 'trust', 'asset', 'insurance', etc.
+    related_entity_id TEXT,
+    
+    -- Status and metadata
+    status TEXT DEFAULT 'pending', -- 'pending', 'verified', 'expired'
+    uploaded_at TEXT NOT NULL DEFAULT (datetime('now')),
+    verified_at TEXT,
+    expires_at TEXT,
+    
+    -- Search and organization
+    tags TEXT, -- JSON array of tags
+    is_archived INTEGER DEFAULT 0,
+    
+    created_at TEXT NOT NULL DEFAULT (datetime('now')),
+    updated_at TEXT NOT NULL DEFAULT (datetime('now')),
+    
+    FOREIGN KEY (user_id) REFERENCES users(id)
+);
+
+-- Document access log (for audit trail)
+CREATE TABLE IF NOT EXISTS document_access_log (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    document_id INTEGER NOT NULL,
+    user_id INTEGER NOT NULL,
+    action TEXT NOT NULL, -- 'view', 'download', 'upload', 'delete'
+    ip_address TEXT,
+    user_agent TEXT,
+    accessed_at TEXT NOT NULL DEFAULT (datetime('now')),
+    
+    FOREIGN KEY (document_id) REFERENCES documents(id),
+    FOREIGN KEY (user_id) REFERENCES users(id)
+);
+
 -- Audit Log for tracking changes
 CREATE TABLE IF NOT EXISTS audit_log (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -368,6 +420,12 @@ CREATE INDEX IF NOT EXISTS idx_professionals_user_id ON professionals(user_id);
 CREATE INDEX IF NOT EXISTS idx_assets_user_id ON assets(user_id);
 CREATE INDEX IF NOT EXISTS idx_assets_category ON assets(category);
 CREATE INDEX IF NOT EXISTS idx_assets_asset_id ON assets(asset_id);
+
+-- Documents indexes
+CREATE INDEX IF NOT EXISTS idx_documents_user_id ON documents(user_id);
+CREATE INDEX IF NOT EXISTS idx_documents_category ON documents(category);
+CREATE INDEX IF NOT EXISTS idx_documents_status ON documents(status);
+CREATE INDEX IF NOT EXISTS idx_documents_related ON documents(related_entity_type, related_entity_id);
 
 -- Audit log indexes
 CREATE INDEX IF NOT EXISTS idx_audit_log_table_record ON audit_log(table_name, record_id);

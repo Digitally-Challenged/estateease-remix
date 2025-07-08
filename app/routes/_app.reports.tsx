@@ -53,11 +53,11 @@ export default function Reports() {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'ready':
-        return 'text-green-600 bg-green-50';
+        return 'text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-900/20';
       case 'outdated':
-        return 'text-yellow-600 bg-yellow-50';
+        return 'text-yellow-600 dark:text-yellow-400 bg-yellow-50 dark:bg-yellow-900/20';
       default:
-        return 'text-gray-600 bg-gray-50';
+        return 'text-gray-600 dark:text-gray-400 dark:text-gray-500 bg-gray-50 dark:bg-gray-900';
     }
   };
 
@@ -76,8 +76,8 @@ export default function Reports() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-gray-900">Reports & Analytics</h1>
-        <p className="text-gray-600 mt-2">Generate comprehensive reports for your estate planning needs</p>
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Reports & Analytics</h1>
+        <p className="text-gray-600 dark:text-gray-400 dark:text-gray-500 mt-2">Generate comprehensive reports for your estate planning needs</p>
       </div>
 
       {/* Quick Actions */}
@@ -113,7 +113,7 @@ export default function Reports() {
               <CardHeader>
                 <div className="flex items-start justify-between">
                   <div className="flex items-start space-x-3">
-                    <Icon className="h-5 w-5 text-gray-600 mt-0.5" />
+                    <Icon className="h-5 w-5 text-gray-600 dark:text-gray-400 dark:text-gray-500 mt-0.5" />
                     <div>
                       <CardTitle className="text-lg">{report.title}</CardTitle>
                       <CardDescription className="mt-1">{report.description}</CardDescription>
@@ -124,7 +124,7 @@ export default function Reports() {
               <CardContent>
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-gray-600">Last generated</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">Last generated</p>
                     <p className="font-medium">{new Date(report.lastGenerated).toLocaleDateString()}</p>
                   </div>
                   <div className="flex items-center space-x-3">
@@ -138,7 +138,7 @@ export default function Reports() {
                   </div>
                 </div>
                 {report.status === 'outdated' && (
-                  <div className="mt-3 flex items-center text-sm text-yellow-600">
+                  <div className="mt-3 flex items-center text-sm text-yellow-600 dark:text-yellow-400">
                     <AlertCircle className="h-4 w-4 mr-1" />
                     This report may contain outdated information
                   </div>
@@ -157,7 +157,7 @@ export default function Reports() {
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">
               Generate custom reports by selecting specific data points, date ranges, and formatting options.
             </p>
             <Button variant="outline">

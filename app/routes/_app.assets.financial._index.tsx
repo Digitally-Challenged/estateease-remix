@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { getAssets } from "~/lib/dal";
 import { AssetCategory, FinancialAccountType } from "~/types/enums";
+import { formatCurrency } from "~/utils/format";
 import type { Column } from "~/components/ui/data-table";
 import type { FinancialAccount, AnyEnhancedAsset } from "~/types/assets";
 
@@ -39,7 +40,7 @@ export async function loader() {
       }
       acc[accountType].push(account);
       return acc;
-    }, {} as Record<string, typeof financialAccounts>);
+    }, {} as Record<string, (typeof financialAccounts)>);
 
     // Calculate totals
     const totalValue = financialAccounts.reduce((sum, account) => sum + (account?.value || 0), 0);
@@ -93,8 +94,8 @@ function FinancialAccountsContent() {
     return (
       <div className="space-y-6">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Financial Accounts</h1>
-          <p className="text-gray-600 mt-2">Manage bank accounts, investments, and retirement accounts</p>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Financial Accounts</h1>
+          <p className="text-gray-600 dark:text-gray-400 dark:text-gray-500 mt-2">Manage bank accounts, investments, and retirement accounts</p>
         </div>
         <ErrorDisplay
           error={error}
@@ -105,15 +106,6 @@ function FinancialAccountsContent() {
       </div>
     );
   }
-
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(amount);
-  };
 
   const getAccountIcon = (account: AnyEnhancedAsset) => {
     const type = (account as FinancialAccount)?.accountType;
@@ -135,31 +127,31 @@ function FinancialAccountsContent() {
         <div className="flex items-center space-x-3">
           {(() => {
             const Icon = getAccountIcon(account);
-            return <Icon className="h-5 w-5 text-gray-600" />;
+            return <Icon className="h-5 w-5 text-gray-600 dark:text-gray-400 dark:text-gray-500" />;
           })()}
           <div>
             <p className="font-medium">{account?.name}</p>
-            <p className="text-sm text-gray-600">{(account as FinancialAccount)?.accountNumber || 'No account number'}</p>
+            <p className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">{(account as FinancialAccount)?.accountNumber || 'No account number'}</p>
           </div>
         </div>
       )
     },
-    {
-      key: 'type',
-      header: 'Type',
-      render: (account) => (
-        <Badge variant="secondary">
-          {account?.details?.type || 'Unknown'}
-        </Badge>
-      )
-    },
-    {
-      key: 'institution',
-      header: 'Institution',
-      render: (account) => (
-        <span>{account?.details?.institution || '—'}</span>
-      )
-    },
+          {
+        key: 'type',
+        header: 'Type',
+        render: (account) => (
+          <Badge variant="secondary">
+            {(account as FinancialAccount)?.accountType || 'Unknown'}
+          </Badge>
+        )
+      },
+          {
+        key: 'institution',
+        header: 'Institution',
+        render: (account) => (
+          <span>{(account as FinancialAccount)?.institution || '—'}</span>
+        )
+      },
     {
       key: 'value',
       header: 'Balance',
@@ -187,15 +179,15 @@ function FinancialAccountsContent() {
       <div className="space-y-6">
         <div className="flex justify-between items-start">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Financial Accounts</h1>
-            <p className="text-gray-600 mt-2">Manage bank accounts, investments, and retirement accounts</p>
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Financial Accounts</h1>
+            <p className="text-gray-600 dark:text-gray-400 dark:text-gray-500 mt-2">Manage bank accounts, investments, and retirement accounts</p>
           </div>
         </div>
         <Card className="text-center py-8">
           <CardContent>
-            <DollarSign className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">No financial accounts</h3>
-            <p className="text-gray-600 mb-4">
+            <DollarSign className="h-12 w-12 text-gray-400 dark:text-gray-500 mx-auto mb-4" />
+            <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">No financial accounts</h3>
+            <p className="text-gray-600 dark:text-gray-400 dark:text-gray-500 mb-4">
               Add your bank accounts, investments, and retirement accounts to track your financial assets
             </p>
             <Button asChild>
@@ -212,8 +204,8 @@ function FinancialAccountsContent() {
       {/* Header */}
       <div className="flex justify-between items-start">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Financial Accounts</h1>
-          <p className="text-gray-600 mt-2">Manage bank accounts, investments, and retirement accounts</p>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Financial Accounts</h1>
+          <p className="text-gray-600 dark:text-gray-400 dark:text-gray-500 mt-2">Manage bank accounts, investments, and retirement accounts</p>
         </div>
         <Button asChild>
           <Link to="/assets/new">
@@ -228,55 +220,55 @@ function FinancialAccountsContent() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Value</CardTitle>
-            <DollarSign className="h-4 w-4 text-gray-600" />
+            <DollarSign className="h-4 w-4 text-gray-600 dark:text-gray-400 dark:text-gray-500" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{formatCurrency(totalValue)}</div>
-            <p className="text-xs text-gray-600 mt-1">All accounts</p>
+            <p className="text-xs text-gray-600 dark:text-gray-400 dark:text-gray-500 mt-1">All accounts</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Checking</CardTitle>
-            <Wallet className="h-4 w-4 text-gray-600" />
+            <Wallet className="h-4 w-4 text-gray-600 dark:text-gray-400 dark:text-gray-500" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{formatCurrency(checkingTotal)}</div>
-            <p className="text-xs text-gray-600 mt-1">Liquid funds</p>
+            <p className="text-xs text-gray-600 dark:text-gray-400 dark:text-gray-500 mt-1">Liquid funds</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Savings</CardTitle>
-            <PiggyBank className="h-4 w-4 text-gray-600" />
+            <PiggyBank className="h-4 w-4 text-gray-600 dark:text-gray-400 dark:text-gray-500" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{formatCurrency(savingsTotal)}</div>
-            <p className="text-xs text-gray-600 mt-1">Emergency fund</p>
+            <p className="text-xs text-gray-600 dark:text-gray-400 dark:text-gray-500 mt-1">Emergency fund</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Investments</CardTitle>
-            <TrendingUp className="h-4 w-4 text-gray-600" />
+            <TrendingUp className="h-4 w-4 text-gray-600 dark:text-gray-400 dark:text-gray-500" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{formatCurrency(investmentTotal)}</div>
-            <p className="text-xs text-gray-600 mt-1">Brokerage accounts</p>
+            <p className="text-xs text-gray-600 dark:text-gray-400 dark:text-gray-500 mt-1">Brokerage accounts</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Retirement</CardTitle>
-            <Landmark className="h-4 w-4 text-gray-600" />
+            <Landmark className="h-4 w-4 text-gray-600 dark:text-gray-400 dark:text-gray-500" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{formatCurrency(retirementTotal)}</div>
-            <p className="text-xs text-gray-600 mt-1">401k, IRA, etc.</p>
+            <p className="text-xs text-gray-600 dark:text-gray-400 dark:text-gray-500 mt-1">401k, IRA, etc.</p>
           </CardContent>
         </Card>
       </div>
@@ -291,8 +283,8 @@ function FinancialAccountsContent() {
         </CardHeader>
         <CardContent>
           <DataTable
-            data={financialAccounts}
-            columns={columns}
+            data={financialAccounts.filter(Boolean).map(acc => ({ ...acc })) as Record<string, unknown>[]}
+            columns={columns as unknown as Column<Record<string, unknown>>[]}
             sortable={true}
             pagination={{
               pageSize: 10,
@@ -313,19 +305,19 @@ function FinancialAccountsContent() {
           <CardContent>
             <div className="space-y-3">
               {[...
-                (accountsByType[FinancialAccountType.CHECKING] || []),
-                ...(accountsByType[FinancialAccountType.SAVINGS] || []),
-                ...(accountsByType[FinancialAccountType.MONEY_MARKET] || [])
+                ((accountsByType as Record<string, typeof financialAccounts>)[FinancialAccountType.CHECKING] || []),
+                ...((accountsByType as Record<string, typeof financialAccounts>)[FinancialAccountType.SAVINGS] || []),
+                ...((accountsByType as Record<string, typeof financialAccounts>)[FinancialAccountType.MONEY_MARKET] || [])
               ].filter(Boolean).map((account) => account ? (
                 <div key={account.id} className="flex items-center justify-between p-3 border rounded-lg">
                   <div className="flex items-center space-x-3">
                     {(() => {
-                      const Icon = getAccountIcon(account.details?.type);
-                      return <Icon className="h-4 w-4 text-gray-600" />;
+                      const Icon = getAccountIcon(account);
+                      return <Icon className="h-4 w-4 text-gray-600 dark:text-gray-400 dark:text-gray-500" />;
                     })()}
                     <div>
                       <p className="font-medium">{account.name}</p>
-                      <p className="text-sm text-gray-600">{account.details?.institution}</p>
+                      <p className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">{(account as FinancialAccount).institution}</p>
                     </div>
                   </div>
                   <span className="font-medium">{formatCurrency(account.value || 0)}</span>
@@ -351,12 +343,12 @@ function FinancialAccountsContent() {
                 <div key={account.id} className="flex items-center justify-between p-3 border rounded-lg">
                   <div className="flex items-center space-x-3">
                     {(() => {
-                      const Icon = getAccountIcon(account.details?.type);
-                      return <Icon className="h-4 w-4 text-gray-600" />;
+                      const Icon = getAccountIcon(account);
+                      return <Icon className="h-4 w-4 text-gray-600 dark:text-gray-400 dark:text-gray-500" />;
                     })()}
                     <div>
                       <p className="font-medium">{account.name}</p>
-                      <p className="text-sm text-gray-600">{account.details?.institution}</p>
+                      <p className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">{(account as FinancialAccount).institution}</p>
                     </div>
                   </div>
                   <span className="font-medium">{formatCurrency(account.value || 0)}</span>

@@ -40,7 +40,7 @@ export default function UIDemo() {
   ]
 
   return (
-    <div className="min-h-screen bg-gray-50 p-8">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-8">
       {showPageLoader && (
         <PageLoader 
           fullScreen 
@@ -51,8 +51,8 @@ export default function UIDemo() {
       
       <div className="max-w-6xl mx-auto space-y-8">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">UI Components Demo</h1>
-          <p className="text-gray-600 mt-2">EstateEase Core UI Component Library</p>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">UI Components Demo</h1>
+          <p className="text-gray-600 dark:text-gray-400 mt-2">EstateEase Core UI Component Library</p>
         </div>
 
         {/* Button Component Demo */}
@@ -212,7 +212,7 @@ export default function UIDemo() {
 
             {/* Progress Bars */}
             <div className="space-y-4">
-              <h3 className="font-medium text-gray-900">Progress Bars</h3>
+              <h3 className="font-medium text-gray-900 dark:text-gray-100">Progress Bars</h3>
               <Progress value={progress} showLabel />
               <Progress value={75} variant="success" size="lg" />
               <Progress value={90} variant="warning" animate />
@@ -236,7 +236,7 @@ export default function UIDemo() {
 
             {/* Page Loader */}
             <div className="space-y-4">
-              <h3 className="font-medium text-gray-900">Page Loader</h3>
+              <h3 className="font-medium text-gray-900 dark:text-gray-100">Page Loader</h3>
               <Button onClick={() => {
                 setShowPageLoader(true)
                 setTimeout(() => setShowPageLoader(false), 3000)
@@ -244,7 +244,7 @@ export default function UIDemo() {
                 Show Page Loader (3s)
               </Button>
               
-              <div className="border border-gray-200 rounded-lg">
+                              <div className="border border-gray-200 dark:border-gray-700 rounded-lg">
                 <PageLoader message="Loading content..." />
               </div>
             </div>

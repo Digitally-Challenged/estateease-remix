@@ -3,6 +3,7 @@ import { ChartContainer } from './chart-container';
 import { ChartTooltip } from './chart-tooltip';
 import { chartColors, getChartTheme } from './chart-colors';
 import { useTheme } from '~/utils/theme';
+import { formatCurrency } from '~/utils/format';
 
 interface NetWorthDataPoint {
   month: string;
@@ -24,22 +25,13 @@ export function NetWorthTrendChart({ data, height = 300 }: NetWorthTrendChartPro
   const { theme } = useTheme();
   const chartTheme = getChartTheme(theme);
 
-  const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(value);
-  };
-
   const formatYAxis = (value: number) => {
     if (value >= 1000000) {
       return `$${(value / 1000000).toFixed(1)}M`;
     } else if (value >= 1000) {
       return `$${(value / 1000).toFixed(0)}K`;
     }
-    return `$${value}`;
+    return formatCurrency(value);
   };
 
   return (

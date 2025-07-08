@@ -10,8 +10,7 @@ import {
   DebtType,
   PersonalPropertyType,
   BusinessType,
-  InvestmentType,
-  DigitalAssetType 
+  InvestmentType
 } from '~/types/enums';
 
 /**
@@ -43,7 +42,6 @@ export const debtTypeSchema = z.nativeEnum(DebtType);
 export const personalPropertyTypeSchema = z.nativeEnum(PersonalPropertyType);
 export const businessTypeSchema = z.nativeEnum(BusinessType);
 export const investmentTypeSchema = z.nativeEnum(InvestmentType);
-export const digitalAssetTypeSchema = z.nativeEnum(DigitalAssetType);
 
 /**
  * Dynamic asset type validation based on category
@@ -280,7 +278,42 @@ export const assetFormSchema = z.object({
   ),
   trustId: z.string().optional().or(z.literal("")),
   businessEntityId: z.string().optional().or(z.literal("")),
-  percentage: z.coerce.number().min(0).max(100).default(100)
+  percentage: z.coerce.number().min(0).max(100).default(100),
+  
+  // Financial Account specific fields
+  institutionName: z.string().max(100, "Institution name too long").optional().or(z.literal("")),
+  accountType: z.string().optional().or(z.literal("")),
+  accountNumber: z.string().max(50, "Account number too long").optional().or(z.literal("")),
+  routingNumber: z.string().max(20, "Routing number too long").optional().or(z.literal("")),
+  
+  // Insurance Policy specific fields
+  policyNumber: z.string().max(50, "Policy number too long").optional().or(z.literal("")),
+  insuranceCompany: z.string().max(100, "Insurance company name too long").optional().or(z.literal("")),
+  annualPremium: z.coerce.number().min(0).optional().or(z.literal("")),
+  
+  // Homeowners insurance fields
+  propertyAddress: z.string().max(200, "Property address too long").optional().or(z.literal("")),
+  coverageAmount: z.coerce.number().min(0).optional().or(z.literal("")),
+  deductible: z.coerce.number().min(0).optional().or(z.literal("")),
+  
+  // Auto insurance fields
+  vehicleInfo: z.string().max(200, "Vehicle info too long").optional().or(z.literal("")),
+  liabilityPerPerson: z.coerce.number().min(0).optional().or(z.literal("")),
+  liabilityPerAccident: z.coerce.number().min(0).optional().or(z.literal("")),
+  collisionDeductible: z.coerce.number().min(0).optional().or(z.literal("")),
+  comprehensiveDeductible: z.coerce.number().min(0).optional().or(z.literal("")),
+  
+  // Umbrella insurance fields
+  coverageLimit: z.coerce.number().min(0).optional().or(z.literal("")),
+  underlyingPolicies: z.string().max(500, "Underlying policies too long").optional().or(z.literal("")),
+  
+  // Business Entity fields
+  businessName: z.string().max(100, "Business name too long").optional().or(z.literal("")),
+  incorporationType: z.string().max(50, "Incorporation type too long").optional().or(z.literal("")),
+  stateOfIncorporation: z.string().max(50, "State too long").optional().or(z.literal("")),
+  ein: z.string().max(20, "EIN too long").optional().or(z.literal("")),
+  percentageOwned: z.coerce.number().min(0).max(100).optional().or(z.literal("")),
+  taxId: z.string().max(20, "Tax ID too long").optional().or(z.literal(""))
 });
 
 /**

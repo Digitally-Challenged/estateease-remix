@@ -8,7 +8,6 @@ import {
   InsurancePolicyType,
   PersonalPropertyType,
   BusinessType,
-  DigitalAssetType,
 } from '../types';
 
 export const ASSET_CATEGORIES_OPTIONS = Object.values(AssetCategory)
@@ -49,11 +48,6 @@ export const PERSONAL_PROPERTY_TYPE_OPTIONS = Object.values(PersonalPropertyType
 }));
 
 export const BUSINESS_TYPE_OPTIONS = Object.values(BusinessType).map(type => ({
-  value: type,
-  label: type,
-}));
-
-export const DIGITAL_ASSET_TYPE_OPTIONS = Object.values(DigitalAssetType).map(type => ({
   value: type,
   label: type,
 }));

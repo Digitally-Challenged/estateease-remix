@@ -146,6 +146,12 @@ export function AssetForm({ asset, trusts, mode }: AssetFormProps) {
               <Select
                 name="type"
                 defaultValue={asset?.type || ''}
+                value={selectedCategory === AssetCategory.INSURANCE_POLICY ? selectedInsuranceType : undefined}
+                onChange={(e) => {
+                  if (selectedCategory === AssetCategory.INSURANCE_POLICY) {
+                    setSelectedInsuranceType(e.target.value as InsurancePolicyType);
+                  }
+                }}
                 required
                 disabled={!selectedCategory}
                 placeholder={selectedCategory ? 'Select a type' : 'Select a category first'}
@@ -162,6 +168,151 @@ export function AssetForm({ asset, trusts, mode }: AssetFormProps) {
               placeholder="Additional details about the asset..."
             />
           </FormField>
+          
+          {/* Financial Account Specific Fields */}
+          {selectedCategory === AssetCategory.FINANCIAL_ACCOUNT && (
+            <div className="border-t pt-4">
+              <h3 className="text-lg font-medium text-gray-900 mb-3">Account Information</h3>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <FormField label="Institution Name" required>
+                  <Input
+                    name="institutionName"
+                    defaultValue={asset?.details?.institutionName as string || ''}
+                    required
+                    placeholder="e.g., Bank of America, Wells Fargo"
+                  />
+                </FormField>
+                
+                <FormField label="Account Type" required>
+                  <Select
+                    name="accountType"
+                    defaultValue={asset?.details?.accountType as string || ''}
+                    required
+                    placeholder="Select account type"
+                    options={[
+                      { value: 'CHECKING', label: 'Checking' },
+                      { value: 'SAVINGS', label: 'Savings' },
+                      { value: 'MONEY_MARKET', label: 'Money Market' },
+                      { value: 'CD', label: 'Certificate of Deposit' },
+                      { value: 'INVESTMENT', label: 'Investment' },
+                      { value: 'RETIREMENT', label: 'Retirement' },
+                    ]}
+                  />
+                </FormField>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                <FormField 
+                  label="Account Number" 
+                  helperText="Last 4 digits only for security"
+                >
+                  <Input
+                    name="accountNumber"
+                    defaultValue={asset?.details?.accountNumber as string || ''}
+                    placeholder="****1234"
+                    maxLength={8}
+                    pattern="[\*\d]+"
+                  />
+                </FormField>
+                
+                <FormField 
+                  label="Routing Number"
+                  helperText="9-digit routing number"
+                >
+                  <Input
+                    name="routingNumber"
+                    defaultValue={asset?.details?.routingNumber as string || ''}
+                    placeholder="123456789"
+                    pattern="\d{9}"
+                    maxLength={9}
+                  />
+                </FormField>
+              </div>
+            </div>
+          )}
+          
+          {/* Business Entity Specific Fields */}
+          {selectedCategory === AssetCategory.BUSINESS_INTEREST && (
+            <div className="border-t pt-4">
+              <h3 className="text-lg font-medium text-gray-900 mb-3">Business Entity Information</h3>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <FormField label="Business Name" required>
+                  <Input
+                    name="businessName"
+                    defaultValue={asset?.details?.businessName as string || ''}
+                    required
+                    placeholder="e.g., Coleman Construction LLC"
+                  />
+                </FormField>
+                
+                <FormField label="Incorporation Type" required>
+                  <Select
+                    name="incorporationType"
+                    defaultValue={asset?.details?.incorporationType as string || ''}
+                    required
+                    placeholder="Select incorporation type"
+                    options={Object.values(IncorporationType).map((type) => ({
+                      value: type,
+                      label: formatEnumLabel(type)
+                    }))}
+                  />
+                </FormField>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                <FormField label="State of Incorporation" required>
+                  <Select
+                    name="stateOfIncorporation"
+                    defaultValue={asset?.details?.stateOfIncorporation as string || ''}
+                    required
+                    placeholder="Select state"
+                    options={US_STATES.map((state) => ({
+                      value: state.code,
+                      label: state.name
+                    }))}
+                  />
+                </FormField>
+                
+                <FormField 
+                  label="EIN (Employer Identification Number)"
+                  helperText="Format: XX-XXXXXXX"
+                >
+                  <Input
+                    name="ein"
+                    defaultValue={asset?.details?.ein as string || ''}
+                    placeholder="12-3456789"
+                    pattern="\d{2}-\d{7}"
+                    maxLength={10}
+                  />
+                </FormField>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                <FormField label="Percentage Owned" required>
+                  <Input
+                    type="number"
+                    name="percentageOwned"
+                    defaultValue={asset?.details?.percentageOwned?.toString() || ''}
+                    required
+                    min="0"
+                    max="100"
+                    step="0.01"
+                    placeholder="0.00"
+                  />
+                </FormField>
+                
+                <FormField label="Tax ID">
+                  <Input
+                    name="taxId"
+                    defaultValue={asset?.details?.taxId as string || ''}
+                    placeholder="Tax identification number"
+                  />
+                </FormField>
+              </div>
+            </div>
+          )}
           
           {/* Ownership Information */}
           <div className="border-t pt-4">
@@ -218,6 +369,241 @@ export function AssetForm({ asset, trusts, mode }: AssetFormProps) {
               </FormField>
             </div>
           </div>
+          
+          {/* Insurance-specific fields */}
+          {selectedCategory === AssetCategory.INSURANCE_POLICY && selectedInsuranceType && (
+            <div className="border-t pt-4">
+              <h3 className="text-lg font-medium text-gray-900 mb-3">Insurance Policy Details</h3>
+              
+              {/* Homeowners Insurance Fields */}
+              {selectedInsuranceType === InsurancePolicyType.HOMEOWNERS && (
+                <div className="space-y-4">
+                  <FormField label="Property Address" required>
+                    <Input
+                      name="propertyAddress"
+                      defaultValue={(asset?.details?.propertyAddress as string) || ''}
+                      placeholder="123 Main St, City, State ZIP"
+                      required
+                    />
+                  </FormField>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <FormField label="Coverage Amount" required>
+                      <Input
+                        type="number"
+                        name="coverageAmount"
+                        defaultValue={asset?.details?.coverageAmount?.toString()}
+                        placeholder="500000"
+                        min="0"
+                        step="1000"
+                        required
+                      />
+                    </FormField>
+                    
+                    <FormField label="Deductible" required>
+                      <Input
+                        type="number"
+                        name="deductible"
+                        defaultValue={asset?.details?.deductible?.toString()}
+                        placeholder="1000"
+                        min="0"
+                        step="100"
+                        required
+                      />
+                    </FormField>
+                  </div>
+                  
+                  <FormField label="Insurance Company">
+                    <Input
+                      name="insuranceCompany"
+                      defaultValue={asset?.details?.insuranceCompany as string | undefined}
+                      placeholder="State Farm, Allstate, etc."
+                    />
+                  </FormField>
+                  
+                  <FormField label="Policy Number">
+                    <Input
+                      name="policyNumber"
+                      defaultValue={asset?.details?.policyNumber as string | undefined}
+                      placeholder="Policy #"
+                    />
+                  </FormField>
+                </div>
+              )}
+              
+              {/* Auto Insurance Fields */}
+              {selectedInsuranceType === InsurancePolicyType.AUTO && (
+                <div className="space-y-4">
+                  <FormField label="Vehicle Information" required>
+                    <Input
+                      name="vehicleInfo"
+                      defaultValue={asset?.details?.vehicleInfo as string | undefined}
+                      placeholder="2020 Toyota Camry, VIN: ..."
+                      required
+                    />
+                  </FormField>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <FormField label="Liability Limit (Per Person)" required>
+                      <Input
+                        type="number"
+                        name="liabilityPerPerson"
+                        defaultValue={asset?.details?.liabilityPerPerson?.toString()}
+                        placeholder="250000"
+                        min="0"
+                        step="1000"
+                        required
+                      />
+                    </FormField>
+                    
+                    <FormField label="Liability Limit (Per Accident)" required>
+                      <Input
+                        type="number"
+                        name="liabilityPerAccident"
+                        defaultValue={asset?.details?.liabilityPerAccident?.toString()}
+                        placeholder="500000"
+                        min="0"
+                        step="1000"
+                        required
+                      />
+                    </FormField>
+                  </div>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <FormField label="Collision Deductible">
+                      <Input
+                        type="number"
+                        name="collisionDeductible"
+                        defaultValue={asset?.details?.collisionDeductible?.toString()}
+                        placeholder="500"
+                        min="0"
+                        step="100"
+                      />
+                    </FormField>
+                    
+                    <FormField label="Comprehensive Deductible">
+                      <Input
+                        type="number"
+                        name="comprehensiveDeductible"
+                        defaultValue={asset?.details?.comprehensiveDeductible?.toString()}
+                        placeholder="500"
+                        min="0"
+                        step="100"
+                      />
+                    </FormField>
+                  </div>
+                  
+                  <FormField label="Insurance Company">
+                    <Input
+                      name="insuranceCompany"
+                      defaultValue={asset?.details?.insuranceCompany as string | undefined}
+                      placeholder="GEICO, Progressive, etc."
+                    />
+                  </FormField>
+                  
+                  <FormField label="Policy Number">
+                    <Input
+                      name="policyNumber"
+                      defaultValue={asset?.details?.policyNumber as string | undefined}
+                      placeholder="Policy #"
+                    />
+                  </FormField>
+                </div>
+              )}
+              
+              {/* Umbrella Insurance Fields */}
+              {selectedInsuranceType === InsurancePolicyType.UMBRELLA && (
+                <div className="space-y-4">
+                  <FormField label="Coverage Limit" required>
+                    <Select
+                      name="coverageLimit"
+                      defaultValue={asset?.details?.coverageLimit?.toString()}
+                      required
+                      placeholder="Select coverage limit"
+                      options={[
+                        { value: '1000000', label: '$1 Million' },
+                        { value: '2000000', label: '$2 Million' },
+                        { value: '3000000', label: '$3 Million' },
+                        { value: '4000000', label: '$4 Million' },
+                        { value: '5000000', label: '$5 Million' },
+                        { value: '10000000', label: '$10 Million' },
+                      ]}
+                    />
+                  </FormField>
+                  
+                  <FormField label="Underlying Policies" helperText="List the policies covered by this umbrella (e.g., home, auto, boat)">
+                    <Textarea
+                      name="underlyingPolicies"
+                      defaultValue={asset?.details?.underlyingPolicies as string | undefined}
+                      rows={3}
+                      placeholder="Home insurance - State Farm Policy #123456&#10;Auto insurance - GEICO Policy #789012"
+                    />
+                  </FormField>
+                  
+                  <FormField label="Insurance Company">
+                    <Input
+                      name="insuranceCompany"
+                      defaultValue={asset?.details?.insuranceCompany as string | undefined}
+                      placeholder="Insurance company name"
+                    />
+                  </FormField>
+                  
+                  <FormField label="Policy Number">
+                    <Input
+                      name="policyNumber"
+                      defaultValue={asset?.details?.policyNumber as string | undefined}
+                      placeholder="Policy #"
+                    />
+                  </FormField>
+                  
+                  <FormField label="Annual Premium">
+                    <Input
+                      type="number"
+                      name="annualPremium"
+                      defaultValue={asset?.details?.annualPremium?.toString()}
+                      placeholder="500"
+                      min="0"
+                      step="1"
+                    />
+                  </FormField>
+                </div>
+              )}
+              
+              {/* Common fields for all insurance types */}
+              {(selectedInsuranceType === InsurancePolicyType.LIFE || 
+                selectedInsuranceType === InsurancePolicyType.DISABILITY ||
+                selectedInsuranceType === InsurancePolicyType.LONG_TERM_CARE) && (
+                <div className="space-y-4">
+                  <FormField label="Policy Number">
+                    <Input
+                      name="policyNumber"
+                      defaultValue={asset?.details?.policyNumber as string | undefined}
+                      placeholder="Policy #"
+                    />
+                  </FormField>
+                  
+                  <FormField label="Insurance Company">
+                    <Input
+                      name="insuranceCompany"
+                      defaultValue={asset?.details?.insuranceCompany as string | undefined}
+                      placeholder="Insurance company name"
+                    />
+                  </FormField>
+                  
+                  <FormField label="Annual Premium">
+                    <Input
+                      type="number"
+                      name="annualPremium"
+                      defaultValue={asset?.details?.annualPremium?.toString()}
+                      placeholder="1200"
+                      min="0"
+                      step="1"
+                    />
+                  </FormField>
+                </div>
+              )}
+            </div>
+          )}
           
           {/* Form Actions */}
           <div className="flex justify-end space-x-3 pt-4 border-t">

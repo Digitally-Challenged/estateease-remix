@@ -2,6 +2,7 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Responsive
 import { ChartContainer } from './chart-container';
 import { ChartTooltip } from './chart-tooltip';
 import { CHART_COLORS } from './chart-colors';
+import { formatCurrency } from '~/utils/format';
 
 interface CashFlowDataPoint {
   month: string;
@@ -20,22 +21,13 @@ interface CashFlowChartProps {
  * Displays income, expenses, and net cash flow by month
  */
 export function CashFlowChart({ data, height = 300 }: CashFlowChartProps) {
-  const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(value);
-  };
-
   const formatYAxis = (value: number) => {
     if (Math.abs(value) >= 1000000) {
       return `$${(value / 1000000).toFixed(1)}M`;
     } else if (Math.abs(value) >= 1000) {
       return `$${(value / 1000).toFixed(0)}K`;
     }
-    return `$${value}`;
+    return formatCurrency(value);
   };
 
   return (

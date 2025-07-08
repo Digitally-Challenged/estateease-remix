@@ -92,6 +92,11 @@ export interface DatabaseAsset {
   last_updated: string;
   created_at: string;
   updated_at: string;
+  // Financial account specific fields
+  institution_name: string | null;
+  account_type: string | null;
+  account_number: string | null;
+  routing_number: string | null;
 }
 
 export interface DatabaseFamilyMember {

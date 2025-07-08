@@ -124,8 +124,8 @@ function InsuranceAssetsContent() {
     return (
       <div className="space-y-6">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Insurance Policies</h1>
-          <p className="text-gray-600 mt-2">Manage your insurance coverage and policies</p>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Insurance Policies</h1>
+          <p className="text-gray-600 dark:text-gray-400 dark:text-gray-500 mt-2">Manage your insurance coverage and policies</p>
         </div>
         <ErrorDisplay
           error={error}
@@ -142,15 +142,15 @@ function InsuranceAssetsContent() {
       <div className="space-y-6">
         <div className="flex justify-between items-start">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Insurance Policies</h1>
-            <p className="text-gray-600 mt-2">Manage your insurance coverage and policies</p>
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Insurance Policies</h1>
+            <p className="text-gray-600 dark:text-gray-400 dark:text-gray-500 mt-2">Manage your insurance coverage and policies</p>
           </div>
         </div>
         <Card className="text-center py-8">
           <CardContent>
-            <Shield className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">No insurance policies found</h3>
-            <p className="text-gray-600 mb-4">
+            <Shield className="h-12 w-12 text-gray-400 dark:text-gray-500 mx-auto mb-4" />
+            <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">No insurance policies found</h3>
+            <p className="text-gray-600 dark:text-gray-400 dark:text-gray-500 mb-4">
               Add your insurance policies to track coverage and ensure adequate protection
             </p>
             <Button asChild>
@@ -168,8 +168,8 @@ function InsuranceAssetsContent() {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
       currency: 'USD',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
     }).format(amount);
   };
 
@@ -179,10 +179,10 @@ function InsuranceAssetsContent() {
       header: 'Policy',
       render: (asset) => (
         <div className="flex items-start space-x-3">
-          <Shield className="h-5 w-5 text-gray-400 mt-0.5" />
+          <Shield className="h-5 w-5 text-gray-400 dark:text-gray-500 mt-0.5" />
           <div>
             <p className="font-medium">{asset?.name}</p>
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">
               {asset?.assetDetails?.policyNumber && `Policy #${asset.assetDetails.policyNumber}`}
             </p>
           </div>
@@ -265,8 +265,8 @@ function InsuranceAssetsContent() {
       {/* Header */}
       <div className="flex justify-between items-start">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Insurance Policies</h1>
-          <p className="text-gray-600 mt-2">Manage your insurance coverage and policies</p>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Insurance Policies</h1>
+          <p className="text-gray-600 dark:text-gray-400 dark:text-gray-500 mt-2">Manage your insurance coverage and policies</p>
         </div>
         <Button asChild>
           <Link to="/assets/new?category=insurance">
@@ -281,33 +281,33 @@ function InsuranceAssetsContent() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Coverage</CardTitle>
-            <TrendingUp className="h-4 w-4 text-gray-600" />
+            <TrendingUp className="h-4 w-4 text-gray-600 dark:text-gray-400 dark:text-gray-500" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{formatCurrency(totalCoverage)}</div>
-            <p className="text-xs text-gray-600 mt-1">Across all policies</p>
+            <p className="text-xs text-gray-600 dark:text-gray-400 dark:text-gray-500 mt-1">Across all policies</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Annual Premiums</CardTitle>
-            <Calendar className="h-4 w-4 text-gray-600" />
+            <Calendar className="h-4 w-4 text-gray-600 dark:text-gray-400 dark:text-gray-500" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{formatCurrency(totalPremiums)}</div>
-            <p className="text-xs text-gray-600 mt-1">Total yearly cost</p>
+            <p className="text-xs text-gray-600 dark:text-gray-400 dark:text-gray-500 mt-1">Total yearly cost</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Active Policies</CardTitle>
-            <FileText className="h-4 w-4 text-gray-600" />
+            <FileText className="h-4 w-4 text-gray-600 dark:text-gray-400 dark:text-gray-500" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{insuranceAssets.length}</div>
-            <p className="text-xs text-gray-600 mt-1">
+            <p className="text-xs text-gray-600 dark:text-gray-400 dark:text-gray-500 mt-1">
               {expiringPolicies.length > 0 && `${expiringPolicies.length} expiring soon`}
             </p>
           </CardContent>
@@ -316,22 +316,22 @@ function InsuranceAssetsContent() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Policy Types</CardTitle>
-            <Shield className="h-4 w-4 text-gray-600" />
+            <Shield className="h-4 w-4 text-gray-600 dark:text-gray-400 dark:text-gray-500" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
               {Object.values(policyTypes).filter(policies => policies.length > 0).length}
             </div>
-            <p className="text-xs text-gray-600 mt-1">Categories covered</p>
+            <p className="text-xs text-gray-600 dark:text-gray-400 dark:text-gray-500 mt-1">Categories covered</p>
           </CardContent>
         </Card>
       </div>
 
       {/* Expiring Policies Alert */}
       {expiringPolicies.length > 0 && (
-        <Card className="border-orange-200 bg-orange-50">
+        <Card className="border-orange-200 dark:border-orange-700 bg-orange-50 dark:bg-orange-900/20">
           <CardHeader>
-            <CardTitle className="text-orange-800 flex items-center">
+            <CardTitle className="text-orange-800 dark:text-orange-200 flex items-center">
               <AlertCircle className="h-5 w-5 mr-2" />
               Policies Expiring Soon
             </CardTitle>
@@ -340,7 +340,7 @@ function InsuranceAssetsContent() {
             <div className="space-y-2">
               {expiringPolicies.map((policy) => policy ? (
                 <div key={policy.id} className="flex items-center justify-between">
-                  <span className="text-orange-700">{policy.name}</span>
+                  <span className="text-orange-700 dark:text-orange-300">{policy.name}</span>
                   <Badge variant="destructive">
                     Expires {new Date(policy.assetDetails?.expirationDate).toLocaleDateString()}
                   </Badge>

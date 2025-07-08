@@ -4,14 +4,45 @@ import { Switch } from "~/components/ui/forms/switch";
 import { Select } from "~/components/ui/forms/select";
 import { FormField } from "~/components/ui/forms/form-field";
 import { Bell, Eye, Globe, Palette, Save } from "lucide-react";
+import { useTheme } from "~/utils/theme";
+import { useState } from "react";
 
 export default function PreferencesSettings() {
+  const { theme, setTheme } = useTheme();
+  const [preferences, setPreferences] = useState({
+    theme: (theme || 'light') as 'light' | 'dark' | 'auto',
+    emailNotifications: true,
+    reminderNotifications: true,
+    valueAlerts: false,
+    notificationFrequency: 'weekly',
+    currencyDisplay: 'usd',
+    dateFormat: 'mm/dd/yyyy',
+    compactView: false,
+    language: 'en',
+    timezone: 'America/Los_Angeles',
+    country: 'US',
+    highContrast: false
+  });
+
+  const handleThemeChange = (value: string) => {
+    setPreferences(prev => ({ ...prev, theme: value as 'light' | 'dark' | 'auto' }));
+    if (value === 'light' || value === 'dark') {
+      setTheme(value as 'light' | 'dark');
+    }
+  };
+
+  const handleSave = () => {
+    // In a real app, this would save to database
+    // For now, theme is already applied on change
+    // Show success toast/notification
+  };
+
   return (
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-gray-900">Preferences</h1>
-        <p className="text-gray-600">Customize how EstateEase works for you</p>
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Preferences</h1>
+        <p className="text-gray-600 dark:text-gray-400 dark:text-gray-500">Customize how EstateEase works for you</p>
       </div>
 
       {/* Notification Preferences */}
@@ -30,10 +61,10 @@ export default function PreferencesSettings() {
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <label htmlFor="email-notifications" className="font-medium text-gray-900">
+                  <label htmlFor="email-notifications" className="font-medium text-gray-900 dark:text-gray-100">
                     Email Notifications
                   </label>
-                  <p className="text-sm text-gray-600">
+                  <p className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">
                     Receive important updates via email
                   </p>
                 </div>
@@ -46,10 +77,10 @@ export default function PreferencesSettings() {
 
               <div className="flex items-center justify-between">
                 <div>
-                  <label htmlFor="reminder-notifications" className="font-medium text-gray-900">
+                  <label htmlFor="reminder-notifications" className="font-medium text-gray-900 dark:text-gray-100">
                     Task Reminders
                   </label>
-                  <p className="text-sm text-gray-600">
+                  <p className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">
                     Get reminded about upcoming estate planning tasks
                   </p>
                 </div>
@@ -62,10 +93,10 @@ export default function PreferencesSettings() {
 
               <div className="flex items-center justify-between">
                 <div>
-                  <label htmlFor="value-alerts" className="font-medium text-gray-900">
+                  <label htmlFor="value-alerts" className="font-medium text-gray-900 dark:text-gray-100">
                     Value Change Alerts
                   </label>
-                  <p className="text-sm text-gray-600">
+                  <p className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">
                     Be notified of significant asset value changes
                   </p>
                 </div>
@@ -140,10 +171,10 @@ export default function PreferencesSettings() {
 
             <div className="flex items-center justify-between">
               <div>
-                <label htmlFor="compact-view" className="font-medium text-gray-900">
+                <label htmlFor="compact-view" className="font-medium text-gray-900 dark:text-gray-100">
                   Compact View
                 </label>
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">
                   Show more information in less space
                 </p>
               </div>
@@ -236,7 +267,8 @@ export default function PreferencesSettings() {
             >
               <Select
                 name="theme"
-                defaultValue="light"
+                value={preferences.theme}
+                onChange={(e) => handleThemeChange(e.target.value)}
                 options={[
                   { value: "light", label: "Light" },
                   { value: "dark", label: "Dark" },
@@ -247,10 +279,10 @@ export default function PreferencesSettings() {
 
             <div className="flex items-center justify-between">
               <div>
-                <label htmlFor="high-contrast" className="font-medium text-gray-900">
+                <label htmlFor="high-contrast" className="font-medium text-gray-900 dark:text-gray-100">
                   High Contrast Mode
                 </label>
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">
                   Increase contrast for better visibility
                 </p>
               </div>
@@ -266,7 +298,7 @@ export default function PreferencesSettings() {
 
       {/* Save Button */}
       <div className="flex justify-end">
-        <Button>
+        <Button onClick={handleSave}>
           <Save className="h-4 w-4 mr-2" />
           Save Preferences
         </Button>

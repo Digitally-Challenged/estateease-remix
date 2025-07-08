@@ -4,6 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "~/com
 import { Building2, DollarSign, Shield, TrendingUp, Plus } from "lucide-react";
 import { getAssets } from "~/lib/dal";
 import { ErrorBoundary, EmptyStates, ErrorDisplay } from "~/components/ui";
+import { formatCurrency } from "~/utils/format";
 
 export async function loader() {
   try {
@@ -29,8 +30,8 @@ function AssetsContent() {
       <div className="space-y-6">
         <div className="flex justify-between items-start">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Assets Overview</h1>
-            <p className="text-gray-600">Comprehensive view of all estate assets and their current values</p>
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Assets Overview</h1>
+            <p className="text-gray-600 dark:text-gray-400">Comprehensive view of all estate assets and their current values</p>
           </div>
         </div>
         <ErrorDisplay
@@ -49,8 +50,8 @@ function AssetsContent() {
       <div className="space-y-6">
         <div className="flex justify-between items-start">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Assets Overview</h1>
-            <p className="text-gray-600">Comprehensive view of all estate assets and their current values</p>
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Assets Overview</h1>
+            <p className="text-gray-600 dark:text-gray-400">Comprehensive view of all estate assets and their current values</p>
           </div>
         </div>
         <EmptyStates.Assets />
@@ -82,15 +83,6 @@ function AssetsContent() {
     'PERSONAL_PROPERTY': DollarSign,
   };
 
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(amount);
-  };
-
   const totalValue = assets.filter(Boolean).reduce((sum, asset) => sum + (asset?.value || 0), 0);
 
   return (
@@ -98,12 +90,12 @@ function AssetsContent() {
       {/* Header */}
       <div className="flex justify-between items-start">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Assets Overview</h1>
-          <p className="text-gray-600">Comprehensive view of all estate assets and their current values</p>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Assets Overview</h1>
+          <p className="text-gray-600 dark:text-gray-400 dark:text-gray-500">Comprehensive view of all estate assets and their current values</p>
         </div>
         <Link
           to="/assets/new"
-          className="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-blue-500 dark:hover:bg-blue-600"
         >
           <Plus className="h-4 w-4 mr-2" />
           Add Asset
@@ -118,14 +110,14 @@ function AssetsContent() {
           return (
             <Card key={category}>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium text-gray-600">
+                <CardTitle className="text-sm font-medium text-gray-600 dark:text-gray-400">
                   {category}
                 </CardTitle>
-                <Icon className="h-4 w-4 text-gray-600" />
+                <Icon className="h-4 w-4 text-gray-600 dark:text-gray-400" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold text-gray-900">{formatCurrency(total)}</div>
-                <p className="text-xs text-gray-600">
+                <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">{formatCurrency(total)}</div>
+                <p className="text-xs text-gray-600 dark:text-gray-400">
                   {count} {count === 1 ? 'asset' : 'assets'}
                 </p>
               </CardContent>
@@ -141,8 +133,8 @@ function AssetsContent() {
           <CardDescription>Combined value of all tracked assets</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="text-4xl font-bold text-gray-900">{formatCurrency(totalValue)}</div>
-          <p className="text-sm text-gray-600 mt-2">
+          <div className="text-4xl font-bold text-gray-900 dark:text-gray-100">{formatCurrency(totalValue)}</div>
+          <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
             Across {assets.length} total assets
           </p>
         </CardContent>
@@ -165,19 +157,31 @@ function AssetsContent() {
                   {categoryAssets.filter(Boolean).map((asset) => {
                     if (!asset) return null;
                     return (
-                      <div key={asset.id} className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+                      <div key={asset.id} className="flex items-center justify-between p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
                         <div className="flex-1">
-                          <h3 className="font-medium text-gray-900">{asset.name}</h3>
-                          <div className="flex items-center space-x-4 mt-1 text-sm text-gray-600">
+                          <h3 className="font-medium text-gray-900 dark:text-gray-100">{asset.name}</h3>
+                          <div className="flex items-center space-x-4 mt-1 text-sm text-gray-600 dark:text-gray-400">
                             <span>{asset.ownership?.type || 'Unknown'}</span>
+                            {asset.category === 'FINANCIAL_ACCOUNT' && asset.details?.institutionName && (
+                              <>
+                                <span>•</span>
+                                <span>{asset.details.institutionName as string}</span>
+                              </>
+                            )}
+                            {asset.category === 'FINANCIAL_ACCOUNT' && asset.details?.accountNumber && (
+                              <>
+                                <span>•</span>
+                                <span>****{(asset.details.accountNumber as string).slice(-4)}</span>
+                              </>
+                            )}
                           </div>
                         </div>
                         <div className="text-right">
-                          <p className="font-semibold text-gray-900">{formatCurrency(asset.value || 0)}</p>
+                          <p className="font-semibold text-gray-900 dark:text-gray-100">{formatCurrency(asset.value || 0)}</p>
                           <div className="flex space-x-2 mt-2">
                             <Link
                               to={`/assets/${asset.id}/edit`}
-                              className="text-sm text-blue-600 hover:text-blue-800"
+                              className="text-sm text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
                             >
                               Edit
                             </Link>

@@ -88,8 +88,8 @@ function ProfessionalsContent() {
     return (
       <div className="space-y-6">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Professional Team</h1>
-          <p className="text-gray-600 mt-2">Manage your estate planning professional advisors</p>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Professional Team</h1>
+          <p className="text-gray-600 dark:text-gray-400 dark:text-gray-500 mt-2">Manage your estate planning professional advisors</p>
         </div>
         <ErrorDisplay
           error={error}
@@ -106,15 +106,15 @@ function ProfessionalsContent() {
       <div className="space-y-6">
         <div className="flex justify-between items-start">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Professional Team</h1>
-            <p className="text-gray-600 mt-2">Manage your estate planning professional advisors</p>
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Professional Team</h1>
+            <p className="text-gray-600 dark:text-gray-400 dark:text-gray-500 mt-2">Manage your estate planning professional advisors</p>
           </div>
         </div>
         <Card className="text-center py-8">
           <CardContent>
-            <Users className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">No professionals added</h3>
-            <p className="text-gray-600 mb-4">
+            <Users className="h-12 w-12 text-gray-400 dark:text-gray-500 mx-auto mb-4" />
+            <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">No professionals added</h3>
+            <p className="text-gray-600 dark:text-gray-400 dark:text-gray-500 mb-4">
               Build your estate planning team by adding trusted professionals
             </p>
             <Button onClick={() => navigate('/professionals/new')}>
@@ -130,15 +130,15 @@ function ProfessionalsContent() {
     switch (type) {
       case 'estate_attorney':
       case 'tax_attorney':
-        return <Scale className="h-5 w-5 text-gray-400" />;
+        return <Scale className="h-5 w-5 text-gray-400 dark:text-gray-500" />;
       case 'financial_advisor':
-        return <TrendingUp className="h-5 w-5 text-gray-400" />;
+        return <TrendingUp className="h-5 w-5 text-gray-400 dark:text-gray-500" />;
       case 'accountant':
-        return <Calculator className="h-5 w-5 text-gray-400" />;
+        return <Calculator className="h-5 w-5 text-gray-400 dark:text-gray-500" />;
       case 'insurance_agent':
-        return <Shield className="h-5 w-5 text-gray-400" />;
+        return <Shield className="h-5 w-5 text-gray-400 dark:text-gray-500" />;
       default:
-        return <Briefcase className="h-5 w-5 text-gray-400" />;
+        return <Briefcase className="h-5 w-5 text-gray-400 dark:text-gray-500" />;
     }
   };
 
@@ -157,10 +157,10 @@ function ProfessionalsContent() {
               )}
             </p>
             {professional?.firm && (
-              <p className="text-sm text-gray-600">{professional.firm}</p>
+              <p className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">{professional.firm}</p>
             )}
             {professional?.title && (
-              <p className="text-sm text-gray-500">{professional.title}</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400 dark:text-gray-500">{professional.title}</p>
             )}
           </div>
         </div>
@@ -198,13 +198,13 @@ function ProfessionalsContent() {
                 </Badge>
               ))}
               {professional.specializations.length > 2 && (
-                <span className="text-gray-500 text-xs">
+                <span className="text-gray-500 dark:text-gray-400 dark:text-gray-500 text-xs">
                   +{professional.specializations.length - 2} more
                 </span>
               )}
             </div>
           ) : (
-            <span className="text-gray-400">None specified</span>
+            <span className="text-gray-400 dark:text-gray-500">None specified</span>
           )}
         </div>
       )
@@ -216,13 +216,13 @@ function ProfessionalsContent() {
         <div className="text-sm space-y-1">
           {professional?.contactInfo?.primaryPhone && (
             <div className="flex items-center space-x-1">
-              <Phone className="h-3 w-3 text-gray-400" />
+              <Phone className="h-3 w-3 text-gray-400 dark:text-gray-500" />
               <span>{professional.contactInfo.primaryPhone}</span>
             </div>
           )}
           {professional?.contactInfo?.email && (
             <div className="flex items-center space-x-1">
-              <Mail className="h-3 w-3 text-gray-400" />
+              <Mail className="h-3 w-3 text-gray-400 dark:text-gray-500" />
               <span>{professional.contactInfo.email}</span>
             </div>
           )}
@@ -256,7 +256,7 @@ function ProfessionalsContent() {
           <Button
             size="sm"
             variant="ghost"
-            className="text-red-600 hover:text-red-700"
+            className="text-red-600 dark:text-red-400 hover:text-red-700 dark:text-red-300"
           >
             <Trash2 className="h-4 w-4" />
           </Button>
@@ -270,8 +270,8 @@ function ProfessionalsContent() {
       {/* Header */}
       <div className="flex justify-between items-start">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Professional Team</h1>
-          <p className="text-gray-600 mt-2">Manage your estate planning professional advisors</p>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Professional Team</h1>
+          <p className="text-gray-600 dark:text-gray-400 dark:text-gray-500 mt-2">Manage your estate planning professional advisors</p>
         </div>
         <Button onClick={() => navigate('/professionals/new')}>
           <Plus className="h-4 w-4 mr-2" />
@@ -284,37 +284,37 @@ function ProfessionalsContent() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Professionals</CardTitle>
-            <Users className="h-4 w-4 text-gray-600" />
+            <Users className="h-4 w-4 text-gray-600 dark:text-gray-400 dark:text-gray-500" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{professionals.length}</div>
-            <p className="text-xs text-gray-600 mt-1">In your team</p>
+            <p className="text-xs text-gray-600 dark:text-gray-400 dark:text-gray-500 mt-1">In your team</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Attorneys</CardTitle>
-            <Scale className="h-4 w-4 text-gray-600" />
+            <Scale className="h-4 w-4 text-gray-600 dark:text-gray-400 dark:text-gray-500" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
               {professionalsByType.estate_attorney.length + professionalsByType.tax_attorney.length}
             </div>
-            <p className="text-xs text-gray-600 mt-1">Legal advisors</p>
+            <p className="text-xs text-gray-600 dark:text-gray-400 dark:text-gray-500 mt-1">Legal advisors</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Financial Team</CardTitle>
-            <TrendingUp className="h-4 w-4 text-gray-600" />
+            <TrendingUp className="h-4 w-4 text-gray-600 dark:text-gray-400 dark:text-gray-500" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
               {professionalsByType.financial_advisor.length + professionalsByType.accountant.length}
             </div>
-            <p className="text-xs text-gray-600 mt-1">Financial experts</p>
+            <p className="text-xs text-gray-600 dark:text-gray-400 dark:text-gray-500 mt-1">Financial experts</p>
           </CardContent>
         </Card>
 
@@ -325,25 +325,25 @@ function ProfessionalsContent() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{preferredProviders.length}</div>
-            <p className="text-xs text-gray-600 mt-1">Preferred providers</p>
+            <p className="text-xs text-gray-600 dark:text-gray-400 dark:text-gray-500 mt-1">Preferred providers</p>
           </CardContent>
         </Card>
       </div>
 
       {/* Missing Professionals Warning */}
       {missingTypes.length > 0 && (
-        <Card className="border-orange-200 bg-orange-50">
+        <Card className="border-orange-200 dark:border-orange-700 bg-orange-50 dark:bg-orange-900/20">
           <CardHeader>
-            <CardTitle className="text-orange-800 flex items-center">
+            <CardTitle className="text-orange-800 dark:text-orange-200 flex items-center">
               <AlertCircle className="h-5 w-5 mr-2" />
               Key Professionals Missing
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-orange-700 mb-3">
+            <p className="text-orange-700 dark:text-orange-300 mb-3">
               Consider adding these essential professionals to your estate planning team:
             </p>
-            <ul className="list-disc list-inside text-orange-700 space-y-1">
+            <ul className="list-disc list-inside text-orange-700 dark:text-orange-300 space-y-1">
               {missingTypes.map((type) => (
                 <li key={type}>{type}</li>
               ))}
@@ -507,7 +507,7 @@ function ProfessionalsContent() {
                     <div>
                       <p className="font-medium">{professional.name}</p>
                       {professional.firm && (
-                        <p className="text-sm text-gray-600 flex items-center mt-1">
+                        <p className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500 flex items-center mt-1">
                           <Building2 className="h-3 w-3 mr-1" />
                           {professional.firm}
                         </p>
@@ -518,7 +518,7 @@ function ProfessionalsContent() {
                     </div>
                     <Star className="h-5 w-5 text-yellow-500" fill="currentColor" />
                   </div>
-                  <div className="mt-3 space-y-1 text-sm text-gray-600">
+                  <div className="mt-3 space-y-1 text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">
                     {professional.contactInfo?.primaryPhone && (
                       <p className="flex items-center">
                         <Phone className="h-3 w-3 mr-1" />
