@@ -9,6 +9,7 @@
 export { Button, buttonVariants, type ButtonProps } from "./button";
 export { Card, CardHeader, CardFooter, CardTitle, CardDescription, CardContent } from "./card";
 export { Badge, type BadgeProps } from "./badge";
+export { StatsCard, type StatsCardProps } from "./stats-card";
 
 // Form components
 export {

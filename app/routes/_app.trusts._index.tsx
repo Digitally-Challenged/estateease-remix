@@ -13,24 +13,22 @@ import Edit from "lucide-react/dist/esm/icons/edit";
 import { getTrusts, getAssetsByTrust } from "~/lib/dal";
 import { formatCurrency } from "~/utils/format";
 
-export async function loader() {
+export function loader() {
   const userId = "user-nick-001"; // Default user for now
 
   // Get all trusts for the user
-  const trusts = await getTrusts(userId);
+  const trusts = getTrusts(userId);
 
   // Get additional data for each trust
-  const trustsWithDetails = await Promise.all(
-    trusts.map(async (trust) => {
-      const assets = await getAssetsByTrust(trust.id);
+  const trustsWithDetails = trusts.map((trust) => {
+    const assets = getAssetsByTrust(trust.id);
 
-      return {
-        ...trust,
-        assets,
-        totalValue: assets.reduce((sum, asset) => sum + asset.value, 0),
-      };
-    }),
-  );
+    return {
+      ...trust,
+      assets,
+      totalValue: assets.reduce((sum, asset) => sum + asset.value, 0),
+    };
+  });
 
   return json({ trusts: trustsWithDetails });
 }

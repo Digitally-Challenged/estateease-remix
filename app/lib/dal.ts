@@ -206,6 +206,85 @@ export interface UpdateUserProfileInput {
   occupation?: string;
   employer?: string;
 }
+// Additional database row type interfaces for type safety
+
+interface DatabasePerson {
+  person_id: string;
+  first_name: string;
+  last_name: string;
+  full_name: string;
+  date_of_birth?: string;
+  is_minor: number;
+  is_dependent: number;
+  primary_phone?: string;
+  secondary_phone?: string;
+  email?: string;
+  preferred_contact?: string;
+  street1?: string;
+  street2?: string;
+  city?: string;
+  state?: string;
+  zip_code?: string;
+  country?: string;
+  notes?: string;
+  is_active: number;
+}
+
+interface DatabaseUserProfileRow {
+  profile_id: string;
+  user_id: number;
+  first_name: string;
+  last_name: string;
+  email?: string;
+  phone?: string;
+  date_of_birth?: string;
+  street1?: string;
+  street2?: string;
+  city?: string;
+  state?: string;
+  zip_code?: string;
+  country?: string;
+  marital_status?: string;
+  number_of_dependents?: number;
+  occupation?: string;
+  employer?: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface EmergencyContact {
+  id: string;
+  name: string;
+  relationship: string;
+  contactType: string;
+  priority: number;
+  contactInfo: {
+    primaryPhone?: string;
+    email?: string;
+    preferredContact?: string;
+  };
+  availability?: string;
+  medicalAuthority: boolean;
+  canMakeDecisions: boolean;
+  languages: string[];
+  notes?: string;
+}
+
+export interface AssetData {
+  id: string;
+  name: string;
+  category: string;
+  type: string;
+  value: number;
+  description?: string;
+  ownership_type: string;
+  ownership_details: Record<string, unknown> | null;
+  asset_details: Record<string, unknown> | null;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
 
 // =================================
 // PERSON MANAGEMENT
@@ -247,7 +326,7 @@ export function getPersons(userId?: number): Person[] {
     WHERE p.is_active = 1
   `;
 
-  const params: any[] = [];
+  const params: (number | string)[] = [];
   if (userId) {
     query += ` AND (
       p.id IN (SELECT person_id FROM family_relationships WHERE user_id = ?)
@@ -259,9 +338,9 @@ export function getPersons(userId?: number): Person[] {
   query += ` ORDER BY p.last_name, p.first_name`;
 
   const stmt = db.prepare(query);
-  const persons = stmt.all(...params);
+  const persons = stmt.all(...params) as DatabasePerson[];
 
-  return persons.map((person: any) => ({
+  return persons.map((person) => ({
     id: person.person_id,
     firstName: person.first_name,
     lastName: person.last_name,
@@ -316,7 +395,7 @@ export function getFamilyMembers(userId?: number): FamilyMember[] {
     WHERE fr.is_active = 1 AND p.is_active = 1
   `;
 
-  const params: any[] = [];
+  const params: (number | string)[] = [];
   if (userId) {
     query += ` AND fr.user_id = ?`;
     params.push(userId);
@@ -325,9 +404,9 @@ export function getFamilyMembers(userId?: number): FamilyMember[] {
   query += ` ORDER BY p.last_name, p.first_name`;
 
   const stmt = db.prepare(query);
-  const members = stmt.all(...params);
+  const members = stmt.all(...params) as (DatabasePerson & { relationship_type_name: string; relationship_type_code: string })[];
 
-  return members.map((member: any) => ({
+  return members.map((member) => ({
     id: member.person_id,
     firstName: member.first_name,
     lastName: member.last_name,
@@ -384,7 +463,7 @@ export function getProfessionals(userId?: number): Professional[] {
     WHERE p.is_active = 1
   `;
 
-  const params: any[] = [];
+  const params: (number | string)[] = [];
   if (userId) {
     query += ` AND p.user_id = ?`;
     params.push(userId);
@@ -393,9 +472,9 @@ export function getProfessionals(userId?: number): Professional[] {
   query += ` ORDER BY p.name`;
 
   const stmt = db.prepare(query);
-  const professionals = stmt.all(...params);
+  const professionals = stmt.all(...params) as (DatabaseProfessional & { professional_type_name?: string; professional_type_code?: string })[];
 
-  return professionals.map((prof: any) => {
+  return professionals.map((prof) => {
     let specializations: string[] = [];
     let credentials: string[] = [];
 
@@ -493,7 +572,7 @@ export function getTrusts(userId?: number): Trust[] {
     WHERE t.is_active = 1
   `;
 
-  const params: any[] = [];
+  const params: (number | string)[] = [];
   if (userId) {
     trustQuery += ` AND t.created_by = ?`;
     params.push(userId);
@@ -502,14 +581,14 @@ export function getTrusts(userId?: number): Trust[] {
   trustQuery += ` ORDER BY t.name`;
 
   const trustStmt = db.prepare(trustQuery);
-  const trusts = trustStmt.all(...params);
+  const trusts = trustStmt.all(...params) as (DatabaseTrust & { trust_type_name: string; trust_type_code: string })[];
 
   if (trusts.length === 0) {
     return [];
   }
 
   // Get trustees for all trusts
-  const trustIds = trusts.map((t: any) => t.id);
+  const trustIds = trusts.map((t) => t.id);
   const placeholders = trustIds.map(() => "?").join(",");
 
   const trusteesQuery = `
@@ -529,7 +608,7 @@ export function getTrusts(userId?: number): Trust[] {
   `;
 
   const trusteesStmt = db.prepare(trusteesQuery);
-  const allTrustees = trusteesStmt.all(...trustIds);
+  const allTrustees = trusteesStmt.all(...trustIds) as (DatabasePerson & { trust_id: number; order_of_succession?: number; powers: string | null; start_date?: string; end_date?: string; trustee_type_name: string })[];
 
   // Get beneficiaries for all trusts
   const beneficiariesQuery = `
@@ -549,10 +628,10 @@ export function getTrusts(userId?: number): Trust[] {
   `;
 
   const beneficiariesStmt = db.prepare(beneficiariesQuery);
-  const allBeneficiaries = beneficiariesStmt.all(...trustIds);
+  const allBeneficiaries = beneficiariesStmt.all(...trustIds) as (DatabasePerson & { trust_id: number; percentage?: number; conditions?: string; beneficiary_type_name: string; relationship_type_name: string })[];
 
   // Group trustees and beneficiaries by trust_id
-  const trusteesByTrustId = allTrustees.reduce((acc: any, trustee: any) => {
+  const trusteesByTrustId = allTrustees.reduce<Record<number, Trustee[]>>((acc, trustee) => {
     if (!acc[trustee.trust_id]) acc[trustee.trust_id] = [];
     acc[trustee.trust_id].push({
       id: trustee.person_id,
@@ -587,7 +666,7 @@ export function getTrusts(userId?: number): Trust[] {
     return acc;
   }, {});
 
-  const beneficiariesByTrustId = allBeneficiaries.reduce((acc: any, beneficiary: any) => {
+  const beneficiariesByTrustId = allBeneficiaries.reduce<Record<number, Beneficiary[]>>((acc, beneficiary) => {
     if (!acc[beneficiary.trust_id]) acc[beneficiary.trust_id] = [];
     acc[beneficiary.trust_id].push({
       id: beneficiary.person_id,
@@ -622,7 +701,7 @@ export function getTrusts(userId?: number): Trust[] {
   }, {});
 
   // Build complete trust objects
-  return trusts.map((trust: any) => ({
+  return trusts.map((trust) => ({
     id: trust.trust_id,
     name: trust.name,
     type: trust.trust_type_code
@@ -684,7 +763,7 @@ export function getLegalRoles(userId?: number): LegalRole[] {
     WHERE lr.is_active = 1 AND p.is_active = 1
   `;
 
-  const params: any[] = [];
+  const params: (number | string)[] = [];
   if (userId) {
     query += ` AND lr.user_id = ?`;
     params.push(userId);
@@ -693,9 +772,9 @@ export function getLegalRoles(userId?: number): LegalRole[] {
   query += ` ORDER BY lr.document_type, lr.priority_order, p.last_name`;
 
   const stmt = db.prepare(query);
-  const roles = stmt.all(...params);
+  const roles = stmt.all(...params) as (DatabasePerson & { role_id: string; role_type_name: string; role_type_code: string; document_type?: string; document_id?: number; priority_order?: number; conditions?: string })[];
 
-  return roles.map((role: any) => ({
+  return roles.map((role) => ({
     id: role.role_id,
     assignee: {
       id: role.person_id,
@@ -743,7 +822,7 @@ export interface HealthcareDirective {
   directiveType: string;
   dateCreated: string;
   dateExecuted?: string;
-  preferences?: any;
+  preferences?: Record<string, unknown>;
   isActive: boolean;
 }
 
@@ -774,7 +853,7 @@ export function getHealthcareDirectives(userId?: number): HealthcareDirective[] 
     WHERE hd.is_active = 1
   `;
 
-  const params: any[] = [];
+  const params: (number | string)[] = [];
   if (userId) {
     query += ` AND hd.created_by = ?`;
     params.push(userId);
@@ -783,9 +862,9 @@ export function getHealthcareDirectives(userId?: number): HealthcareDirective[] 
   query += ` ORDER BY hd.date_created DESC`;
 
   const stmt = db.prepare(query);
-  const directives = stmt.all(...params);
+  const directives = stmt.all(...params) as { directive_id: string; directive_type_name: string; date_created: string; date_executed?: string; preferences?: string; is_active: number; principal_person_id: string; principal_first_name: string; principal_last_name: string; principal_full_name: string; proxy1_person_id?: string; proxy1_first_name?: string; proxy1_last_name?: string; proxy1_full_name?: string; proxy2_person_id?: string; proxy2_first_name?: string; proxy2_last_name?: string; proxy2_full_name?: string }[];
 
-  return directives.map((directive: any) => ({
+  return directives.map((directive): HealthcareDirective => ({
     id: directive.directive_id,
     principal: {
       id: directive.principal_person_id,
@@ -802,9 +881,9 @@ export function getHealthcareDirectives(userId?: number): HealthcareDirective[] 
     primaryProxy: directive.proxy1_person_id
       ? {
           id: directive.proxy1_person_id,
-          firstName: directive.proxy1_first_name,
-          lastName: directive.proxy1_last_name,
-          fullName: directive.proxy1_full_name,
+          firstName: directive.proxy1_first_name || "",
+          lastName: directive.proxy1_last_name || "",
+          fullName: directive.proxy1_full_name || "",
           dateOfBirth: undefined,
           isMinor: false,
           isDependent: false,
@@ -816,9 +895,9 @@ export function getHealthcareDirectives(userId?: number): HealthcareDirective[] 
     secondaryProxy: directive.proxy2_person_id
       ? {
           id: directive.proxy2_person_id,
-          firstName: directive.proxy2_first_name,
-          lastName: directive.proxy2_last_name,
-          fullName: directive.proxy2_full_name,
+          firstName: directive.proxy2_first_name || "",
+          lastName: directive.proxy2_last_name || "",
+          fullName: directive.proxy2_full_name || "",
           dateOfBirth: undefined,
           isMinor: false,
           isDependent: false,
@@ -830,7 +909,7 @@ export function getHealthcareDirectives(userId?: number): HealthcareDirective[] 
     directiveType: directive.directive_type_name,
     dateCreated: directive.date_created,
     dateExecuted: directive.date_executed,
-    preferences: directive.preferences ? JSON.parse(directive.preferences) : undefined,
+    preferences: directive.preferences ? JSON.parse(directive.preferences) as Record<string, unknown> : undefined,
     isActive: directive.is_active === 1,
   }));
 }
@@ -858,7 +937,7 @@ export function getBeneficiaries(userId?: number): Beneficiary[] {
     WHERE tb.is_active = 1 AND p.is_active = 1
   `;
 
-  const params: any[] = [];
+  const params: (number | string)[] = [];
   if (userId) {
     query += ` AND t.created_by = ?`;
     params.push(userId);
@@ -867,9 +946,9 @@ export function getBeneficiaries(userId?: number): Beneficiary[] {
   query += ` ORDER BY p.last_name, p.first_name`;
 
   const stmt = db.prepare(query);
-  const beneficiaries = stmt.all(...params);
+  const beneficiaries = stmt.all(...params) as (DatabasePerson & { source_type: string; beneficiary_type_name: string; relationship_type_name: string; percentage?: number; conditions?: string })[];
 
-  return beneficiaries.map((beneficiary: any) => ({
+  return beneficiaries.map((beneficiary) => ({
     id: beneficiary.person_id,
     firstName: beneficiary.first_name,
     lastName: beneficiary.last_name,
@@ -904,7 +983,7 @@ export function getBeneficiaries(userId?: number): Beneficiary[] {
 // EMERGENCY CONTACTS
 // =================================
 
-export function getEmergencyContacts(userId?: number): any[] {
+export function getEmergencyContacts(userId?: number): EmergencyContact[] {
   const db = getDatabase();
   let query = `
     SELECT 
@@ -917,7 +996,7 @@ export function getEmergencyContacts(userId?: number): any[] {
     WHERE ec.is_active = 1
   `;
 
-  const params: any[] = [];
+  const params: (number | string)[] = [];
   if (userId) {
     query += " AND ec.user_id = ?";
     params.push(userId);
@@ -927,9 +1006,9 @@ export function getEmergencyContacts(userId?: number): any[] {
 
   try {
     const stmt = db.prepare(query);
-    const contacts = stmt.all(...params);
+    const contacts = stmt.all(...params) as { id: string; contact_name?: string; family_name?: string; relationship?: string; contact_category?: string; priority?: number; phone?: string; family_phone?: string; email?: string; family_email?: string; preferred_contact_method?: string; availability?: string; medical_authority: number; decision_authority: number; languages?: string; notes?: string }[];
 
-    return contacts.map((contact: any) => ({
+    return contacts.map((contact) => ({
       id: contact.id,
       name: contact.contact_name || contact.family_name || "Unknown Contact",
       relationship: contact.relationship || "emergency_contact",
@@ -957,7 +1036,7 @@ export function getEmergencyContacts(userId?: number): any[] {
 // ASSET MANAGEMENT (Essential for Compatibility)
 // =================================
 
-export function getAssets(userId?: number): any[] {
+export function getAssets(userId?: number): AssetData[] {
   const db = getDatabase();
   let query = `
     SELECT 
@@ -966,7 +1045,7 @@ export function getAssets(userId?: number): any[] {
     WHERE a.is_active = 1
   `;
 
-  const params: any[] = [];
+  const params: (number | string)[] = [];
   if (userId) {
     query += " AND a.user_id = ?";
     params.push(userId);
@@ -975,9 +1054,9 @@ export function getAssets(userId?: number): any[] {
   query += " ORDER BY a.name";
 
   const stmt = db.prepare(query);
-  const assets = stmt.all(...params);
+  const assets = stmt.all(...params) as DatabaseAsset[];
 
-  return assets.map((asset: any) => {
+  return assets.map((asset) => {
     let ownership_details = null;
     try {
       if (typeof asset.ownership_details === "string") {
@@ -1019,10 +1098,10 @@ export function getAssets(userId?: number): any[] {
   });
 }
 
-export function getAsset(assetId: string): any | null {
+export function getAsset(assetId: string): AssetData | null {
   const db = getDatabase();
   const stmt = db.prepare("SELECT * FROM assets WHERE asset_id = ? AND is_active = 1");
-  const asset = stmt.get(assetId);
+  const asset = stmt.get(assetId) as DatabaseAsset | undefined;
 
   if (!asset) return null;
 
@@ -1101,7 +1180,7 @@ export function getDashboardStats(userId?: number | string): {
 }
 
 // Recent Assets Function
-export function getRecentAssets(userId?: number | string, limit: number = 4): any[] {
+export function getRecentAssets(userId?: number | string, limit: number = 4): AssetData[] {
   const userIdNum =
     typeof userId === "string" ? parseInt(userId.split("-").pop() || "1") : userId || 1;
 
@@ -1121,7 +1200,7 @@ export function getRecentAssets(userId?: number | string, limit: number = 4): an
 // TRUST ASSETS
 // =================================
 
-export function getAssetsByTrust(trustId: string): any[] {
+export function getAssetsByTrust(trustId: string): AssetData[] {
   const db = getDatabase();
 
   // Get trust's internal ID
@@ -1143,9 +1222,9 @@ export function getAssetsByTrust(trustId: string): any[] {
   `;
 
   const stmt = db.prepare(query);
-  const assets = stmt.all(trust.id);
+  const assets = stmt.all(trust.id) as DatabaseAsset[];
 
-  return assets.map((asset: any) => {
+  return assets.map((asset) => {
     let ownership_details = null;
     try {
       if (typeof asset.ownership_details === "string") {
@@ -1232,7 +1311,7 @@ export function searchAll(options: SearchOptions): SearchResult[] {
       WHERE is_active = 1
     `;
 
-    const params: any[] = [];
+    const params: (number | string)[] = [];
     if (userId) {
       const userIdNum = typeof userId === "string" ? parseInt(userId.split("-").pop() || "1") : userId;
       assetQuery += " AND user_id = ?";
@@ -1240,9 +1319,9 @@ export function searchAll(options: SearchOptions): SearchResult[] {
     }
 
     const assetStmt = db.prepare(assetQuery);
-    const assets = assetStmt.all(...params);
+    const assets = assetStmt.all(...params) as { id: string; name: string; category: string; type: string; value: number; description?: string }[];
 
-    assets.forEach((asset: any) => {
+    assets.forEach((asset) => {
       const nameLower = (asset.name || "").toLowerCase();
       const categoryLower = (asset.category || "").toLowerCase();
       const descLower = (asset.description || "").toLowerCase();
@@ -1290,7 +1369,7 @@ export function searchAll(options: SearchOptions): SearchResult[] {
       WHERE t.is_active = 1
     `;
 
-    const params: any[] = [];
+    const params: (number | string)[] = [];
     if (userId) {
       const userIdNum = typeof userId === "string" ? parseInt(userId.split("-").pop() || "1") : userId;
       trustQuery += " AND t.created_by = ?";
@@ -1298,9 +1377,9 @@ export function searchAll(options: SearchOptions): SearchResult[] {
     }
 
     const trustStmt = db.prepare(trustQuery);
-    const trusts = trustStmt.all(...params);
+    const trusts = trustStmt.all(...params) as Array<{ id: string; name: string; grantor: string; purpose?: string; trust_type: string }>;
 
-    trusts.forEach((trust: any) => {
+    trusts.forEach((trust) => {
       const nameLower = (trust.name || "").toLowerCase();
       const grantorLower = (trust.grantor || "").toLowerCase();
       const purposeLower = (trust.purpose || "").toLowerCase();
@@ -1324,8 +1403,8 @@ export function searchAll(options: SearchOptions): SearchResult[] {
           id: trust.id,
           type: "trust",
           title: trust.name,
-          subtitle: trust.trust_type,
-          category: trust.trust_type,
+          subtitle: trust.trust_type || "",
+          category: trust.trust_type || "",
           matchedField,
           matchScore,
         });
@@ -1349,7 +1428,7 @@ export function searchAll(options: SearchOptions): SearchResult[] {
       WHERE fr.is_active = 1 AND p.is_active = 1
     `;
 
-    const params: any[] = [];
+    const params: (number | string)[] = [];
     if (userId) {
       const userIdNum = typeof userId === "string" ? parseInt(userId.split("-").pop() || "1") : userId;
       familyQuery += " AND fr.user_id = ?";
@@ -1357,9 +1436,9 @@ export function searchAll(options: SearchOptions): SearchResult[] {
     }
 
     const familyStmt = db.prepare(familyQuery);
-    const members = familyStmt.all(...params);
+    const members = familyStmt.all(...params) as { id: string; first_name: string; last_name: string; full_name: string; email?: string; relationship: string }[];
 
-    members.forEach((member: any) => {
+    members.forEach((member) => {
       const nameLower = (member.full_name || "").toLowerCase();
       const emailLower = (member.email || "").toLowerCase();
       const relationshipLower = (member.relationship || "").toLowerCase();
@@ -1406,7 +1485,7 @@ export function searchAll(options: SearchOptions): SearchResult[] {
       WHERE p.is_active = 1
     `;
 
-    const params: any[] = [];
+    const params: (number | string)[] = [];
     if (userId) {
       const userIdNum = typeof userId === "string" ? parseInt(userId.split("-").pop() || "1") : userId;
       profQuery += " AND p.user_id = ?";
@@ -1414,9 +1493,9 @@ export function searchAll(options: SearchOptions): SearchResult[] {
     }
 
     const profStmt = db.prepare(profQuery);
-    const professionals = profStmt.all(...params);
+    const professionals = profStmt.all(...params) as { id: string; name: string; firm?: string; email?: string; professional_type?: string }[];
 
-    professionals.forEach((prof: any) => {
+    professionals.forEach((prof) => {
       const nameLower = (prof.name || "").toLowerCase();
       const firmLower = (prof.firm || "").toLowerCase();
       const emailLower = (prof.email || "").toLowerCase();
@@ -1517,7 +1596,7 @@ export function getUserProfile(userId: number): UserProfile | null {
       WHERE user_id = ? AND is_active = 1
     `);
 
-    const profile = stmt.get(userId) as any;
+    const profile = stmt.get(userId) as DatabaseUserProfileRow | undefined;
 
     if (!profile) {
       return null;
@@ -1564,7 +1643,7 @@ export function updateUserProfile(userId: number, data: UpdateUserProfileInput):
   try {
     // Build update query dynamically based on provided fields
     const updates: string[] = [];
-    const values: any[] = [];
+    const values: (string | number)[] = [];
 
     if (data.firstName !== undefined) {
       updates.push("first_name = ?");

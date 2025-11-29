@@ -53,7 +53,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
     const results = searchAll(searchOptions);
 
     // Calculate type breakdown for UI grouping
-    const typeBreakdown = results.reduce(
+    const typeBreakdown = results.reduce<Record<string, number>>(
       (acc, result) => {
         acc[result.type] = (acc[result.type] || 0) + 1;
         return acc;

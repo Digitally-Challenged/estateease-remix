@@ -6,7 +6,7 @@ import { ErrorBoundary, EmptyStates, ErrorDisplay } from "~/components/ui";
 import { AssetAccordion } from "~/components/ui/asset-accordion";
 import { AssetCategory } from "~/types/enums";
 
-export async function loader() {
+export function loader() {
   try {
     const userId = "user-nick-001"; // Default user for now
     const assets = getAssets(userId);

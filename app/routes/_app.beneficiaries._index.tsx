@@ -15,23 +15,21 @@ import Trash2 from "lucide-react/dist/esm/icons/trash-2";
 import { getBeneficiaries, getTrusts } from "~/lib/dal";
 import type { Column } from "~/components/ui/data-table";
 
-export async function loader() {
+export function loader() {
   try {
     const userId = "user-nick-001";
 
-    const [beneficiaries, trusts] = await Promise.all([
-      getBeneficiaries(userId),
-      getTrusts(userId),
-    ]);
+    const beneficiaries = getBeneficiaries(userId);
+    const trusts = getTrusts(userId);
 
     // Calculate total percentages
     const primaryTotal = beneficiaries
       .filter((b) => b?.isPrimary)
-      .reduce((sum, b) => sum + (b?.percentage || 0), 0);
+      .reduce<number>((sum, b) => sum + (b?.percentage || 0), 0);
 
     const contingentTotal = beneficiaries
       .filter((b) => b?.isContingent)
-      .reduce((sum, b) => sum + (b?.percentage || 0), 0);
+      .reduce<number>((sum, b) => sum + (b?.percentage || 0), 0);
 
     return json({
       beneficiaries,

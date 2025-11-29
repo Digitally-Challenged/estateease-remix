@@ -12,16 +12,14 @@ import { calculateAssetAllocation } from "~/lib/financial-calculations";
 import { AssetAllocationChart, NetWorthTrendChart } from "~/components/ui/charts";
 import { formatCurrency } from "~/utils/format";
 
-export async function loader() {
+export function loader() {
   // For now, we'll use the default user ID from the seed data
   const userId = "user-nick-001";
 
-  const [dashboardStats, recentAssets, trusts, assets] = await Promise.all([
-    getDashboardStats(userId),
-    getRecentAssets(userId, 4),
-    getTrusts(userId),
-    getAssets(userId),
-  ]);
+  const dashboardStats = getDashboardStats(userId);
+  const recentAssets = getRecentAssets(userId, 4);
+  const trusts = getTrusts(userId);
+  const assets = getAssets(userId);
 
   // Calculate asset allocation for the pie chart
   const assetAllocation = calculateAssetAllocation(assets);

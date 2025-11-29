@@ -113,7 +113,7 @@ export async function loader({ request }: LoaderFunctionArgs): Promise<Response>
         : searchResults;
 
     // Calculate type breakdown
-    const typeBreakdown = results.reduce(
+    const typeBreakdown = results.reduce<Record<string, number>>(
       (acc, result) => {
         acc[result.type] = (acc[result.type] || 0) + 1;
         return acc;
@@ -166,8 +166,8 @@ export default function SearchResults() {
   const { results, query, totalCount, typeBreakdown, appliedFilters, performance, error } = data;
 
   // Group results by type for display
-  const groupedResults = results.reduce(
-    (groups: Record<string, SearchResult[]>, result: SearchResult) => {
+  const groupedResults = results.reduce<Record<string, SearchResult[]>>(
+    (groups, result) => {
       const type = result.type;
       if (!groups[type]) {
         groups[type] = [];

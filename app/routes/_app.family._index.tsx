@@ -20,17 +20,14 @@ import {
   getHealthcareDirectives,
 } from "~/lib/dal";
 
-export async function loader() {
+export function loader() {
   const userId = "user-nick-001"; // Default user for now
 
-  const [familyMembers, professionals, emergencyContacts, legalRoles, healthcareDirectives] =
-    await Promise.all([
-      getFamilyMembers(userId),
-      getProfessionals(userId),
-      getEmergencyContacts(userId),
-      getLegalRoles(userId),
-      getHealthcareDirectives(userId),
-    ]);
+  const familyMembers = getFamilyMembers(userId);
+  const professionals = getProfessionals(userId);
+  const emergencyContacts = getEmergencyContacts(userId);
+  const legalRoles = getLegalRoles(userId);
+  const healthcareDirectives = getHealthcareDirectives(userId);
 
   return json({
     familyMembers,

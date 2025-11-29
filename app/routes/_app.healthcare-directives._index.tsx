@@ -23,7 +23,7 @@ export async function loader() {
     ]);
 
     // Group directives by type
-    const directivesByType = healthcareDirectives.reduce(
+    const directivesByType = healthcareDirectives.reduce<Record<string, typeof healthcareDirectives>>(
       (acc, directive) => {
         if (!directive) return acc;
         const type = directive.type;
