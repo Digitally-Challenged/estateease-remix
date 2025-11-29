@@ -95,7 +95,7 @@ export function DocumentAIAnalysis({
             <Button
               onClick={handleAnalyze}
               disabled={isAnalyzing}
-              variant={currentAnalysis ? "outline" : "default"}
+              variant={currentAnalysis ? "outline" : "primary"}
             >
               {isAnalyzing ? (
                 <>

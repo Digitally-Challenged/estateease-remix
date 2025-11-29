@@ -916,3 +916,343 @@ export function getRecentAssets(userId?: number | string, limit: number = 4): an
     })
     .slice(0, limit);
 }
+
+// =================================
+// TRUST ASSETS
+// =================================
+
+export function getAssetsByTrust(trustId: string): any[] {
+  const db = getDatabase();
+
+  // Get trust's internal ID
+  const trustStmt = db.prepare("SELECT id FROM trusts WHERE trust_id = ? AND is_active = 1");
+  const trust = trustStmt.get(trustId) as { id: number } | undefined;
+
+  if (!trust) {
+    return [];
+  }
+
+  // Get assets linked to this trust
+  const query = `
+    SELECT
+      a.*
+    FROM assets a
+    JOIN trust_assets ta ON a.id = ta.asset_id
+    WHERE ta.trust_id = ? AND a.is_active = 1 AND ta.is_active = 1
+    ORDER BY a.name
+  `;
+
+  const stmt = db.prepare(query);
+  const assets = stmt.all(trust.id);
+
+  return assets.map((asset: any) => {
+    let ownership_details = null;
+    try {
+      if (typeof asset.ownership_details === "string") {
+        ownership_details = JSON.parse(asset.ownership_details);
+      } else {
+        ownership_details = asset.ownership_details;
+      }
+    } catch (e) {
+      console.error("Failed to parse ownership_details:", e);
+      ownership_details = null;
+    }
+
+    let asset_details = null;
+    try {
+      if (typeof asset.asset_details === "string") {
+        asset_details = JSON.parse(asset.asset_details);
+      } else {
+        asset_details = asset.asset_details;
+      }
+    } catch (e) {
+      console.error("Failed to parse asset_details:", e);
+      asset_details = null;
+    }
+
+    return {
+      id: asset.asset_id,
+      name: asset.name,
+      category: asset.category,
+      type: asset.type,
+      value: asset.value,
+      description: asset.description,
+      ownership_type: asset.ownership_type,
+      ownership_details,
+      asset_details,
+      isActive: asset.is_active === 1,
+      createdAt: asset.created_at,
+      updatedAt: asset.updated_at,
+    };
+  });
+}
+
+// =================================
+// SEARCH FUNCTIONALITY
+// =================================
+
+export interface SearchOptions {
+  query: string;
+  userId?: string;
+  types?: Array<"asset" | "trust" | "family" | "professional">;
+  limit?: number;
+}
+
+export interface SearchResult {
+  id: string;
+  type: "asset" | "trust" | "family" | "professional";
+  title: string;
+  subtitle?: string;
+  category?: string;
+  value?: number;
+  matchedField: string;
+  matchScore: number;
+}
+
+export function searchAll(options: SearchOptions): SearchResult[] {
+  const { query, userId, types, limit = 50 } = options;
+  const db = getDatabase();
+  const searchTerm = query.toLowerCase().trim();
+  const results: SearchResult[] = [];
+
+  // Determine which types to search
+  const searchTypes = types && types.length > 0 ? types : ["asset", "trust", "family", "professional"];
+
+  // Search Assets
+  if (searchTypes.includes("asset")) {
+    let assetQuery = `
+      SELECT
+        asset_id as id,
+        name,
+        category,
+        type,
+        value,
+        description
+      FROM assets
+      WHERE is_active = 1
+    `;
+
+    const params: any[] = [];
+    if (userId) {
+      const userIdNum = typeof userId === "string" ? parseInt(userId.split("-").pop() || "1") : userId;
+      assetQuery += " AND user_id = ?";
+      params.push(userIdNum);
+    }
+
+    const assetStmt = db.prepare(assetQuery);
+    const assets = assetStmt.all(...params);
+
+    assets.forEach((asset: any) => {
+      const nameLower = (asset.name || "").toLowerCase();
+      const categoryLower = (asset.category || "").toLowerCase();
+      const descLower = (asset.description || "").toLowerCase();
+
+      let matchScore = 0;
+      let matchedField = "";
+
+      if (nameLower.includes(searchTerm)) {
+        matchScore = 100;
+        matchedField = "name";
+      } else if (categoryLower.includes(searchTerm)) {
+        matchScore = 80;
+        matchedField = "category";
+      } else if (descLower.includes(searchTerm)) {
+        matchScore = 60;
+        matchedField = "description";
+      }
+
+      if (matchScore > 0) {
+        results.push({
+          id: asset.id,
+          type: "asset",
+          title: asset.name,
+          subtitle: asset.category,
+          category: asset.category,
+          value: asset.value,
+          matchedField,
+          matchScore,
+        });
+      }
+    });
+  }
+
+  // Search Trusts
+  if (searchTypes.includes("trust")) {
+    let trustQuery = `
+      SELECT
+        t.trust_id as id,
+        t.name,
+        t.grantor,
+        t.purpose,
+        tt.name as trust_type
+      FROM trusts t
+      JOIN trust_types tt ON t.trust_type_id = tt.id
+      WHERE t.is_active = 1
+    `;
+
+    const params: any[] = [];
+    if (userId) {
+      const userIdNum = typeof userId === "string" ? parseInt(userId.split("-").pop() || "1") : userId;
+      trustQuery += " AND t.created_by = ?";
+      params.push(userIdNum);
+    }
+
+    const trustStmt = db.prepare(trustQuery);
+    const trusts = trustStmt.all(...params);
+
+    trusts.forEach((trust: any) => {
+      const nameLower = (trust.name || "").toLowerCase();
+      const grantorLower = (trust.grantor || "").toLowerCase();
+      const purposeLower = (trust.purpose || "").toLowerCase();
+
+      let matchScore = 0;
+      let matchedField = "";
+
+      if (nameLower.includes(searchTerm)) {
+        matchScore = 100;
+        matchedField = "name";
+      } else if (grantorLower.includes(searchTerm)) {
+        matchScore = 85;
+        matchedField = "grantor";
+      } else if (purposeLower.includes(searchTerm)) {
+        matchScore = 70;
+        matchedField = "purpose";
+      }
+
+      if (matchScore > 0) {
+        results.push({
+          id: trust.id,
+          type: "trust",
+          title: trust.name,
+          subtitle: trust.trust_type,
+          category: trust.trust_type,
+          matchedField,
+          matchScore,
+        });
+      }
+    });
+  }
+
+  // Search Family Members
+  if (searchTypes.includes("family")) {
+    let familyQuery = `
+      SELECT
+        p.person_id as id,
+        p.first_name,
+        p.last_name,
+        p.full_name,
+        p.email,
+        rt.name as relationship
+      FROM persons p
+      JOIN family_relationships fr ON p.id = fr.person_id
+      JOIN relationship_types rt ON fr.relationship_type_id = rt.id
+      WHERE fr.is_active = 1 AND p.is_active = 1
+    `;
+
+    const params: any[] = [];
+    if (userId) {
+      const userIdNum = typeof userId === "string" ? parseInt(userId.split("-").pop() || "1") : userId;
+      familyQuery += " AND fr.user_id = ?";
+      params.push(userIdNum);
+    }
+
+    const familyStmt = db.prepare(familyQuery);
+    const members = familyStmt.all(...params);
+
+    members.forEach((member: any) => {
+      const nameLower = (member.full_name || "").toLowerCase();
+      const emailLower = (member.email || "").toLowerCase();
+      const relationshipLower = (member.relationship || "").toLowerCase();
+
+      let matchScore = 0;
+      let matchedField = "";
+
+      if (nameLower.includes(searchTerm)) {
+        matchScore = 100;
+        matchedField = "name";
+      } else if (emailLower.includes(searchTerm)) {
+        matchScore = 90;
+        matchedField = "email";
+      } else if (relationshipLower.includes(searchTerm)) {
+        matchScore = 75;
+        matchedField = "relationship";
+      }
+
+      if (matchScore > 0) {
+        results.push({
+          id: member.id,
+          type: "family",
+          title: member.full_name,
+          subtitle: member.relationship,
+          category: member.relationship,
+          matchedField,
+          matchScore,
+        });
+      }
+    });
+  }
+
+  // Search Professionals
+  if (searchTypes.includes("professional")) {
+    let profQuery = `
+      SELECT
+        p.professional_id as id,
+        p.name,
+        p.firm,
+        p.email,
+        pt.name as professional_type
+      FROM professionals p
+      LEFT JOIN professional_types pt ON p.professional_type_id = pt.id
+      WHERE p.is_active = 1
+    `;
+
+    const params: any[] = [];
+    if (userId) {
+      const userIdNum = typeof userId === "string" ? parseInt(userId.split("-").pop() || "1") : userId;
+      profQuery += " AND p.user_id = ?";
+      params.push(userIdNum);
+    }
+
+    const profStmt = db.prepare(profQuery);
+    const professionals = profStmt.all(...params);
+
+    professionals.forEach((prof: any) => {
+      const nameLower = (prof.name || "").toLowerCase();
+      const firmLower = (prof.firm || "").toLowerCase();
+      const emailLower = (prof.email || "").toLowerCase();
+      const typeLower = (prof.professional_type || "").toLowerCase();
+
+      let matchScore = 0;
+      let matchedField = "";
+
+      if (nameLower.includes(searchTerm)) {
+        matchScore = 100;
+        matchedField = "name";
+      } else if (firmLower.includes(searchTerm)) {
+        matchScore = 90;
+        matchedField = "firm";
+      } else if (emailLower.includes(searchTerm)) {
+        matchScore = 85;
+        matchedField = "email";
+      } else if (typeLower.includes(searchTerm)) {
+        matchScore = 75;
+        matchedField = "type";
+      }
+
+      if (matchScore > 0) {
+        results.push({
+          id: prof.id,
+          type: "professional",
+          title: prof.name,
+          subtitle: prof.firm || prof.professional_type,
+          category: prof.professional_type,
+          matchedField,
+          matchScore,
+        });
+      }
+    });
+  }
+
+  // Sort by match score (highest first) and limit results
+  return results.sort((a, b) => b.matchScore - a.matchScore).slice(0, limit);
+}

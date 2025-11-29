@@ -598,13 +598,68 @@ export function updateFamilyMember(memberId: string, updates: Partial<FamilyMemb
   stmt.run(...params);
 }
 
+export function getFamilyMember(userId: string, memberId: string): FamilyMember | null {
+  const db = getDatabase();
+
+  const query = `
+    SELECT
+      fm.*,
+      rt.name as relationship_type_name,
+      rt.code as relationship_type_code
+    FROM family_members fm
+    JOIN relationship_types rt ON fm.relationship_type_id = rt.id
+    WHERE fm.family_member_id = ? AND fm.is_active = 1
+  `;
+
+  const stmt = db.prepare(query);
+  const member = stmt.get(memberId) as any;
+
+  if (!member) {
+    return null;
+  }
+
+  return {
+    id: member.family_member_id,
+    firstName: member.first_name,
+    lastName: member.last_name,
+    name: `${member.first_name} ${member.last_name}`,
+    relationship: member.relationship_type_code
+      ? member.relationship_type_code.toLowerCase().replace("_", "-")
+      : "other",
+    dateOfBirth: member.date_of_birth || null,
+    email: member.email || null,
+    phone: member.phone || null,
+    address: member.address || null,
+    city: member.city || null,
+    state: member.state || null,
+    zipCode: member.zip || null,
+    notes: member.notes || null,
+    isEmergencyContact: member.is_emergency_contact === 1,
+    isBeneficiary: member.is_beneficiary === 1,
+    isTrustee: member.is_trustee === 1,
+    isExecutor: member.is_executor === 1,
+    isPowerOfAttorney: member.is_power_of_attorney === 1,
+    isHealthcareProxy: member.is_healthcare_proxy === 1,
+    contactInfo: {
+      email: member.email || null,
+      primaryPhone: member.phone || null,
+      address: {
+        street1: member.address || null,
+        city: member.city || null,
+        state: member.state || null,
+        zipCode: member.zip || null,
+      },
+    },
+  };
+}
+
 export function deleteFamilyMember(memberId: string): void {
   const db = getDatabase();
 
   // Soft delete
   const stmt = db.prepare(`
-    UPDATE family_members 
-    SET is_active = 0, updated_at = ? 
+    UPDATE family_members
+    SET is_active = 0, updated_at = ?
     WHERE family_member_id = ?
   `);
 

@@ -162,7 +162,7 @@ function IntelligentDashboardComponent({
           {/* Scope Controls */}
           <div className="flex items-center space-x-2">
             <Button
-              variant={scopeContext.focus === "overview" ? "default" : "outline"}
+              variant={scopeContext.focus === "overview" ? "primary" : "outline"}
               size="sm"
               onClick={() => updateScopeContext({ focus: "overview" })}
             >
@@ -170,21 +170,21 @@ function IntelligentDashboardComponent({
               Overview
             </Button>
             <Button
-              variant={scopeContext.focus === "planning" ? "default" : "outline"}
+              variant={scopeContext.focus === "planning" ? "primary" : "outline"}
               size="sm"
               onClick={() => updateScopeContext({ focus: "planning" })}
             >
               Planning
             </Button>
             <Button
-              variant={scopeContext.focus === "tax" ? "default" : "outline"}
+              variant={scopeContext.focus === "tax" ? "primary" : "outline"}
               size="sm"
               onClick={() => updateScopeContext({ focus: "tax" })}
             >
               Tax
             </Button>
             <Button
-              variant={scopeContext.focus === "risk" ? "default" : "outline"}
+              variant={scopeContext.focus === "risk" ? "primary" : "outline"}
               size="sm"
               onClick={() => updateScopeContext({ focus: "risk" })}
             >

@@ -54,8 +54,6 @@ export {
   useErrorBoundary,
   withErrorBoundary,
   ErrorDisplay,
-  InlineError,
-  ErrorBanner,
   useErrorState,
   type ErrorBoundaryProps,
   type ErrorFallbackProps,

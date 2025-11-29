@@ -14,18 +14,3 @@ export {
 } from "./skeleton";
 export { Progress, type ProgressProps } from "./progress";
 export { PageLoader, type PageLoaderProps } from "./page-loader";
-export {
-  AssetCardSkeleton,
-  AssetListSkeleton,
-  TrustCardSkeleton,
-  FamilyMemberSkeleton,
-  StatsCardSkeleton,
-  ChartSkeleton,
-  TableSkeleton,
-  FormSkeleton,
-  NavigationSkeleton,
-  HeaderSkeleton,
-  PageSkeleton,
-  SkeletonPresets,
-  type SkeletonPresetProps,
-} from "./skeleton-presets";

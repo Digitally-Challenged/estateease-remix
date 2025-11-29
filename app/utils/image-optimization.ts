@@ -51,25 +51,3 @@ export function generatePictureSources(imagePath: string): ImageSource[] {
   ];
 }
 
-/**
- * Get optimized image path based on theme
- */
-export function getThemedImagePath(
-  baseName: string,
-  theme: "light" | "dark",
-  extension: string = "png",
-): string {
-  return `/images/${baseName}-${theme}.${extension}`;
-}
-
-/**
- * Preload critical images
- */
-export function getImagePreloadLinks(images: string[]) {
-  return images.map((image) => ({
-    rel: "preload" as const,
-    as: "image" as const,
-    href: image,
-    type: image.includes(".webp") ? "image/webp" : "image/png",
-  }));
-}

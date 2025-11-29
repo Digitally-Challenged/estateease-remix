@@ -316,7 +316,7 @@ export function DataIntegrationMonitor() {
             Refresh
           </Button>
           <Button
-            variant={autoRefresh ? "default" : "outline"}
+            variant={autoRefresh ? "primary" : "outline"}
             size="sm"
             onClick={() => setAutoRefresh(!autoRefresh)}
           >

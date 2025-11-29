@@ -299,7 +299,7 @@ export function AIInsightsDashboard({
               {categories.map((category) => (
                 <Button
                   key={category}
-                  variant={selectedCategory === category ? "default" : "outline"}
+                  variant={selectedCategory === category ? "primary" : "outline"}
                   size="sm"
                   onClick={() => setSelectedCategory(category)}
                   className="capitalize"
