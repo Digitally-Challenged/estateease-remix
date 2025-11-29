@@ -3,6 +3,7 @@ import { json } from "@remix-run/node";
 import { unlink } from "fs/promises";
 import path from "path";
 import { getDocument, archiveDocument, logDocumentAccess } from "~/lib/dal-crud";
+import { getUserIdFromSession } from "~/lib/auth.server";
 
 const UPLOAD_DIR = path.join(process.cwd(), "data", "documents", "uploads");
 
@@ -18,8 +19,11 @@ export async function action({ params, request }: ActionFunctionArgs) {
       return json({ error: "Document ID is required" }, { status: 400 });
     }
 
-    // TODO: Get actual user ID from session
-    const userId = 1;
+    const userId = await getUserIdFromSession(request);
+
+    if (!userId) {
+      return json({ error: "Unauthorized" }, { status: 401 });
+    }
 
     // Get document metadata
     const document = getDocument(documentId);
@@ -47,7 +51,7 @@ export async function action({ params, request }: ActionFunctionArgs) {
     // In production, you might want to move it to a "trash" folder
     try {
       // await unlink(filePath);
-      console.log(`Document ${documentId} marked as deleted, file preserved at ${filePath}`);
+      // File preserved for recovery purposes
     } catch (fileError) {
       console.warn(`Failed to delete file ${filePath}:`, fileError);
       // Continue with the operation even if file deletion fails

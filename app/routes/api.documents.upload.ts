@@ -9,6 +9,7 @@ import path from "path";
 import crypto from "crypto";
 import { createDocument, logDocumentAccess, getDocument } from "~/lib/dal-crud";
 import { formatFileSize } from "~/utils/format";
+import { getUserIdFromSession } from "~/lib/auth.server";
 
 const UPLOAD_DIR = path.join(process.cwd(), "data", "documents", "uploads");
 
@@ -29,6 +30,12 @@ const ALLOWED_TYPES: Record<string, string> = {
 
 export async function action({ request }: ActionFunctionArgs) {
   try {
+    const userId = await getUserIdFromSession(request);
+
+    if (!userId) {
+      return json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     // Parse multipart form data using Remix's built-in handler
     const formData = await unstable_parseMultipartFormData(request, uploadHandler);
 
@@ -125,7 +132,6 @@ export async function action({ request }: ActionFunctionArgs) {
     }
 
     // Log the upload action
-    const userId = 1; // TODO: Get actual user ID from session
     logDocumentAccess(createdDocument.id, userId, "upload");
 
     return json({

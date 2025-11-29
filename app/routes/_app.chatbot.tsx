@@ -150,8 +150,6 @@ export default function Chatbot() {
   );
 
   const handleFeedback = useCallback((messageId: string, feedback: "positive" | "negative") => {
-    // Log feedback for AI improvement
-    console.log(`Feedback for message ${messageId}: ${feedback}`);
     // In a real implementation, this would be sent to an analytics service
   }, []);
 

@@ -363,16 +363,14 @@ export function cleanupOldSecurityEvents() {
   const db = getDatabase();
 
   try {
-    const result = db
+    db
       .prepare(
         `
-      DELETE FROM security_events 
+      DELETE FROM security_events
       WHERE timestamp < datetime('now', '-90 days')
     `,
       )
       .run();
-
-    console.log(`Cleaned up ${result.changes} old security events`);
   } catch (error) {
     console.error("Failed to cleanup old security events:", error);
   }

@@ -34,7 +34,6 @@ export async function action({ request }: ActionFunctionArgs) {
   try {
     // TODO: Implement beneficiary creation in DAL
     // const beneficiaryId = await createBeneficiary(data);
-    console.log("Creating beneficiary:", data);
 
     return redirect("/beneficiaries");
   } catch (error) {

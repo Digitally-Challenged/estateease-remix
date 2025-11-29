@@ -8,6 +8,206 @@
 import { getDatabase } from "./database";
 
 // =================================
+// DATABASE TYPES (Raw database row types)
+// =================================
+
+export interface DatabaseAsset {
+  asset_id: string;
+  name: string;
+  category: string;
+  type: string;
+  value: number;
+  description?: string;
+  ownership_type: string;
+  ownership_details: string | null;
+  asset_details: string | null;
+  account_type?: string;
+  institution_name?: string;
+  account_number?: string;
+  routing_number?: string;
+  notes?: string;
+  is_active: number;
+  created_at: string;
+  updated_at: string;
+  user_id?: number;
+}
+
+export interface DatabaseTrust {
+  id: number;
+  trust_id: string;
+  name: string;
+  trust_type_id: number;
+  trust_type_code: string;
+  grantor: string;
+  tax_id?: string;
+  date_created: string;
+  purpose?: string;
+  is_active: number;
+  created_by?: number;
+}
+
+export interface DatabaseTrustTrustee {
+  trust_id: number;
+  person_id: string;
+  trustee_name: string;
+  trustee_type_id: number;
+  trustee_type_code: string;
+  order_of_succession?: number;
+  powers: string | null;
+  start_date?: string;
+  end_date?: string;
+  is_active: number;
+}
+
+export interface DatabaseTrustBeneficiary {
+  trust_id: number;
+  person_id: string;
+  beneficiary_name: string;
+  beneficiary_type_id: number;
+  beneficiary_type_code: string;
+  relationship_type_id: number;
+  relationship_type_code: string;
+  percentage?: number;
+  conditions?: string;
+  is_active: number;
+}
+
+export interface DatabaseFamilyMember {
+  family_member_id: string;
+  name: string;
+  relationship_code: string;
+  date_of_birth?: string;
+  is_minor: number;
+  is_dependent: number;
+  primary_phone?: string;
+  secondary_phone?: string;
+  email?: string;
+  preferred_contact?: string;
+  street1?: string;
+  street2?: string;
+  city?: string;
+  state?: string;
+  zip_code?: string;
+  country?: string;
+  notes?: string;
+  is_active: number;
+}
+
+export interface DatabaseLegalRole {
+  legal_role_id: string;
+  role_type_code: string;
+  person_id?: string;
+  person_name: string;
+  is_primary: number;
+  order_of_precedence?: number;
+  specific_powers: string | null;
+  compensation_type?: string;
+  compensation_amount?: number;
+  compensation_details?: string;
+  start_date?: string;
+  end_date?: string;
+  end_conditions?: string;
+  notes?: string;
+  is_active: number;
+}
+
+export interface DatabaseHealthcareDirective {
+  directive_id: string;
+  directive_type_code: string;
+  date_created: string;
+  last_updated: string;
+  person_id?: string;
+  person_name?: string;
+  is_primary: number;
+  life_sustaining_decision?: string;
+  artificial_nutrition_decision?: string;
+  pain_management_instructions?: string;
+  organ_donation: number;
+  body_disposition?: string;
+  religious_preferences?: string;
+  additional_instructions?: string;
+  is_active: number;
+}
+
+export interface DatabaseBeneficiary {
+  beneficiary_id: string;
+  name: string;
+  relationship_code: string;
+  percentage?: number;
+  is_primary: number;
+  is_contingent: number;
+  contingent_to?: string;
+  per_stirpes: number;
+  primary_phone?: string;
+  email?: string;
+  preferred_contact?: string;
+  notes?: string;
+  is_active: number;
+}
+
+export interface DatabaseProfessional {
+  professional_id: string;
+  name: string;
+  professional_type_code: string;
+  firm?: string;
+  title?: string;
+  specializations: string | null;
+  credentials: string | null;
+  primary_phone?: string;
+  secondary_phone?: string;
+  email?: string;
+  preferred_contact?: string;
+  street1?: string;
+  street2?: string;
+  city?: string;
+  state?: string;
+  zip_code?: string;
+  country?: string;
+  years_experience?: number;
+  is_preferred_provider: number;
+  notes?: string;
+  is_active: number;
+}
+
+export interface DatabaseEmergencyContact {
+  contact_id: string;
+  name: string;
+  relationship_code: string;
+  contact_type: string;
+  primary_phone: string;
+  secondary_phone?: string;
+  email?: string;
+  preferred_contact?: string;
+  priority: number;
+  availability?: string;
+  medical_authority: number;
+  can_make_decisions: number;
+  languages: string | null;
+  notes?: string;
+  is_active: number;
+}
+
+export interface UpdateUserProfileInput {
+  firstName?: string;
+  lastName?: string;
+  email?: string;
+  phone?: string;
+  dateOfBirth?: string;
+  address?: {
+    street1?: string;
+    street2?: string;
+    city?: string;
+    state?: string;
+    zipCode?: string;
+    country?: string;
+  };
+  maritalStatus?: string;
+  numberOfDependents?: number;
+  occupation?: string;
+  employer?: string;
+}
+
+// =================================
 // PERSON MANAGEMENT
 // =================================
 
@@ -1255,4 +1455,202 @@ export function searchAll(options: SearchOptions): SearchResult[] {
 
   // Sort by match score (highest first) and limit results
   return results.sort((a, b) => b.matchScore - a.matchScore).slice(0, limit);
+}
+
+// =================================
+// USER PROFILE MANAGEMENT
+// =================================
+
+export interface UserProfile {
+  id: string;
+  userId: number;
+  firstName: string;
+  lastName: string;
+  email?: string;
+  phone?: string;
+  dateOfBirth?: string;
+  address?: {
+    street1?: string;
+    street2?: string;
+    city?: string;
+    state?: string;
+    zipCode?: string;
+    country?: string;
+  };
+  maritalStatus?: string;
+  numberOfDependents?: number;
+  occupation?: string;
+  employer?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+/**
+ * Get user profile by user ID
+ */
+export function getUserProfile(userId: number): UserProfile | null {
+  const db = getDatabase();
+
+  try {
+    const stmt = db.prepare(`
+      SELECT
+        profile_id,
+        user_id,
+        first_name,
+        last_name,
+        email,
+        phone,
+        date_of_birth,
+        street1,
+        street2,
+        city,
+        state,
+        zip_code,
+        country,
+        marital_status,
+        number_of_dependents,
+        occupation,
+        employer,
+        created_at,
+        updated_at
+      FROM user_profiles
+      WHERE user_id = ? AND is_active = 1
+    `);
+
+    const profile = stmt.get(userId) as any;
+
+    if (!profile) {
+      return null;
+    }
+
+    return {
+      id: profile.profile_id,
+      userId: profile.user_id,
+      firstName: profile.first_name,
+      lastName: profile.last_name,
+      email: profile.email || undefined,
+      phone: profile.phone || undefined,
+      dateOfBirth: profile.date_of_birth || undefined,
+      address:
+        profile.street1 || profile.city
+          ? {
+              street1: profile.street1 || undefined,
+              street2: profile.street2 || undefined,
+              city: profile.city || undefined,
+              state: profile.state || undefined,
+              zipCode: profile.zip_code || undefined,
+              country: profile.country || undefined,
+            }
+          : undefined,
+      maritalStatus: profile.marital_status || undefined,
+      numberOfDependents: profile.number_of_dependents || undefined,
+      occupation: profile.occupation || undefined,
+      employer: profile.employer || undefined,
+      createdAt: profile.created_at,
+      updatedAt: profile.updated_at,
+    };
+  } catch (error) {
+    console.error("Error fetching user profile:", error);
+    return null;
+  }
+}
+
+/**
+ * Update user profile
+ */
+export function updateUserProfile(userId: number, data: UpdateUserProfileInput): void {
+  const db = getDatabase();
+
+  try {
+    // Build update query dynamically based on provided fields
+    const updates: string[] = [];
+    const values: any[] = [];
+
+    if (data.firstName !== undefined) {
+      updates.push("first_name = ?");
+      values.push(data.firstName);
+    }
+    if (data.lastName !== undefined) {
+      updates.push("last_name = ?");
+      values.push(data.lastName);
+    }
+    if (data.email !== undefined) {
+      updates.push("email = ?");
+      values.push(data.email);
+    }
+    if (data.phone !== undefined) {
+      updates.push("phone = ?");
+      values.push(data.phone);
+    }
+    if (data.dateOfBirth !== undefined) {
+      updates.push("date_of_birth = ?");
+      values.push(data.dateOfBirth);
+    }
+    if (data.maritalStatus !== undefined) {
+      updates.push("marital_status = ?");
+      values.push(data.maritalStatus);
+    }
+    if (data.numberOfDependents !== undefined) {
+      updates.push("number_of_dependents = ?");
+      values.push(data.numberOfDependents);
+    }
+    if (data.occupation !== undefined) {
+      updates.push("occupation = ?");
+      values.push(data.occupation);
+    }
+    if (data.employer !== undefined) {
+      updates.push("employer = ?");
+      values.push(data.employer);
+    }
+
+    // Handle address fields
+    if (data.address) {
+      if (data.address.street1 !== undefined) {
+        updates.push("street1 = ?");
+        values.push(data.address.street1);
+      }
+      if (data.address.street2 !== undefined) {
+        updates.push("street2 = ?");
+        values.push(data.address.street2);
+      }
+      if (data.address.city !== undefined) {
+        updates.push("city = ?");
+        values.push(data.address.city);
+      }
+      if (data.address.state !== undefined) {
+        updates.push("state = ?");
+        values.push(data.address.state);
+      }
+      if (data.address.zipCode !== undefined) {
+        updates.push("zip_code = ?");
+        values.push(data.address.zipCode);
+      }
+      if (data.address.country !== undefined) {
+        updates.push("country = ?");
+        values.push(data.address.country);
+      }
+    }
+
+    // Always update the updated_at timestamp
+    updates.push("updated_at = CURRENT_TIMESTAMP");
+
+    if (updates.length === 1) {
+      // Only updated_at changed, nothing to do
+      return;
+    }
+
+    values.push(userId);
+
+    const query = `
+      UPDATE user_profiles
+      SET ${updates.join(", ")}
+      WHERE user_id = ? AND is_active = 1
+    `;
+
+    const stmt = db.prepare(query);
+    stmt.run(...values);
+  } catch (error) {
+    console.error("Error updating user profile:", error);
+    throw error;
+  }
 }

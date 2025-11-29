@@ -22,7 +22,6 @@ export default function Reports() {
     try {
       // TODO: Implement actual export functionality
       await new Promise((resolve) => setTimeout(resolve, 2000)); // Simulate export
-      console.log("Exporting all reports...");
 
       // Create a downloadable bundle (placeholder)
       const reportData = {
@@ -56,7 +55,6 @@ export default function Reports() {
     try {
       // TODO: Implement actual report generation
       await new Promise((resolve) => setTimeout(resolve, 1500)); // Simulate generation
-      console.log(`Generating report: ${reportTitle}`);
 
       // Create downloadable report (placeholder)
       const reportData = {

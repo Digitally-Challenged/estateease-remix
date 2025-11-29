@@ -1,5 +1,6 @@
 import { json, type ActionFunction } from "@remix-run/node";
 import { exportPortfolioData } from "~/services/asset-management.server";
+import { getUserIdFromSession } from "~/lib/auth.server";
 
 export const action: ActionFunction = async ({ request }) => {
   if (request.method !== "POST") {
@@ -7,8 +8,11 @@ export const action: ActionFunction = async ({ request }) => {
   }
 
   try {
-    // TODO: Get actual user ID from session
-    const userId = 1; // Placeholder
+    const userId = await getUserIdFromSession(request);
+
+    if (!userId) {
+      return json({ error: "Unauthorized" }, { status: 401 });
+    }
 
     const portfolioData = await exportPortfolioData(userId);
 

@@ -41,7 +41,6 @@ export async function action({ request }: ActionFunctionArgs) {
   try {
     // TODO: Implement legal role creation in DAL
     // const roleId = await createLegalRole(data);
-    console.log("Creating legal role:", data);
 
     return redirect("/family");
   } catch (error) {

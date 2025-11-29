@@ -32,7 +32,6 @@ function initDatabase() {
     db.pragma("synchronous = NORMAL");
     db.pragma("cache_size = 1000");
 
-    console.log("Database connected successfully");
     return db;
   } catch (error) {
     console.error("Failed to connect to database:", error);
@@ -52,7 +51,6 @@ export function getDatabase(): Database.Database {
 export function closeDatabase() {
   if (db) {
     db.close();
-    console.log("Database connection closed");
   }
 }
 
@@ -78,8 +76,6 @@ export function initializeTables() {
         }
       }
     })();
-
-    console.log("Database tables initialized successfully");
   } catch (error) {
     console.error("Failed to initialize tables:", error);
     throw error;
@@ -108,8 +104,6 @@ export function seedDatabase() {
         }
       }
     })();
-
-    console.log("Database seeded successfully");
   } catch (error) {
     console.error("Failed to seed database:", error);
     throw error;
@@ -127,11 +121,10 @@ export function checkAndInitializeDatabase() {
       .get();
 
     if (!result) {
-      console.log("Database tables not found, initializing...");
       initializeTables();
       seedDatabase();
     } else {
-      console.log("Database already initialized");
+      // Database already initialized
     }
   } catch (error) {
     console.error("Error checking database state:", error);

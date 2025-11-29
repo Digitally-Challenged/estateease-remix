@@ -36,7 +36,6 @@ export async function action({ request }: ActionFunctionArgs) {
   try {
     // TODO: Implement healthcare directive creation in DAL
     // const directiveId = await createHealthcareDirective(data);
-    console.log("Creating healthcare directive:", data);
 
     return redirect("/family");
   } catch (error) {

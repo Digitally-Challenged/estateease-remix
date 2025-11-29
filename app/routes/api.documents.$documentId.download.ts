@@ -4,6 +4,7 @@ import { createReadStream } from "fs";
 import { stat } from "fs/promises";
 import path from "path";
 import { getDocument, logDocumentAccess } from "~/lib/dal-crud";
+import { getUserIdFromSession } from "~/lib/auth.server";
 
 const UPLOAD_DIR = path.join(process.cwd(), "data", "documents", "uploads");
 
@@ -15,8 +16,11 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
       return json({ error: "Document ID is required" }, { status: 400 });
     }
 
-    // TODO: Get actual user ID from session
-    const userId = 1;
+    const userId = await getUserIdFromSession(request);
+
+    if (!userId) {
+      return json({ error: "Unauthorized" }, { status: 401 });
+    }
 
     // Get document metadata using DAL
     const document = getDocument(documentId);

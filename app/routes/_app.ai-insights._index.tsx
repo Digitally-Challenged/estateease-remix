@@ -85,13 +85,11 @@ export default function AIInsights() {
 
   const handleInsightClick = useCallback((insight: EstateInsight) => {
     // Navigate to detailed insight view or open modal
-    console.log("Insight clicked:", insight);
     // In a real implementation, this might open a detailed view or modal
   }, []);
 
   const handleRecommendationAction = useCallback((recommendation: AIRecommendation) => {
     // Handle recommendation action (e.g., schedule consultation, create task)
-    console.log("Recommendation action:", recommendation);
     // In a real implementation, this might:
     // - Schedule a consultation with a professional
     // - Create a task in the user's todo list

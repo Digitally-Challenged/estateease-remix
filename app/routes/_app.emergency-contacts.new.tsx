@@ -36,7 +36,6 @@ export async function action({ request }: ActionFunctionArgs) {
   try {
     // TODO: Implement emergency contact creation in DAL
     // const contactId = await createEmergencyContact(data);
-    console.log("Creating emergency contact:", data);
 
     return redirect("/family");
   } catch (error) {

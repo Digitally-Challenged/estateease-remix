@@ -45,7 +45,6 @@ export async function action({ request }: ActionFunctionArgs) {
   try {
     // TODO: Implement professional creation in DAL
     // const professionalId = await createProfessional(data);
-    console.log("Creating professional:", data);
 
     return redirect("/family");
   } catch (error) {

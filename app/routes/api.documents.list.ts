@@ -1,6 +1,7 @@
 import type { LoaderFunctionArgs } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { getDocuments } from "~/lib/dal-crud";
+import { getUserIdFromSession } from "~/lib/auth.server";
 
 export async function loader({ request }: LoaderFunctionArgs) {
   try {
@@ -11,8 +12,11 @@ export async function loader({ request }: LoaderFunctionArgs) {
     const page = parseInt(url.searchParams.get("page") || "1", 10);
     const limit = parseInt(url.searchParams.get("limit") || "50", 10);
 
-    // TODO: Get actual user ID from session
-    const userId = 1;
+    const userId = await getUserIdFromSession(request);
+
+    if (!userId) {
+      return json({ error: "Unauthorized" }, { status: 401 });
+    }
 
     // Calculate offset for pagination
     const offset = (page - 1) * limit;

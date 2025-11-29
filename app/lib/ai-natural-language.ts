@@ -58,7 +58,7 @@ export class NaturalLanguageProcessor {
 
   // Document Analysis
   public async analyzeDocument(document: Document): Promise<DocumentAnalysisResult> {
-    const cacheKey = `${document.id}-${document.updatedAt || document.uploadedAt}`;
+    const cacheKey = `${document.id}-${document.updated_at || document.uploaded_at}`;
 
     if (this.documentCache.has(cacheKey)) {
       return this.documentCache.get(cacheKey)!;
@@ -90,8 +90,8 @@ export class NaturalLanguageProcessor {
     const category = document.category?.toLowerCase() || "general";
 
     const summaries: Record<string, string> = {
-      will: `Last Will and Testament for ${document.relatedEntityId || "the estate owner"}. This document establishes the distribution of assets upon death and names executors to manage the estate.`,
-      trust: `Trust document establishing a ${document.subcategory || "trust"} structure. This legal entity can hold assets and provide tax advantages and asset protection benefits.`,
+      will: `Last Will and Testament for ${document.related_entity_id || "the estate owner"}. This document establishes the distribution of assets upon death and names executors to manage the estate.`,
+      trust: `Trust document establishing a ${document.category || "trust"} structure. This legal entity can hold assets and provide tax advantages and asset protection benefits.`,
       power_of_attorney: `Power of Attorney document granting legal authority to make decisions on behalf of the principal. This includes financial and/or healthcare decision-making powers.`,
       insurance: `Insurance policy providing coverage for estate planning purposes. This may include life insurance for estate liquidity or property insurance for asset protection.`,
       tax: `Tax-related document that may impact estate planning strategies. Important for understanding current tax positions and planning future tax optimization.`,
@@ -109,7 +109,6 @@ export class NaturalLanguageProcessor {
     const terms: string[] = [];
     const name = document.name?.toLowerCase() || "";
     const category = document.category?.toLowerCase() || "";
-    const subcategory = document.subcategory?.toLowerCase() || "";
 
     // Category-based key terms
     if (category.includes("will")) {
@@ -150,8 +149,8 @@ export class NaturalLanguageProcessor {
     const people: string[] = [];
 
     // Extract from related entity information
-    if (document.relatedEntityType === "family_member" && document.relatedEntityId) {
-      people.push(document.relatedEntityId);
+    if (document.related_entity_type === "family_member" && document.related_entity_id) {
+      people.push(document.related_entity_id);
     }
 
     // Category-based entity extraction
@@ -172,12 +171,12 @@ export class NaturalLanguageProcessor {
   private extractDateEntities(document: Document): string[] {
     const dates: string[] = [];
 
-    if (document.uploadedAt) {
-      dates.push(`Uploaded: ${new Date(document.uploadedAt).toLocaleDateString()}`);
+    if (document.uploaded_at) {
+      dates.push(`Uploaded: ${new Date(document.uploaded_at).toLocaleDateString()}`);
     }
 
-    if (document.updatedAt && document.updatedAt !== document.uploadedAt) {
-      dates.push(`Updated: ${new Date(document.updatedAt).toLocaleDateString()}`);
+    if (document.updated_at && document.updated_at !== document.uploaded_at) {
+      dates.push(`Updated: ${new Date(document.updated_at).toLocaleDateString()}`);
     }
 
     // Add common estate planning dates
@@ -226,7 +225,7 @@ export class NaturalLanguageProcessor {
     const recommendations: string[] = [];
 
     const now = new Date();
-    const uploadDate = new Date(document.uploadedAt);
+    const uploadDate = new Date(document.uploaded_at);
     const daysSinceUpload = Math.floor(
       (now.getTime() - uploadDate.getTime()) / (1000 * 60 * 60 * 24),
     );
@@ -271,7 +270,7 @@ export class NaturalLanguageProcessor {
     const risks: string[] = [];
     const category = document.category?.toLowerCase() || "";
     const now = new Date();
-    const uploadDate = new Date(document.uploadedAt);
+    const uploadDate = new Date(document.uploaded_at);
     const daysSinceUpload = Math.floor(
       (now.getTime() - uploadDate.getTime()) / (1000 * 60 * 60 * 24),
     );

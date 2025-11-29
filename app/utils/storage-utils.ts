@@ -176,52 +176,6 @@ export function getAbsolutePath(
 }
 
 /**
- * Clean up old files (for maintenance)
- */
-export async function cleanupOldFiles(
-  userId: string,
-  olderThanDays: number = 30,
-  config: StorageConfig = DEFAULT_STORAGE_CONFIG,
-): Promise<{
-  deletedFiles: string[];
-  freedSpace: number;
-}> {
-  const userDir = path.join(config.baseDir, userId);
-  const cutoffDate = new Date(Date.now() - olderThanDays * 24 * 60 * 60 * 1000);
-  const deletedFiles: string[] = [];
-  let freedSpace = 0;
-
-  try {
-    for (const category of config.allowedCategories) {
-      const categoryDir = path.join(userDir, category);
-
-      try {
-        const files = await readdir(categoryDir);
-
-        for (const file of files) {
-          const filePath = path.join(categoryDir, file);
-          const fileStat = await stat(filePath);
-
-          if (fileStat.isFile() && fileStat.mtime < cutoffDate) {
-            // Note: This is a destructive operation
-            // In production, you might want to move files to a trash folder first
-            // await unlink(filePath);
-            deletedFiles.push(filePath);
-            freedSpace += fileStat.size;
-          }
-        }
-      } catch {
-        // Category directory doesn't exist, skip
-      }
-    }
-  } catch {
-    // User directory doesn't exist, nothing to clean
-  }
-
-  return { deletedFiles, freedSpace };
-}
-
-/**
  * Format bytes to human readable string
  */
 export function formatBytes(bytes: number, decimals: number = 2): string {
@@ -241,39 +195,6 @@ export function formatBytes(bytes: number, decimals: number = 2): string {
  */
 export function getFileExtension(filename: string): string {
   return path.extname(filename).toLowerCase();
-}
-
-/**
- * Check if file extension is allowed
- */
-export function isAllowedFileType(filename: string, allowedExtensions: string[]): boolean {
-  const extension = getFileExtension(filename);
-  return allowedExtensions.includes(extension);
-}
-
-/**
- * Sanitize filename for safe storage
- */
-export function sanitizeFilename(filename: string): string {
-  // Remove unsafe characters and limit length
-  const name = path.parse(filename).name;
-  const ext = path.parse(filename).ext;
-
-  const safeName = name
-    .replace(/[^a-zA-Z0-9-_\s]/g, "")
-    .replace(/\s+/g, "-")
-    .substring(0, 100);
-
-  return safeName + ext;
-}
-
-/**
- * Create backup of file before operations
- */
-export async function createBackup(filePath: string): Promise<string> {
-  const backupPath = `${filePath}.backup-${Date.now()}`;
-  // Implementation would copy file to backup location
-  return backupPath;
 }
 
 /**

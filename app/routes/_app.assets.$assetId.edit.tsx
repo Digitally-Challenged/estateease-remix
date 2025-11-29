@@ -89,9 +89,6 @@ export async function action({ request, params }: ActionFunctionArgs) {
       taxId: formData.get("taxId"),
     };
 
-    // Log raw data for debugging
-    console.log("Raw form data:", rawData);
-
     // Validate form data with comprehensive schema
     const validatedData = assetFormSchema.parse(rawData);
 

@@ -74,7 +74,6 @@ function AssetsContent() {
   const handleDelete = async (assetId: string) => {
     if (confirm("Are you sure you want to delete this asset?")) {
       // TODO: Implement delete functionality with proper form submission
-      console.log("Delete asset:", assetId);
       window.location.reload();
     }
   };
