@@ -1,5 +1,9 @@
 import { Link } from "@remix-run/react";
-import { FileText, Building, Users, Briefcase, ArrowRight } from "lucide-react";
+import FileText from "lucide-react/dist/esm/icons/file-text";
+import Building from "lucide-react/dist/esm/icons/building";
+import Users from "lucide-react/dist/esm/icons/users";
+import Briefcase from "lucide-react/dist/esm/icons/briefcase";
+import ArrowRight from "lucide-react/dist/esm/icons/arrow-right";
 import type { SearchResult } from "~/lib/dal";
 import { formatCurrency } from "../../../utils/format";
 
@@ -11,40 +15,40 @@ interface SearchResultProps {
 export function SearchResultItem({ result, onClose }: SearchResultProps) {
   const getIcon = () => {
     switch (result.type) {
-      case 'asset':
+      case "asset":
         return <FileText className="h-5 w-5 text-secondary-400" />;
-      case 'trust':
+      case "trust":
         return <Building className="h-5 w-5 text-secondary-400" />;
-      case 'family':
+      case "family":
         return <Users className="h-5 w-5 text-secondary-400" />;
-      case 'professional':
+      case "professional":
         return <Briefcase className="h-5 w-5 text-secondary-400" />;
     }
   };
 
   const getLink = () => {
     switch (result.type) {
-      case 'asset':
+      case "asset":
         return `/assets/${result.id}/edit`;
-      case 'trust':
+      case "trust":
         return `/trusts/${result.id}`;
-      case 'family':
+      case "family":
         return `/family/${result.id}`;
-      case 'professional':
+      case "professional":
         return `/family#professionals`;
     }
   };
 
   const getTypeLabel = () => {
     switch (result.type) {
-      case 'asset':
-        return 'Asset';
-      case 'trust':
-        return 'Trust';
-      case 'family':
-        return 'Family Member';
-      case 'professional':
-        return 'Professional';
+      case "asset":
+        return "Asset";
+      case "trust":
+        return "Trust";
+      case "family":
+        return "Family Member";
+      case "professional":
+        return "Professional";
     }
   };
 
@@ -52,22 +56,16 @@ export function SearchResultItem({ result, onClose }: SearchResultProps) {
     <Link
       to={getLink()}
       onClick={onClose}
-      className="block px-4 py-3 hover:bg-secondary-100 transition-colors"
+      className="block px-4 py-3 transition-colors hover:bg-secondary-100"
     >
       <div className="flex items-start space-x-3">
-        <div className="flex-shrink-0 mt-0.5">
-          {getIcon()}
-        </div>
-        <div className="flex-1 min-w-0">
-          <p className="text-sm font-medium text-secondary-900 truncate">
-            {result.title}
-          </p>
+        <div className="mt-0.5 flex-shrink-0">{getIcon()}</div>
+        <div className="min-w-0 flex-1">
+          <p className="truncate text-sm font-medium text-secondary-900">{result.title}</p>
           {result.subtitle && (
-            <p className="text-sm text-secondary-500 truncate">
-              {result.subtitle}
-            </p>
+            <p className="truncate text-sm text-secondary-500">{result.subtitle}</p>
           )}
-          <div className="flex items-center mt-1 space-x-2 text-xs text-secondary-400">
+          <div className="mt-1 flex items-center space-x-2 text-xs text-secondary-400">
             <span className="capitalize">{getTypeLabel()}</span>
             <span>•</span>
             <span>Matched in {result.matchedField}</span>
@@ -88,7 +86,7 @@ export function SearchResultItem({ result, onClose }: SearchResultProps) {
 }
 
 interface SearchResultsGroupProps {
-  type: 'asset' | 'trust' | 'family' | 'professional';
+  type: "asset" | "trust" | "family" | "professional";
   results: SearchResult[];
   onClose?: () => void;
 }
@@ -96,14 +94,14 @@ interface SearchResultsGroupProps {
 export function SearchResultsGroup({ type, results, onClose }: SearchResultsGroupProps) {
   const getGroupTitle = () => {
     switch (type) {
-      case 'asset':
-        return 'Assets';
-      case 'trust':
-        return 'Trusts';
-      case 'family':
-        return 'Family Members';
-      case 'professional':
-        return 'Professionals';
+      case "asset":
+        return "Assets";
+      case "trust":
+        return "Trusts";
+      case "family":
+        return "Family Members";
+      case "professional":
+        return "Professionals";
     }
   };
 
@@ -111,7 +109,7 @@ export function SearchResultsGroup({ type, results, onClose }: SearchResultsGrou
 
   return (
     <div>
-      <div className="px-4 py-2 text-xs font-semibold text-secondary-500 uppercase tracking-wider bg-secondary-100">
+      <div className="bg-secondary-100 px-4 py-2 text-xs font-semibold uppercase tracking-wider text-secondary-500">
         {getGroupTitle()} ({results.length})
       </div>
       <div className="divide-y divide-secondary-200">

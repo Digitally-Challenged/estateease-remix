@@ -36,233 +36,240 @@ export interface ProfessionalModalProps {
   isOpen: boolean;
   onClose: () => void;
   professional?: Professional | null;
-  mode: 'create' | 'edit';
+  mode: "create" | "edit";
 }
 
 const professionalTypes = [
-  { value: 'attorney', label: 'Attorney' },
-  { value: 'cpa', label: 'CPA/Tax Professional' },
-  { value: 'financial_advisor', label: 'Financial Advisor' },
-  { value: 'insurance_agent', label: 'Insurance Agent' },
-  { value: 'real_estate_agent', label: 'Real Estate Agent' },
-  { value: 'banker', label: 'Banker' },
-  { value: 'trust_officer', label: 'Trust Officer' },
-  { value: 'investment_manager', label: 'Investment Manager' },
-  { value: 'business_broker', label: 'Business Broker' },
-  { value: 'appraiser', label: 'Appraiser' },
-  { value: 'other', label: 'Other Professional' },
+  { value: "attorney", label: "Attorney" },
+  { value: "cpa", label: "CPA/Tax Professional" },
+  { value: "financial_advisor", label: "Financial Advisor" },
+  { value: "insurance_agent", label: "Insurance Agent" },
+  { value: "real_estate_agent", label: "Real Estate Agent" },
+  { value: "banker", label: "Banker" },
+  { value: "trust_officer", label: "Trust Officer" },
+  { value: "investment_manager", label: "Investment Manager" },
+  { value: "business_broker", label: "Business Broker" },
+  { value: "appraiser", label: "Appraiser" },
+  { value: "other", label: "Other Professional" },
 ];
 
 const attorneySpecializations = [
-  'Estate Planning',
-  'Tax Law',
-  'Business Law',
-  'Real Estate Law',
-  'Family Law',
-  'Probate',
-  'Elder Law',
-  'Asset Protection',
-  'Trusts & Estates',
-  'Corporate Law',
+  "Estate Planning",
+  "Tax Law",
+  "Business Law",
+  "Real Estate Law",
+  "Family Law",
+  "Probate",
+  "Elder Law",
+  "Asset Protection",
+  "Trusts & Estates",
+  "Corporate Law",
 ];
 
 const cpaSpecializations = [
-  'Tax Planning',
-  'Estate Tax',
-  'Business Taxation',
-  'Tax Preparation',
-  'Audit',
-  'Financial Reporting',
-  'International Tax',
-  'Non-Profit Tax',
-  'Tax Strategy',
-  'IRS Representation',
+  "Tax Planning",
+  "Estate Tax",
+  "Business Taxation",
+  "Tax Preparation",
+  "Audit",
+  "Financial Reporting",
+  "International Tax",
+  "Non-Profit Tax",
+  "Tax Strategy",
+  "IRS Representation",
 ];
 
 const financialAdvisorSpecializations = [
-  'Wealth Management',
-  'Retirement Planning',
-  'Investment Management',
-  'Financial Planning',
-  'Risk Management',
-  'Portfolio Management',
-  'Alternative Investments',
-  'Trust Services',
-  'Charitable Planning',
-  'Insurance Planning',
+  "Wealth Management",
+  "Retirement Planning",
+  "Investment Management",
+  "Financial Planning",
+  "Risk Management",
+  "Portfolio Management",
+  "Alternative Investments",
+  "Trust Services",
+  "Charitable Planning",
+  "Insurance Planning",
 ];
 
 const contactMethods = [
-  { value: 'phone', label: 'Phone' },
-  { value: 'email', label: 'Email' },
-  { value: 'text', label: 'Text Message' },
-  { value: 'mail', label: 'Mail' },
+  { value: "phone", label: "Phone" },
+  { value: "email", label: "Email" },
+  { value: "text", label: "Text Message" },
+  { value: "mail", label: "Mail" },
 ];
 
 const stateOptions = [
-  { value: 'AL', label: 'Alabama' },
-  { value: 'AK', label: 'Alaska' },
-  { value: 'AZ', label: 'Arizona' },
-  { value: 'AR', label: 'Arkansas' },
-  { value: 'CA', label: 'California' },
-  { value: 'CO', label: 'Colorado' },
-  { value: 'CT', label: 'Connecticut' },
-  { value: 'DE', label: 'Delaware' },
-  { value: 'FL', label: 'Florida' },
-  { value: 'GA', label: 'Georgia' },
-  { value: 'HI', label: 'Hawaii' },
-  { value: 'ID', label: 'Idaho' },
-  { value: 'IL', label: 'Illinois' },
-  { value: 'IN', label: 'Indiana' },
-  { value: 'IA', label: 'Iowa' },
-  { value: 'KS', label: 'Kansas' },
-  { value: 'KY', label: 'Kentucky' },
-  { value: 'LA', label: 'Louisiana' },
-  { value: 'ME', label: 'Maine' },
-  { value: 'MD', label: 'Maryland' },
-  { value: 'MA', label: 'Massachusetts' },
-  { value: 'MI', label: 'Michigan' },
-  { value: 'MN', label: 'Minnesota' },
-  { value: 'MS', label: 'Mississippi' },
-  { value: 'MO', label: 'Missouri' },
-  { value: 'MT', label: 'Montana' },
-  { value: 'NE', label: 'Nebraska' },
-  { value: 'NV', label: 'Nevada' },
-  { value: 'NH', label: 'New Hampshire' },
-  { value: 'NJ', label: 'New Jersey' },
-  { value: 'NM', label: 'New Mexico' },
-  { value: 'NY', label: 'New York' },
-  { value: 'NC', label: 'North Carolina' },
-  { value: 'ND', label: 'North Dakota' },
-  { value: 'OH', label: 'Ohio' },
-  { value: 'OK', label: 'Oklahoma' },
-  { value: 'OR', label: 'Oregon' },
-  { value: 'PA', label: 'Pennsylvania' },
-  { value: 'RI', label: 'Rhode Island' },
-  { value: 'SC', label: 'South Carolina' },
-  { value: 'SD', label: 'South Dakota' },
-  { value: 'TN', label: 'Tennessee' },
-  { value: 'TX', label: 'Texas' },
-  { value: 'UT', label: 'Utah' },
-  { value: 'VT', label: 'Vermont' },
-  { value: 'VA', label: 'Virginia' },
-  { value: 'WA', label: 'Washington' },
-  { value: 'WV', label: 'West Virginia' },
-  { value: 'WI', label: 'Wisconsin' },
-  { value: 'WY', label: 'Wyoming' },
+  { value: "AL", label: "Alabama" },
+  { value: "AK", label: "Alaska" },
+  { value: "AZ", label: "Arizona" },
+  { value: "AR", label: "Arkansas" },
+  { value: "CA", label: "California" },
+  { value: "CO", label: "Colorado" },
+  { value: "CT", label: "Connecticut" },
+  { value: "DE", label: "Delaware" },
+  { value: "FL", label: "Florida" },
+  { value: "GA", label: "Georgia" },
+  { value: "HI", label: "Hawaii" },
+  { value: "ID", label: "Idaho" },
+  { value: "IL", label: "Illinois" },
+  { value: "IN", label: "Indiana" },
+  { value: "IA", label: "Iowa" },
+  { value: "KS", label: "Kansas" },
+  { value: "KY", label: "Kentucky" },
+  { value: "LA", label: "Louisiana" },
+  { value: "ME", label: "Maine" },
+  { value: "MD", label: "Maryland" },
+  { value: "MA", label: "Massachusetts" },
+  { value: "MI", label: "Michigan" },
+  { value: "MN", label: "Minnesota" },
+  { value: "MS", label: "Mississippi" },
+  { value: "MO", label: "Missouri" },
+  { value: "MT", label: "Montana" },
+  { value: "NE", label: "Nebraska" },
+  { value: "NV", label: "Nevada" },
+  { value: "NH", label: "New Hampshire" },
+  { value: "NJ", label: "New Jersey" },
+  { value: "NM", label: "New Mexico" },
+  { value: "NY", label: "New York" },
+  { value: "NC", label: "North Carolina" },
+  { value: "ND", label: "North Dakota" },
+  { value: "OH", label: "Ohio" },
+  { value: "OK", label: "Oklahoma" },
+  { value: "OR", label: "Oregon" },
+  { value: "PA", label: "Pennsylvania" },
+  { value: "RI", label: "Rhode Island" },
+  { value: "SC", label: "South Carolina" },
+  { value: "SD", label: "South Dakota" },
+  { value: "TN", label: "Tennessee" },
+  { value: "TX", label: "Texas" },
+  { value: "UT", label: "Utah" },
+  { value: "VT", label: "Vermont" },
+  { value: "VA", label: "Virginia" },
+  { value: "WA", label: "Washington" },
+  { value: "WV", label: "West Virginia" },
+  { value: "WI", label: "Wisconsin" },
+  { value: "WY", label: "Wyoming" },
 ];
+
+interface ActionData {
+  errors?: Record<string, string>;
+  success?: boolean;
+}
 
 export function ProfessionalModal({ isOpen, onClose, professional, mode }: ProfessionalModalProps) {
   const navigation = useNavigation();
-  const actionData = useActionData();
+  const actionData = useActionData<ActionData>();
   const isSubmitting = navigation.state === "submitting";
 
   const [formData, setFormData] = useState<Professional>({
-    name: '',
-    professionalType: '',
-    firm: '',
-    title: '',
+    name: "",
+    professionalType: "",
+    firm: "",
+    title: "",
     specializations: [],
-    primaryPhone: '',
-    secondaryPhone: '',
-    email: '',
-    preferredContact: 'phone',
-    street1: '',
-    street2: '',
-    city: '',
-    state: '',
-    zipCode: '',
-    country: 'USA',
+    primaryPhone: "",
+    secondaryPhone: "",
+    email: "",
+    preferredContact: "phone",
+    street1: "",
+    street2: "",
+    city: "",
+    state: "",
+    zipCode: "",
+    country: "USA",
     credentials: [],
     yearsExperience: 0,
     isPreferredProvider: false,
-    notes: '',
+    notes: "",
   });
 
-  const [newSpecialization, setNewSpecialization] = useState('');
-  const [newCredential, setNewCredential] = useState('');
+  const [newSpecialization, setNewSpecialization] = useState("");
+  const [newCredential, setNewCredential] = useState("");
 
   useEffect(() => {
     if (professional) {
       setFormData(professional);
     } else {
       setFormData({
-        name: '',
-        professionalType: '',
-        firm: '',
-        title: '',
+        name: "",
+        professionalType: "",
+        firm: "",
+        title: "",
         specializations: [],
-        primaryPhone: '',
-        secondaryPhone: '',
-        email: '',
-        preferredContact: 'phone',
-        street1: '',
-        street2: '',
-        city: '',
-        state: '',
-        zipCode: '',
-        country: 'USA',
+        primaryPhone: "",
+        secondaryPhone: "",
+        email: "",
+        preferredContact: "phone",
+        street1: "",
+        street2: "",
+        city: "",
+        state: "",
+        zipCode: "",
+        country: "USA",
         credentials: [],
         yearsExperience: 0,
         isPreferredProvider: false,
-        notes: '',
+        notes: "",
       });
     }
   }, [professional]);
 
   const getSpecializationOptions = () => {
     switch (formData.professionalType) {
-      case 'attorney':
+      case "attorney":
         return attorneySpecializations;
-      case 'cpa':
+      case "cpa":
         return cpaSpecializations;
-      case 'financial_advisor':
+      case "financial_advisor":
         return financialAdvisorSpecializations;
       default:
         return [];
     }
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>,
+  ) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleCheckboxChange = (name: string) => (checked: boolean) => {
-    setFormData(prev => ({ ...prev, [name]: checked }));
+  const handleCheckboxChange = (name: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData((prev) => ({ ...prev, [name]: e.target.checked }));
   };
 
   const handleAddSpecialization = () => {
     if (newSpecialization && !formData.specializations.includes(newSpecialization)) {
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
-        specializations: [...prev.specializations, newSpecialization]
+        specializations: [...prev.specializations, newSpecialization],
       }));
-      setNewSpecialization('');
+      setNewSpecialization("");
     }
   };
 
   const handleRemoveSpecialization = (spec: string) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      specializations: prev.specializations.filter(s => s !== spec)
+      specializations: prev.specializations.filter((s) => s !== spec),
     }));
   };
 
   const handleAddCredential = () => {
     if (newCredential && !formData.credentials?.includes(newCredential)) {
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
-        credentials: [...(prev.credentials || []), newCredential]
+        credentials: [...(prev.credentials || []), newCredential],
       }));
-      setNewCredential('');
+      setNewCredential("");
     }
   };
 
   const handleRemoveCredential = (cred: string) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      credentials: prev.credentials?.filter(c => c !== cred) || []
+      credentials: prev.credentials?.filter((c) => c !== cred) || [],
     }));
   };
 
@@ -271,20 +278,32 @@ export function ProfessionalModal({ isOpen, onClose, professional, mode }: Profe
       open={isOpen}
       onOpenChange={onClose}
       size="xl"
-      title={mode === 'create' ? 'Add Professional Contact' : 'Edit Professional Contact'}
-      description={mode === 'create' ? 'Add a new professional to your team' : 'Update professional contact information'}
+      title={mode === "create" ? "Add Professional Contact" : "Edit Professional Contact"}
+      description={
+        mode === "create"
+          ? "Add a new professional to your team"
+          : "Update professional contact information"
+      }
     >
       <Form method="post" className="space-y-6">
-        <input type="hidden" name="action" value={mode === 'create' ? 'create_professional' : 'update_professional'} />
+        <input
+          type="hidden"
+          name="action"
+          value={mode === "create" ? "create_professional" : "update_professional"}
+        />
         {professional?.id && <input type="hidden" name="id" value={professional.id} />}
-        <input type="hidden" name="specializations" value={JSON.stringify(formData.specializations)} />
+        <input
+          type="hidden"
+          name="specializations"
+          value={JSON.stringify(formData.specializations)}
+        />
         <input type="hidden" name="credentials" value={JSON.stringify(formData.credentials)} />
 
         {/* Basic Information */}
         <div className="space-y-4">
           <h3 className="text-lg font-semibold">Basic Information</h3>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <FormField label="Full Name" required error={actionData?.errors?.name}>
               <Input
                 name="name"
@@ -295,20 +314,18 @@ export function ProfessionalModal({ isOpen, onClose, professional, mode }: Profe
               />
             </FormField>
 
-            <FormField label="Professional Type" required error={actionData?.errors?.professionalType}>
+            <FormField
+              label="Professional Type"
+              required
+              error={actionData?.errors?.professionalType}
+            >
               <Select
                 name="professionalType"
                 value={formData.professionalType}
                 onChange={handleInputChange}
                 required
-              >
-                <option value="">Select type</option>
-                {professionalTypes.map(option => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </Select>
+                options={professionalTypes}
+              />
             </FormField>
 
             <FormField label="Firm/Company" error={actionData?.errors?.firm}>
@@ -345,10 +362,9 @@ export function ProfessionalModal({ isOpen, onClose, professional, mode }: Profe
                 id="isPreferredProvider"
                 name="isPreferredProvider"
                 checked={formData.isPreferredProvider}
-                onCheckedChange={handleCheckboxChange('isPreferredProvider')}
-              >
-                Preferred Provider
-              </Checkbox>
+                onChange={handleCheckboxChange("isPreferredProvider")}
+                label="Preferred Provider"
+              />
             </div>
           </div>
         </div>
@@ -356,11 +372,11 @@ export function ProfessionalModal({ isOpen, onClose, professional, mode }: Profe
         {/* Specializations */}
         <div className="space-y-4">
           <h3 className="text-lg font-semibold">Specializations</h3>
-          
+
           <div className="space-y-2">
             {formData.specializations.length > 0 && (
-              <div className="flex flex-wrap gap-2 mb-3">
-                {formData.specializations.map(spec => (
+              <div className="mb-3 flex flex-wrap gap-2">
+                {formData.specializations.map((spec) => (
                   <Badge key={spec} variant="secondary" className="flex items-center gap-1">
                     {spec}
                     <button
@@ -374,21 +390,20 @@ export function ProfessionalModal({ isOpen, onClose, professional, mode }: Profe
                 ))}
               </div>
             )}
-            
+
             <div className="flex gap-2">
               {getSpecializationOptions().length > 0 ? (
                 <Select
                   value={newSpecialization}
                   onChange={(e) => setNewSpecialization(e.target.value)}
                   className="flex-1"
-                >
-                  <option value="">Select specialization</option>
-                  {getSpecializationOptions()
-                    .filter(spec => !formData.specializations.includes(spec))
-                    .map(spec => (
-                      <option key={spec} value={spec}>{spec}</option>
-                    ))}
-                </Select>
+                  options={[
+                    { value: "", label: "Select specialization" },
+                    ...getSpecializationOptions()
+                      .filter((spec) => !formData.specializations.includes(spec))
+                      .map((spec) => ({ value: spec, label: spec })),
+                  ]}
+                />
               ) : (
                 <Input
                   value={newSpecialization}
@@ -407,11 +422,11 @@ export function ProfessionalModal({ isOpen, onClose, professional, mode }: Profe
         {/* Credentials */}
         <div className="space-y-4">
           <h3 className="text-lg font-semibold">Credentials</h3>
-          
+
           <div className="space-y-2">
             {formData.credentials && formData.credentials.length > 0 && (
-              <div className="flex flex-wrap gap-2 mb-3">
-                {formData.credentials.map(cred => (
+              <div className="mb-3 flex flex-wrap gap-2">
+                {formData.credentials.map((cred) => (
                   <Badge key={cred} variant="outline" className="flex items-center gap-1">
                     {cred}
                     <button
@@ -425,7 +440,7 @@ export function ProfessionalModal({ isOpen, onClose, professional, mode }: Profe
                 ))}
               </div>
             )}
-            
+
             <div className="flex gap-2">
               <Input
                 value={newCredential}
@@ -443,8 +458,8 @@ export function ProfessionalModal({ isOpen, onClose, professional, mode }: Profe
         {/* Contact Information */}
         <div className="space-y-4">
           <h3 className="text-lg font-semibold">Contact Information</h3>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <FormField label="Primary Phone" error={actionData?.errors?.primaryPhone}>
               <Input
                 type="tel"
@@ -475,18 +490,16 @@ export function ProfessionalModal({ isOpen, onClose, professional, mode }: Profe
               />
             </FormField>
 
-            <FormField label="Preferred Contact Method" error={actionData?.errors?.preferredContact}>
+            <FormField
+              label="Preferred Contact Method"
+              error={actionData?.errors?.preferredContact}
+            >
               <Select
                 name="preferredContact"
                 value={formData.preferredContact}
                 onChange={handleInputChange}
-              >
-                {contactMethods.map(option => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </Select>
+                options={contactMethods}
+              />
             </FormField>
           </div>
         </div>
@@ -494,7 +507,7 @@ export function ProfessionalModal({ isOpen, onClose, professional, mode }: Profe
         {/* Office Address */}
         <div className="space-y-4">
           <h3 className="text-lg font-semibold">Office Address</h3>
-          
+
           <div className="space-y-4">
             <FormField label="Street Address" error={actionData?.errors?.street1}>
               <Input
@@ -514,8 +527,12 @@ export function ProfessionalModal({ isOpen, onClose, professional, mode }: Profe
               />
             </FormField>
 
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <FormField label="City" error={actionData?.errors?.city} containerClassName="col-span-2">
+            <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+              <FormField
+                label="City"
+                error={actionData?.errors?.city}
+                containerClassName="col-span-2"
+              >
                 <Input
                   name="city"
                   value={formData.city}
@@ -529,14 +546,8 @@ export function ProfessionalModal({ isOpen, onClose, professional, mode }: Profe
                   name="state"
                   value={formData.state}
                   onChange={handleInputChange}
-                >
-                  <option value="">Select</option>
-                  {stateOptions.map(option => (
-                    <option key={option.value} value={option.value}>
-                      {option.value}
-                    </option>
-                  ))}
-                </Select>
+                  options={[{ value: "", label: "Select" }, ...stateOptions]}
+                />
               </FormField>
 
               <FormField label="ZIP Code" error={actionData?.errors?.zipCode}>
@@ -567,7 +578,7 @@ export function ProfessionalModal({ isOpen, onClose, professional, mode }: Profe
             Cancel
           </Button>
           <Button type="submit" loading={isSubmitting}>
-            {mode === 'create' ? 'Add Professional' : 'Save Changes'}
+            {mode === "create" ? "Add Professional" : "Save Changes"}
           </Button>
         </ModalFooter>
       </Form>

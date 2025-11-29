@@ -4,7 +4,10 @@ import { redirect } from "@remix-run/node";
 export const meta: MetaFunction = () => {
   return [
     { title: "EstateEase - Estate Planning Management" },
-    { name: "description", content: "Comprehensive estate planning management for Nick and Kelsey Coleman" },
+    {
+      name: "description",
+      content: "Comprehensive estate planning management for Nick and Kelsey Coleman",
+    },
   ];
 };
 

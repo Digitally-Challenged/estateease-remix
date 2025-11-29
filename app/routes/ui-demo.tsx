@@ -1,12 +1,12 @@
-import { useState } from "react"
-import { 
-  Button, 
-  Input, 
-  Textarea, 
-  Select, 
-  Checkbox, 
+import { useState } from "react";
+import {
+  Button,
+  Input,
+  Textarea,
+  Select,
+  Checkbox,
   CheckboxGroup,
-  Radio, 
+  Radio,
   RadioGroup,
   Switch,
   FormField,
@@ -20,39 +20,38 @@ import {
   CardTitle,
   CardDescription,
   CardContent,
-} from "~/components/ui"
-import { Plus, Download } from "lucide-react"
+} from "~/components/ui";
+import Plus from "lucide-react/dist/esm/icons/plus";
+import Download from "lucide-react/dist/esm/icons/download";
 
 /**
  * UI Components Demo Page
  * Showcases all UI components for the EstateEase application
  */
 export default function UIDemo() {
-  const [loading, setLoading] = useState(false)
-  const [progress, setProgress] = useState(30)
-  const [showPageLoader, setShowPageLoader] = useState(false)
+  const [loading, setLoading] = useState(false);
+  const [progress, setProgress] = useState(30);
+  const [showPageLoader, setShowPageLoader] = useState(false);
 
   const selectOptions = [
-    { value: 'option1', label: 'Option 1' },
-    { value: 'option2', label: 'Option 2' },
-    { value: 'option3', label: 'Option 3', disabled: true },
-    { value: 'option4', label: 'Option 4' },
-  ]
+    { value: "option1", label: "Option 1" },
+    { value: "option2", label: "Option 2" },
+    { value: "option3", label: "Option 3", disabled: true },
+    { value: "option4", label: "Option 4" },
+  ];
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-8">
-      {showPageLoader && (
-        <PageLoader 
-          fullScreen 
-          backdrop 
-          message="Loading demo content..." 
-        />
-      )}
-      
-      <div className="max-w-6xl mx-auto space-y-8">
+    <div className="min-h-screen bg-gray-50 p-8 dark:bg-gray-900">
+      {showPageLoader && <PageLoader fullScreen backdrop message="Loading demo content..." />}
+
+      <div className="mx-auto max-w-6xl space-y-8">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">UI Components Demo</h1>
-          <p className="text-gray-600 dark:text-gray-400 mt-2">EstateEase Core UI Component Library</p>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+            UI Components Demo
+          </h1>
+          <p className="mt-2 text-gray-600 dark:text-gray-400">
+            EstateEase Core UI Component Library
+          </p>
         </div>
 
         {/* Button Component Demo */}
@@ -70,20 +69,20 @@ export default function UIDemo() {
               <Button variant="ghost">Ghost</Button>
               <Button variant="link">Link</Button>
             </div>
-            
+
             <div className="flex flex-wrap gap-4">
               <Button size="sm">Small</Button>
               <Button size="md">Medium</Button>
               <Button size="lg">Large</Button>
             </div>
-            
+
             <div className="flex flex-wrap gap-4">
               <Button loading>Loading</Button>
               <Button disabled>Disabled</Button>
               <Button leftIcon={<Plus className="h-4 w-4" />}>Add Item</Button>
               <Button rightIcon={<Download className="h-4 w-4" />}>Download</Button>
             </div>
-            
+
             <div>
               <Button fullWidth>Full Width Button</Button>
             </div>
@@ -98,18 +97,18 @@ export default function UIDemo() {
           </CardHeader>
           <CardContent className="space-y-6">
             {/* Input Fields */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Input 
-                label="Email Address" 
-                type="email" 
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+              <Input
+                label="Email Address"
+                type="email"
                 placeholder="john@example.com"
                 helperText="We'll never share your email"
                 required
               />
-              
-              <Input 
-                label="Password" 
-                type="password" 
+
+              <Input
+                label="Password"
+                type="password"
                 error
                 errorMessage="Password must be at least 8 characters"
               />
@@ -118,28 +117,18 @@ export default function UIDemo() {
             {/* Textarea */}
             <div>
               <FormField label="Description" helperText="Maximum 500 characters">
-                <Textarea 
-                  placeholder="Enter a detailed description..."
-                  maxLength={500}
-                  rows={3}
-                />
+                <Textarea placeholder="Enter a detailed description..." maxLength={500} rows={3} />
               </FormField>
             </div>
 
             {/* Select */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               <FormField label="Select Option" required>
-                <Select 
-                  placeholder="Choose an option"
-                  options={selectOptions}
-                />
+                <Select placeholder="Choose an option" options={selectOptions} />
               </FormField>
-              
+
               <FormField label="Error Select" error="Please select a valid option">
-                <Select 
-                  options={selectOptions}
-                  error
-                />
+                <Select options={selectOptions} error />
               </FormField>
             </div>
 
@@ -148,7 +137,10 @@ export default function UIDemo() {
               <CheckboxGroup label="Select Features" required>
                 <Checkbox label="Email notifications" defaultChecked />
                 <Checkbox label="SMS alerts" />
-                <Checkbox label="Marketing emails" helperText="Receive updates about new features" />
+                <Checkbox
+                  label="Marketing emails"
+                  helperText="Receive updates about new features"
+                />
               </CheckboxGroup>
             </div>
 
@@ -163,10 +155,7 @@ export default function UIDemo() {
 
             {/* Switches */}
             <div className="space-y-4">
-              <Switch 
-                label="Enable dark mode" 
-                helperText="Applies system-wide theme changes"
-              />
+              <Switch label="Enable dark mode" helperText="Applies system-wide theme changes" />
               <Switch label="Auto-save" size="sm" defaultChecked />
               <Switch label="Advanced settings" size="lg" />
             </div>
@@ -203,7 +192,7 @@ export default function UIDemo() {
                     <Skeleton variant="text" width="50%" />
                   </div>
                 </div>
-                
+
                 <SkeletonContainer count={3} spacing="sm">
                   <Skeleton variant="rectangular" height={80} />
                 </SkeletonContainer>
@@ -217,18 +206,12 @@ export default function UIDemo() {
               <Progress value={75} variant="success" size="lg" />
               <Progress value={90} variant="warning" animate />
               <Progress value={25} variant="danger" />
-              
+
               <div className="flex gap-4">
-                <Button 
-                  size="sm"
-                  onClick={() => setProgress(Math.max(0, progress - 10))}
-                >
+                <Button size="sm" onClick={() => setProgress(Math.max(0, progress - 10))}>
                   Decrease
                 </Button>
-                <Button 
-                  size="sm"
-                  onClick={() => setProgress(Math.min(100, progress + 10))}
-                >
+                <Button size="sm" onClick={() => setProgress(Math.min(100, progress + 10))}>
                   Increase
                 </Button>
               </div>
@@ -237,14 +220,16 @@ export default function UIDemo() {
             {/* Page Loader */}
             <div className="space-y-4">
               <h3 className="font-medium text-gray-900 dark:text-gray-100">Page Loader</h3>
-              <Button onClick={() => {
-                setShowPageLoader(true)
-                setTimeout(() => setShowPageLoader(false), 3000)
-              }}>
+              <Button
+                onClick={() => {
+                  setShowPageLoader(true);
+                  setTimeout(() => setShowPageLoader(false), 3000);
+                }}
+              >
                 Show Page Loader (3s)
               </Button>
-              
-                              <div className="border border-gray-200 dark:border-gray-700 rounded-lg">
+
+              <div className="rounded-lg border border-gray-200 dark:border-gray-700">
                 <PageLoader message="Loading content..." />
               </div>
             </div>
@@ -258,58 +243,44 @@ export default function UIDemo() {
             <CardDescription>Real-world form implementation</CardDescription>
           </CardHeader>
           <CardContent>
-            <form className="space-y-4" onSubmit={(e) => {
-              e.preventDefault()
-              setLoading(true)
-              setTimeout(() => setLoading(false), 2000)
-            }}>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <Input 
-                  label="First Name" 
-                  placeholder="John"
-                  required
-                />
-                <Input 
-                  label="Last Name" 
-                  placeholder="Doe"
-                  required
-                />
+            <form
+              className="space-y-4"
+              onSubmit={(e) => {
+                e.preventDefault();
+                setLoading(true);
+                setTimeout(() => setLoading(false), 2000);
+              }}
+            >
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                <Input label="First Name" placeholder="John" required />
+                <Input label="Last Name" placeholder="Doe" required />
               </div>
-              
-              <Input 
-                label="Email" 
-                type="email" 
-                placeholder="john.doe@example.com"
-                required
-              />
-              
+
+              <Input label="Email" type="email" placeholder="john.doe@example.com" required />
+
               <FormField label="Country" required>
-                <Select 
+                <Select
                   options={[
-                    { value: 'us', label: 'United States' },
-                    { value: 'ca', label: 'Canada' },
-                    { value: 'uk', label: 'United Kingdom' },
+                    { value: "us", label: "United States" },
+                    { value: "ca", label: "Canada" },
+                    { value: "uk", label: "United Kingdom" },
                   ]}
                   placeholder="Select your country"
                 />
               </FormField>
-              
+
               <FormField label="Bio">
-                <Textarea 
-                  placeholder="Tell us about yourself..."
-                  rows={4}
-                  maxLength={200}
-                />
+                <Textarea placeholder="Tell us about yourself..." rows={4} maxLength={200} />
               </FormField>
-              
+
               <CheckboxGroup>
                 <Checkbox label="I agree to the terms and conditions" required />
                 <Checkbox label="Subscribe to newsletter" />
               </CheckboxGroup>
-              
+
               <div className="flex gap-4">
                 <Button type="submit" loading={loading}>
-                  {loading ? 'Submitting...' : 'Submit Form'}
+                  {loading ? "Submitting..." : "Submit Form"}
                 </Button>
                 <Button type="button" variant="outline">
                   Cancel
@@ -320,5 +291,5 @@ export default function UIDemo() {
         </Card>
       </div>
     </div>
-  )
+  );
 }

@@ -1,42 +1,42 @@
-import * as React from "react"
-import { cn } from "~/lib/utils"
+import * as React from "react";
+import { cn } from "~/lib/utils";
 
 export interface FormFieldProps extends React.HTMLAttributes<HTMLDivElement> {
   /**
    * Label for the form field
    */
-  label?: string
+  label?: string;
   /**
    * Whether the field is required
    */
-  required?: boolean
+  required?: boolean;
   /**
    * Error message to display
    */
-  error?: string
+  error?: string;
   /**
    * Helper text to display below the field
    */
-  helperText?: string
+  helperText?: string;
   /**
    * HTML for attribute to link label to input
    */
-  htmlFor?: string
+  htmlFor?: string;
   /**
    * Additional class names for the container
    */
-  containerClassName?: string
+  containerClassName?: string;
 }
 
 /**
  * FormField wrapper component for consistent form layouts
  * Provides label, error message, and helper text functionality
- * 
+ *
  * @example
  * ```tsx
- * <FormField 
- *   label="Email Address" 
- *   required 
+ * <FormField
+ *   label="Email Address"
+ *   required
  *   error={errors.email}
  *   helperText="We'll never share your email"
  * >
@@ -58,27 +58,18 @@ export function FormField({
   return (
     <div className={cn("space-y-1", containerClassName)} {...props}>
       {label && (
-        <label 
-          htmlFor={htmlFor}
-          className="block text-sm font-medium text-secondary-700"
-        >
+        <label htmlFor={htmlFor} className="block text-sm font-medium text-secondary-700">
           {label}
-          {required && <span className="text-error-500 ml-1">*</span>}
+          {required && <span className="ml-1 text-error-500">*</span>}
         </label>
       )}
-      <div className={className}>
-        {children}
-      </div>
+      <div className={className}>{children}</div>
       {error && (
         <p className="text-sm text-error-500" role="alert">
           {error}
         </p>
       )}
-      {helperText && !error && (
-        <p className="text-sm text-secondary-500">
-          {helperText}
-        </p>
-      )}
+      {helperText && !error && <p className="text-sm text-secondary-500">{helperText}</p>}
     </div>
-  )
+  );
 }

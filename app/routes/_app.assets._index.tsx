@@ -1,37 +1,43 @@
 import { json } from "@remix-run/node";
-import { Link, useLoaderData } from "@remix-run/react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "~/components/ui/card";
-import { Building2, DollarSign, Shield, TrendingUp, Plus } from "lucide-react";
+import { Link, useLoaderData, useNavigate } from "@remix-run/react";
+import Plus from "lucide-react/dist/esm/icons/plus";
 import { getAssets } from "~/lib/dal";
 import { ErrorBoundary, EmptyStates, ErrorDisplay } from "~/components/ui";
-import { formatCurrency } from "~/utils/format";
+import { AssetAccordion } from "~/components/ui/asset-accordion";
+import { AssetCategory } from "~/types/enums";
 
 export async function loader() {
   try {
-    const userId = 'user-nick-001'; // Default user for now
-    const assets = await getAssets(userId);
-    
+    const userId = "user-nick-001"; // Default user for now
+    const assets = getAssets(userId);
+
     return json({ assets, error: null });
   } catch (error) {
-    console.error('Failed to load assets:', error);
-    return json({ 
-      assets: [], 
-      error: error instanceof Error ? error.message : 'Failed to load assets' 
-    }, { status: 500 });
+    console.error("Failed to load assets:", error);
+    return json(
+      {
+        assets: [],
+        error: error instanceof Error ? error.message : "Failed to load assets",
+      },
+      { status: 500 },
+    );
   }
 }
 
 function AssetsContent() {
   const { assets, error } = useLoaderData<typeof loader>();
+  const navigate = useNavigate();
 
   // Show error if there was one
   if (error) {
     return (
       <div className="space-y-6">
-        <div className="flex justify-between items-start">
+        <div className="flex items-start justify-between">
           <div>
             <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Assets Overview</h1>
-            <p className="text-gray-600 dark:text-gray-400">Comprehensive view of all estate assets and their current values</p>
+            <p className="text-gray-600 dark:text-gray-400">
+              Comprehensive view of all estate assets and their current values
+            </p>
           </div>
         </div>
         <ErrorDisplay
@@ -48,10 +54,12 @@ function AssetsContent() {
   if (!assets || assets.length === 0) {
     return (
       <div className="space-y-6">
-        <div className="flex justify-between items-start">
+        <div className="flex items-start justify-between">
           <div>
             <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Assets Overview</h1>
-            <p className="text-gray-600 dark:text-gray-400">Comprehensive view of all estate assets and their current values</p>
+            <p className="text-gray-600 dark:text-gray-400">
+              Comprehensive view of all estate assets and their current values
+            </p>
           </div>
         </div>
         <EmptyStates.Assets />
@@ -59,143 +67,66 @@ function AssetsContent() {
     );
   }
 
-  // Calculate totals by category
-  const assetsByCategory = assets.filter(Boolean).reduce((acc, asset) => {
-    if (!asset) return acc; // Additional null check
-    const category = asset.category;
-    if (!acc[category]) {
-      acc[category] = [];
-    }
-    acc[category].push(asset);
-    return acc;
-  }, {} as Record<string, NonNullable<(typeof assets)[number]>[]>);
-
-  const totalsByCategory = Object.entries(assetsByCategory).map(([category, categoryAssets]) => {
-    const total = categoryAssets.filter(Boolean).reduce((sum, asset) => sum + (asset?.value || 0), 0);
-    return { category, total, count: categoryAssets.length, assets: categoryAssets };
-  });
-
-  const categoryIcons = {
-    'REAL_ESTATE': Building2,
-    'FINANCIAL_ACCOUNT': DollarSign,
-    'INSURANCE_POLICY': Shield,
-    'BUSINESS_INTEREST': TrendingUp,
-    'PERSONAL_PROPERTY': DollarSign,
+  const handleEdit = (asset: { id: string }) => {
+    navigate(`/assets/${asset.id}/edit`);
   };
 
-  const totalValue = assets.filter(Boolean).reduce((sum, asset) => sum + (asset?.value || 0), 0);
+  const handleDelete = async (assetId: string) => {
+    if (confirm("Are you sure you want to delete this asset?")) {
+      // TODO: Implement delete functionality with proper form submission
+      console.log("Delete asset:", assetId);
+      window.location.reload();
+    }
+  };
+
+  const handleAdd = (category: AssetCategory) => {
+    navigate(`/assets/new?category=${category}`);
+  };
 
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex justify-between items-start">
+      <div className="flex items-start justify-between">
         <div>
           <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Assets Overview</h1>
-          <p className="text-gray-600 dark:text-gray-400 dark:text-gray-500">Comprehensive view of all estate assets and their current values</p>
-        </div>
-        <Link
-          to="/assets/new"
-          className="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-blue-500 dark:hover:bg-blue-600"
-        >
-          <Plus className="h-4 w-4 mr-2" />
-          Add Asset
-        </Link>
-      </div>
-
-      {/* Summary Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {totalsByCategory.map(({ category, total, count }) => {
-          const Icon = categoryIcons[category as keyof typeof categoryIcons] || DollarSign;
-          
-          return (
-            <Card key={category}>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium text-gray-600 dark:text-gray-400">
-                  {category}
-                </CardTitle>
-                <Icon className="h-4 w-4 text-gray-600 dark:text-gray-400" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">{formatCurrency(total)}</div>
-                <p className="text-xs text-gray-600 dark:text-gray-400">
-                  {count} {count === 1 ? 'asset' : 'assets'}
-                </p>
-              </CardContent>
-            </Card>
-          );
-        })}
-      </div>
-
-      {/* Total Portfolio Value */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Total Portfolio Value</CardTitle>
-          <CardDescription>Combined value of all tracked assets</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="text-4xl font-bold text-gray-900 dark:text-gray-100">{formatCurrency(totalValue)}</div>
-          <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
-            Across {assets.length} total assets
+          <p className="text-gray-600 dark:text-gray-400 dark:text-gray-500">
+            Comprehensive view of all estate assets and their current values
           </p>
-        </CardContent>
-      </Card>
-
-      {/* Assets by Category */}
-      <div className="space-y-6">
-        {totalsByCategory.map(({ category, assets: categoryAssets }) => {
-          return (
-            <Card key={category}>
-              <CardHeader>
-                <CardTitle>{category}</CardTitle>
-                <CardDescription>
-                  {categoryAssets.length} {categoryAssets.length === 1 ? 'asset' : 'assets'} • 
-                  Total value: {formatCurrency(categoryAssets.filter(Boolean).reduce((sum, asset) => sum + (asset?.value || 0), 0))}
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {categoryAssets.filter(Boolean).map((asset) => {
-                    if (!asset) return null;
-                    return (
-                      <div key={asset.id} className="flex items-center justify-between p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
-                        <div className="flex-1">
-                          <h3 className="font-medium text-gray-900 dark:text-gray-100">{asset.name}</h3>
-                          <div className="flex items-center space-x-4 mt-1 text-sm text-gray-600 dark:text-gray-400">
-                            <span>{asset.ownership?.type || 'Unknown'}</span>
-                            {asset.category === 'FINANCIAL_ACCOUNT' && asset.details?.institutionName && (
-                              <>
-                                <span>•</span>
-                                <span>{asset.details.institutionName as string}</span>
-                              </>
-                            )}
-                            {asset.category === 'FINANCIAL_ACCOUNT' && asset.details?.accountNumber && (
-                              <>
-                                <span>•</span>
-                                <span>****{(asset.details.accountNumber as string).slice(-4)}</span>
-                              </>
-                            )}
-                          </div>
-                        </div>
-                        <div className="text-right">
-                          <p className="font-semibold text-gray-900 dark:text-gray-100">{formatCurrency(asset.value || 0)}</p>
-                          <div className="flex space-x-2 mt-2">
-                            <Link
-                              to={`/assets/${asset.id}/edit`}
-                              className="text-sm text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
-                            >
-                              Edit
-                            </Link>
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </CardContent>
-            </Card>
-          );
-        })}
+        </div>
+        <div className="flex gap-2">
+          <Link
+            to="/assets/performance"
+            className="inline-flex items-center rounded-md border border-blue-200 bg-blue-50 px-4 py-2 text-sm font-medium text-blue-600 hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-blue-800 dark:bg-blue-900/20 dark:text-blue-400 dark:hover:bg-blue-900/30"
+          >
+            <svg className="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+              />
+            </svg>
+            Performance Dashboard
+          </Link>
+          <Link
+            to="/assets/new"
+            className="inline-flex items-center rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-blue-500 dark:hover:bg-blue-600"
+          >
+            <Plus className="mr-2 h-4 w-4" />
+            Add Asset
+          </Link>
+        </div>
       </div>
+
+      {/* Asset Accordion */}
+      <AssetAccordion
+        assets={assets.filter(
+          (asset): asset is NonNullable<typeof asset> => asset !== null && asset !== undefined,
+        )}
+        onEdit={handleEdit}
+        onDelete={handleDelete}
+        onAdd={handleAdd}
+      />
     </div>
   );
 }

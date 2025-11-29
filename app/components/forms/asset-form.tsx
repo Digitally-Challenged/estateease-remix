@@ -1,12 +1,12 @@
 import { Form, useNavigation } from "@remix-run/react";
-import { useState, useMemo } from "react";
+import { useState, useMemo, memo, useCallback } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "~/components/ui/card";
 import { FormField } from "~/components/ui/forms/form-field";
 import { Input } from "~/components/ui/forms/input";
 import { Select } from "~/components/ui/forms/select";
 import { Textarea } from "~/components/ui/forms/textarea";
 import { Button } from "~/components/ui/button";
-import type { AnyAsset, Trust } from "~/types";
+import type { AnyAsset, Trust, FinancialAccount, InsurancePolicy } from "~/types";
 import {
   AssetCategory,
   PropertyType,
@@ -15,12 +15,14 @@ import {
   BusinessStructureType,
   PersonalPropertyType,
   OwnershipType,
+  IncorporationType,
+  US_STATES,
 } from "~/types/enums";
 
 interface AssetFormProps {
   asset?: AnyAsset;
   trusts: Trust[];
-  mode: 'create' | 'edit';
+  mode: "create" | "edit";
 }
 
 // Helper function to format enum values to human-readable labels
@@ -28,83 +30,99 @@ function formatEnumLabel(value: string): string {
   // Handle UPPERCASE enum values
   return value
     .toLowerCase()
-    .split('_')
-    .map(word => {
+    .split("_")
+    .map((word) => {
       // Special cases
-      if (word === '401k') return '401(k)';
-      if (word === 'ira') return 'IRA';
-      if (word === 'roth') return 'Roth';
-      if (word === 'llc') return 'LLC';
-      if (word === 'corp') return 'Corp';
+      if (word === "401k") return "401(k)";
+      if (word === "ira") return "IRA";
+      if (word === "roth") return "Roth";
+      if (word === "llc") return "LLC";
+      if (word === "corp") return "Corp";
       // Capitalize first letter
       return word.charAt(0).toUpperCase() + word.slice(1);
     })
-    .join(' ');
+    .join(" ");
 }
 
-export function AssetForm({ asset, trusts, mode }: AssetFormProps) {
+export const AssetForm = memo(function AssetForm({ asset, trusts, mode }: AssetFormProps) {
   const navigation = useNavigation();
   const isSubmitting = navigation.state === "submitting";
-  
-  const [selectedCategory, setSelectedCategory] = useState<AssetCategory | ''>(
-    (asset?.category as AssetCategory) || ''
+
+  const [selectedCategory, setSelectedCategory] = useState<AssetCategory | "">(
+    (asset?.category as AssetCategory) || "",
+  );
+  const [selectedInsuranceType, setSelectedInsuranceType] = useState<InsurancePolicyType | "">(
+    asset?.category === AssetCategory.INSURANCE_POLICY && asset && "policyType" in asset
+      ? (asset as InsurancePolicy).policyType
+      : "",
   );
   const [ownershipType, setOwnershipType] = useState<OwnershipType>(
-    (asset?.ownership.type as OwnershipType) || OwnershipType.INDIVIDUAL
+    (asset?.ownership.type as OwnershipType) || OwnershipType.INDIVIDUAL,
   );
-  
+
+  // Memoized callbacks for performance
+  const handleCategoryChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedCategory(e.target.value as AssetCategory | "");
+  }, []);
+
+  const handleInsuranceTypeChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedInsuranceType(e.target.value as InsurancePolicyType);
+  }, []);
+
+  const handleOwnershipTypeChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
+    setOwnershipType(e.target.value as OwnershipType);
+  }, []);
+
   // Get type options based on selected category
   const typeOptions = useMemo(() => {
     switch (selectedCategory) {
       case AssetCategory.REAL_ESTATE:
-        return Object.values(PropertyType).map(type => ({
+        return Object.values(PropertyType).map((type) => ({
           value: type,
-          label: formatEnumLabel(type)
+          label: formatEnumLabel(type),
         }));
       case AssetCategory.FINANCIAL_ACCOUNT:
-        return Object.values(FinancialAccountType).map(type => ({
+        return Object.values(FinancialAccountType).map((type) => ({
           value: type,
-          label: formatEnumLabel(type)
+          label: formatEnumLabel(type),
         }));
       case AssetCategory.INSURANCE_POLICY:
-        return Object.values(InsurancePolicyType).map(type => ({
+        return Object.values(InsurancePolicyType).map((type) => ({
           value: type,
-          label: formatEnumLabel(type)
+          label: formatEnumLabel(type),
         }));
       case AssetCategory.BUSINESS_INTEREST:
-        return Object.values(BusinessStructureType).map(type => ({
+        return Object.values(BusinessStructureType).map((type) => ({
           value: type,
-          label: formatEnumLabel(type)
+          label: formatEnumLabel(type),
         }));
       case AssetCategory.PERSONAL_PROPERTY:
-        return Object.values(PersonalPropertyType).map(type => ({
+        return Object.values(PersonalPropertyType).map((type) => ({
           value: type,
-          label: formatEnumLabel(type)
+          label: formatEnumLabel(type),
         }));
       default:
         return [];
     }
   }, [selectedCategory]);
-  
+
   return (
     <Form method="post" className="space-y-6">
       <input type="hidden" name="intent" value={mode} />
-      {mode === 'edit' && asset && (
-        <input type="hidden" name="assetId" value={asset.id} />
-      )}
-      
+      {mode === "edit" && asset && <input type="hidden" name="assetId" value={asset.id} />}
+
       <Card>
         <CardHeader>
-          <CardTitle>{mode === 'create' ? 'Add New Asset' : 'Edit Asset'}</CardTitle>
+          <CardTitle>{mode === "create" ? "Add New Asset" : "Edit Asset"}</CardTitle>
           <CardDescription>
-            {mode === 'create' 
-              ? 'Enter the details for the new asset' 
-              : 'Update the asset information'}
+            {mode === "create"
+              ? "Enter the details for the new asset"
+              : "Update the asset information"}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           {/* Basic Information */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <FormField label="Asset Name" required>
               <Input
                 name="name"
@@ -113,23 +131,23 @@ export function AssetForm({ asset, trusts, mode }: AssetFormProps) {
                 placeholder="e.g., 2211 NW Willow, Bentonville"
               />
             </FormField>
-            
+
             <FormField label="Category" required>
               <Select
                 name="category"
                 value={selectedCategory}
-                onChange={(e) => setSelectedCategory(e.target.value as AssetCategory | '')}
+                onChange={handleCategoryChange}
                 required
                 placeholder="Select a category"
                 options={Object.values(AssetCategory).map((category) => ({
                   value: category,
-                  label: formatEnumLabel(category)
+                  label: formatEnumLabel(category),
                 }))}
               />
             </FormField>
           </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <FormField label="Current Value" required>
               <Input
                 type="number"
@@ -141,25 +159,31 @@ export function AssetForm({ asset, trusts, mode }: AssetFormProps) {
                 placeholder="0.00"
               />
             </FormField>
-            
+
             <FormField label="Asset Type" required>
               <Select
                 name="type"
-                defaultValue={asset?.type || ''}
-                value={selectedCategory === AssetCategory.INSURANCE_POLICY ? selectedInsuranceType : undefined}
-                onChange={(e) => {
-                  if (selectedCategory === AssetCategory.INSURANCE_POLICY) {
-                    setSelectedInsuranceType(e.target.value as InsurancePolicyType);
+                defaultValue={(() => {
+                  if (!asset) return "";
+                  if (asset.category === AssetCategory.INSURANCE_POLICY && "policyType" in asset) {
+                    return (asset as InsurancePolicy).policyType;
                   }
-                }}
+                  return asset.type || "";
+                })()}
+                value={
+                  selectedCategory === AssetCategory.INSURANCE_POLICY
+                    ? selectedInsuranceType
+                    : undefined
+                }
+                onChange={handleInsuranceTypeChange}
                 required
                 disabled={!selectedCategory}
-                placeholder={selectedCategory ? 'Select a type' : 'Select a category first'}
+                placeholder={selectedCategory ? "Select a type" : "Select a category first"}
                 options={typeOptions}
               />
             </FormField>
           </div>
-          
+
           <FormField label="Description">
             <Textarea
               name="description"
@@ -168,61 +192,95 @@ export function AssetForm({ asset, trusts, mode }: AssetFormProps) {
               placeholder="Additional details about the asset..."
             />
           </FormField>
-          
+
           {/* Financial Account Specific Fields */}
           {selectedCategory === AssetCategory.FINANCIAL_ACCOUNT && (
             <div className="border-t pt-4">
-              <h3 className="text-lg font-medium text-gray-900 mb-3">Account Information</h3>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <h3 className="mb-3 text-lg font-medium text-gray-900">Account Information</h3>
+
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                 <FormField label="Institution Name" required>
                   <Input
                     name="institutionName"
-                    defaultValue={asset?.details?.institutionName as string || ''}
+                    defaultValue={(() => {
+                      if (!asset) return "";
+                      if (
+                        asset.category === AssetCategory.FINANCIAL_ACCOUNT &&
+                        "institutionName" in asset
+                      ) {
+                        return (
+                          (asset as FinancialAccount).institutionName ||
+                          (asset as FinancialAccount).institution ||
+                          ""
+                        );
+                      }
+                      return (asset.details?.institutionName as string) || "";
+                    })()}
                     required
                     placeholder="e.g., Bank of America, Wells Fargo"
                   />
                 </FormField>
-                
+
                 <FormField label="Account Type" required>
                   <Select
                     name="accountType"
-                    defaultValue={asset?.details?.accountType as string || ''}
+                    defaultValue={(() => {
+                      if (!asset) return "";
+                      if (
+                        asset.category === AssetCategory.FINANCIAL_ACCOUNT &&
+                        "accountType" in asset
+                      ) {
+                        return (asset as FinancialAccount).accountType;
+                      }
+                      return (asset.details?.accountType as string) || "";
+                    })()}
                     required
                     placeholder="Select account type"
                     options={[
-                      { value: 'CHECKING', label: 'Checking' },
-                      { value: 'SAVINGS', label: 'Savings' },
-                      { value: 'MONEY_MARKET', label: 'Money Market' },
-                      { value: 'CD', label: 'Certificate of Deposit' },
-                      { value: 'INVESTMENT', label: 'Investment' },
-                      { value: 'RETIREMENT', label: 'Retirement' },
+                      { value: "CHECKING", label: "Checking" },
+                      { value: "SAVINGS", label: "Savings" },
+                      { value: "MONEY_MARKET", label: "Money Market" },
+                      { value: "CD", label: "Certificate of Deposit" },
+                      { value: "INVESTMENT", label: "Investment" },
+                      { value: "RETIREMENT", label: "Retirement" },
                     ]}
                   />
                 </FormField>
               </div>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-                <FormField 
-                  label="Account Number" 
-                  helperText="Last 4 digits only for security"
-                >
+
+              <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2">
+                <FormField label="Account Number" helperText="Last 4 digits only for security">
                   <Input
                     name="accountNumber"
-                    defaultValue={asset?.details?.accountNumber as string || ''}
+                    defaultValue={(() => {
+                      if (!asset) return "";
+                      if (
+                        asset.category === AssetCategory.FINANCIAL_ACCOUNT &&
+                        "accountNumber" in asset
+                      ) {
+                        return (asset as FinancialAccount).accountNumber || "";
+                      }
+                      return (asset.details?.accountNumber as string) || "";
+                    })()}
                     placeholder="****1234"
                     maxLength={8}
                     pattern="[\*\d]+"
                   />
                 </FormField>
-                
-                <FormField 
-                  label="Routing Number"
-                  helperText="9-digit routing number"
-                >
+
+                <FormField label="Routing Number" helperText="9-digit routing number">
                   <Input
                     name="routingNumber"
-                    defaultValue={asset?.details?.routingNumber as string || ''}
+                    defaultValue={(() => {
+                      if (!asset) return "";
+                      if (
+                        asset.category === AssetCategory.FINANCIAL_ACCOUNT &&
+                        "routingNumber" in asset
+                      ) {
+                        return (asset as FinancialAccount).routingNumber || "";
+                      }
+                      return (asset.details?.routingNumber as string) || "";
+                    })()}
                     placeholder="123456789"
                     pattern="\d{9}"
                     maxLength={9}
@@ -231,70 +289,69 @@ export function AssetForm({ asset, trusts, mode }: AssetFormProps) {
               </div>
             </div>
           )}
-          
+
           {/* Business Entity Specific Fields */}
           {selectedCategory === AssetCategory.BUSINESS_INTEREST && (
             <div className="border-t pt-4">
-              <h3 className="text-lg font-medium text-gray-900 mb-3">Business Entity Information</h3>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <h3 className="mb-3 text-lg font-medium text-gray-900">
+                Business Entity Information
+              </h3>
+
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                 <FormField label="Business Name" required>
                   <Input
                     name="businessName"
-                    defaultValue={asset?.details?.businessName as string || ''}
+                    defaultValue={(asset?.details?.businessName as string) || ""}
                     required
                     placeholder="e.g., Coleman Construction LLC"
                   />
                 </FormField>
-                
+
                 <FormField label="Incorporation Type" required>
                   <Select
                     name="incorporationType"
-                    defaultValue={asset?.details?.incorporationType as string || ''}
+                    defaultValue={(asset?.details?.incorporationType as string) || ""}
                     required
                     placeholder="Select incorporation type"
                     options={Object.values(IncorporationType).map((type) => ({
                       value: type,
-                      label: formatEnumLabel(type)
+                      label: formatEnumLabel(type),
                     }))}
                   />
                 </FormField>
               </div>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+
+              <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2">
                 <FormField label="State of Incorporation" required>
                   <Select
                     name="stateOfIncorporation"
-                    defaultValue={asset?.details?.stateOfIncorporation as string || ''}
+                    defaultValue={(asset?.details?.stateOfIncorporation as string) || ""}
                     required
                     placeholder="Select state"
-                    options={US_STATES.map((state) => ({
-                      value: state.code,
-                      label: state.name
-                    }))}
+                    options={[...US_STATES]}
                   />
                 </FormField>
-                
-                <FormField 
+
+                <FormField
                   label="EIN (Employer Identification Number)"
                   helperText="Format: XX-XXXXXXX"
                 >
                   <Input
                     name="ein"
-                    defaultValue={asset?.details?.ein as string || ''}
+                    defaultValue={(asset?.details?.ein as string) || ""}
                     placeholder="12-3456789"
                     pattern="\d{2}-\d{7}"
                     maxLength={10}
                   />
                 </FormField>
               </div>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+
+              <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2">
                 <FormField label="Percentage Owned" required>
                   <Input
                     type="number"
                     name="percentageOwned"
-                    defaultValue={asset?.details?.percentageOwned?.toString() || ''}
+                    defaultValue={asset?.details?.percentageOwned?.toString() || ""}
                     required
                     min="0"
                     max="100"
@@ -302,35 +359,35 @@ export function AssetForm({ asset, trusts, mode }: AssetFormProps) {
                     placeholder="0.00"
                   />
                 </FormField>
-                
+
                 <FormField label="Tax ID">
                   <Input
                     name="taxId"
-                    defaultValue={asset?.details?.taxId as string || ''}
+                    defaultValue={(asset?.details?.taxId as string) || ""}
                     placeholder="Tax identification number"
                   />
                 </FormField>
               </div>
             </div>
           )}
-          
+
           {/* Ownership Information */}
           <div className="border-t pt-4">
-            <h3 className="text-lg font-medium text-gray-900 mb-3">Ownership Information</h3>
-            
+            <h3 className="mb-3 text-lg font-medium text-gray-900">Ownership Information</h3>
+
             <div className="space-y-4">
               <FormField label="Ownership Type" required>
                 <Select
                   name="ownershipType"
                   value={ownershipType}
-                  onChange={(e) => setOwnershipType(e.target.value as OwnershipType)}
+                  onChange={handleOwnershipTypeChange}
                   options={Object.values(OwnershipType).map((type) => ({
                     value: type,
-                    label: formatEnumLabel(type)
+                    label: formatEnumLabel(type),
                   }))}
                 />
               </FormField>
-              
+
               {ownershipType === OwnershipType.TRUST && (
                 <FormField label="Select Trust" required>
                   <Select
@@ -340,12 +397,12 @@ export function AssetForm({ asset, trusts, mode }: AssetFormProps) {
                     placeholder="Select a trust"
                     options={trusts.map((trust) => ({
                       value: trust.id,
-                      label: trust.name
+                      label: trust.name,
                     }))}
                   />
                 </FormField>
               )}
-              
+
               {ownershipType === OwnershipType.BUSINESS && (
                 <FormField label="Business Entity Name">
                   <Input
@@ -355,7 +412,7 @@ export function AssetForm({ asset, trusts, mode }: AssetFormProps) {
                   />
                 </FormField>
               )}
-              
+
               <FormField label="Ownership Percentage" required>
                 <Input
                   type="number"
@@ -369,25 +426,25 @@ export function AssetForm({ asset, trusts, mode }: AssetFormProps) {
               </FormField>
             </div>
           </div>
-          
+
           {/* Insurance-specific fields */}
           {selectedCategory === AssetCategory.INSURANCE_POLICY && selectedInsuranceType && (
             <div className="border-t pt-4">
-              <h3 className="text-lg font-medium text-gray-900 mb-3">Insurance Policy Details</h3>
-              
+              <h3 className="mb-3 text-lg font-medium text-gray-900">Insurance Policy Details</h3>
+
               {/* Homeowners Insurance Fields */}
               {selectedInsuranceType === InsurancePolicyType.HOMEOWNERS && (
                 <div className="space-y-4">
                   <FormField label="Property Address" required>
                     <Input
                       name="propertyAddress"
-                      defaultValue={(asset?.details?.propertyAddress as string) || ''}
+                      defaultValue={(asset?.details?.propertyAddress as string) || ""}
                       placeholder="123 Main St, City, State ZIP"
                       required
                     />
                   </FormField>
-                  
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+                  <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                     <FormField label="Coverage Amount" required>
                       <Input
                         type="number"
@@ -399,7 +456,7 @@ export function AssetForm({ asset, trusts, mode }: AssetFormProps) {
                         required
                       />
                     </FormField>
-                    
+
                     <FormField label="Deductible" required>
                       <Input
                         type="number"
@@ -412,7 +469,7 @@ export function AssetForm({ asset, trusts, mode }: AssetFormProps) {
                       />
                     </FormField>
                   </div>
-                  
+
                   <FormField label="Insurance Company">
                     <Input
                       name="insuranceCompany"
@@ -420,7 +477,7 @@ export function AssetForm({ asset, trusts, mode }: AssetFormProps) {
                       placeholder="State Farm, Allstate, etc."
                     />
                   </FormField>
-                  
+
                   <FormField label="Policy Number">
                     <Input
                       name="policyNumber"
@@ -430,7 +487,7 @@ export function AssetForm({ asset, trusts, mode }: AssetFormProps) {
                   </FormField>
                 </div>
               )}
-              
+
               {/* Auto Insurance Fields */}
               {selectedInsuranceType === InsurancePolicyType.AUTO && (
                 <div className="space-y-4">
@@ -442,8 +499,8 @@ export function AssetForm({ asset, trusts, mode }: AssetFormProps) {
                       required
                     />
                   </FormField>
-                  
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+                  <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                     <FormField label="Liability Limit (Per Person)" required>
                       <Input
                         type="number"
@@ -455,7 +512,7 @@ export function AssetForm({ asset, trusts, mode }: AssetFormProps) {
                         required
                       />
                     </FormField>
-                    
+
                     <FormField label="Liability Limit (Per Accident)" required>
                       <Input
                         type="number"
@@ -468,8 +525,8 @@ export function AssetForm({ asset, trusts, mode }: AssetFormProps) {
                       />
                     </FormField>
                   </div>
-                  
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+                  <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                     <FormField label="Collision Deductible">
                       <Input
                         type="number"
@@ -480,7 +537,7 @@ export function AssetForm({ asset, trusts, mode }: AssetFormProps) {
                         step="100"
                       />
                     </FormField>
-                    
+
                     <FormField label="Comprehensive Deductible">
                       <Input
                         type="number"
@@ -492,7 +549,7 @@ export function AssetForm({ asset, trusts, mode }: AssetFormProps) {
                       />
                     </FormField>
                   </div>
-                  
+
                   <FormField label="Insurance Company">
                     <Input
                       name="insuranceCompany"
@@ -500,7 +557,7 @@ export function AssetForm({ asset, trusts, mode }: AssetFormProps) {
                       placeholder="GEICO, Progressive, etc."
                     />
                   </FormField>
-                  
+
                   <FormField label="Policy Number">
                     <Input
                       name="policyNumber"
@@ -510,7 +567,7 @@ export function AssetForm({ asset, trusts, mode }: AssetFormProps) {
                   </FormField>
                 </div>
               )}
-              
+
               {/* Umbrella Insurance Fields */}
               {selectedInsuranceType === InsurancePolicyType.UMBRELLA && (
                 <div className="space-y-4">
@@ -521,17 +578,20 @@ export function AssetForm({ asset, trusts, mode }: AssetFormProps) {
                       required
                       placeholder="Select coverage limit"
                       options={[
-                        { value: '1000000', label: '$1 Million' },
-                        { value: '2000000', label: '$2 Million' },
-                        { value: '3000000', label: '$3 Million' },
-                        { value: '4000000', label: '$4 Million' },
-                        { value: '5000000', label: '$5 Million' },
-                        { value: '10000000', label: '$10 Million' },
+                        { value: "1000000", label: "$1 Million" },
+                        { value: "2000000", label: "$2 Million" },
+                        { value: "3000000", label: "$3 Million" },
+                        { value: "4000000", label: "$4 Million" },
+                        { value: "5000000", label: "$5 Million" },
+                        { value: "10000000", label: "$10 Million" },
                       ]}
                     />
                   </FormField>
-                  
-                  <FormField label="Underlying Policies" helperText="List the policies covered by this umbrella (e.g., home, auto, boat)">
+
+                  <FormField
+                    label="Underlying Policies"
+                    helperText="List the policies covered by this umbrella (e.g., home, auto, boat)"
+                  >
                     <Textarea
                       name="underlyingPolicies"
                       defaultValue={asset?.details?.underlyingPolicies as string | undefined}
@@ -539,7 +599,7 @@ export function AssetForm({ asset, trusts, mode }: AssetFormProps) {
                       placeholder="Home insurance - State Farm Policy #123456&#10;Auto insurance - GEICO Policy #789012"
                     />
                   </FormField>
-                  
+
                   <FormField label="Insurance Company">
                     <Input
                       name="insuranceCompany"
@@ -547,7 +607,7 @@ export function AssetForm({ asset, trusts, mode }: AssetFormProps) {
                       placeholder="Insurance company name"
                     />
                   </FormField>
-                  
+
                   <FormField label="Policy Number">
                     <Input
                       name="policyNumber"
@@ -555,7 +615,7 @@ export function AssetForm({ asset, trusts, mode }: AssetFormProps) {
                       placeholder="Policy #"
                     />
                   </FormField>
-                  
+
                   <FormField label="Annual Premium">
                     <Input
                       type="number"
@@ -568,9 +628,9 @@ export function AssetForm({ asset, trusts, mode }: AssetFormProps) {
                   </FormField>
                 </div>
               )}
-              
+
               {/* Common fields for all insurance types */}
-              {(selectedInsuranceType === InsurancePolicyType.LIFE || 
+              {(selectedInsuranceType === InsurancePolicyType.LIFE ||
                 selectedInsuranceType === InsurancePolicyType.DISABILITY ||
                 selectedInsuranceType === InsurancePolicyType.LONG_TERM_CARE) && (
                 <div className="space-y-4">
@@ -581,7 +641,7 @@ export function AssetForm({ asset, trusts, mode }: AssetFormProps) {
                       placeholder="Policy #"
                     />
                   </FormField>
-                  
+
                   <FormField label="Insurance Company">
                     <Input
                       name="insuranceCompany"
@@ -589,7 +649,7 @@ export function AssetForm({ asset, trusts, mode }: AssetFormProps) {
                       placeholder="Insurance company name"
                     />
                   </FormField>
-                  
+
                   <FormField label="Annual Premium">
                     <Input
                       type="number"
@@ -604,28 +664,24 @@ export function AssetForm({ asset, trusts, mode }: AssetFormProps) {
               )}
             </div>
           )}
-          
+
           {/* Form Actions */}
-          <div className="flex justify-end space-x-3 pt-4 border-t">
-            <Button
-              type="button"
-              variant="secondary"
-              onClick={() => window.history.back()}
-            >
+          <div className="flex justify-end space-x-3 border-t pt-4">
+            <Button type="button" variant="secondary" onClick={() => window.history.back()}>
               Cancel
             </Button>
-            <Button
-              type="submit"
-              disabled={isSubmitting}
-              loading={isSubmitting}
-            >
-              {isSubmitting 
-                ? (mode === 'create' ? 'Creating...' : 'Updating...') 
-                : (mode === 'create' ? 'Create Asset' : 'Update Asset')}
+            <Button type="submit" disabled={isSubmitting} loading={isSubmitting}>
+              {isSubmitting
+                ? mode === "create"
+                  ? "Creating..."
+                  : "Updating..."
+                : mode === "create"
+                  ? "Create Asset"
+                  : "Update Asset"}
             </Button>
           </div>
         </CardContent>
       </Card>
     </Form>
   );
-}
+});

@@ -1,0 +1,330 @@
+import type { ActionFunctionArgs } from "@remix-run/node";
+import { json, redirect } from "@remix-run/node";
+import { Form, useActionData, useNavigate } from "@remix-run/react";
+import { Button } from "~/components/ui/button";
+import { Card } from "~/components/ui/card";
+import { Input } from "~/components/ui/forms/input";
+import { FormField } from "~/components/ui/forms/form-field";
+import { Select } from "~/components/ui/forms/select";
+import { Textarea } from "~/components/ui/forms/textarea";
+import { createFamilyMember } from "~/lib/dal-crud";
+import { requireUser } from "~/lib/auth.server";
+import { FamilyRelationship, US_STATES } from "~/types/enums";
+import ArrowLeft from "lucide-react/dist/esm/icons/arrow-left";
+import User from "lucide-react/dist/esm/icons/user";
+import Phone from "lucide-react/dist/esm/icons/phone";
+import Mail from "lucide-react/dist/esm/icons/mail";
+import Home from "lucide-react/dist/esm/icons/home";
+import Heart from "lucide-react/dist/esm/icons/heart";
+import Shield from "lucide-react/dist/esm/icons/shield";
+import { useState } from "react";
+
+interface ActionData {
+  error?: string;
+  fieldErrors?: Record<string, string>;
+}
+
+export async function action({ request }: ActionFunctionArgs) {
+  const user = await requireUser(request);
+  const formData = await request.formData();
+
+  try {
+    const familyData = {
+      userId: user.id,
+      name: formData.get("name") as string,
+      relationship: formData.get("relationship") as FamilyRelationship,
+      dateOfBirth: (formData.get("dateOfBirth") as string) || null,
+      email: (formData.get("email") as string) || null,
+      phone: (formData.get("phone") as string) || null,
+      address: (formData.get("address") as string) || null,
+      city: (formData.get("city") as string) || null,
+      state: (formData.get("state") as string) || null,
+      zipCode: (formData.get("zipCode") as string) || null,
+      notes: (formData.get("notes") as string) || null,
+      isEmergencyContact: formData.get("isEmergencyContact") === "true",
+      isBeneficiary: formData.get("isBeneficiary") === "true",
+      isTrustee: formData.get("isTrustee") === "true",
+      isExecutor: formData.get("isExecutor") === "true",
+      isPowerOfAttorney: formData.get("isPowerOfAttorney") === "true",
+      isHealthcareProxy: formData.get("isHealthcareProxy") === "true",
+    };
+
+    await createFamilyMember(familyData);
+    return redirect("/family");
+  } catch (error) {
+    console.error("Error creating family member:", error);
+    return json(
+      {
+        error: "Failed to create family member. Please try again.",
+        fieldErrors: {},
+      },
+      { status: 400 },
+    );
+  }
+}
+
+export default function NewFamilyMember() {
+  const actionData = useActionData<ActionData>();
+  const navigate = useNavigate();
+  const [showLegalRoles, setShowLegalRoles] = useState(false);
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center gap-4">
+        <button
+          onClick={() => navigate(-1)}
+          className="rounded-lg p-2 transition-colors hover:bg-gray-100 dark:hover:bg-gray-800"
+        >
+          <ArrowLeft className="h-5 w-5" />
+        </button>
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Add Family Member</h1>
+          <p className="mt-1 text-gray-600 dark:text-gray-400">
+            Add a new family member to your estate planning records
+          </p>
+        </div>
+      </div>
+
+      {actionData?.error && (
+        <div className="rounded-lg border border-red-200 bg-red-50 p-4 dark:border-red-800 dark:bg-red-900/20">
+          <p className="text-red-800 dark:text-red-200">{actionData.error}</p>
+        </div>
+      )}
+
+      <Form method="post" className="space-y-6">
+        <Card className="p-6">
+          <div className="mb-4 flex items-center gap-2">
+            <User className="h-5 w-5 text-gray-600" />
+            <h2 className="text-xl font-semibold">Personal Information</h2>
+          </div>
+          <div className="grid gap-4">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+              <FormField label="Full Name" required>
+                <Input name="name" placeholder="First and last name" required />
+              </FormField>
+
+              <FormField label="Relationship" required>
+                <Select
+                  name="relationship"
+                  required
+                  options={[
+                    { value: "", label: "Select relationship" },
+                    { value: FamilyRelationship.SPOUSE, label: "Spouse" },
+                    { value: FamilyRelationship.CHILD, label: "Child" },
+                    { value: FamilyRelationship.PARENT, label: "Parent" },
+                    { value: FamilyRelationship.SIBLING, label: "Sibling" },
+                    { value: FamilyRelationship.GRANDCHILD, label: "Grandchild" },
+                    { value: FamilyRelationship.GRANDPARENT, label: "Grandparent" },
+                    { value: FamilyRelationship.AUNT_UNCLE, label: "Aunt/Uncle" },
+                    { value: FamilyRelationship.NIECE_NEPHEW, label: "Niece/Nephew" },
+                    { value: FamilyRelationship.COUSIN, label: "Cousin" },
+                    { value: FamilyRelationship.IN_LAW, label: "In-Law" },
+                    { value: FamilyRelationship.STEP_RELATIVE, label: "Step Relative" },
+                    { value: FamilyRelationship.OTHER, label: "Other" },
+                  ]}
+                />
+              </FormField>
+            </div>
+
+            <FormField label="Date of Birth">
+              <Input name="dateOfBirth" type="date" />
+            </FormField>
+          </div>
+        </Card>
+
+        <Card className="p-6">
+          <div className="mb-4 flex items-center gap-2">
+            <Phone className="h-5 w-5 text-gray-600" />
+            <h2 className="text-xl font-semibold">Contact Information</h2>
+          </div>
+          <div className="grid gap-4">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+              <FormField label="Email">
+                <div className="relative">
+                  <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 transform text-gray-400" />
+                  <Input
+                    name="email"
+                    type="email"
+                    placeholder="email@example.com"
+                    className="pl-10"
+                  />
+                </div>
+              </FormField>
+
+              <FormField label="Phone">
+                <div className="relative">
+                  <Phone className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 transform text-gray-400" />
+                  <Input name="phone" type="tel" placeholder="(555) 123-4567" className="pl-10" />
+                </div>
+              </FormField>
+            </div>
+
+            <FormField label="Street Address">
+              <div className="relative">
+                <Home className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 transform text-gray-400" />
+                <Input name="address" placeholder="123 Main Street" className="pl-10" />
+              </div>
+            </FormField>
+
+            <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
+              <FormField label="City">
+                <Input name="city" placeholder="City" />
+              </FormField>
+
+              <FormField label="State">
+                <Select
+                  name="state"
+                  options={[{ value: "", label: "Select state" }, ...US_STATES]}
+                />
+              </FormField>
+
+              <FormField label="Zip Code">
+                <Input name="zipCode" placeholder="12345" pattern="[0-9]{5}(-[0-9]{4})?" />
+              </FormField>
+            </div>
+          </div>
+        </Card>
+
+        <Card className="p-6">
+          <div className="mb-4 flex items-center gap-2">
+            <Heart className="h-5 w-5 text-gray-600" />
+            <h2 className="text-xl font-semibold">Emergency & Estate Roles</h2>
+          </div>
+
+          <div className="space-y-4">
+            <div className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                id="isEmergencyContact"
+                name="isEmergencyContact"
+                value="true"
+                className="h-4 w-4 rounded border-gray-300 text-primary-600"
+              />
+              <label
+                htmlFor="isEmergencyContact"
+                className="text-sm font-medium text-gray-700 dark:text-gray-300"
+              >
+                Emergency Contact
+              </label>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                id="showLegalRoles"
+                checked={showLegalRoles}
+                onChange={(e) => setShowLegalRoles(e.target.checked)}
+                className="h-4 w-4 rounded border-gray-300 text-primary-600"
+              />
+              <label
+                htmlFor="showLegalRoles"
+                className="text-sm font-medium text-gray-700 dark:text-gray-300"
+              >
+                Has Legal Roles in Estate Planning
+              </label>
+            </div>
+
+            {showLegalRoles && (
+              <div className="ml-6 space-y-3 rounded-lg bg-gray-50 p-4 dark:bg-gray-800">
+                <div className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    id="isBeneficiary"
+                    name="isBeneficiary"
+                    value="true"
+                    className="h-4 w-4 rounded border-gray-300 text-primary-600"
+                  />
+                  <label
+                    htmlFor="isBeneficiary"
+                    className="text-sm text-gray-700 dark:text-gray-300"
+                  >
+                    Beneficiary
+                  </label>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    id="isTrustee"
+                    name="isTrustee"
+                    value="true"
+                    className="h-4 w-4 rounded border-gray-300 text-primary-600"
+                  />
+                  <label htmlFor="isTrustee" className="text-sm text-gray-700 dark:text-gray-300">
+                    Trustee
+                  </label>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    id="isExecutor"
+                    name="isExecutor"
+                    value="true"
+                    className="h-4 w-4 rounded border-gray-300 text-primary-600"
+                  />
+                  <label htmlFor="isExecutor" className="text-sm text-gray-700 dark:text-gray-300">
+                    Executor
+                  </label>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    id="isPowerOfAttorney"
+                    name="isPowerOfAttorney"
+                    value="true"
+                    className="h-4 w-4 rounded border-gray-300 text-primary-600"
+                  />
+                  <label
+                    htmlFor="isPowerOfAttorney"
+                    className="text-sm text-gray-700 dark:text-gray-300"
+                  >
+                    Power of Attorney
+                  </label>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    id="isHealthcareProxy"
+                    name="isHealthcareProxy"
+                    value="true"
+                    className="h-4 w-4 rounded border-gray-300 text-primary-600"
+                  />
+                  <label
+                    htmlFor="isHealthcareProxy"
+                    className="text-sm text-gray-700 dark:text-gray-300"
+                  >
+                    Healthcare Proxy
+                  </label>
+                </div>
+              </div>
+            )}
+          </div>
+        </Card>
+
+        <Card className="p-6">
+          <div className="mb-4 flex items-center gap-2">
+            <Shield className="h-5 w-5 text-gray-600" />
+            <h2 className="text-xl font-semibold">Additional Information</h2>
+          </div>
+          <FormField label="Notes">
+            <Textarea
+              name="notes"
+              placeholder="Any additional information about this family member..."
+              rows={4}
+            />
+          </FormField>
+        </Card>
+
+        <div className="flex justify-end gap-4">
+          <Button type="button" variant="outline" onClick={() => navigate(-1)}>
+            Cancel
+          </Button>
+          <Button type="submit">Add Family Member</Button>
+        </div>
+      </Form>
+    </div>
+  );
+}

@@ -1,22 +1,28 @@
 import * as React from "react";
-import { AlertTriangle, Wifi, RefreshCw, AlertCircle, XCircle, Clock, Shield } from "lucide-react";
+import AlertTriangle from "lucide-react/dist/esm/icons/alert-triangle";
+import Wifi from "lucide-react/dist/esm/icons/wifi";
+import RefreshCw from "lucide-react/dist/esm/icons/refresh-cw";
+import AlertCircle from "lucide-react/dist/esm/icons/alert-circle";
+import XCircle from "lucide-react/dist/esm/icons/x-circle";
+import Clock from "lucide-react/dist/esm/icons/clock";
+import Shield from "lucide-react/dist/esm/icons/shield";
 import { cn } from "~/lib/utils";
 
-export type ErrorType = 
-  | 'network'
-  | 'validation'
-  | 'permission'
-  | 'timeout'
-  | 'server'
-  | 'client'
-  | 'unknown';
+export type ErrorType =
+  | "network"
+  | "validation"
+  | "permission"
+  | "timeout"
+  | "server"
+  | "client"
+  | "unknown";
 
 export interface ErrorDisplayProps {
   error?: Error | string | null;
   type?: ErrorType;
   title?: string;
   message?: string;
-  variant?: 'default' | 'minimal' | 'inline' | 'banner';
+  variant?: "default" | "minimal" | "inline" | "banner";
   showIcon?: boolean;
   showRetry?: boolean;
   onRetry?: () => void;
@@ -32,84 +38,77 @@ export interface ErrorDisplayProps {
  */
 export function ErrorDisplay({
   error,
-  type = 'unknown',
+  type = "unknown",
   title,
   message,
-  variant = 'default',
+  variant = "default",
   showIcon = true,
   showRetry = false,
   onRetry,
-  retryText = 'Try Again',
+  retryText = "Try Again",
   dismissible = false,
   onDismiss,
-  className
+  className,
 }: ErrorDisplayProps) {
   // Auto-detect error type from error object/message if not specified
   const detectedType = React.useMemo(() => {
-    if (type !== 'unknown') return type;
-    
-    const errorMessage = typeof error === 'string' ? error : error?.message || '';
+    if (type !== "unknown") return type;
+
+    const errorMessage = typeof error === "string" ? error : error?.message || "";
     const lowerMessage = errorMessage.toLowerCase();
-    
-    if (lowerMessage.includes('network') || lowerMessage.includes('fetch')) return 'network';
-    if (lowerMessage.includes('validation') || lowerMessage.includes('invalid')) return 'validation';
-    if (lowerMessage.includes('permission') || lowerMessage.includes('unauthorized')) return 'permission';
-    if (lowerMessage.includes('timeout')) return 'timeout';
-    if (lowerMessage.includes('server') || lowerMessage.includes('500')) return 'server';
-    
-    return 'client';
+
+    if (lowerMessage.includes("network") || lowerMessage.includes("fetch")) return "network";
+    if (lowerMessage.includes("validation") || lowerMessage.includes("invalid"))
+      return "validation";
+    if (lowerMessage.includes("permission") || lowerMessage.includes("unauthorized"))
+      return "permission";
+    if (lowerMessage.includes("timeout")) return "timeout";
+    if (lowerMessage.includes("server") || lowerMessage.includes("500")) return "server";
+
+    return "client";
   }, [error, type]);
 
   const errorConfig = getErrorConfig(detectedType);
   const displayTitle = title || errorConfig.title;
-  const displayMessage = message || (typeof error === 'string' ? error : error?.message) || errorConfig.message;
+  const displayMessage =
+    message || (typeof error === "string" ? error : error?.message) || errorConfig.message;
 
   const containerClasses = cn(
     "rounded-lg",
     {
       // Default variant - full error display
-      "p-4 border bg-white": variant === 'default',
-      
+      "p-4 border bg-white": variant === "default",
+
       // Minimal variant - compact display
-      "p-3 border": variant === 'minimal',
-      
+      "p-3 border": variant === "minimal",
+
       // Inline variant - fits within content
-      "p-2 text-sm": variant === 'inline',
-      
+      "p-2 text-sm": variant === "inline",
+
       // Banner variant - full width alert
-      "p-4 border-l-4": variant === 'banner'
+      "p-4 border-l-4": variant === "banner",
     },
     errorConfig.containerClass,
-    className
+    className,
   );
 
-  const iconClasses = cn(
-    errorConfig.iconClass,
-    {
-      "h-5 w-5": variant === 'default',
-      "h-4 w-4": variant === 'minimal' || variant === 'inline',
-      "h-6 w-6": variant === 'banner'
-    }
-  );
+  const iconClasses = cn(errorConfig.iconClass, {
+    "h-5 w-5": variant === "default",
+    "h-4 w-4": variant === "minimal" || variant === "inline",
+    "h-6 w-6": variant === "banner",
+  });
 
-  const titleClasses = cn(
-    "font-medium",
-    errorConfig.textClass,
-    {
-      "text-base": variant === 'default',
-      "text-sm": variant === 'minimal' || variant === 'banner',
-      "text-xs": variant === 'inline'
-    }
-  );
+  const titleClasses = cn("font-medium", errorConfig.textClass, {
+    "text-base": variant === "default",
+    "text-sm": variant === "minimal" || variant === "banner",
+    "text-xs": variant === "inline",
+  });
 
-  const messageClasses = cn(
-    errorConfig.textClass,
-    {
-      "text-sm opacity-90": variant === 'default',
-      "text-xs opacity-80": variant === 'minimal' || variant === 'banner',
-      "text-xs opacity-75": variant === 'inline'
-    }
-  );
+  const messageClasses = cn(errorConfig.textClass, {
+    "text-sm opacity-90": variant === "default",
+    "text-xs opacity-80": variant === "minimal" || variant === "banner",
+    "text-xs opacity-75": variant === "inline",
+  });
 
   if (!error && !message) return null;
 
@@ -117,57 +116,48 @@ export function ErrorDisplay({
     <div className={containerClasses} role="alert" aria-live="polite">
       <div className="flex items-start gap-3">
         {showIcon && (
-          <div className="flex-shrink-0 mt-0.5">
+          <div className="mt-0.5 flex-shrink-0">
             <errorConfig.icon className={iconClasses} />
           </div>
         )}
-        
-        <div className="flex-1 min-w-0">
-          {displayTitle && (
-            <h4 className={titleClasses}>
-              {displayTitle}
-            </h4>
-          )}
-          
+
+        <div className="min-w-0 flex-1">
+          {displayTitle && <h4 className={titleClasses}>{displayTitle}</h4>}
+
           {displayMessage && (
-            <p className={cn(messageClasses, { "mt-1": displayTitle })}>
-              {displayMessage}
-            </p>
+            <p className={cn(messageClasses, { "mt-1": displayTitle })}>{displayMessage}</p>
           )}
-          
+
           {/* Actions */}
           {(showRetry || dismissible) && (
-            <div className={cn(
-              "flex items-center gap-2",
-              variant === 'inline' ? "mt-1" : "mt-3"
-            )}>
+            <div className={cn("flex items-center gap-2", variant === "inline" ? "mt-1" : "mt-3")}>
               {showRetry && onRetry && (
                 <button
                   onClick={onRetry}
                   className={cn(
-                    "inline-flex items-center gap-1 font-medium hover:underline focus:outline-none focus:underline",
+                    "inline-flex items-center gap-1 font-medium hover:underline focus:underline focus:outline-none",
                     errorConfig.actionClass,
                     {
-                      "text-sm": variant === 'default',
-                      "text-xs": variant !== 'default'
-                    }
+                      "text-sm": variant === "default",
+                      "text-xs": variant !== "default",
+                    },
                   )}
                 >
                   <RefreshCw className="h-3 w-3" />
                   {retryText}
                 </button>
               )}
-              
+
               {dismissible && onDismiss && (
                 <button
                   onClick={onDismiss}
                   className={cn(
-                    "inline-flex items-center gap-1 font-medium hover:underline focus:outline-none focus:underline",
+                    "inline-flex items-center gap-1 font-medium hover:underline focus:underline focus:outline-none",
                     errorConfig.actionClass,
                     {
-                      "text-sm": variant === 'default',
-                      "text-xs": variant !== 'default'
-                    }
+                      "text-sm": variant === "default",
+                      "text-xs": variant !== "default",
+                    },
                   )}
                 >
                   Dismiss
@@ -176,13 +166,13 @@ export function ErrorDisplay({
             </div>
           )}
         </div>
-        
-        {dismissible && onDismiss && variant !== 'inline' && (
+
+        {dismissible && onDismiss && variant !== "inline" && (
           <button
             onClick={onDismiss}
             className={cn(
-              "flex-shrink-0 p-1 rounded hover:bg-black hover:bg-opacity-10 focus:outline-none focus:ring-2 focus:ring-black focus:ring-opacity-20",
-              errorConfig.textClass
+              "flex-shrink-0 rounded p-1 hover:bg-black hover:bg-opacity-10 focus:outline-none focus:ring-2 focus:ring-black focus:ring-opacity-20",
+              errorConfig.textClass,
             )}
             aria-label="Dismiss error"
           >
@@ -206,7 +196,7 @@ function getErrorConfig(type: ErrorType) {
       containerClass: "border-orange-200 bg-orange-50",
       iconClass: "text-orange-500",
       textClass: "text-orange-800",
-      actionClass: "text-orange-600 hover:text-orange-700"
+      actionClass: "text-orange-600 hover:text-orange-700",
     },
     validation: {
       icon: AlertCircle,
@@ -215,7 +205,7 @@ function getErrorConfig(type: ErrorType) {
       containerClass: "border-yellow-200 bg-yellow-50",
       iconClass: "text-yellow-500",
       textClass: "text-yellow-800",
-      actionClass: "text-yellow-600 hover:text-yellow-700"
+      actionClass: "text-yellow-600 hover:text-yellow-700",
     },
     permission: {
       icon: Shield,
@@ -224,7 +214,7 @@ function getErrorConfig(type: ErrorType) {
       containerClass: "border-red-200 bg-red-50",
       iconClass: "text-red-500",
       textClass: "text-red-800",
-      actionClass: "text-red-600 hover:text-red-700"
+      actionClass: "text-red-600 hover:text-red-700",
     },
     timeout: {
       icon: Clock,
@@ -233,7 +223,7 @@ function getErrorConfig(type: ErrorType) {
       containerClass: "border-blue-200 bg-blue-50",
       iconClass: "text-blue-500",
       textClass: "text-blue-800",
-      actionClass: "text-blue-600 hover:text-blue-700"
+      actionClass: "text-blue-600 hover:text-blue-700",
     },
     server: {
       icon: AlertTriangle,
@@ -242,7 +232,7 @@ function getErrorConfig(type: ErrorType) {
       containerClass: "border-red-200 bg-red-50",
       iconClass: "text-red-500",
       textClass: "text-red-800",
-      actionClass: "text-red-600 hover:text-red-700"
+      actionClass: "text-red-600 hover:text-red-700",
     },
     client: {
       icon: AlertCircle,
@@ -251,7 +241,7 @@ function getErrorConfig(type: ErrorType) {
       containerClass: "border-gray-200 bg-gray-50",
       iconClass: "text-gray-500",
       textClass: "text-gray-800",
-      actionClass: "text-gray-600 hover:text-gray-700"
+      actionClass: "text-gray-600 hover:text-gray-700",
     },
     unknown: {
       icon: AlertTriangle,
@@ -260,8 +250,8 @@ function getErrorConfig(type: ErrorType) {
       containerClass: "border-gray-200 bg-gray-50",
       iconClass: "text-gray-500",
       textClass: "text-gray-800",
-      actionClass: "text-gray-600 hover:text-gray-700"
-    }
+      actionClass: "text-gray-600 hover:text-gray-700",
+    },
   };
 
   return configs[type];
@@ -270,11 +260,7 @@ function getErrorConfig(type: ErrorType) {
 /**
  * Inline error component for form fields
  */
-export function InlineError({ 
-  error, 
-  className, 
-  ...props 
-}: Omit<ErrorDisplayProps, 'variant'>) {
+export function InlineError({ error, className, ...props }: Omit<ErrorDisplayProps, "variant">) {
   return (
     <ErrorDisplay
       {...props}
@@ -289,18 +275,9 @@ export function InlineError({
 /**
  * Banner error component for page-level errors
  */
-export function ErrorBanner({ 
-  error, 
-  className, 
-  ...props 
-}: Omit<ErrorDisplayProps, 'variant'>) {
+export function ErrorBanner({ error, className, ...props }: Omit<ErrorDisplayProps, "variant">) {
   return (
-    <ErrorDisplay
-      {...props}
-      error={error}
-      variant="banner"
-      className={cn("mb-4", className)}
-    />
+    <ErrorDisplay {...props} error={error} variant="banner" className={cn("mb-4", className)} />
   );
 }
 
@@ -311,18 +288,21 @@ export function useErrorState(autoDismissDelay?: number) {
   const [error, setError] = React.useState<Error | string | null>(null);
   const timeoutRef = React.useRef<NodeJS.Timeout>();
 
-  const showError = React.useCallback((error: Error | string) => {
-    setError(error);
-    
-    if (autoDismissDelay) {
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
+  const showError = React.useCallback(
+    (error: Error | string) => {
+      setError(error);
+
+      if (autoDismissDelay) {
+        if (timeoutRef.current) {
+          clearTimeout(timeoutRef.current);
+        }
+        timeoutRef.current = setTimeout(() => {
+          setError(null);
+        }, autoDismissDelay);
       }
-      timeoutRef.current = setTimeout(() => {
-        setError(null);
-      }, autoDismissDelay);
-    }
-  }, [autoDismissDelay]);
+    },
+    [autoDismissDelay],
+  );
 
   const clearError = React.useCallback(() => {
     setError(null);
@@ -343,6 +323,6 @@ export function useErrorState(autoDismissDelay?: number) {
     error,
     showError,
     clearError,
-    hasError: error !== null
+    hasError: error !== null,
   };
 }

@@ -1,1109 +1,918 @@
-import { getDatabase } from './database';
-import type { Trust } from '../types/trusts';
-import type { FamilyMember, LegalRole, HealthcareDirective, Beneficiary, Professional, EmergencyContact } from '../types/people';
-import type { AnyEnhancedAsset, OwnershipInfo } from '../types/assets';
-import { AssetCategory } from '../types/enums';
-import {
-  transformDatabaseAsset,
-  transformDatabaseTrust,
-  transformDatabaseFamilyMember,
-  transformDatabaseLegalRole,
-  transformDatabaseHealthcareDirective,
-  transformDatabaseBeneficiary,
-  transformDatabaseProfessional,
-  transformDatabaseEmergencyContact,
-  transformDashboardStats
-} from './transformers';
+/**
+ * Data Access Layer - Coleman Trust Version
+ *
+ * This DAL is designed to work with the Coleman Trust normalized database schema
+ * that properly supports estate planning relationships based on the Excel migration.
+ */
 
-// =============================================
-// DATABASE RESPONSE INTERFACES
-// =============================================
+import { getDatabase } from "./database";
 
-export interface DatabaseUser {
-  id: number;
-  external_id: string | null;
-  first_name: string;
-  middle_name: string | null;
-  last_name: string;
-  email: string;
-  phone_number: string | null;
-  date_of_birth: string | null;
-  is_active: number;
-  created_at: string;
-  updated_at: string;
+// =================================
+// PERSON MANAGEMENT
+// =================================
+
+export interface Person {
+  id: string;
+  firstName: string;
+  lastName: string;
+  fullName: string;
+  dateOfBirth?: string;
+  isMinor: boolean;
+  isDependent: boolean;
+  contactInfo: {
+    primaryPhone?: string;
+    secondaryPhone?: string;
+    email?: string;
+    preferredContact?: string;
+  };
+  address: {
+    street1?: string;
+    street2?: string;
+    city?: string;
+    state?: string;
+    zipCode?: string;
+    country?: string;
+  };
+  notes?: string;
+  isActive: boolean;
 }
 
-export interface DatabaseTrust {
-  id: number;
-  trust_id: string;
-  name: string;
-  trust_type_id: number;
-  trust_type_code?: string;
-  trust_type_name?: string;
-  tax_id: string | null;
-  date_created: string;
-  grantor: string;
-  purpose: string | null;
-  is_active: number;
-  created_by: number;
-  created_at: string;
-  updated_at: string;
-}
-
-export interface DatabaseTrustTrustee {
-  id: number;
-  trust_id: number;
-  trustee_name: string;
-  trustee_type_id: number;
-  trustee_type_code?: string;
-  trustee_type_name?: string;
-  powers: string | null;
-  start_date: string | null;
-  end_date: string | null;
-  order_of_succession: number | null;
-  is_active: number;
-}
-
-export interface DatabaseTrustBeneficiary {
-  id: number;
-  trust_id: number;
-  beneficiary_name: string;
-  beneficiary_type_id: number;
-  beneficiary_type_code?: string;
-  relationship_type_id: number;
-  relationship_type_code?: string;
-  percentage: number | null;
-  conditions: string | null;
-  is_active: number;
-}
-
-export interface DatabaseAsset {
-  id: number;
-  asset_id: string;
-  user_id: number;
-  name: string;
-  category: string;
-  value: number;
-  ownership_type: string;
-  ownership_details: string | null;
-  asset_details: string | null;
-  notes: string | null;
-  is_active: number;
-  last_updated: string;
-  created_at: string;
-  updated_at: string;
-  // Financial account specific fields
-  institution_name: string | null;
-  account_type: string | null;
-  account_number: string | null;
-  routing_number: string | null;
-}
-
-export interface DatabaseFamilyMember {
-  id: number;
-  family_member_id: string;
-  user_id: number;
-  name: string;
-  relationship_type_id: number;
-  relationship_code: string;
-  date_of_birth: string | null;
-  is_minor: number;
-  is_dependent: number;
-  primary_phone: string | null;
-  secondary_phone: string | null;
-  email: string | null;
-  preferred_contact: string | null;
-  street1: string | null;
-  street2: string | null;
-  city: string | null;
-  state: string | null;
-  zip_code: string | null;
-  country: string | null;
-  notes: string | null;
-  is_active: number;
-  created_at: string;
-  updated_at: string;
-}
-
-export interface DatabaseLegalRole {
-  id: number;
-  legal_role_id: string;
-  user_id: number;
-  role_type_id: number;
-  role_type_code: string;
-  person_id: string | null;
-  person_name: string;
-  is_primary: number;
-  order_of_precedence: number | null;
-  specific_powers: string | null;
-  compensation_type: string | null;
-  compensation_amount: number | null;
-  compensation_details: string | null;
-  start_date: string | null;
-  end_date: string | null;
-  end_conditions: string | null;
-  notes: string | null;
-  is_active: number;
-  created_at: string;
-  updated_at: string;
-}
-
-export interface DatabaseHealthcareDirective {
-  id: number;
-  directive_id: string;
-  user_id: number;
-  directive_type_id: number;
-  directive_type_code: string;
-  person_id: string | null;
-  person_name: string | null;
-  is_primary: number;
-  life_sustaining_decision: string | null;
-  artificial_nutrition_decision: string | null;
-  pain_management_instructions: string | null;
-  organ_donation: number | null;
-  body_disposition: string | null;
-  religious_preferences: string | null;
-  additional_instructions: string | null;
-  date_created: string;
-  last_updated: string;
-  is_active: number;
-  created_at: string;
-  updated_at: string;
-}
-
-export interface DatabaseBeneficiary {
-  id: number;
-  beneficiary_id: string;
-  user_id: number;
-  name: string;
-  relationship_type_id: number;
-  relationship_code: string;
-  percentage: number | null;
-  is_primary: number;
-  is_contingent: number;
-  contingent_to: string | null;
-  per_stirpes: number;
-  primary_phone: string | null;
-  email: string | null;
-  preferred_contact: string | null;
-  notes: string | null;
-  is_active: number;
-  created_at: string;
-  updated_at: string;
-}
-
-export interface DatabaseProfessional {
-  id: number;
-  professional_id: string;
-  user_id: number;
-  name: string;
-  professional_type_id: number;
-  professional_type_code: string;
-  firm: string | null;
-  title: string | null;
-  specializations: string | null;
-  primary_phone: string | null;
-  secondary_phone: string | null;
-  email: string | null;
-  preferred_contact: string | null;
-  street1: string | null;
-  street2: string | null;
-  city: string | null;
-  state: string | null;
-  zip_code: string | null;
-  country: string | null;
-  credentials: string | null;
-  years_experience: number | null;
-  is_preferred_provider: number;
-  notes: string | null;
-  is_active: number;
-  created_at: string;
-  updated_at: string;
-}
-
-export interface DatabaseEmergencyContact {
-  id: number;
-  contact_id: string;
-  user_id: number;
-  name: string;
-  relationship_type_id: number;
-  relationship_code: string;
-  contact_type: string;
-  primary_phone: string;
-  secondary_phone: string | null;
-  email: string | null;
-  preferred_contact: string | null;
-  priority: number;
-  availability: string | null;
-  medical_authority: number;
-  can_make_decisions: number;
-  languages: string | null;
-  notes: string | null;
-  is_active: number;
-  created_at: string;
-  updated_at: string;
-}
-
-// =============================================
-// UTILITY FUNCTIONS
-// =============================================
-
-function parseJsonField<T>(jsonString: string | null): T | null {
-  if (!jsonString) return null;
-  try {
-    return JSON.parse(jsonString);
-  } catch {
-    return null;
-  }
-}
-
-// =============================================
-// USER OPERATIONS
-// =============================================
-
-export function getUserProfile(userId: string = 'user-nick-001'): DatabaseUser | null {
+export function getPersons(userId?: number): Person[] {
   const db = getDatabase();
-  const stmt = db.prepare(`
-    SELECT * FROM users 
-    WHERE external_id = ? AND is_active = 1
-  `);
-  
-  return stmt.get(userId) as DatabaseUser | null;
-}
 
-export function getAllUsers(): DatabaseUser[] {
-  const db = getDatabase();
-  const stmt = db.prepare(`
-    SELECT * FROM users 
-    WHERE is_active = 1
-    ORDER BY first_name, last_name
-  `);
-  
-  return stmt.all() as DatabaseUser[];
-}
-
-// =============================================
-// TRUST OPERATIONS
-// =============================================
-
-export function getTrusts(userId?: string): Trust[] {
-  const db = getDatabase();
-  
   let query = `
     SELECT 
-      t.*,
-      tt.code as trust_type_code,
-      tt.name as trust_type_name
-    FROM trusts t
-    INNER JOIN trust_types tt ON t.trust_type_id = tt.id
-    WHERE t.is_active = 1
+      p.*
+    FROM persons p
+    WHERE p.is_active = 1
   `;
-  
-  const params: string[] = [];
+
+  const params: any[] = [];
   if (userId) {
-    query += ` AND t.created_by = (SELECT id FROM users WHERE external_id = ?)`;
+    query += ` AND (
+      p.id IN (SELECT person_id FROM family_relationships WHERE user_id = ?)
+      OR p.id IN (SELECT person_id FROM professional_relationships WHERE user_id = ?)
+    )`;
+    params.push(userId, userId);
+  }
+
+  query += ` ORDER BY p.last_name, p.first_name`;
+
+  const stmt = db.prepare(query);
+  const persons = stmt.all(...params);
+
+  return persons.map((person: any) => ({
+    id: person.person_id,
+    firstName: person.first_name,
+    lastName: person.last_name,
+    fullName: person.full_name,
+    dateOfBirth: person.date_of_birth,
+    isMinor: person.is_minor === 1,
+    isDependent: person.is_dependent === 1,
+    contactInfo: {
+      primaryPhone: person.primary_phone,
+      secondaryPhone: person.secondary_phone,
+      email: person.email,
+      preferredContact: person.preferred_contact,
+    },
+    address: {
+      street1: person.street1,
+      street2: person.street2,
+      city: person.city,
+      state: person.state,
+      zipCode: person.zip_code,
+      country: person.country,
+    },
+    notes: person.notes,
+    isActive: person.is_active === 1,
+  }));
+}
+
+export function getPerson(personId: string): Person | null {
+  const persons = getPersons();
+  return persons.find((person) => person.id === personId) || null;
+}
+
+// =================================
+// FAMILY RELATIONSHIPS
+// =================================
+
+export interface FamilyMember extends Person {
+  relationship: string;
+  relationshipType: string;
+}
+
+export function getFamilyMembers(userId?: number): FamilyMember[] {
+  const db = getDatabase();
+
+  let query = `
+    SELECT 
+      p.*,
+      rt.name as relationship_type_name,
+      rt.code as relationship_type_code
+    FROM persons p
+    JOIN family_relationships fr ON p.id = fr.person_id
+    JOIN relationship_types rt ON fr.relationship_type_id = rt.id
+    WHERE fr.is_active = 1 AND p.is_active = 1
+  `;
+
+  const params: any[] = [];
+  if (userId) {
+    query += ` AND fr.user_id = ?`;
     params.push(userId);
   }
-  
-  query += ` ORDER BY t.name`;
-  
+
+  query += ` ORDER BY p.last_name, p.first_name`;
+
   const stmt = db.prepare(query);
-  const dbTrusts = stmt.all(params) as DatabaseTrust[];
-  
-  return dbTrusts.map(dbTrust => {
-    const trustees = getTrustTrustees(dbTrust.id);
-    const beneficiaries = getTrustBeneficiaries(dbTrust.id);
-    return transformDatabaseTrust(dbTrust, trustees, beneficiaries);
+  const members = stmt.all(...params);
+
+  return members.map((member: any) => ({
+    id: member.person_id,
+    firstName: member.first_name,
+    lastName: member.last_name,
+    fullName: member.full_name,
+    dateOfBirth: member.date_of_birth,
+    isMinor: member.is_minor === 1,
+    isDependent: member.is_dependent === 1,
+    contactInfo: {
+      primaryPhone: member.primary_phone,
+      secondaryPhone: member.secondary_phone,
+      email: member.email,
+      preferredContact: member.preferred_contact,
+    },
+    address: {
+      street1: member.street1,
+      street2: member.street2,
+      city: member.city,
+      state: member.state,
+      zipCode: member.zip_code,
+      country: member.country,
+    },
+    notes: member.notes,
+    isActive: member.is_active === 1,
+    relationship: member.relationship_type_name,
+    relationshipType: member.relationship_type_code.toLowerCase().replace("_", "-"),
+  }));
+}
+
+// =================================
+// PROFESSIONAL RELATIONSHIPS
+// =================================
+
+export interface Professional extends Person {
+  type: string;
+  firm?: string;
+  title?: string;
+  specializations: string[];
+  credentials: string[];
+  yearsExperience?: number;
+  isPreferredProvider: boolean;
+}
+
+export function getProfessionals(userId?: number): Professional[] {
+  const db = getDatabase();
+
+  // Use existing professionals table for now (simplified)
+  let query = `
+    SELECT 
+      p.*,
+      pt.name as professional_type_name,
+      pt.code as professional_type_code
+    FROM professionals p
+    LEFT JOIN professional_types pt ON p.professional_type_id = pt.id
+    WHERE p.is_active = 1
+  `;
+
+  const params: any[] = [];
+  if (userId) {
+    query += ` AND p.user_id = ?`;
+    params.push(userId);
+  }
+
+  query += ` ORDER BY p.name`;
+
+  const stmt = db.prepare(query);
+  const professionals = stmt.all(...params);
+
+  return professionals.map((prof: any) => {
+    let specializations: string[] = [];
+    let credentials: string[] = [];
+
+    try {
+      specializations = prof.specializations ? JSON.parse(prof.specializations) : [];
+      credentials = prof.credentials ? JSON.parse(prof.credentials) : [];
+    } catch (e) {
+      console.error("Failed to parse professional data:", e);
+    }
+
+    // Parse name from professionals table
+    const [firstName, ...lastNameParts] = prof.name.split(" ");
+    const lastName = lastNameParts.join(" ") || "";
+
+    return {
+      id: prof.professional_id,
+      firstName: firstName,
+      lastName: lastName,
+      fullName: prof.name,
+      dateOfBirth: undefined,
+      isMinor: false,
+      isDependent: false,
+      contactInfo: {
+        primaryPhone: prof.primary_phone,
+        secondaryPhone: prof.secondary_phone,
+        email: prof.email,
+        preferredContact: prof.preferred_contact,
+      },
+      address: {
+        street1: prof.street1,
+        street2: prof.street2,
+        city: prof.city,
+        state: prof.state,
+        zipCode: prof.zip_code,
+        country: prof.country,
+      },
+      notes: prof.notes,
+      isActive: prof.is_active === 1,
+      type: prof.professional_type_code
+        ? prof.professional_type_code.toLowerCase().replace("_", "-")
+        : "other",
+      firm: prof.firm,
+      title: prof.title,
+      specializations,
+      credentials,
+      yearsExperience: prof.years_experience,
+      isPreferredProvider: prof.is_preferred_provider === 1,
+    };
   });
+}
+
+// =================================
+// IMPROVED TRUSTS
+// =================================
+
+export interface Trustee extends Person {
+  type: string;
+  powers: string[];
+  startDate?: string;
+  endDate?: string;
+  orderOfSuccession?: number;
+}
+
+export interface Beneficiary extends Person {
+  type: string;
+  relationship: string;
+  percentage?: number;
+  conditions?: string;
+}
+
+export interface Trust {
+  id: string;
+  name: string;
+  type: string;
+  grantor: Person;
+  taxId?: string;
+  dateCreated: string;
+  purpose?: string;
+  trustees: Trustee[];
+  beneficiaries: Beneficiary[];
+  isActive: boolean;
+}
+
+export function getTrusts(userId?: number): Trust[] {
+  const db = getDatabase();
+
+  // Get trusts with basic information (simplified for current schema)
+  let trustQuery = `
+    SELECT 
+      t.*,
+      tt.name as trust_type_name,
+      tt.code as trust_type_code
+    FROM trusts t
+    JOIN trust_types tt ON t.trust_type_id = tt.id
+    WHERE t.is_active = 1
+  `;
+
+  const params: any[] = [];
+  if (userId) {
+    trustQuery += ` AND t.created_by = ?`;
+    params.push(userId);
+  }
+
+  trustQuery += ` ORDER BY t.name`;
+
+  const trustStmt = db.prepare(trustQuery);
+  const trusts = trustStmt.all(...params);
+
+  if (trusts.length === 0) {
+    return [];
+  }
+
+  // Get trustees for all trusts
+  const trustIds = trusts.map((t: any) => t.id);
+  const placeholders = trustIds.map(() => "?").join(",");
+
+  const trusteesQuery = `
+    SELECT 
+      tt.trust_id,
+      tt.order_of_succession,
+      tt.powers,
+      tt.start_date,
+      tt.end_date,
+      p.*,
+      ttype.name as trustee_type_name
+    FROM trust_trustees tt
+    JOIN persons p ON tt.person_id = p.id
+    JOIN trustee_types ttype ON tt.trustee_type_id = ttype.id
+    WHERE tt.trust_id IN (${placeholders}) AND tt.is_active = 1
+    ORDER BY tt.trust_id, tt.order_of_succession ASC
+  `;
+
+  const trusteesStmt = db.prepare(trusteesQuery);
+  const allTrustees = trusteesStmt.all(...trustIds);
+
+  // Get beneficiaries for all trusts
+  const beneficiariesQuery = `
+    SELECT 
+      tb.trust_id,
+      tb.percentage,
+      tb.conditions,
+      p.*,
+      bt.name as beneficiary_type_name,
+      rt.name as relationship_type_name
+    FROM trust_beneficiaries tb
+    JOIN persons p ON tb.person_id = p.id
+    JOIN beneficiary_types bt ON tb.beneficiary_type_id = bt.id
+    JOIN relationship_types rt ON tb.relationship_type_id = rt.id
+    WHERE tb.trust_id IN (${placeholders}) AND tb.is_active = 1
+    ORDER BY tb.trust_id, tb.percentage DESC
+  `;
+
+  const beneficiariesStmt = db.prepare(beneficiariesQuery);
+  const allBeneficiaries = beneficiariesStmt.all(...trustIds);
+
+  // Group trustees and beneficiaries by trust_id
+  const trusteesByTrustId = allTrustees.reduce((acc: any, trustee: any) => {
+    if (!acc[trustee.trust_id]) acc[trustee.trust_id] = [];
+    acc[trustee.trust_id].push({
+      id: trustee.person_id,
+      firstName: trustee.first_name,
+      lastName: trustee.last_name,
+      fullName: trustee.full_name,
+      dateOfBirth: trustee.date_of_birth,
+      isMinor: trustee.is_minor === 1,
+      isDependent: trustee.is_dependent === 1,
+      contactInfo: {
+        primaryPhone: trustee.primary_phone,
+        secondaryPhone: trustee.secondary_phone,
+        email: trustee.email,
+        preferredContact: trustee.preferred_contact,
+      },
+      address: {
+        street1: trustee.street1,
+        street2: trustee.street2,
+        city: trustee.city,
+        state: trustee.state,
+        zipCode: trustee.zip_code,
+        country: trustee.country,
+      },
+      notes: trustee.notes,
+      isActive: trustee.is_active === 1,
+      type: trustee.trustee_type_name,
+      powers: trustee.powers ? JSON.parse(trustee.powers) : [],
+      startDate: trustee.start_date,
+      endDate: trustee.end_date,
+      orderOfSuccession: trustee.order_of_succession,
+    });
+    return acc;
+  }, {});
+
+  const beneficiariesByTrustId = allBeneficiaries.reduce((acc: any, beneficiary: any) => {
+    if (!acc[beneficiary.trust_id]) acc[beneficiary.trust_id] = [];
+    acc[beneficiary.trust_id].push({
+      id: beneficiary.person_id,
+      firstName: beneficiary.first_name,
+      lastName: beneficiary.last_name,
+      fullName: beneficiary.full_name,
+      dateOfBirth: beneficiary.date_of_birth,
+      isMinor: beneficiary.is_minor === 1,
+      isDependent: beneficiary.is_dependent === 1,
+      contactInfo: {
+        primaryPhone: beneficiary.primary_phone,
+        secondaryPhone: beneficiary.secondary_phone,
+        email: beneficiary.email,
+        preferredContact: beneficiary.preferred_contact,
+      },
+      address: {
+        street1: beneficiary.street1,
+        street2: beneficiary.street2,
+        city: beneficiary.city,
+        state: beneficiary.state,
+        zipCode: beneficiary.zip_code,
+        country: beneficiary.country,
+      },
+      notes: beneficiary.notes,
+      isActive: beneficiary.is_active === 1,
+      type: beneficiary.beneficiary_type_name,
+      relationship: beneficiary.relationship_type_name,
+      percentage: beneficiary.percentage,
+      conditions: beneficiary.conditions,
+    });
+    return acc;
+  }, {});
+
+  // Build complete trust objects
+  return trusts.map((trust: any) => ({
+    id: trust.trust_id,
+    name: trust.name,
+    type: trust.trust_type_code
+      ? trust.trust_type_code.toLowerCase().replace("_", "-")
+      : "revocable",
+    grantor: {
+      id: trust.grantor, // Using text grantor field for now
+      firstName: "",
+      lastName: "",
+      fullName: trust.grantor,
+      dateOfBirth: undefined,
+      isMinor: false,
+      isDependent: false,
+      contactInfo: {},
+      address: {},
+      isActive: true,
+    },
+    taxId: trust.tax_id,
+    dateCreated: trust.date_created,
+    purpose: trust.purpose,
+    trustees: trusteesByTrustId[trust.id] || [],
+    beneficiaries: beneficiariesByTrustId[trust.id] || [],
+    isActive: trust.is_active === 1,
+  }));
 }
 
 export function getTrust(trustId: string): Trust | null {
-  const db = getDatabase();
-  const stmt = db.prepare(`
-    SELECT 
-      t.*,
-      tt.code as trust_type_code,
-      tt.name as trust_type_name
-    FROM trusts t
-    INNER JOIN trust_types tt ON t.trust_type_id = tt.id
-    WHERE t.trust_id = ? AND t.is_active = 1
-  `);
-  
-  const dbTrust = stmt.get(trustId) as DatabaseTrust | null;
-  if (!dbTrust) return null;
-  
-  const trustees = getTrustTrustees(dbTrust.id);
-  const beneficiaries = getTrustBeneficiaries(dbTrust.id);
-  return transformDatabaseTrust(dbTrust, trustees, beneficiaries);
+  const trusts = getTrusts();
+  return trusts.find((trust) => trust.id === trustId) || null;
 }
 
-function getTrustTrustees(trustDbId: number): DatabaseTrustTrustee[] {
-  const db = getDatabase();
-  const stmt = db.prepare(`
-    SELECT 
-      tt.*,
-      ttype.code as trustee_type_code,
-      ttype.name as trustee_type_name
-    FROM trust_trustees tt
-    INNER JOIN trustee_types ttype ON tt.trustee_type_id = ttype.id
-    WHERE tt.trust_id = ? AND tt.is_active = 1
-    ORDER BY tt.order_of_succession, tt.id
-  `);
-  
-  const dbTrustees = stmt.all(trustDbId) as DatabaseTrustTrustee[];
-  
-  return dbTrustees;
+// =================================
+// LEGAL ROLES
+// =================================
+
+export interface LegalRole {
+  id: string;
+  assignee: Person;
+  roleType: string;
+  documentType?: string;
+  documentId?: number;
+  priorityOrder?: number;
+  conditions?: string;
+  isActive: boolean;
 }
 
-function getTrustBeneficiaries(trustDbId: number): DatabaseTrustBeneficiary[] {
+export function getLegalRoles(userId?: number): LegalRole[] {
   const db = getDatabase();
-  const stmt = db.prepare(`
-    SELECT 
-      tb.*,
-      bt.code as beneficiary_type_code,
-      rt.code as relationship_type_code
-    FROM trust_beneficiaries tb
-    INNER JOIN beneficiary_types bt ON tb.beneficiary_type_id = bt.id
-    INNER JOIN relationship_types rt ON tb.relationship_type_id = rt.id
-    WHERE tb.trust_id = ? AND tb.is_active = 1
-    ORDER BY tb.id
-  `);
-  
-  const dbBeneficiaries = stmt.all(trustDbId) as DatabaseTrustBeneficiary[];
-  
-  return dbBeneficiaries;
-}
 
-// =============================================
-// FAMILY MEMBER OPERATIONS
-// =============================================
-
-export function getFamilyMembers(userId: string = 'user-nick-001'): FamilyMember[] {
-  const db = getDatabase();
-  const stmt = db.prepare(`
-    SELECT 
-      fm.*,
-      rt.code as relationship_code
-    FROM family_members fm
-    INNER JOIN relationship_types rt ON fm.relationship_type_id = rt.id
-    WHERE fm.user_id = (SELECT id FROM users WHERE external_id = ?)
-      AND fm.is_active = 1
-    ORDER BY fm.name
-  `);
-  
-  const dbMembers = stmt.all(userId) as DatabaseFamilyMember[];
-  
-  return dbMembers.map(transformDatabaseFamilyMember);
-}
-
-// =============================================
-// LEGAL ROLE OPERATIONS
-// =============================================
-
-export function getLegalRoles(userId: string = 'user-nick-001'): LegalRole[] {
-  const db = getDatabase();
-  const stmt = db.prepare(`
+  let query = `
     SELECT 
       lr.*,
+      p.*,
+      lrt.name as role_type_name,
       lrt.code as role_type_code
     FROM legal_roles lr
-    INNER JOIN legal_role_types lrt ON lr.role_type_id = lrt.id
-    WHERE lr.user_id = (SELECT id FROM users WHERE external_id = ?)
-      AND lr.is_active = 1
-    ORDER BY lr.role_type_id, lr.order_of_precedence
-  `);
-  
-  const dbRoles = stmt.all(userId) as DatabaseLegalRole[];
-  
-  return dbRoles.map(transformDatabaseLegalRole);
-}
-
-// =============================================
-// HEALTHCARE DIRECTIVE OPERATIONS
-// =============================================
-
-export function getHealthcareDirectives(userId: string = 'user-nick-001'): HealthcareDirective[] {
-  const db = getDatabase();
-  const stmt = db.prepare(`
-    SELECT 
-      hd.*,
-      hdt.code as directive_type_code
-    FROM healthcare_directives hd
-    INNER JOIN healthcare_directive_types hdt ON hd.directive_type_id = hdt.id
-    WHERE hd.user_id = (SELECT id FROM users WHERE external_id = ?)
-      AND hd.is_active = 1
-    ORDER BY hd.directive_type_id, hd.is_primary DESC
-  `);
-  
-  const dbDirectives = stmt.all(userId) as DatabaseHealthcareDirective[];
-  
-  return dbDirectives.map(transformDatabaseHealthcareDirective);
-}
-
-// =============================================
-// BENEFICIARY OPERATIONS
-// =============================================
-
-export function getBeneficiaries(userId: string = 'user-nick-001'): Beneficiary[] {
-  const db = getDatabase();
-  const stmt = db.prepare(`
-    SELECT 
-      b.*,
-      rt.code as relationship_code
-    FROM beneficiaries b
-    INNER JOIN relationship_types rt ON b.relationship_type_id = rt.id
-    WHERE b.user_id = (SELECT id FROM users WHERE external_id = ?)
-      AND b.is_active = 1
-    ORDER BY b.is_primary DESC, b.name
-  `);
-  
-  const dbBeneficiaries = stmt.all(userId) as DatabaseBeneficiary[];
-  
-  return dbBeneficiaries.map(transformDatabaseBeneficiary);
-}
-
-// =============================================
-// PROFESSIONAL OPERATIONS
-// =============================================
-
-export function getProfessionals(userId: string = 'user-nick-001'): Professional[] {
-  const db = getDatabase();
-  const stmt = db.prepare(`
-    SELECT 
-      p.*,
-      pt.code as professional_type_code
-    FROM professionals p
-    INNER JOIN professional_types pt ON p.professional_type_id = pt.id
-    WHERE p.user_id = (SELECT id FROM users WHERE external_id = ?)
-      AND p.is_active = 1
-    ORDER BY p.is_preferred_provider DESC, p.name
-  `);
-  
-  const dbProfessionals = stmt.all(userId) as DatabaseProfessional[];
-  
-  return dbProfessionals.map(transformDatabaseProfessional);
-}
-
-// =============================================
-// EMERGENCY CONTACT OPERATIONS
-// =============================================
-
-export function getEmergencyContacts(userId: string = 'user-nick-001'): EmergencyContact[] {
-  const db = getDatabase();
-  const stmt = db.prepare(`
-    SELECT 
-      ec.*,
-      rt.code as relationship_code
-    FROM emergency_contacts ec
-    INNER JOIN relationship_types rt ON ec.relationship_type_id = rt.id
-    WHERE ec.user_id = (SELECT id FROM users WHERE external_id = ?)
-      AND ec.is_active = 1
-    ORDER BY ec.priority, ec.name
-  `);
-  
-  const dbContacts = stmt.all(userId) as DatabaseEmergencyContact[];
-  
-  return dbContacts.map(transformDatabaseEmergencyContact);
-}
-
-// =============================================
-// ASSET OPERATIONS
-// =============================================
-
-export function getRecentAssets(userId: string = 'user-nick-001', limit: number = 4): AnyEnhancedAsset[] {
-  const db = getDatabase();
-  const stmt = db.prepare(`
-    SELECT * FROM assets
-    WHERE user_id = (SELECT id FROM users WHERE external_id = ?)
-      AND is_active = 1
-    ORDER BY updated_at DESC, created_at DESC
-    LIMIT ?
-  `);
-  
-  const dbAssets = stmt.all(userId, limit) as DatabaseAsset[];
-  
-  return dbAssets.map(transformDatabaseAsset);
-}
-
-export function getAssets(userId: string = 'user-nick-001'): AnyEnhancedAsset[] {
-  const db = getDatabase();
-  const stmt = db.prepare(`
-    SELECT * FROM assets
-    WHERE user_id = (SELECT id FROM users WHERE external_id = ?)
-      AND is_active = 1
-    ORDER BY category, name
-  `);
-  
-  const dbAssets = stmt.all(userId) as DatabaseAsset[];
-  
-  return dbAssets.map(transformDatabaseAsset);
-}
-
-export function getAsset(assetId: string): AnyEnhancedAsset | null {
-  const db = getDatabase();
-  const stmt = db.prepare(`
-    SELECT * FROM assets
-    WHERE asset_id = ? AND is_active = 1
-  `);
-  
-  const dbAsset = stmt.get(assetId) as DatabaseAsset | null;
-  
-  return dbAsset ? transformDatabaseAsset(dbAsset) : null;
-}
-
-export function getAssetsByTrust(trustId: string): AnyEnhancedAsset[] {
-  const db = getDatabase();
-  const stmt = db.prepare(`
-    SELECT * FROM assets
-    WHERE ownership_type = 'TRUST' 
-      AND json_extract(ownership_details, '$.trustId') = ?
-      AND is_active = 1
-    ORDER BY category, name
-  `);
-  
-  const dbAssets = stmt.all(trustId) as DatabaseAsset[];
-  
-  return dbAssets.map(transformDatabaseAsset);
-}
-
-// =============================================
-// DASHBOARD STATISTICS
-// =============================================
-
-export function getDashboardStats(userId: string = 'user-nick-001') {
-  const db = getDatabase();
-  
-  // Get total asset value
-  const assetStmt = db.prepare(`
-    SELECT 
-      SUM(value) as total_value,
-      COUNT(*) as total_count
-    FROM assets
-    WHERE user_id = (SELECT id FROM users WHERE external_id = ?)
-      AND is_active = 1
-  `);
-  const assetStats = assetStmt.get(userId) as { total_value: number | null; total_count: number };
-  
-  // Get trust count
-  const trustStmt = db.prepare(`
-    SELECT COUNT(*) as trust_count
-    FROM trusts
-    WHERE created_by = (SELECT id FROM users WHERE external_id = ?)
-      AND is_active = 1
-  `);
-  const trustStats = trustStmt.get(userId) as { trust_count: number };
-  
-  // Get asset breakdown by category
-  const categoryStmt = db.prepare(`
-    SELECT 
-      category,
-      SUM(value) as category_value,
-      COUNT(*) as category_count
-    FROM assets
-    WHERE user_id = (SELECT id FROM users WHERE external_id = ?)
-      AND is_active = 1
-    GROUP BY category
-    ORDER BY category_value DESC
-  `);
-  const categoryStats = categoryStmt.all(userId) as Array<{
-    category: string;
-    category_value: number;
-    category_count: number;
-  }>;
-  
-  // Calculate category-specific totals
-  const realEstateValue = categoryStats.find(c => c.category === 'REAL_ESTATE')?.category_value || 0;
-  const investmentValue = categoryStats.find(c => c.category === 'FINANCIAL_ACCOUNT')?.category_value || 0;
-  const businessValue = categoryStats.find(c => c.category === 'BUSINESS_INTEREST')?.category_value || 0;
-  const insuranceValue = categoryStats.find(c => c.category === 'INSURANCE_POLICY')?.category_value || 0;
-  
-  return transformDashboardStats({
-    total_net_worth: assetStats.total_value || 0,
-    real_estate_value: realEstateValue,
-    investment_value: investmentValue,
-    business_value: businessValue,
-    insurance_value: insuranceValue,
-    total_assets: assetStats.total_count || 0,
-    active_trusts: trustStats.trust_count || 0,
-    assets_by_category: categoryStats
-  });
-}
-
-// =============================================
-// VALIDATION HELPERS
-// =============================================
-
-export function validateTrustExists(trustId: string): boolean {
-  const db = getDatabase();
-  const stmt = db.prepare(`
-    SELECT 1 FROM trusts 
-    WHERE trust_id = ? AND is_active = 1
-  `);
-  
-  return Boolean(stmt.get(trustId));
-}
-
-export function validateUserExists(userId: string): boolean {
-  const db = getDatabase();
-  const stmt = db.prepare(`
-    SELECT 1 FROM users 
-    WHERE external_id = ? AND is_active = 1
-  `);
-  
-  return Boolean(stmt.get(userId));
-}
-
-// =============================================
-// SEARCH OPERATIONS
-// =============================================
-
-export interface SearchResult {
-  id: string;
-  type: 'asset' | 'trust' | 'family' | 'professional';
-  title: string;
-  subtitle?: string;
-  category?: string;
-  value?: number;
-  matchedField: string;
-  matchScore: number;
-}
-
-export interface SearchOptions {
-  query: string;
-  types?: Array<'asset' | 'trust' | 'family' | 'professional'>;
-  limit?: number;
-  userId?: string;
-}
-
-/**
- * Performs a fuzzy search across multiple entity types
- * Uses SQLite's LIKE operator for simple fuzzy matching
- */
-export function searchAll(options: SearchOptions): SearchResult[] {
-  const db = getDatabase();
-  const { query, types = ['asset', 'trust', 'family', 'professional'], limit = 20, userId = 'user-nick-001' } = options;
-  
-  if (!query || query.trim().length === 0) {
-    return [];
-  }
-  
-  const searchTerm = `%${query.toLowerCase()}%`;
-  const results: SearchResult[] = [];
-  
-  // Get the user's database ID
-  const userStmt = db.prepare('SELECT id FROM users WHERE external_id = ?');
-  const userRecord = userStmt.get(userId) as { id: number } | null;
-  if (!userRecord) return [];
-  const userDbId = userRecord.id;
-  
-  // Search assets
-  if (types.includes('asset')) {
-    const assetStmt = db.prepare(`
-      SELECT 
-        asset_id as id,
-        name,
-        category,
-        value,
-        ownership_type,
-        notes,
-        CASE
-          WHEN LOWER(name) LIKE ? THEN 100
-          WHEN LOWER(notes) LIKE ? THEN 50
-          WHEN LOWER(category) LIKE ? THEN 30
-          ELSE 10
-        END as match_score,
-        CASE
-          WHEN LOWER(name) LIKE ? THEN 'name'
-          WHEN LOWER(notes) LIKE ? THEN 'notes'
-          WHEN LOWER(category) LIKE ? THEN 'category'
-          ELSE 'other'
-        END as matched_field
-      FROM assets
-      WHERE user_id = ?
-        AND is_active = 1
-        AND (
-          LOWER(name) LIKE ?
-          OR LOWER(notes) LIKE ?
-          OR LOWER(category) LIKE ?
-          OR LOWER(ownership_type) LIKE ?
-        )
-      ORDER BY match_score DESC
-      LIMIT ?
-    `);
-    
-    const assetResults = assetStmt.all(
-      searchTerm, searchTerm, searchTerm, // for match_score
-      searchTerm, searchTerm, searchTerm, // for matched_field
-      userDbId,
-      searchTerm, searchTerm, searchTerm, searchTerm, // for WHERE clause
-      limit
-    ) as Array<{
-      id: string;
-      name: string;
-      category: string;
-      value: number;
-      ownership_type: string;
-      notes: string | null;
-      match_score: number;
-      matched_field: string;
-    }>;
-    
-    results.push(...assetResults.map(asset => ({
-      id: asset.id,
-      type: 'asset' as const,
-      title: asset.name,
-      subtitle: `${asset.category} - ${asset.ownership_type}`,
-      category: asset.category,
-      value: asset.value,
-      matchedField: asset.matched_field,
-      matchScore: asset.match_score
-    })));
-  }
-  
-  // Search trusts
-  if (types.includes('trust')) {
-    const trustStmt = db.prepare(`
-      SELECT 
-        t.trust_id as id,
-        t.name,
-        t.grantor,
-        t.purpose,
-        tt.name as trust_type,
-        CASE
-          WHEN LOWER(t.name) LIKE ? THEN 100
-          WHEN LOWER(t.grantor) LIKE ? THEN 70
-          WHEN LOWER(t.purpose) LIKE ? THEN 50
-          ELSE 10
-        END as match_score,
-        CASE
-          WHEN LOWER(t.name) LIKE ? THEN 'name'
-          WHEN LOWER(t.grantor) LIKE ? THEN 'grantor'
-          WHEN LOWER(t.purpose) LIKE ? THEN 'purpose'
-          ELSE 'other'
-        END as matched_field
-      FROM trusts t
-      INNER JOIN trust_types tt ON t.trust_type_id = tt.id
-      WHERE t.created_by = ?
-        AND t.is_active = 1
-        AND (
-          LOWER(t.name) LIKE ?
-          OR LOWER(t.grantor) LIKE ?
-          OR LOWER(t.purpose) LIKE ?
-          OR LOWER(tt.name) LIKE ?
-        )
-      ORDER BY match_score DESC
-      LIMIT ?
-    `);
-    
-    const trustResults = trustStmt.all(
-      searchTerm, searchTerm, searchTerm, // for match_score
-      searchTerm, searchTerm, searchTerm, // for matched_field
-      userDbId,
-      searchTerm, searchTerm, searchTerm, searchTerm, // for WHERE clause
-      limit
-    ) as Array<{
-      id: string;
-      name: string;
-      grantor: string;
-      purpose: string | null;
-      trust_type: string;
-      match_score: number;
-      matched_field: string;
-    }>;
-    
-    results.push(...trustResults.map(trust => ({
-      id: trust.id,
-      type: 'trust' as const,
-      title: trust.name,
-      subtitle: `${trust.trust_type} - Grantor: ${trust.grantor}`,
-      matchedField: trust.matched_field,
-      matchScore: trust.match_score
-    })));
-  }
-  
-  // Search family members
-  if (types.includes('family')) {
-    const familyStmt = db.prepare(`
-      SELECT 
-        fm.family_member_id as id,
-        fm.name,
-        fm.email,
-        fm.primary_phone,
-        fm.notes,
-        rt.name as relationship,
-        CASE
-          WHEN LOWER(fm.name) LIKE ? THEN 100
-          WHEN LOWER(fm.email) LIKE ? THEN 70
-          WHEN LOWER(fm.notes) LIKE ? THEN 50
-          ELSE 10
-        END as match_score,
-        CASE
-          WHEN LOWER(fm.name) LIKE ? THEN 'name'
-          WHEN LOWER(fm.email) LIKE ? THEN 'email'
-          WHEN LOWER(fm.notes) LIKE ? THEN 'notes'
-          ELSE 'other'
-        END as matched_field
-      FROM family_members fm
-      INNER JOIN relationship_types rt ON fm.relationship_type_id = rt.id
-      WHERE fm.user_id = ?
-        AND fm.is_active = 1
-        AND (
-          LOWER(fm.name) LIKE ?
-          OR LOWER(fm.email) LIKE ?
-          OR LOWER(fm.primary_phone) LIKE ?
-          OR LOWER(fm.notes) LIKE ?
-        )
-      ORDER BY match_score DESC
-      LIMIT ?
-    `);
-    
-    const familyResults = familyStmt.all(
-      searchTerm, searchTerm, searchTerm, // for match_score
-      searchTerm, searchTerm, searchTerm, // for matched_field
-      userDbId,
-      searchTerm, searchTerm, searchTerm, searchTerm, // for WHERE clause
-      limit
-    ) as Array<{
-      id: string;
-      name: string;
-      email: string | null;
-      primary_phone: string | null;
-      notes: string | null;
-      relationship: string;
-      match_score: number;
-      matched_field: string;
-    }>;
-    
-    results.push(...familyResults.map(member => ({
-      id: member.id,
-      type: 'family' as const,
-      title: member.name,
-      subtitle: member.relationship,
-      matchedField: member.matched_field,
-      matchScore: member.match_score
-    })));
-  }
-  
-  // Search professionals
-  if (types.includes('professional')) {
-    const professionalStmt = db.prepare(`
-      SELECT 
-        p.professional_id as id,
-        p.name,
-        p.firm,
-        p.email,
-        p.notes,
-        pt.name as professional_type,
-        CASE
-          WHEN LOWER(p.name) LIKE ? THEN 100
-          WHEN LOWER(p.firm) LIKE ? THEN 70
-          WHEN LOWER(p.email) LIKE ? THEN 60
-          WHEN LOWER(p.notes) LIKE ? THEN 40
-          ELSE 10
-        END as match_score,
-        CASE
-          WHEN LOWER(p.name) LIKE ? THEN 'name'
-          WHEN LOWER(p.firm) LIKE ? THEN 'firm'
-          WHEN LOWER(p.email) LIKE ? THEN 'email'
-          WHEN LOWER(p.notes) LIKE ? THEN 'notes'
-          ELSE 'other'
-        END as matched_field
-      FROM professionals p
-      INNER JOIN professional_types pt ON p.professional_type_id = pt.id
-      WHERE p.user_id = ?
-        AND p.is_active = 1
-        AND (
-          LOWER(p.name) LIKE ?
-          OR LOWER(p.firm) LIKE ?
-          OR LOWER(p.email) LIKE ?
-          OR LOWER(p.notes) LIKE ?
-          OR LOWER(pt.name) LIKE ?
-        )
-      ORDER BY match_score DESC
-      LIMIT ?
-    `);
-    
-    const professionalResults = professionalStmt.all(
-      searchTerm, searchTerm, searchTerm, searchTerm, // for match_score
-      searchTerm, searchTerm, searchTerm, searchTerm, // for matched_field
-      userDbId,
-      searchTerm, searchTerm, searchTerm, searchTerm, searchTerm, // for WHERE clause
-      limit
-    ) as Array<{
-      id: string;
-      name: string;
-      firm: string | null;
-      email: string | null;
-      notes: string | null;
-      professional_type: string;
-      match_score: number;
-      matched_field: string;
-    }>;
-    
-    results.push(...professionalResults.map(prof => ({
-      id: prof.id,
-      type: 'professional' as const,
-      title: prof.name,
-      subtitle: prof.firm ? `${prof.professional_type} at ${prof.firm}` : prof.professional_type,
-      matchedField: prof.matched_field,
-      matchScore: prof.match_score
-    })));
-  }
-  
-  // Sort all results by match score
-  results.sort((a, b) => b.matchScore - a.matchScore);
-  
-  // Limit total results
-  return results.slice(0, limit);
-}
-
-/**
- * Search for assets by name, category, or notes
- */
-export function searchAssets(query: string, userId: string = 'user-nick-001', limit: number = 10): AnyEnhancedAsset[] {
-  const db = getDatabase();
-  
-  if (!query || query.trim().length === 0) {
-    return [];
-  }
-  
-  const searchTerm = `%${query.toLowerCase()}%`;
-  
-  const stmt = db.prepare(`
-    SELECT * FROM assets
-    WHERE user_id = (SELECT id FROM users WHERE external_id = ?)
-      AND is_active = 1
-      AND (
-        LOWER(name) LIKE ?
-        OR LOWER(notes) LIKE ?
-        OR LOWER(category) LIKE ?
-        OR LOWER(ownership_type) LIKE ?
-      )
-    ORDER BY 
-      CASE 
-        WHEN LOWER(name) LIKE ? THEN 1
-        WHEN LOWER(category) LIKE ? THEN 2
-        WHEN LOWER(ownership_type) LIKE ? THEN 3
-        ELSE 4
-      END,
-      value DESC
-    LIMIT ?
-  `);
-  
-  const dbAssets = stmt.all(
-    userId,
-    searchTerm, searchTerm, searchTerm, searchTerm,
-    searchTerm, searchTerm, searchTerm,
-    limit
-  ) as DatabaseAsset[];
-  
-  return dbAssets.map(dbAsset => {
-    const ownershipDetails = parseJsonField<Record<string, unknown>>(dbAsset.ownership_details) || {};
-    const assetDetails = parseJsonField<Record<string, unknown>>(dbAsset.asset_details) || {};
-    
-    const baseAsset = {
-      id: dbAsset.asset_id,
-      name: dbAsset.name,
-      category: dbAsset.category as AssetCategory,
-      value: dbAsset.value,
-      ownership: {
-        type: dbAsset.ownership_type as OwnershipInfo['type'],
-        ...ownershipDetails
-      },
-      notes: dbAsset.notes || undefined
-    };
-
-    return {
-      ...baseAsset,
-      ...assetDetails
-    } as AnyEnhancedAsset;
-  });
-}
-
-/**
- * Search for trusts by name, grantor, or purpose
- */
-export function searchTrusts(query: string, userId?: string, limit: number = 10): Trust[] {
-  const db = getDatabase();
-  
-  if (!query || query.trim().length === 0) {
-    return [];
-  }
-  
-  const searchTerm = `%${query.toLowerCase()}%`;
-  
-  let baseQuery = `
-    SELECT 
-      t.*,
-      tt.code as trust_type_code,
-      tt.name as trust_type_name
-    FROM trusts t
-    INNER JOIN trust_types tt ON t.trust_type_id = tt.id
-    WHERE t.is_active = 1
-      AND (
-        LOWER(t.name) LIKE ?
-        OR LOWER(t.grantor) LIKE ?
-        OR LOWER(t.purpose) LIKE ?
-        OR LOWER(tt.name) LIKE ?
-      )
+    JOIN persons p ON lr.assignee_id = p.id
+    JOIN legal_role_types lrt ON lr.role_type_id = lrt.id
+    WHERE lr.is_active = 1 AND p.is_active = 1
   `;
-  
-  const params: (string | number)[] = [searchTerm, searchTerm, searchTerm, searchTerm];
-  
+
+  const params: any[] = [];
   if (userId) {
-    baseQuery += ` AND t.created_by = (SELECT id FROM users WHERE external_id = ?)`;
+    query += ` AND lr.user_id = ?`;
     params.push(userId);
   }
-  
-  baseQuery += ` ORDER BY t.name LIMIT ?`;
-  params.push(limit);
-  
-  const stmt = db.prepare(baseQuery);
-  const dbTrusts = stmt.all(params) as DatabaseTrust[];
-  
-  return dbTrusts.map(dbTrust => {
-    const trustees = getTrustTrustees(dbTrust.id);
-    const beneficiaries = getTrustBeneficiaries(dbTrust.id);
-    return transformDatabaseTrust(dbTrust, trustees, beneficiaries);
+
+  query += ` ORDER BY lr.document_type, lr.priority_order, p.last_name`;
+
+  const stmt = db.prepare(query);
+  const roles = stmt.all(...params);
+
+  return roles.map((role: any) => ({
+    id: role.role_id,
+    assignee: {
+      id: role.person_id,
+      firstName: role.first_name,
+      lastName: role.last_name,
+      fullName: role.full_name,
+      dateOfBirth: role.date_of_birth,
+      isMinor: role.is_minor === 1,
+      isDependent: role.is_dependent === 1,
+      contactInfo: {
+        primaryPhone: role.primary_phone,
+        secondaryPhone: role.secondary_phone,
+        email: role.email,
+        preferredContact: role.preferred_contact,
+      },
+      address: {
+        street1: role.street1,
+        street2: role.street2,
+        city: role.city,
+        state: role.state,
+        zipCode: role.zip_code,
+        country: role.country,
+      },
+      notes: role.notes,
+      isActive: role.is_active === 1,
+    },
+    roleType: role.role_type_name,
+    documentType: role.document_type,
+    documentId: role.document_id,
+    priorityOrder: role.priority_order,
+    conditions: role.conditions,
+    isActive: role.is_active === 1,
+  }));
+}
+
+// =================================
+// HEALTHCARE DIRECTIVES
+// =================================
+
+export interface HealthcareDirective {
+  id: string;
+  principal: Person;
+  primaryProxy?: Person;
+  secondaryProxy?: Person;
+  directiveType: string;
+  dateCreated: string;
+  dateExecuted?: string;
+  preferences?: any;
+  isActive: boolean;
+}
+
+export function getHealthcareDirectives(userId?: number): HealthcareDirective[] {
+  const db = getDatabase();
+
+  let query = `
+    SELECT 
+      hd.*,
+      hdt.name as directive_type_name,
+      p_principal.person_id as principal_person_id,
+      p_principal.first_name as principal_first_name,
+      p_principal.last_name as principal_last_name,
+      p_principal.full_name as principal_full_name,
+      p_proxy1.person_id as proxy1_person_id,
+      p_proxy1.first_name as proxy1_first_name,
+      p_proxy1.last_name as proxy1_last_name,
+      p_proxy1.full_name as proxy1_full_name,
+      p_proxy2.person_id as proxy2_person_id,
+      p_proxy2.first_name as proxy2_first_name,
+      p_proxy2.last_name as proxy2_last_name,
+      p_proxy2.full_name as proxy2_full_name
+    FROM healthcare_directives hd
+    JOIN healthcare_directive_types hdt ON hd.directive_type_id = hdt.id
+    JOIN persons p_principal ON hd.principal_id = p_principal.id
+    LEFT JOIN persons p_proxy1 ON hd.proxy_primary_id = p_proxy1.id
+    LEFT JOIN persons p_proxy2 ON hd.proxy_secondary_id = p_proxy2.id
+    WHERE hd.is_active = 1
+  `;
+
+  const params: any[] = [];
+  if (userId) {
+    query += ` AND hd.created_by = ?`;
+    params.push(userId);
+  }
+
+  query += ` ORDER BY hd.date_created DESC`;
+
+  const stmt = db.prepare(query);
+  const directives = stmt.all(...params);
+
+  return directives.map((directive: any) => ({
+    id: directive.directive_id,
+    principal: {
+      id: directive.principal_person_id,
+      firstName: directive.principal_first_name,
+      lastName: directive.principal_last_name,
+      fullName: directive.principal_full_name,
+      dateOfBirth: undefined,
+      isMinor: false,
+      isDependent: false,
+      contactInfo: {},
+      address: {},
+      isActive: true,
+    },
+    primaryProxy: directive.proxy1_person_id
+      ? {
+          id: directive.proxy1_person_id,
+          firstName: directive.proxy1_first_name,
+          lastName: directive.proxy1_last_name,
+          fullName: directive.proxy1_full_name,
+          dateOfBirth: undefined,
+          isMinor: false,
+          isDependent: false,
+          contactInfo: {},
+          address: {},
+          isActive: true,
+        }
+      : undefined,
+    secondaryProxy: directive.proxy2_person_id
+      ? {
+          id: directive.proxy2_person_id,
+          firstName: directive.proxy2_first_name,
+          lastName: directive.proxy2_last_name,
+          fullName: directive.proxy2_full_name,
+          dateOfBirth: undefined,
+          isMinor: false,
+          isDependent: false,
+          contactInfo: {},
+          address: {},
+          isActive: true,
+        }
+      : undefined,
+    directiveType: directive.directive_type_name,
+    dateCreated: directive.date_created,
+    dateExecuted: directive.date_executed,
+    preferences: directive.preferences ? JSON.parse(directive.preferences) : undefined,
+    isActive: directive.is_active === 1,
+  }));
+}
+
+// =================================
+// BENEFICIARIES (STANDALONE)
+// =================================
+
+export function getBeneficiaries(userId?: number): Beneficiary[] {
+  const db = getDatabase();
+
+  let query = `
+    SELECT DISTINCT
+      p.*,
+      'trust_beneficiary' as source_type,
+      bt.name as beneficiary_type_name,
+      rt.name as relationship_type_name,
+      tb.percentage,
+      tb.conditions
+    FROM persons p
+    JOIN trust_beneficiaries tb ON p.id = tb.person_id
+    JOIN beneficiary_types bt ON tb.beneficiary_type_id = bt.id
+    JOIN relationship_types rt ON tb.relationship_type_id = rt.id
+    JOIN trusts t ON tb.trust_id = t.id
+    WHERE tb.is_active = 1 AND p.is_active = 1
+  `;
+
+  const params: any[] = [];
+  if (userId) {
+    query += ` AND t.created_by = ?`;
+    params.push(userId);
+  }
+
+  query += ` ORDER BY p.last_name, p.first_name`;
+
+  const stmt = db.prepare(query);
+  const beneficiaries = stmt.all(...params);
+
+  return beneficiaries.map((beneficiary: any) => ({
+    id: beneficiary.person_id,
+    firstName: beneficiary.first_name,
+    lastName: beneficiary.last_name,
+    fullName: beneficiary.full_name,
+    dateOfBirth: beneficiary.date_of_birth,
+    isMinor: beneficiary.is_minor === 1,
+    isDependent: beneficiary.is_dependent === 1,
+    contactInfo: {
+      primaryPhone: beneficiary.primary_phone,
+      secondaryPhone: beneficiary.secondary_phone,
+      email: beneficiary.email,
+      preferredContact: beneficiary.preferred_contact,
+    },
+    address: {
+      street1: beneficiary.street1,
+      street2: beneficiary.street2,
+      city: beneficiary.city,
+      state: beneficiary.state,
+      zipCode: beneficiary.zip_code,
+      country: beneficiary.country,
+    },
+    notes: beneficiary.notes,
+    isActive: beneficiary.is_active === 1,
+    type: beneficiary.beneficiary_type_name,
+    relationship: beneficiary.relationship_type_name,
+    percentage: beneficiary.percentage,
+    conditions: beneficiary.conditions,
+  }));
+}
+
+// =================================
+// EMERGENCY CONTACTS
+// =================================
+
+export function getEmergencyContacts(userId?: number): any[] {
+  const db = getDatabase();
+  let query = `
+    SELECT 
+      ec.*,
+      fm.name as family_name,
+      fm.email as family_email,
+      fm.primary_phone as family_phone
+    FROM emergency_contacts ec
+    LEFT JOIN family_members fm ON ec.contact_id = fm.id AND ec.contact_type = 'family_member'
+    WHERE ec.is_active = 1
+  `;
+
+  const params: any[] = [];
+  if (userId) {
+    query += " AND ec.user_id = ?";
+    params.push(userId);
+  }
+
+  query += " ORDER BY ec.priority ASC, ec.contact_name";
+
+  try {
+    const stmt = db.prepare(query);
+    const contacts = stmt.all(...params);
+
+    return contacts.map((contact: any) => ({
+      id: contact.id,
+      name: contact.contact_name || contact.family_name || "Unknown Contact",
+      relationship: contact.relationship || "emergency_contact",
+      contactType: contact.contact_category || "primary",
+      priority: contact.priority || 999,
+      contactInfo: {
+        primaryPhone: contact.phone || contact.family_phone,
+        email: contact.email || contact.family_email,
+        preferredContact: contact.preferred_contact_method || "phone",
+      },
+      availability: contact.availability,
+      medicalAuthority: contact.medical_authority === 1,
+      canMakeDecisions: contact.decision_authority === 1,
+      languages: contact.languages ? contact.languages.split(",") : [],
+      notes: contact.notes,
+    }));
+  } catch (error) {
+    console.error("Error fetching emergency contacts:", error);
+    // Return empty array if emergency_contacts table doesn't exist
+    return [];
+  }
+}
+
+// =================================
+// ASSET MANAGEMENT (Essential for Compatibility)
+// =================================
+
+export function getAssets(userId?: number): any[] {
+  const db = getDatabase();
+  let query = `
+    SELECT 
+      a.*
+    FROM assets a
+    WHERE a.is_active = 1
+  `;
+
+  const params: any[] = [];
+  if (userId) {
+    query += " AND a.user_id = ?";
+    params.push(userId);
+  }
+
+  query += " ORDER BY a.name";
+
+  const stmt = db.prepare(query);
+  const assets = stmt.all(...params);
+
+  return assets.map((asset: any) => {
+    let ownership_details = null;
+    try {
+      if (typeof asset.ownership_details === "string") {
+        ownership_details = JSON.parse(asset.ownership_details);
+      } else {
+        ownership_details = asset.ownership_details;
+      }
+    } catch (e) {
+      console.error("Failed to parse ownership_details:", e);
+      ownership_details = null;
+    }
+
+    let asset_details = null;
+    try {
+      if (typeof asset.asset_details === "string") {
+        asset_details = JSON.parse(asset.asset_details);
+      } else {
+        asset_details = asset.asset_details;
+      }
+    } catch (e) {
+      console.error("Failed to parse asset_details:", e);
+      asset_details = null;
+    }
+
+    return {
+      id: asset.asset_id,
+      name: asset.name,
+      category: asset.category,
+      type: asset.type,
+      value: asset.value,
+      description: asset.description,
+      ownership_type: asset.ownership_type,
+      ownership_details,
+      asset_details,
+      isActive: asset.is_active === 1,
+      createdAt: asset.created_at,
+      updatedAt: asset.updated_at,
+    };
   });
 }
 
-/**
- * Search for family members by name, email, or phone
- */
-export function searchFamilyMembers(query: string, userId: string = 'user-nick-001', limit: number = 10): FamilyMember[] {
+export function getAsset(assetId: string): any | null {
   const db = getDatabase();
-  
-  if (!query || query.trim().length === 0) {
-    return [];
+  const stmt = db.prepare("SELECT * FROM assets WHERE asset_id = ? AND is_active = 1");
+  const asset = stmt.get(assetId);
+
+  if (!asset) return null;
+
+  // Transform the asset similar to getAssets
+  let ownership_details = null;
+  try {
+    if (typeof asset.ownership_details === "string") {
+      ownership_details = JSON.parse(asset.ownership_details);
+    } else {
+      ownership_details = asset.ownership_details;
+    }
+  } catch (e) {
+    console.error("Failed to parse ownership_details:", e);
+    ownership_details = null;
   }
-  
-  const searchTerm = `%${query.toLowerCase()}%`;
-  
-  const stmt = db.prepare(`
-    SELECT 
-      fm.*,
-      rt.code as relationship_code
-    FROM family_members fm
-    INNER JOIN relationship_types rt ON fm.relationship_type_id = rt.id
-    WHERE fm.user_id = (SELECT id FROM users WHERE external_id = ?)
-      AND fm.is_active = 1
-      AND (
-        LOWER(fm.name) LIKE ?
-        OR LOWER(fm.email) LIKE ?
-        OR LOWER(fm.primary_phone) LIKE ?
-        OR LOWER(fm.secondary_phone) LIKE ?
-        OR LOWER(fm.notes) LIKE ?
-      )
-    ORDER BY fm.name
-    LIMIT ?
-  `);
-  
-  const dbMembers = stmt.all(
-    userId,
-    searchTerm, searchTerm, searchTerm, searchTerm, searchTerm,
-    limit
-  ) as DatabaseFamilyMember[];
-  
-  return dbMembers.map(transformDatabaseFamilyMember);
+
+  let asset_details = null;
+  try {
+    if (typeof asset.asset_details === "string") {
+      asset_details = JSON.parse(asset.asset_details);
+    } else {
+      asset_details = asset.asset_details;
+    }
+  } catch (e) {
+    console.error("Failed to parse asset_details:", e);
+    asset_details = null;
+  }
+
+  return {
+    id: asset.asset_id,
+    name: asset.name,
+    category: asset.category,
+    type: asset.type,
+    value: asset.value,
+    description: asset.description,
+    ownership_type: asset.ownership_type,
+    ownership_details,
+    asset_details,
+    isActive: asset.is_active === 1,
+    createdAt: asset.created_at,
+    updatedAt: asset.updated_at,
+  };
+}
+
+// Dashboard Stats Function
+export function getDashboardStats(userId?: number | string): {
+  totalNetWorth: number;
+  realEstateValue: number;
+  investmentValue: number;
+  trustCount: number;
+  assetCount: number;
+} {
+  const userIdNum =
+    typeof userId === "string" ? parseInt(userId.split("-").pop() || "1") : userId || 1;
+
+  const assets = getAssets(userIdNum);
+  const trusts = getTrusts(userIdNum);
+
+  const totalNetWorth = assets.reduce((sum, asset) => sum + (asset.value || 0), 0);
+
+  const realEstateValue = assets
+    .filter((asset) => asset.category === "REAL_ESTATE")
+    .reduce((sum, asset) => sum + (asset.value || 0), 0);
+
+  const investmentValue = assets
+    .filter((asset) => asset.category === "FINANCIAL_ACCOUNT")
+    .reduce((sum, asset) => sum + (asset.value || 0), 0);
+
+  return {
+    totalNetWorth,
+    realEstateValue,
+    investmentValue,
+    trustCount: trusts.length,
+    assetCount: assets.length,
+  };
+}
+
+// Recent Assets Function
+export function getRecentAssets(userId?: number | string, limit: number = 4): any[] {
+  const userIdNum =
+    typeof userId === "string" ? parseInt(userId.split("-").pop() || "1") : userId || 1;
+
+  const assets = getAssets(userIdNum);
+
+  // Sort by updatedAt or createdAt, then take the most recent
+  return assets
+    .sort((a, b) => {
+      const aDate = new Date(a.updatedAt || a.createdAt || 0);
+      const bDate = new Date(b.updatedAt || b.createdAt || 0);
+      return bDate.getTime() - aDate.getTime();
+    })
+    .slice(0, limit);
 }

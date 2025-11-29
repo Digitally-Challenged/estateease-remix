@@ -45,21 +45,24 @@ export async function action({ request }: ActionFunctionArgs) {
       beneficiaries = JSON.parse(beneficiariesData || "[]");
       trustees = JSON.parse(trusteesData || "[]");
     } catch {
-      return json({ 
-        error: "Invalid beneficiary or trustee data",
-        fieldErrors: {}
-      }, { status: 400 });
+      return json(
+        {
+          error: "Invalid beneficiary or trustee data",
+          fieldErrors: {},
+        },
+        { status: 400 },
+      );
     }
 
     // Create trust data object
     const trustData = {
       name,
       type,
-      status: 'ACTIVE' as const,
+      status: "ACTIVE" as const,
       description: description || undefined,
       establishedDate: establishedDate ? new Date(establishedDate) : undefined,
       purpose: purpose || undefined,
-      grantor: grantor || 'Nicholas Coleman', // Default grantor
+      grantor: grantor || "Nicholas Coleman", // Default grantor
       taxId: taxId || undefined,
       trustees,
       beneficiaries,
@@ -70,7 +73,7 @@ export async function action({ request }: ActionFunctionArgs) {
         establishedState: establishedState || undefined,
         governingLaw: governingLaw || undefined,
       },
-      userId: 'user-nick-001' // Default user for now
+      userId: "user-nick-001", // Default user for now
     };
 
     // Validate the trust data
@@ -78,46 +81,49 @@ export async function action({ request }: ActionFunctionArgs) {
 
     if (!validationResult.success) {
       const fieldErrors = formatTrustValidationErrors(validationResult.error);
-      return json({
-        error: "Validation failed",
-        fieldErrors,
-        formData: trustData
-      }, { status: 400 });
+      return json(
+        {
+          error: "Validation failed",
+          fieldErrors,
+          formData: trustData,
+        },
+        { status: 400 },
+      );
     }
 
     // Transform data for database
     const dbTrustData = {
       name: validationResult.data.name,
-      type: validationResult.data.type.toLowerCase() as 'revocable' | 'irrevocable',
+      type: validationResult.data.type.toLowerCase() as "revocable" | "irrevocable",
       taxId: validationResult.data.taxId || `TR-${Date.now()}`, // Generate default tax ID if not provided
       dateCreated: validationResult.data.establishedDate?.toISOString() || new Date().toISOString(),
-      grantor: validationResult.data.grantor || 'Nicholas Coleman',
-      purpose: validationResult.data.purpose || 'Estate planning purposes',
+      grantor: validationResult.data.grantor || "Nicholas Coleman",
+      purpose: validationResult.data.purpose || "Estate planning purposes",
       notes: validationResult.data.notes,
       isActive: true,
-      trustees: validationResult.data.trustees.map(t => ({
+      trustees: validationResult.data.trustees.map((t) => ({
         name: t.name,
-        type: t.isPrimary ? 'primary' : (t.isSuccessor ? 'successor' : 'co-trustee'),
-        powers: ['Standard trustee powers'],
+        type: t.isPrimary ? "primary" : t.isSuccessor ? "successor" : "co-trustee",
+        powers: ["Standard trustee powers"],
         startDate: new Date().toISOString(),
         orderOfSuccession: t.isSuccessor ? 1 : undefined,
         compensation: {
-          type: 'none' as const,
-          details: ''
-        }
+          type: "none" as const,
+          details: "",
+        },
       })),
-      beneficiaries: validationResult.data.beneficiaries.map(b => ({
+      beneficiaries: validationResult.data.beneficiaries.map((b) => ({
         name: b.name,
-        type: b.contingent ? 'contingent' : 'primary',
+        type: b.contingent ? "contingent" : "primary",
         relationship: b.relationship,
         percentage: b.percentage,
         conditions: b.notes,
         distributions: {
-          type: 'discretionary' as const,
-          schedule: '',
-          amount: ''
-        }
-      }))
+          type: "discretionary" as const,
+          schedule: "",
+          amount: "",
+        },
+      })),
     };
 
     // Create the trust
@@ -125,13 +131,15 @@ export async function action({ request }: ActionFunctionArgs) {
 
     // Redirect to the trust overview page
     return redirect("/trusts");
-
   } catch (error) {
     console.error("Error creating trust:", error);
-    return json({
-      error: error instanceof Error ? error.message : "Failed to create trust",
-      fieldErrors: {}
-    }, { status: 500 });
+    return json(
+      {
+        error: error instanceof Error ? error.message : "Failed to create trust",
+        fieldErrors: {},
+      },
+      { status: 500 },
+    );
   }
 }
 
@@ -139,24 +147,28 @@ export default function NewTrust() {
   const actionData = useActionData<ActionData>();
 
   return (
-    <div className="max-w-4xl mx-auto py-6">
+    <div className="mx-auto max-w-4xl py-6">
       <div className="mb-6">
         <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Create New Trust</h1>
-        <p className="text-gray-600 dark:text-gray-400 dark:text-gray-500">Set up a new trust for your estate planning needs</p>
+        <p className="text-gray-600 dark:text-gray-400 dark:text-gray-500">
+          Set up a new trust for your estate planning needs
+        </p>
       </div>
 
       {actionData?.error && (
-        <div className="mb-6 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-700 rounded-lg">
-          <div className="text-red-800 dark:text-red-200 font-medium">Error</div>
-          <div className="text-red-600 dark:text-red-400 text-sm mt-1">{actionData.error}</div>
-          
+        <div className="mb-6 rounded-lg border border-red-200 bg-red-50 p-4 dark:border-red-700 dark:bg-red-900/20">
+          <div className="font-medium text-red-800 dark:text-red-200">Error</div>
+          <div className="mt-1 text-sm text-red-600 dark:text-red-400">{actionData.error}</div>
+
           {actionData.fieldErrors && Object.keys(actionData.fieldErrors).length > 0 && (
             <div className="mt-3">
-              <div className="text-red-700 dark:text-red-300 font-medium text-sm">Validation Errors:</div>
-              <ul className="text-red-600 dark:text-red-400 text-sm mt-1 list-disc list-inside">
+              <div className="text-sm font-medium text-red-700 dark:text-red-300">
+                Validation Errors:
+              </div>
+              <ul className="mt-1 list-inside list-disc text-sm text-red-600 dark:text-red-400">
                 {Object.entries(actionData.fieldErrors).map(([field, errors]) => (
                   <li key={field}>
-                    <strong>{field}:</strong> {Array.isArray(errors) ? errors.join(', ') : errors}
+                    <strong>{field}:</strong> {Array.isArray(errors) ? errors.join(", ") : errors}
                   </li>
                 ))}
               </ul>

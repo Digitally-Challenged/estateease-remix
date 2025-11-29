@@ -5,23 +5,21 @@ import { Button } from "~/components/ui/button";
 import { Badge } from "~/components/ui/badge";
 import { DataTable } from "~/components/ui/data-table";
 import { ErrorBoundary, ErrorDisplay } from "~/components/ui";
-import { 
-  Users,
-  Plus,
-  Phone,
-  Heart,
-  AlertCircle,
-  Shield,
-  Edit,
-  Trash2,
-  UserCheck
-} from "lucide-react";
+import Users from "lucide-react/dist/esm/icons/users";
+import Plus from "lucide-react/dist/esm/icons/plus";
+import Phone from "lucide-react/dist/esm/icons/phone";
+import Heart from "lucide-react/dist/esm/icons/heart";
+import AlertCircle from "lucide-react/dist/esm/icons/alert-circle";
+import Shield from "lucide-react/dist/esm/icons/shield";
+import Edit from "lucide-react/dist/esm/icons/edit";
+import Trash2 from "lucide-react/dist/esm/icons/trash-2";
+import UserCheck from "lucide-react/dist/esm/icons/user-check";
 import { getEmergencyContacts } from "~/lib/dal";
 import type { Column } from "~/components/ui/data-table";
 
 export async function loader() {
   try {
-    const userId = 'user-nick-001';
+    const userId = "user-nick-001";
     const contacts = await getEmergencyContacts(userId);
 
     // Sort contacts by priority
@@ -33,33 +31,35 @@ export async function loader() {
 
     // Group by contact type
     const contactsByType = {
-      primary: sortedContacts.filter(c => c?.contactType === 'primary'),
-      secondary: sortedContacts.filter(c => c?.contactType === 'secondary'),
-      medical: sortedContacts.filter(c => c?.medicalAuthority),
-      other: sortedContacts.filter(c => 
-        c?.contactType !== 'primary' && 
-        c?.contactType !== 'secondary' && 
-        !c?.medicalAuthority
-      )
+      primary: sortedContacts.filter((c) => c?.contactType === "primary"),
+      secondary: sortedContacts.filter((c) => c?.contactType === "secondary"),
+      medical: sortedContacts.filter((c) => c?.medicalAuthority),
+      other: sortedContacts.filter(
+        (c) =>
+          c?.contactType !== "primary" && c?.contactType !== "secondary" && !c?.medicalAuthority,
+      ),
     };
 
     // Find contacts who can make decisions
-    const decisionMakers = contacts.filter(c => c?.canMakeDecisions);
+    const decisionMakers = contacts.filter((c) => c?.canMakeDecisions);
 
-    return json({ 
+    return json({
       contacts: sortedContacts,
       contactsByType,
       decisionMakers,
-      error: null 
+      error: null,
     });
   } catch (error) {
-    console.error('Failed to load emergency contacts:', error);
-    return json({ 
-      contacts: [],
-      contactsByType: { primary: [], secondary: [], medical: [], other: [] },
-      decisionMakers: [],
-      error: error instanceof Error ? error.message : 'Failed to load emergency contacts' 
-    }, { status: 500 });
+    console.error("Failed to load emergency contacts:", error);
+    return json(
+      {
+        contacts: [],
+        contactsByType: { primary: [], secondary: [], medical: [], other: [] },
+        decisionMakers: [],
+        error: error instanceof Error ? error.message : "Failed to load emergency contacts",
+      },
+      { status: 500 },
+    );
   }
 }
 
@@ -71,8 +71,12 @@ function EmergencyContactsContent() {
     return (
       <div className="space-y-6">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Emergency Contacts</h1>
-          <p className="text-gray-600 dark:text-gray-400 dark:text-gray-500 mt-2">Manage your emergency contact information</p>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+            Emergency Contacts
+          </h1>
+          <p className="mt-2 text-gray-600 dark:text-gray-400 dark:text-gray-500">
+            Manage your emergency contact information
+          </p>
         </div>
         <ErrorDisplay
           error={error}
@@ -87,20 +91,26 @@ function EmergencyContactsContent() {
   if (!contacts || contacts.length === 0) {
     return (
       <div className="space-y-6">
-        <div className="flex justify-between items-start">
+        <div className="flex items-start justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Emergency Contacts</h1>
-            <p className="text-gray-600 dark:text-gray-400 dark:text-gray-500 mt-2">Manage your emergency contact information</p>
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+              Emergency Contacts
+            </h1>
+            <p className="mt-2 text-gray-600 dark:text-gray-400 dark:text-gray-500">
+              Manage your emergency contact information
+            </p>
           </div>
         </div>
-        <Card className="text-center py-8">
+        <Card className="py-8 text-center">
           <CardContent>
-            <Users className="h-12 w-12 text-gray-400 dark:text-gray-500 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">No emergency contacts set up</h3>
-            <p className="text-gray-600 dark:text-gray-400 dark:text-gray-500 mb-4">
+            <Users className="mx-auto mb-4 h-12 w-12 text-gray-400 dark:text-gray-500" />
+            <h3 className="mb-2 text-lg font-medium text-gray-900 dark:text-gray-100">
+              No emergency contacts set up
+            </h3>
+            <p className="mb-4 text-gray-600 dark:text-gray-400 dark:text-gray-500">
               Add emergency contacts to ensure you can be reached in case of an emergency
             </p>
-            <Button onClick={() => navigate('/emergency-contacts/new')}>
+            <Button onClick={() => navigate("/emergency-contacts/new")}>
               Add Emergency Contact
             </Button>
           </CardContent>
@@ -109,90 +119,99 @@ function EmergencyContactsContent() {
     );
   }
 
-  const columns: Column<typeof contacts[0]>[] = [
+  const columns: Column<(typeof contacts)[0]>[] = [
     {
-      key: 'priority',
-      header: '#',
+      key: "priority",
+      header: "#",
       render: (contact) => (
         <span className="font-medium text-gray-600 dark:text-gray-400 dark:text-gray-500">
-          {contact?.priority || '-'}
+          {contact?.priority || "-"}
         </span>
-      )
+      ),
     },
     {
-      key: 'name',
-      header: 'Contact',
+      key: "name",
+      header: "Contact",
       render: (contact) => (
         <div>
           <p className="font-medium">{contact?.name}</p>
-          <p className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">{contact?.relationship}</p>
+          <p className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">
+            {contact?.relationship}
+          </p>
         </div>
-      )
+      ),
     },
     {
-      key: 'contact',
-      header: 'Contact Info',
+      key: "contact",
+      header: "Contact Info",
       render: (contact) => (
         <div className="text-sm">
-          <div className="flex items-center space-x-1 mb-1">
+          <div className="mb-1 flex items-center space-x-1">
             <Phone className="h-3 w-3 text-gray-400 dark:text-gray-500" />
-            <span>{contact?.contactInfo?.primaryPhone || 'No phone'}</span>
+            <span>{contact?.contactInfo?.primaryPhone || "No phone"}</span>
           </div>
           {contact?.contactInfo?.secondaryPhone && (
-            <div className="text-gray-600 dark:text-gray-400 dark:text-gray-500">Alt: {contact.contactInfo.secondaryPhone}</div>
+            <div className="text-gray-600 dark:text-gray-400 dark:text-gray-500">
+              Alt: {contact.contactInfo.secondaryPhone}
+            </div>
           )}
           {contact?.contactInfo?.email && (
-            <div className="text-gray-600 dark:text-gray-400 dark:text-gray-500">{contact.contactInfo.email}</div>
+            <div className="text-gray-600 dark:text-gray-400 dark:text-gray-500">
+              {contact.contactInfo.email}
+            </div>
           )}
         </div>
-      )
+      ),
     },
     {
-      key: 'type',
-      header: 'Type',
+      key: "type",
+      header: "Type",
       render: (contact) => (
         <div className="space-y-1">
-          <Badge variant={contact?.contactType === 'primary' ? 'default' : 'secondary'}>
-            {contact?.contactType === 'primary' ? 'Primary' : 
-             contact?.contactType === 'secondary' ? 'Secondary' : 'Other'}
+          <Badge variant={contact?.contactType === "primary" ? "default" : "secondary"}>
+            {contact?.contactType === "primary"
+              ? "Primary"
+              : contact?.contactType === "secondary"
+                ? "Secondary"
+                : "Other"}
           </Badge>
           {contact?.medicalAuthority && (
             <Badge variant="outline" className="bg-red-50 dark:bg-red-900/20">
-              <Heart className="h-3 w-3 mr-1" />
+              <Heart className="mr-1 h-3 w-3" />
               Medical
             </Badge>
           )}
         </div>
-      )
+      ),
     },
     {
-      key: 'authority',
-      header: 'Authority',
+      key: "authority",
+      header: "Authority",
       render: (contact) => (
         <div className="text-sm">
           {contact?.canMakeDecisions ? (
-            <span className="text-green-600 dark:text-green-400 flex items-center">
-              <UserCheck className="h-4 w-4 mr-1" />
+            <span className="flex items-center text-green-600 dark:text-green-400">
+              <UserCheck className="mr-1 h-4 w-4" />
               Can decide
             </span>
           ) : (
             <span className="text-gray-400 dark:text-gray-500">Info only</span>
           )}
         </div>
-      )
+      ),
     },
     {
-      key: 'availability',
-      header: 'Availability',
+      key: "availability",
+      header: "Availability",
       render: (contact) => (
         <span className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">
-          {contact?.availability || 'Always'}
+          {contact?.availability || "Always"}
         </span>
-      )
+      ),
     },
     {
-      key: 'actions',
-      header: 'Actions',
+      key: "actions",
+      header: "Actions",
       render: (contact) => (
         <div className="flex space-x-2">
           <Button
@@ -205,31 +224,35 @@ function EmergencyContactsContent() {
           <Button
             size="sm"
             variant="ghost"
-            className="text-red-600 dark:text-red-400 hover:text-red-700 dark:text-red-300"
+            className="text-red-600 hover:text-red-700 dark:text-red-300 dark:text-red-400"
           >
             <Trash2 className="h-4 w-4" />
           </Button>
         </div>
-      )
-    }
+      ),
+    },
   ];
 
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex justify-between items-start">
+      <div className="flex items-start justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Emergency Contacts</h1>
-          <p className="text-gray-600 dark:text-gray-400 dark:text-gray-500 mt-2">Manage your emergency contact information</p>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+            Emergency Contacts
+          </h1>
+          <p className="mt-2 text-gray-600 dark:text-gray-400 dark:text-gray-500">
+            Manage your emergency contact information
+          </p>
         </div>
-        <Button onClick={() => navigate('/emergency-contacts/new')}>
-          <Plus className="h-4 w-4 mr-2" />
+        <Button onClick={() => navigate("/emergency-contacts/new")}>
+          <Plus className="mr-2 h-4 w-4" />
           Add Contact
         </Button>
       </div>
 
       {/* Summary Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Contacts</CardTitle>
@@ -237,7 +260,9 @@ function EmergencyContactsContent() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{contacts.length}</div>
-            <p className="text-xs text-gray-600 dark:text-gray-400 dark:text-gray-500 mt-1">Emergency contacts</p>
+            <p className="mt-1 text-xs text-gray-600 dark:text-gray-400 dark:text-gray-500">
+              Emergency contacts
+            </p>
           </CardContent>
         </Card>
 
@@ -248,7 +273,9 @@ function EmergencyContactsContent() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{contactsByType.primary.length}</div>
-            <p className="text-xs text-gray-600 dark:text-gray-400 dark:text-gray-500 mt-1">First to contact</p>
+            <p className="mt-1 text-xs text-gray-600 dark:text-gray-400 dark:text-gray-500">
+              First to contact
+            </p>
           </CardContent>
         </Card>
 
@@ -259,7 +286,9 @@ function EmergencyContactsContent() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{contactsByType.medical.length}</div>
-            <p className="text-xs text-gray-600 dark:text-gray-400 dark:text-gray-500 mt-1">Can make medical decisions</p>
+            <p className="mt-1 text-xs text-gray-600 dark:text-gray-400 dark:text-gray-500">
+              Can make medical decisions
+            </p>
           </CardContent>
         </Card>
 
@@ -270,28 +299,28 @@ function EmergencyContactsContent() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{decisionMakers.length}</div>
-            <p className="text-xs text-gray-600 dark:text-gray-400 dark:text-gray-500 mt-1">Can make decisions</p>
+            <p className="mt-1 text-xs text-gray-600 dark:text-gray-400 dark:text-gray-500">
+              Can make decisions
+            </p>
           </CardContent>
         </Card>
       </div>
 
       {/* Warnings */}
       {contactsByType.primary.length === 0 && (
-        <Card className="border-orange-200 dark:border-orange-700 bg-orange-50 dark:bg-orange-900/20">
+        <Card className="border-orange-200 bg-orange-50 dark:border-orange-700 dark:bg-orange-900/20">
           <CardHeader>
-            <CardTitle className="text-orange-800 dark:text-orange-200 flex items-center">
-              <AlertCircle className="h-5 w-5 mr-2" />
+            <CardTitle className="flex items-center text-orange-800 dark:text-orange-200">
+              <AlertCircle className="mr-2 h-5 w-5" />
               No Primary Contact Designated
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-orange-700 dark:text-orange-300 mb-3">
-              You should designate at least one primary emergency contact who will be contacted first in case of emergency.
+            <p className="mb-3 text-orange-700 dark:text-orange-300">
+              You should designate at least one primary emergency contact who will be contacted
+              first in case of emergency.
             </p>
-            <Button 
-              variant="outline" 
-              onClick={() => navigate('/emergency-contacts/new')}
-            >
+            <Button variant="outline" onClick={() => navigate("/emergency-contacts/new")}>
               Add Primary Contact
             </Button>
           </CardContent>
@@ -299,16 +328,17 @@ function EmergencyContactsContent() {
       )}
 
       {contactsByType.medical.length === 0 && (
-        <Card className="border-yellow-200 dark:border-yellow-700 bg-yellow-50 dark:bg-yellow-900/20">
+        <Card className="border-yellow-200 bg-yellow-50 dark:border-yellow-700 dark:bg-yellow-900/20">
           <CardHeader>
-            <CardTitle className="text-yellow-800 dark:text-yellow-200 flex items-center">
-              <Heart className="h-5 w-5 mr-2" />
+            <CardTitle className="flex items-center text-yellow-800 dark:text-yellow-200">
+              <Heart className="mr-2 h-5 w-5" />
               No Medical Decision Maker
             </CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-yellow-700 dark:text-yellow-300">
-              Consider designating someone with medical decision-making authority in case you&apos;re unable to make medical decisions.
+              Consider designating someone with medical decision-making authority in case
+              you&apos;re unable to make medical decisions.
             </p>
           </CardContent>
         </Card>
@@ -336,7 +366,7 @@ function EmergencyContactsContent() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center">
-              <Shield className="h-5 w-5 mr-2" />
+              <Shield className="mr-2 h-5 w-5" />
               Decision Making Authority
             </CardTitle>
             <CardDescription>
@@ -345,58 +375,67 @@ function EmergencyContactsContent() {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {decisionMakers.map((contact) => contact ? (
-                <div key={contact.id} className="flex items-start justify-between border rounded-lg p-4">
-                  <div>
-                    <p className="font-medium">{contact.name}</p>
-                    <p className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">{contact.relationship}</p>
-                    <div className="flex items-center space-x-3 mt-2">
-                      {contact.medicalAuthority && (
-                        <Badge variant="outline" className="text-xs">
-                          Medical Decisions
-                        </Badge>
-                      )}
-                      {contact.canMakeDecisions && (
-                        <Badge variant="outline" className="text-xs">
-                          Legal Decisions
-                        </Badge>
-                      )}
+              {decisionMakers.map((contact) =>
+                contact ? (
+                  <div
+                    key={contact.id}
+                    className="flex items-start justify-between rounded-lg border p-4"
+                  >
+                    <div>
+                      <p className="font-medium">{contact.name}</p>
+                      <p className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">
+                        {contact.relationship}
+                      </p>
+                      <div className="mt-2 flex items-center space-x-3">
+                        {contact.medicalAuthority && (
+                          <Badge variant="outline" className="text-xs">
+                            Medical Decisions
+                          </Badge>
+                        )}
+                        {contact.canMakeDecisions && (
+                          <Badge variant="outline" className="text-xs">
+                            Legal Decisions
+                          </Badge>
+                        )}
+                      </div>
+                    </div>
+                    <div className="text-right text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">
+                      <p>{contact.contactInfo?.primaryPhone || ""}</p>
+                      {contact.contactInfo?.email && <p>{contact.contactInfo.email}</p>}
                     </div>
                   </div>
-                  <div className="text-right text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">
-                    <p>{contact.contactInfo?.primaryPhone || ''}</p>
-                    {contact.contactInfo?.email && <p>{contact.contactInfo.email}</p>}
-                  </div>
-                </div>
-              ) : null)}
+                ) : null,
+              )}
             </div>
           </CardContent>
         </Card>
       )}
 
       {/* Language Support */}
-      {contacts.some(c => c?.languages && c.languages.length > 0) && (
+      {contacts.some((c) => c?.languages && c.languages.length > 0) && (
         <Card>
           <CardHeader>
             <CardTitle>Language Preferences</CardTitle>
-            <CardDescription>
-              Languages spoken by your emergency contacts
-            </CardDescription>
+            <CardDescription>Languages spoken by your emergency contacts</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-2">
-              {contacts.filter(c => c?.languages && c.languages.length > 0).map((contact) => contact ? (
-                <div key={contact.id} className="flex items-center justify-between">
-                  <span className="font-medium">{contact.name}</span>
-                  <div className="flex gap-2">
-                    {contact.languages?.map((lang) => (
-                      <Badge key={lang} variant="secondary">
-                        {lang}
-                      </Badge>
-                    ))}
-                  </div>
-                </div>
-              ) : null)}
+              {contacts
+                .filter((c) => c?.languages && c.languages.length > 0)
+                .map((contact) =>
+                  contact ? (
+                    <div key={contact.id} className="flex items-center justify-between">
+                      <span className="font-medium">{contact.name}</span>
+                      <div className="flex gap-2">
+                        {contact.languages?.map((lang) => (
+                          <Badge key={lang} variant="secondary">
+                            {lang}
+                          </Badge>
+                        ))}
+                      </div>
+                    </div>
+                  ) : null,
+                )}
             </div>
           </CardContent>
         </Card>
@@ -411,4 +450,4 @@ export default function EmergencyContacts() {
       <EmergencyContactsContent />
     </ErrorBoundary>
   );
-} 
+}

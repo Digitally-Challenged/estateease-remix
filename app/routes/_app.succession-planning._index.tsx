@@ -3,103 +3,124 @@ import { useLoaderData } from "@remix-run/react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "~/components/ui/card";
 import { Badge } from "~/components/ui/badge";
 import { ErrorBoundary, ErrorDisplay } from "~/components/ui";
-import { 
-  Clock,
-  Users,
-  FileText,
-  ArrowRight,
-  CheckCircle,
-  AlertCircle,
-  TrendingUp
-} from "lucide-react";
+import { AssetDistributionChart } from "~/components/ui/asset-distribution-chart";
+import Clock from "lucide-react/dist/esm/icons/clock";
+import Users from "lucide-react/dist/esm/icons/users";
+import FileText from "lucide-react/dist/esm/icons/file-text";
+import ArrowRight from "lucide-react/dist/esm/icons/arrow-right";
+import CheckCircle from "lucide-react/dist/esm/icons/check-circle";
+import AlertCircle from "lucide-react/dist/esm/icons/alert-circle";
+import TrendingUp from "lucide-react/dist/esm/icons/trending-up";
 import { getTrusts, getBeneficiaries, getLegalRoles, getAssets } from "~/lib/dal";
+import { formatCurrency } from "~/utils/format";
+import type { AnyEnhancedAsset } from "~/types/assets";
 
 export async function loader() {
   try {
-    const userId = 'user-nick-001';
-    
+    const userId = "user-nick-001";
+
     const [trusts, beneficiaries, legalRoles, assets] = await Promise.all([
       getTrusts(userId),
       getBeneficiaries(userId),
       getLegalRoles(userId),
-      getAssets(userId)
+      getAssets(userId),
     ]);
 
     // Calculate succession timeline phases
     const phases = [
       {
-        name: 'Current Estate',
-        status: 'active',
-        description: 'Present asset ownership and management',
+        name: "Current Estate",
+        status: "active",
+        description: "Present asset ownership and management",
         items: [
-          { type: 'assets', count: assets.length, label: 'Total Assets' },
-          { type: 'trusts', count: trusts.length, label: 'Active Trusts' }
-        ]
+          { type: "assets", count: assets.length, label: "Total Assets" },
+          { type: "trusts", count: trusts.length, label: "Active Trusts" },
+        ],
       },
       {
-        name: 'First Transfer',
-        status: beneficiaries.filter(b => b?.isPrimary).length > 0 ? 'ready' : 'incomplete',
-        description: 'Primary beneficiary distributions',
+        name: "First Transfer",
+        status: beneficiaries.filter((b) => b?.isPrimary).length > 0 ? "ready" : "incomplete",
+        description: "Primary beneficiary distributions",
         items: [
-          { 
-            type: 'beneficiaries', 
-            count: beneficiaries.filter(b => b?.isPrimary).length, 
-            label: 'Primary Beneficiaries' 
+          {
+            type: "beneficiaries",
+            count: beneficiaries.filter((b) => b?.isPrimary).length,
+            label: "Primary Beneficiaries",
           },
           {
-            type: 'percentage',
-            count: beneficiaries.filter(b => b?.isPrimary).reduce((sum, b) => sum + (b?.percentage || 0), 0),
-            label: '% Allocated'
-          }
-        ]
+            type: "percentage",
+            count: beneficiaries
+              .filter((b) => b?.isPrimary)
+              .reduce((sum, b) => sum + (b?.percentage || 0), 0),
+            label: "% Allocated",
+          },
+        ],
       },
       {
-        name: 'Contingent Transfer',
-        status: beneficiaries.filter(b => b?.isContingent).length > 0 ? 'ready' : 'incomplete',
-        description: 'Backup beneficiary distributions',
+        name: "Contingent Transfer",
+        status: beneficiaries.filter((b) => b?.isContingent).length > 0 ? "ready" : "incomplete",
+        description: "Backup beneficiary distributions",
         items: [
-          { 
-            type: 'beneficiaries', 
-            count: beneficiaries.filter(b => b?.isContingent).length, 
-            label: 'Contingent Beneficiaries' 
-          }
-        ]
+          {
+            type: "beneficiaries",
+            count: beneficiaries.filter((b) => b?.isContingent).length,
+            label: "Contingent Beneficiaries",
+          },
+        ],
       },
       {
-        name: 'Administration',
-        status: legalRoles.filter(r => r?.roleType === 'executor').length > 0 ? 'ready' : 'incomplete',
-        description: 'Estate settlement process',
+        name: "Administration",
+        status:
+          legalRoles.filter((r) => r?.roleType === "executor").length > 0 ? "ready" : "incomplete",
+        description: "Estate settlement process",
         items: [
-          { 
-            type: 'executor', 
-            count: legalRoles.filter(r => r?.roleType === 'executor').length, 
-            label: 'Executors' 
+          {
+            type: "executor",
+            count: legalRoles.filter((r) => r?.roleType === "executor").length,
+            label: "Executors",
           },
           {
-            type: 'trustee',
-            count: legalRoles.filter(r => r?.roleType === 'trustee').length,
-            label: 'Trustees'
-          }
-        ]
-      }
+            type: "trustee",
+            count: legalRoles.filter((r) => r?.roleType === "trustee").length,
+            label: "Trustees",
+          },
+        ],
+      },
     ];
 
     // Calculate readiness score
-    const readyPhases = phases.filter(p => p.status === 'ready' || p.status === 'active').length;
+    const readyPhases = phases.filter((p) => p.status === "ready" || p.status === "active").length;
     const readinessScore = Math.round((readyPhases / phases.length) * 100);
 
     // Group assets by ownership for succession flow
-    const assetsByOwnership = assets.reduce((acc, asset) => {
-      if (!asset) return acc;
-      const ownershipType = asset.ownership?.type || 'unknown';
-      if (!acc[ownershipType]) {
-        acc[ownershipType] = [];
-      }
-      acc[ownershipType].push(asset);
-      return acc;
-    }, {} as Record<string, typeof assets>);
+    const assetsByOwnership = assets.reduce(
+      (acc, asset) => {
+        if (!asset) return acc;
+        const ownershipType = asset.ownership?.type || "unknown";
+        if (!acc[ownershipType]) {
+          acc[ownershipType] = [];
+        }
+        acc[ownershipType].push(asset);
+        return acc;
+      },
+      {} as Record<string, AnyEnhancedAsset[]>,
+    );
 
-    return json({ 
+    // Prepare distribution chart data
+    const totalEstateValue = assets.reduce((sum, asset) => sum + (asset?.value || 0), 0);
+    const distributionData = beneficiaries
+      .map((beneficiary, index) => ({
+        id: `beneficiary-${beneficiary?.id || index}`,
+        name: beneficiary?.name || `Beneficiary ${index + 1}`,
+        type: "person" as const,
+        percentage: beneficiary?.percentage || 0,
+        amount: totalEstateValue * ((beneficiary?.percentage || 0) / 100),
+        level: beneficiary?.isPrimary ? 0 : 1,
+        children: undefined,
+      }))
+      .filter((b) => b.percentage > 0);
+
+    return json({
       trusts,
       beneficiaries,
       legalRoles,
@@ -107,25 +128,32 @@ export async function loader() {
       phases,
       readinessScore,
       assetsByOwnership,
-      error: null 
+      distributionData,
+      totalEstateValue,
+      error: null,
     });
   } catch (error) {
-    console.error('Failed to load succession planning data:', error);
-    return json({ 
-      trusts: [],
-      beneficiaries: [],
-      legalRoles: [],
-      assets: [],
-      phases: [],
-      readinessScore: 0,
-      assetsByOwnership: {},
-      error: error instanceof Error ? error.message : 'Failed to load succession planning data' 
-    }, { status: 500 });
+    console.error("Failed to load succession planning data:", error);
+    return json(
+      {
+        trusts: [],
+        beneficiaries: [],
+        legalRoles: [],
+        assets: [],
+        phases: [],
+        readinessScore: 0,
+        assetsByOwnership: {},
+        distributionData: [],
+        totalEstateValue: 0,
+        error: error instanceof Error ? error.message : "Failed to load succession planning data",
+      },
+      { status: 500 },
+    );
   }
 }
 
 function SuccessionPlanningContent() {
-  const { 
+  const {
     trusts,
     beneficiaries,
     legalRoles,
@@ -133,15 +161,21 @@ function SuccessionPlanningContent() {
     phases,
     readinessScore,
     assetsByOwnership,
-    error 
+    distributionData,
+    totalEstateValue,
+    error,
   } = useLoaderData<typeof loader>();
 
   if (error) {
     return (
       <div className="space-y-6">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Succession Planning</h1>
-          <p className="text-gray-600 dark:text-gray-400 dark:text-gray-500 mt-2">Visualize your estate succession timeline and transfer process</p>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+            Succession Planning
+          </h1>
+          <p className="mt-2 text-gray-600 dark:text-gray-400 dark:text-gray-500">
+            Visualize your estate succession timeline and transfer process
+          </p>
         </div>
         <ErrorDisplay
           error={error}
@@ -153,29 +187,60 @@ function SuccessionPlanningContent() {
     );
   }
 
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    }).format(amount);
-  };
+  const primaryBeneficiaries = beneficiaries.filter((b) => b?.isPrimary);
+  const contingentBeneficiaries = beneficiaries.filter((b) => b?.isContingent);
 
-  const totalEstateValue = assets.reduce((sum, asset) => sum + (asset?.value || 0), 0);
-  const primaryBeneficiaries = beneficiaries.filter(b => b?.isPrimary);
-  const contingentBeneficiaries = beneficiaries.filter(b => b?.isContingent);
+  const handleExportDistribution = () => {
+    // Generate distribution report data
+    const distributionReport = {
+      title: "Asset Distribution Report",
+      generatedDate: new Date().toISOString(),
+      totalEstate: totalEstateValue,
+      beneficiaries: distributionData,
+      summary: {
+        totalBeneficiaries: distributionData.length,
+        totalAllocated: distributionData.reduce((sum, b) => sum + b.percentage, 0),
+        totalAmount: distributionData.reduce((sum, b) => sum + b.amount, 0),
+      },
+      phases: phases.map((phase) => ({
+        name: phase.name,
+        status: phase.status,
+        description: phase.description,
+        items: phase.items,
+      })),
+      assetsByOwnership: Object.entries(assetsByOwnership).map(([type, assets]) => ({
+        ownershipType: type,
+        count: assets.length,
+        totalValue: assets.reduce((sum, asset) => sum + (asset?.value || 0), 0),
+      })),
+    };
+
+    // Create downloadable file
+    const blob = new Blob([JSON.stringify(distributionReport, null, 2)], {
+      type: "application/json",
+    });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `distribution-report-${new Date().toISOString().split("T")[0]}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
 
   return (
     <div className="space-y-6">
       {/* Header */}
       <div>
         <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Succession Planning</h1>
-        <p className="text-gray-600 dark:text-gray-400 dark:text-gray-500 mt-2">Visualize your estate succession timeline and transfer process</p>
+        <p className="mt-2 text-gray-600 dark:text-gray-400 dark:text-gray-500">
+          Visualize your estate succession timeline and transfer process
+        </p>
       </div>
 
       {/* Readiness Score */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Succession Readiness</CardTitle>
@@ -183,8 +248,12 @@ function SuccessionPlanningContent() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{readinessScore}%</div>
-            <p className="text-xs text-gray-600 dark:text-gray-400 dark:text-gray-500 mt-1">
-              {readinessScore >= 75 ? 'Well prepared' : readinessScore >= 50 ? 'Partially ready' : 'Needs attention'}
+            <p className="mt-1 text-xs text-gray-600 dark:text-gray-400 dark:text-gray-500">
+              {readinessScore >= 75
+                ? "Well prepared"
+                : readinessScore >= 50
+                  ? "Partially ready"
+                  : "Needs attention"}
             </p>
           </CardContent>
         </Card>
@@ -196,7 +265,9 @@ function SuccessionPlanningContent() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{formatCurrency(totalEstateValue)}</div>
-            <p className="text-xs text-gray-600 dark:text-gray-400 dark:text-gray-500 mt-1">Across {assets.length} assets</p>
+            <p className="mt-1 text-xs text-gray-600 dark:text-gray-400 dark:text-gray-500">
+              Across {assets.length} assets
+            </p>
           </CardContent>
         </Card>
 
@@ -207,7 +278,7 @@ function SuccessionPlanningContent() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{beneficiaries.length}</div>
-            <p className="text-xs text-gray-600 dark:text-gray-400 dark:text-gray-500 mt-1">
+            <p className="mt-1 text-xs text-gray-600 dark:text-gray-400 dark:text-gray-500">
               {primaryBeneficiaries.length} primary, {contingentBeneficiaries.length} contingent
             </p>
           </CardContent>
@@ -218,51 +289,70 @@ function SuccessionPlanningContent() {
       <Card>
         <CardHeader>
           <CardTitle>Estate Succession Timeline</CardTitle>
-          <CardDescription>
-            Visual representation of your estate transfer process
-          </CardDescription>
+          <CardDescription>Visual representation of your estate transfer process</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-8">
             {phases.map((phase, index) => (
               <div key={phase.name} className="relative">
                 {index < phases.length - 1 && (
-                  <div className="absolute left-6 top-12 w-0.5 h-16 bg-gray-300" />
+                  <div className="absolute left-6 top-12 h-16 w-0.5 bg-gray-300" />
                 )}
-                
+
                 <div className="flex items-start space-x-4">
-                  <div className={`flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center ${
-                    phase.status === 'active' ? 'bg-blue-100 text-blue-600 dark:text-blue-400' :
-                    phase.status === 'ready' ? 'bg-green-100 text-green-600 dark:text-green-400' :
-                    'bg-gray-100 dark:bg-gray-800 text-gray-400 dark:text-gray-500'
-                  }`}>
-                    {phase.status === 'active' ? <Clock className="h-5 w-5" /> :
-                     phase.status === 'ready' ? <CheckCircle className="h-5 w-5" /> :
-                     <AlertCircle className="h-5 w-5" />}
+                  <div
+                    className={`flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full ${
+                      phase.status === "active"
+                        ? "bg-blue-100 text-blue-600 dark:text-blue-400"
+                        : phase.status === "ready"
+                          ? "bg-green-100 text-green-600 dark:text-green-400"
+                          : "bg-gray-100 text-gray-400 dark:bg-gray-800 dark:text-gray-500"
+                    }`}
+                  >
+                    {phase.status === "active" ? (
+                      <Clock className="h-5 w-5" />
+                    ) : phase.status === "ready" ? (
+                      <CheckCircle className="h-5 w-5" />
+                    ) : (
+                      <AlertCircle className="h-5 w-5" />
+                    )}
                   </div>
-                  
+
                   <div className="flex-1">
-                    <div className="flex items-center space-x-3 mb-2">
-                      <h3 className="font-medium text-lg">{phase.name}</h3>
-                      <Badge variant={
-                        phase.status === 'active' ? 'default' :
-                        phase.status === 'ready' ? 'default' :
-                        'secondary'
-                      }>
-                        {phase.status === 'active' ? 'Current' :
-                         phase.status === 'ready' ? 'Ready' :
-                         'Incomplete'}
+                    <div className="mb-2 flex items-center space-x-3">
+                      <h3 className="text-lg font-medium">{phase.name}</h3>
+                      <Badge
+                        variant={
+                          phase.status === "active"
+                            ? "default"
+                            : phase.status === "ready"
+                              ? "default"
+                              : "secondary"
+                        }
+                      >
+                        {phase.status === "active"
+                          ? "Current"
+                          : phase.status === "ready"
+                            ? "Ready"
+                            : "Incomplete"}
                       </Badge>
                     </div>
-                    <p className="text-gray-600 dark:text-gray-400 dark:text-gray-500 mb-3">{phase.description}</p>
-                    
+                    <p className="mb-3 text-gray-600 dark:text-gray-400 dark:text-gray-500">
+                      {phase.description}
+                    </p>
+
                     <div className="grid grid-cols-2 gap-4">
                       {phase.items.map((item) => (
-                        <div key={item.label} className="bg-gray-50 dark:bg-gray-900 rounded-lg p-3">
+                        <div
+                          key={item.label}
+                          className="rounded-lg bg-gray-50 p-3 dark:bg-gray-900"
+                        >
                           <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-                            {item.type === 'percentage' ? `${item.count}%` : item.count}
+                            {item.type === "percentage" ? `${item.count}%` : item.count}
                           </p>
-                          <p className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">{item.label}</p>
+                          <p className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">
+                            {item.label}
+                          </p>
                         </div>
                       ))}
                     </div>
@@ -274,73 +364,90 @@ function SuccessionPlanningContent() {
         </CardContent>
       </Card>
 
+      {/* Asset Distribution Chart */}
+      <AssetDistributionChart
+        data={distributionData}
+        totalEstate={totalEstateValue}
+        onExport={handleExportDistribution}
+      />
+
       {/* Asset Flow Visualization */}
       <Card>
         <CardHeader>
           <CardTitle>Asset Distribution Flow</CardTitle>
-          <CardDescription>
-            How your assets will be distributed to beneficiaries
-          </CardDescription>
+          <CardDescription>How your assets will be distributed to beneficiaries</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-6">
             {/* Trust Assets */}
-            {assetsByOwnership['TRUST'] && assetsByOwnership['TRUST'].length > 0 && (
-              <div className="border rounded-lg p-4">
-                <h3 className="font-medium mb-3 flex items-center">
-                  <FileText className="h-4 w-4 mr-2" />
+            {assetsByOwnership["TRUST"] && assetsByOwnership["TRUST"].length > 0 && (
+              <div className="rounded-lg border p-4">
+                <h3 className="mb-3 flex items-center font-medium">
+                  <FileText className="mr-2 h-4 w-4" />
                   Trust-Owned Assets
                 </h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-3">
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                  <div className="rounded-lg bg-blue-50 p-3 dark:bg-blue-900/20">
                     <p className="text-sm font-medium text-blue-900">Assets in Trust</p>
                     <p className="text-2xl font-bold text-blue-900">
-                      {assetsByOwnership['TRUST'].length}
+                      {assetsByOwnership["TRUST"]?.length || 0}
                     </p>
                     <p className="text-sm text-blue-700 dark:text-blue-300">
-                      {formatCurrency(assetsByOwnership['TRUST'].reduce((sum, a) => sum + (a?.value || 0), 0))}
+                      {formatCurrency(
+                        (assetsByOwnership["TRUST"] || []).reduce(
+                          (sum: number, asset) => sum + (asset?.value || 0),
+                          0,
+                        ),
+                      )}
                     </p>
                   </div>
-                  
+
                   <div className="flex items-center justify-center">
                     <ArrowRight className="h-6 w-6 text-gray-400 dark:text-gray-500" />
                   </div>
-                  
-                  <div className="bg-green-50 dark:bg-green-900/20 rounded-lg p-3">
+
+                  <div className="rounded-lg bg-green-50 p-3 dark:bg-green-900/20">
                     <p className="text-sm font-medium text-green-900">Trust Beneficiaries</p>
-                    {trusts.map((trust) => trust ? (
-                      <p key={trust.id} className="text-sm text-green-700 dark:text-green-300">
-                        {trust.name}: {trust.beneficiaries?.length || 0} beneficiaries
-                      </p>
-                    ) : null)}
+                    {trusts.map((trust) =>
+                      trust ? (
+                        <p key={trust.id} className="text-sm text-green-700 dark:text-green-300">
+                          {trust.name}: {trust.beneficiaries?.length || 0} beneficiaries
+                        </p>
+                      ) : null,
+                    )}
                   </div>
                 </div>
               </div>
             )}
 
             {/* Individual Assets */}
-            {assetsByOwnership['INDIVIDUAL'] && assetsByOwnership['INDIVIDUAL'].length > 0 && (
-              <div className="border rounded-lg p-4">
-                <h3 className="font-medium mb-3 flex items-center">
-                  <Users className="h-4 w-4 mr-2" />
+            {assetsByOwnership["INDIVIDUAL"] && assetsByOwnership["INDIVIDUAL"].length > 0 && (
+              <div className="rounded-lg border p-4">
+                <h3 className="mb-3 flex items-center font-medium">
+                  <Users className="mr-2 h-4 w-4" />
                   Individually-Owned Assets
                 </h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="bg-orange-50 dark:bg-orange-900/20 rounded-lg p-3">
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                  <div className="rounded-lg bg-orange-50 p-3 dark:bg-orange-900/20">
                     <p className="text-sm font-medium text-orange-900">Individual Assets</p>
                     <p className="text-2xl font-bold text-orange-900">
-                      {assetsByOwnership['INDIVIDUAL'].length}
+                      {assetsByOwnership["INDIVIDUAL"]?.length || 0}
                     </p>
                     <p className="text-sm text-orange-700 dark:text-orange-300">
-                      {formatCurrency(assetsByOwnership['INDIVIDUAL'].reduce((sum, a) => sum + (a?.value || 0), 0))}
+                      {formatCurrency(
+                        (assetsByOwnership["INDIVIDUAL"] || []).reduce(
+                          (sum: number, asset) => sum + (asset?.value || 0),
+                          0,
+                        ),
+                      )}
                     </p>
                   </div>
-                  
+
                   <div className="flex items-center justify-center">
                     <ArrowRight className="h-6 w-6 text-gray-400 dark:text-gray-500" />
                   </div>
-                  
-                  <div className="bg-purple-50 rounded-lg p-3">
+
+                  <div className="rounded-lg bg-purple-50 p-3">
                     <p className="text-sm font-medium text-purple-900">Will Beneficiaries</p>
                     <p className="text-sm text-purple-700">
                       Distributed according to will provisions
@@ -351,29 +458,36 @@ function SuccessionPlanningContent() {
             )}
 
             {/* Joint Assets */}
-            {assetsByOwnership['JOINT'] && assetsByOwnership['JOINT'].length > 0 && (
-              <div className="border rounded-lg p-4">
-                <h3 className="font-medium mb-3 flex items-center">
-                  <Users className="h-4 w-4 mr-2" />
+            {assetsByOwnership["JOINT"] && assetsByOwnership["JOINT"].length > 0 && (
+              <div className="rounded-lg border p-4">
+                <h3 className="mb-3 flex items-center font-medium">
+                  <Users className="mr-2 h-4 w-4" />
                   Jointly-Owned Assets
                 </h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="bg-indigo-50 rounded-lg p-3">
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                  <div className="rounded-lg bg-indigo-50 p-3">
                     <p className="text-sm font-medium text-indigo-900">Joint Assets</p>
                     <p className="text-2xl font-bold text-indigo-900">
-                      {assetsByOwnership['JOINT'].length}
+                      {assetsByOwnership["JOINT"]?.length || 0}
                     </p>
                     <p className="text-sm text-indigo-700">
-                      {formatCurrency(assetsByOwnership['JOINT'].reduce((sum, a) => sum + (a?.value || 0), 0))}
+                      {formatCurrency(
+                        (assetsByOwnership["JOINT"] || []).reduce(
+                          (sum: number, asset) => sum + (asset?.value || 0),
+                          0,
+                        ),
+                      )}
                     </p>
                   </div>
-                  
+
                   <div className="flex items-center justify-center">
                     <ArrowRight className="h-6 w-6 text-gray-400 dark:text-gray-500" />
                   </div>
-                  
-                  <div className="bg-gray-50 dark:bg-gray-900 rounded-lg p-3">
-                    <p className="text-sm font-medium text-gray-900 dark:text-gray-100">Surviving Owner</p>
+
+                  <div className="rounded-lg bg-gray-50 p-3 dark:bg-gray-900">
+                    <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                      Surviving Owner
+                    </p>
                     <p className="text-sm text-gray-700 dark:text-gray-300">
                       Passes automatically by survivorship
                     </p>
@@ -389,37 +503,44 @@ function SuccessionPlanningContent() {
       <Card>
         <CardHeader>
           <CardTitle>Key Roles in Estate Administration</CardTitle>
-          <CardDescription>
-            People responsible for managing the succession process
-          </CardDescription>
+          <CardDescription>People responsible for managing the succession process</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {legalRoles.filter(r => r && ['executor', 'trustee', 'successor_trustee'].includes(r.roleType)).map((role) => role ? (
-              <div key={role.id} className="border rounded-lg p-4">
-                <div className="flex items-start justify-between mb-2">
-                  <div>
-                    <p className="font-medium">{role.personName}</p>
-                    <p className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500 capitalize">{role.roleType.replace('_', ' ')}</p>
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {legalRoles
+              .filter((r) => r && ["executor", "trustee", "successor_trustee"].includes(r.roleType))
+              .map((role) =>
+                role ? (
+                  <div key={role.id} className="rounded-lg border p-4">
+                    <div className="mb-2 flex items-start justify-between">
+                      <div>
+                        <p className="font-medium">{role.personName}</p>
+                        <p className="text-sm capitalize text-gray-600 dark:text-gray-400 dark:text-gray-500">
+                          {role.roleType.replace("_", " ")}
+                        </p>
+                      </div>
+                      <Badge variant={role.isPrimary ? "default" : "secondary"}>
+                        {role.isPrimary ? "Primary" : "Alternate"}
+                      </Badge>
+                    </div>
+                    {role.specificPowers && role.specificPowers.length > 0 && (
+                      <p className="mt-2 text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">
+                        {role.specificPowers.length} specific powers granted
+                      </p>
+                    )}
                   </div>
-                  <Badge variant={role.isPrimary ? "default" : "secondary"}>
-                    {role.isPrimary ? 'Primary' : 'Alternate'}
-                  </Badge>
-                </div>
-                {role.specificPowers && role.specificPowers.length > 0 && (
-                  <p className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500 mt-2">
-                    {role.specificPowers.length} specific powers granted
-                  </p>
-                )}
-              </div>
-            ) : null)}
+                ) : null,
+              )}
           </div>
-          
-          {legalRoles.filter(r => r && ['executor', 'trustee'].includes(r.roleType)).length === 0 && (
-            <div className="text-center py-8 bg-orange-50 dark:bg-orange-900/20 rounded-lg">
-              <AlertCircle className="h-12 w-12 text-orange-600 dark:text-orange-400 mx-auto mb-3" />
-              <p className="text-orange-800 dark:text-orange-200 font-medium">No Executor or Trustee Assigned</p>
-              <p className="text-sm text-orange-600 dark:text-orange-400 mt-1">
+
+          {legalRoles.filter((r) => r && ["executor", "trustee"].includes(r.roleType)).length ===
+            0 && (
+            <div className="rounded-lg bg-orange-50 py-8 text-center dark:bg-orange-900/20">
+              <AlertCircle className="mx-auto mb-3 h-12 w-12 text-orange-600 dark:text-orange-400" />
+              <p className="font-medium text-orange-800 dark:text-orange-200">
+                No Executor or Trustee Assigned
+              </p>
+              <p className="mt-1 text-sm text-orange-600 dark:text-orange-400">
                 Assign key roles to ensure smooth estate administration
               </p>
             </div>
@@ -436,4 +557,4 @@ export default function SuccessionPlanning() {
       <SuccessionPlanningContent />
     </ErrorBoundary>
   );
-} 
+}

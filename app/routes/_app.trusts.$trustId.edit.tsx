@@ -16,14 +16,14 @@ interface ActionData {
 
 export async function loader({ params }: LoaderFunctionArgs) {
   const { trustId } = params;
-  
+
   if (!trustId) {
     throw new Response("Trust ID is required", { status: 400 });
   }
 
   try {
     const trust = getTrust(trustId);
-    
+
     if (!trust) {
       throw new Response("Trust not found", { status: 404 });
     }
@@ -73,10 +73,13 @@ export async function action({ request, params }: ActionFunctionArgs) {
       beneficiaries = JSON.parse(beneficiariesData || "[]");
       trustees = JSON.parse(trusteesData || "[]");
     } catch {
-      return json({ 
-        error: "Invalid beneficiary or trustee data",
-        fieldErrors: {}
-      }, { status: 400 });
+      return json(
+        {
+          error: "Invalid beneficiary or trustee data",
+          fieldErrors: {},
+        },
+        { status: 400 },
+      );
     }
 
     // Create trust update data object
@@ -84,7 +87,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
       id: trustId,
       name,
       type,
-      status: 'ACTIVE' as const,
+      status: "ACTIVE" as const,
       description: description || undefined,
       establishedDate: establishedDate ? new Date(establishedDate) : undefined,
       purpose: purpose || undefined,
@@ -98,7 +101,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
         lawFirm: lawFirm || undefined,
         establishedState: establishedState || undefined,
         governingLaw: governingLaw || undefined,
-      }
+      },
     };
 
     // Validate the trust data
@@ -106,17 +109,20 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
     if (!validationResult.success) {
       const fieldErrors = formatTrustValidationErrors(validationResult.error);
-      return json({
-        error: "Validation failed",
-        fieldErrors,
-        formData: trustUpdateData
-      }, { status: 400 });
+      return json(
+        {
+          error: "Validation failed",
+          fieldErrors,
+          formData: trustUpdateData,
+        },
+        { status: 400 },
+      );
     }
 
     // Transform data for database update
     const dbUpdateData = {
       name: validationResult.data.name,
-      type: validationResult.data.type?.toLowerCase() as 'revocable' | 'irrevocable' | undefined,
+      type: validationResult.data.type?.toLowerCase() as "revocable" | "irrevocable" | undefined,
       taxId: validationResult.data.taxId,
       purpose: validationResult.data.purpose,
       notes: validationResult.data.notes,
@@ -130,13 +136,15 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
     // Redirect to the trust overview page
     return redirect("/trusts");
-
   } catch (error) {
     console.error("Error updating trust:", error);
-    return json({
-      error: error instanceof Error ? error.message : "Failed to update trust",
-      fieldErrors: {}
-    }, { status: 500 });
+    return json(
+      {
+        error: error instanceof Error ? error.message : "Failed to update trust",
+        fieldErrors: {},
+      },
+      { status: 500 },
+    );
   }
 }
 
@@ -145,24 +153,28 @@ export default function EditTrust() {
   const actionData = useActionData<ActionData>();
 
   return (
-    <div className="max-w-4xl mx-auto py-6">
+    <div className="mx-auto max-w-4xl py-6">
       <div className="mb-6">
         <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Edit Trust</h1>
-        <p className="text-gray-600 dark:text-gray-400 dark:text-gray-500">Update the trust information and settings</p>
+        <p className="text-gray-600 dark:text-gray-400 dark:text-gray-500">
+          Update the trust information and settings
+        </p>
       </div>
 
       {actionData?.error && (
-        <div className="mb-6 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-700 rounded-lg">
-          <div className="text-red-800 dark:text-red-200 font-medium">Error</div>
-          <div className="text-red-600 dark:text-red-400 text-sm mt-1">{actionData.error}</div>
-          
+        <div className="mb-6 rounded-lg border border-red-200 bg-red-50 p-4 dark:border-red-700 dark:bg-red-900/20">
+          <div className="font-medium text-red-800 dark:text-red-200">Error</div>
+          <div className="mt-1 text-sm text-red-600 dark:text-red-400">{actionData.error}</div>
+
           {actionData.fieldErrors && Object.keys(actionData.fieldErrors).length > 0 && (
             <div className="mt-3">
-              <div className="text-red-700 dark:text-red-300 font-medium text-sm">Validation Errors:</div>
-              <ul className="text-red-600 dark:text-red-400 text-sm mt-1 list-disc list-inside">
+              <div className="text-sm font-medium text-red-700 dark:text-red-300">
+                Validation Errors:
+              </div>
+              <ul className="mt-1 list-inside list-disc text-sm text-red-600 dark:text-red-400">
                 {Object.entries(actionData.fieldErrors).map(([field, errors]) => (
                   <li key={field}>
-                    <strong>{field}:</strong> {Array.isArray(errors) ? errors.join(', ') : errors}
+                    <strong>{field}:</strong> {Array.isArray(errors) ? errors.join(", ") : errors}
                   </li>
                 ))}
               </ul>

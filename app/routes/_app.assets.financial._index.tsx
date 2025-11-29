@@ -5,16 +5,14 @@ import { Button } from "~/components/ui/button";
 import { Badge } from "~/components/ui/badge";
 import { DataTable } from "~/components/ui/data-table";
 import { ErrorBoundary, ErrorDisplay } from "~/components/ui";
-import { 
-  DollarSign, 
-  Plus,
-  TrendingUp,
-  Wallet,
-  PiggyBank,
-  Landmark,
-  CreditCard,
-  Building
-} from "lucide-react";
+import DollarSign from "lucide-react/dist/esm/icons/dollar-sign";
+import Plus from "lucide-react/dist/esm/icons/plus";
+import TrendingUp from "lucide-react/dist/esm/icons/trending-up";
+import Wallet from "lucide-react/dist/esm/icons/wallet";
+import PiggyBank from "lucide-react/dist/esm/icons/piggy-bank";
+import Landmark from "lucide-react/dist/esm/icons/landmark";
+import CreditCard from "lucide-react/dist/esm/icons/credit-card";
+import Building from "lucide-react/dist/esm/icons/building";
 import { getAssets } from "~/lib/dal";
 import { AssetCategory, FinancialAccountType } from "~/types/enums";
 import { formatCurrency } from "~/utils/format";
@@ -23,37 +21,48 @@ import type { FinancialAccount, AnyEnhancedAsset } from "~/types/assets";
 
 export async function loader() {
   try {
-    const userId = 'user-nick-001';
+    const userId = "user-nick-001";
     const allAssets = await getAssets(userId);
-    
+
     // Filter for financial accounts only
-    const financialAccounts = allAssets.filter(asset => 
-      asset && asset.category === AssetCategory.FINANCIAL_ACCOUNT
+    const financialAccounts = allAssets.filter(
+      (asset) => asset && asset.category === AssetCategory.FINANCIAL_ACCOUNT,
     );
 
     // Group by account type
-    const accountsByType = financialAccounts.reduce((acc, account) => {
-      if (!account) return acc;
-      const accountType = (account as FinancialAccount).accountType || 'OTHER';
-      if (!acc[accountType]) {
-        acc[accountType] = [];
-      }
-      acc[accountType].push(account);
-      return acc;
-    }, {} as Record<string, (typeof financialAccounts)>);
+    const accountsByType = financialAccounts.reduce(
+      (acc, account) => {
+        if (!account) return acc;
+        const accountType = (account as FinancialAccount).accountType || "OTHER";
+        if (!acc[accountType]) {
+          acc[accountType] = [];
+        }
+        acc[accountType].push(account);
+        return acc;
+      },
+      {} as Record<string, typeof financialAccounts>,
+    );
 
     // Calculate totals
     const totalValue = financialAccounts.reduce((sum, account) => sum + (account?.value || 0), 0);
-    const checkingTotal = accountsByType[FinancialAccountType.CHECKING]?.reduce((sum, acc) => sum + (acc?.value || 0), 0) || 0;
-    const savingsTotal = accountsByType[FinancialAccountType.SAVINGS]?.reduce((sum, acc) => sum + (acc?.value || 0), 0) || 0;
+    const checkingTotal =
+      accountsByType[FinancialAccountType.CHECKING]?.reduce(
+        (sum, acc) => sum + (acc?.value || 0),
+        0,
+      ) || 0;
+    const savingsTotal =
+      accountsByType[FinancialAccountType.SAVINGS]?.reduce(
+        (sum, acc) => sum + (acc?.value || 0),
+        0,
+      ) || 0;
     const investmentTotal = Object.entries(accountsByType)
-      .filter(([type]) => type.includes('INVESTMENT') || type.includes('BROKERAGE'))
+      .filter(([type]) => type.includes("INVESTMENT") || type.includes("BROKERAGE"))
       .reduce((sum, [, accounts]) => sum + accounts.reduce((s, a) => s + (a?.value || 0), 0), 0);
     const retirementTotal = Object.entries(accountsByType)
-      .filter(([type]) => type.includes('RETIREMENT'))
+      .filter(([type]) => type.includes("RETIREMENT"))
       .reduce((sum, [, accounts]) => sum + accounts.reduce((s, a) => s + (a?.value || 0), 0), 0);
 
-    return json({ 
+    return json({
       financialAccounts,
       accountsByType,
       totalValue,
@@ -61,41 +70,48 @@ export async function loader() {
       savingsTotal,
       investmentTotal,
       retirementTotal,
-      error: null 
+      error: null,
     });
   } catch (error) {
-    console.error('Failed to load financial accounts:', error);
-    return json({ 
-      financialAccounts: [],
-      accountsByType: {},
-      totalValue: 0,
-      checkingTotal: 0,
-      savingsTotal: 0,
-      investmentTotal: 0,
-      retirementTotal: 0,
-      error: error instanceof Error ? error.message : 'Failed to load financial accounts' 
-    }, { status: 500 });
+    console.error("Failed to load financial accounts:", error);
+    return json(
+      {
+        financialAccounts: [],
+        accountsByType: {},
+        totalValue: 0,
+        checkingTotal: 0,
+        savingsTotal: 0,
+        investmentTotal: 0,
+        retirementTotal: 0,
+        error: error instanceof Error ? error.message : "Failed to load financial accounts",
+      },
+      { status: 500 },
+    );
   }
 }
 
 function FinancialAccountsContent() {
-  const { 
-    financialAccounts, 
+  const {
+    financialAccounts,
     accountsByType,
     totalValue,
     checkingTotal,
     savingsTotal,
     investmentTotal,
     retirementTotal,
-    error 
+    error,
   } = useLoaderData<typeof loader>();
 
   if (error) {
     return (
       <div className="space-y-6">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Financial Accounts</h1>
-          <p className="text-gray-600 dark:text-gray-400 dark:text-gray-500 mt-2">Manage bank accounts, investments, and retirement accounts</p>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+            Financial Accounts
+          </h1>
+          <p className="mt-2 text-gray-600 dark:text-gray-400 dark:text-gray-500">
+            Manage bank accounts, investments, and retirement accounts
+          </p>
         </div>
         <ErrorDisplay
           error={error}
@@ -110,19 +126,19 @@ function FinancialAccountsContent() {
   const getAccountIcon = (account: AnyEnhancedAsset) => {
     const type = (account as FinancialAccount)?.accountType;
     if (!type) return DollarSign;
-    if (type.includes('CHECKING')) return Wallet;
-    if (type.includes('SAVINGS')) return PiggyBank;
-    if (type.includes('INVESTMENT') || type.includes('BROKERAGE')) return TrendingUp;
-    if (type.includes('RETIREMENT')) return Landmark;
-    if (type === 'CD') return Building;
-    if (type.includes('CREDIT')) return CreditCard;
+    if (type.includes("CHECKING")) return Wallet;
+    if (type.includes("SAVINGS")) return PiggyBank;
+    if (type.includes("INVESTMENT") || type.includes("BROKERAGE")) return TrendingUp;
+    if (type.includes("RETIREMENT")) return Landmark;
+    if (type === "CD") return Building;
+    if (type.includes("CREDIT")) return CreditCard;
     return DollarSign;
   };
 
   const columns: Column<AnyEnhancedAsset>[] = [
     {
-      key: 'name',
-      header: 'Account Name',
+      key: "name",
+      header: "Account Name",
       render: (account) => (
         <div className="flex items-center space-x-3">
           {(() => {
@@ -131,64 +147,65 @@ function FinancialAccountsContent() {
           })()}
           <div>
             <p className="font-medium">{account?.name}</p>
-            <p className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">{(account as FinancialAccount)?.accountNumber || 'No account number'}</p>
+            <p className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">
+              {(account as FinancialAccount)?.accountNumber || "No account number"}
+            </p>
           </div>
         </div>
-      )
+      ),
     },
-          {
-        key: 'type',
-        header: 'Type',
-        render: (account) => (
-          <Badge variant="secondary">
-            {(account as FinancialAccount)?.accountType || 'Unknown'}
-          </Badge>
-        )
-      },
-          {
-        key: 'institution',
-        header: 'Institution',
-        render: (account) => (
-          <span>{(account as FinancialAccount)?.institution || '—'}</span>
-        )
-      },
     {
-      key: 'value',
-      header: 'Balance',
+      key: "type",
+      header: "Type",
+      render: (account) => (
+        <Badge variant="secondary">{(account as FinancialAccount)?.accountType || "Unknown"}</Badge>
+      ),
+    },
+    {
+      key: "institution",
+      header: "Institution",
+      render: (account) => <span>{(account as FinancialAccount)?.institution || "—"}</span>,
+    },
+    {
+      key: "value",
+      header: "Balance",
       render: (account) => (
         <span className="font-medium">{formatCurrency(account?.value || 0)}</span>
-      )
+      ),
     },
     {
-      key: 'actions',
-      header: 'Actions',
+      key: "actions",
+      header: "Actions",
       render: (account) => (
-        <Button
-          size="sm"
-          variant="ghost"
-          asChild
-        >
+        <Button size="sm" variant="ghost" asChild>
           <Link to={`/assets/${account?.id}/edit`}>Edit</Link>
         </Button>
-      )
-    }
+      ),
+    },
   ];
 
   if (!financialAccounts || financialAccounts.length === 0) {
     return (
       <div className="space-y-6">
-        <div className="flex justify-between items-start">
+        <div className="flex items-start justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Financial Accounts</h1>
-            <p className="text-gray-600 dark:text-gray-400 dark:text-gray-500 mt-2">Manage bank accounts, investments, and retirement accounts</p>
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+              Financial Accounts
+            </h1>
+            <p className="mt-2 text-gray-600 dark:text-gray-400 dark:text-gray-500">
+              Manage bank accounts, investments, and retirement accounts
+            </p>
           </div>
         </div>
-        <Card className="text-center py-8">
+        <Card className="py-8 text-center">
           <CardContent>
-            <DollarSign className="h-12 w-12 text-gray-400 dark:text-gray-500 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">No financial accounts</h3>
-            <p className="text-gray-600 dark:text-gray-400 dark:text-gray-500 mb-4">
-              Add your bank accounts, investments, and retirement accounts to track your financial assets
+            <DollarSign className="mx-auto mb-4 h-12 w-12 text-gray-400 dark:text-gray-500" />
+            <h3 className="mb-2 text-lg font-medium text-gray-900 dark:text-gray-100">
+              No financial accounts
+            </h3>
+            <p className="mb-4 text-gray-600 dark:text-gray-400 dark:text-gray-500">
+              Add your bank accounts, investments, and retirement accounts to track your financial
+              assets
             </p>
             <Button asChild>
               <Link to="/assets/new">Add Financial Account</Link>
@@ -202,21 +219,25 @@ function FinancialAccountsContent() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex justify-between items-start">
+      <div className="flex items-start justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Financial Accounts</h1>
-          <p className="text-gray-600 dark:text-gray-400 dark:text-gray-500 mt-2">Manage bank accounts, investments, and retirement accounts</p>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+            Financial Accounts
+          </h1>
+          <p className="mt-2 text-gray-600 dark:text-gray-400 dark:text-gray-500">
+            Manage bank accounts, investments, and retirement accounts
+          </p>
         </div>
         <Button asChild>
           <Link to="/assets/new">
-            <Plus className="h-4 w-4 mr-2" />
+            <Plus className="mr-2 h-4 w-4" />
             Add Account
           </Link>
         </Button>
       </div>
 
       {/* Summary Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-5">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Value</CardTitle>
@@ -224,7 +245,9 @@ function FinancialAccountsContent() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{formatCurrency(totalValue)}</div>
-            <p className="text-xs text-gray-600 dark:text-gray-400 dark:text-gray-500 mt-1">All accounts</p>
+            <p className="mt-1 text-xs text-gray-600 dark:text-gray-400 dark:text-gray-500">
+              All accounts
+            </p>
           </CardContent>
         </Card>
 
@@ -235,7 +258,9 @@ function FinancialAccountsContent() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{formatCurrency(checkingTotal)}</div>
-            <p className="text-xs text-gray-600 dark:text-gray-400 dark:text-gray-500 mt-1">Liquid funds</p>
+            <p className="mt-1 text-xs text-gray-600 dark:text-gray-400 dark:text-gray-500">
+              Liquid funds
+            </p>
           </CardContent>
         </Card>
 
@@ -246,7 +271,9 @@ function FinancialAccountsContent() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{formatCurrency(savingsTotal)}</div>
-            <p className="text-xs text-gray-600 dark:text-gray-400 dark:text-gray-500 mt-1">Emergency fund</p>
+            <p className="mt-1 text-xs text-gray-600 dark:text-gray-400 dark:text-gray-500">
+              Emergency fund
+            </p>
           </CardContent>
         </Card>
 
@@ -257,7 +284,9 @@ function FinancialAccountsContent() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{formatCurrency(investmentTotal)}</div>
-            <p className="text-xs text-gray-600 dark:text-gray-400 dark:text-gray-500 mt-1">Brokerage accounts</p>
+            <p className="mt-1 text-xs text-gray-600 dark:text-gray-400 dark:text-gray-500">
+              Brokerage accounts
+            </p>
           </CardContent>
         </Card>
 
@@ -268,7 +297,9 @@ function FinancialAccountsContent() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{formatCurrency(retirementTotal)}</div>
-            <p className="text-xs text-gray-600 dark:text-gray-400 dark:text-gray-500 mt-1">401k, IRA, etc.</p>
+            <p className="mt-1 text-xs text-gray-600 dark:text-gray-400 dark:text-gray-500">
+              401k, IRA, etc.
+            </p>
           </CardContent>
         </Card>
       </div>
@@ -283,19 +314,24 @@ function FinancialAccountsContent() {
         </CardHeader>
         <CardContent>
           <DataTable
-            data={financialAccounts.filter(Boolean).map(acc => ({ ...acc })) as Record<string, unknown>[]}
+            data={
+              financialAccounts.filter(Boolean).map((acc) => ({ ...acc })) as Record<
+                string,
+                unknown
+              >[]
+            }
             columns={columns as unknown as Column<Record<string, unknown>>[]}
             sortable={true}
             pagination={{
               pageSize: 10,
-              showPagination: true
+              showPagination: true,
             }}
           />
         </CardContent>
       </Card>
 
       {/* Account Type Breakdown */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
         {/* Liquid Accounts */}
         <Card>
           <CardHeader>
@@ -304,25 +340,42 @@ function FinancialAccountsContent() {
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
-              {[...
-                ((accountsByType as Record<string, typeof financialAccounts>)[FinancialAccountType.CHECKING] || []),
-                ...((accountsByType as Record<string, typeof financialAccounts>)[FinancialAccountType.SAVINGS] || []),
-                ...((accountsByType as Record<string, typeof financialAccounts>)[FinancialAccountType.MONEY_MARKET] || [])
-              ].filter(Boolean).map((account) => account ? (
-                <div key={account.id} className="flex items-center justify-between p-3 border rounded-lg">
-                  <div className="flex items-center space-x-3">
-                    {(() => {
-                      const Icon = getAccountIcon(account);
-                      return <Icon className="h-4 w-4 text-gray-600 dark:text-gray-400 dark:text-gray-500" />;
-                    })()}
-                    <div>
-                      <p className="font-medium">{account.name}</p>
-                      <p className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">{(account as FinancialAccount).institution}</p>
+              {[
+                ...((accountsByType as Record<string, typeof financialAccounts>)[
+                  FinancialAccountType.CHECKING
+                ] || []),
+                ...((accountsByType as Record<string, typeof financialAccounts>)[
+                  FinancialAccountType.SAVINGS
+                ] || []),
+                ...((accountsByType as Record<string, typeof financialAccounts>)[
+                  FinancialAccountType.MONEY_MARKET
+                ] || []),
+              ]
+                .filter(Boolean)
+                .map((account) =>
+                  account ? (
+                    <div
+                      key={account.id}
+                      className="flex items-center justify-between rounded-lg border p-3"
+                    >
+                      <div className="flex items-center space-x-3">
+                        {(() => {
+                          const Icon = getAccountIcon(account);
+                          return (
+                            <Icon className="h-4 w-4 text-gray-600 dark:text-gray-400 dark:text-gray-500" />
+                          );
+                        })()}
+                        <div>
+                          <p className="font-medium">{account.name}</p>
+                          <p className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">
+                            {(account as FinancialAccount).institution}
+                          </p>
+                        </div>
+                      </div>
+                      <span className="font-medium">{formatCurrency(account.value || 0)}</span>
                     </div>
-                  </div>
-                  <span className="font-medium">{formatCurrency(account.value || 0)}</span>
-                </div>
-              ) : null)}
+                  ) : null,
+                )}
             </div>
           </CardContent>
         </Card>
@@ -336,24 +389,38 @@ function FinancialAccountsContent() {
           <CardContent>
             <div className="space-y-3">
               {Object.entries(accountsByType)
-                .filter(([type]) => type.includes('INVESTMENT') || type.includes('RETIREMENT') || type.includes('BROKERAGE'))
+                .filter(
+                  ([type]) =>
+                    type.includes("INVESTMENT") ||
+                    type.includes("RETIREMENT") ||
+                    type.includes("BROKERAGE"),
+                )
                 .flatMap(([, accounts]) => accounts)
                 .filter(Boolean)
-                .map((account) => account ? (
-                <div key={account.id} className="flex items-center justify-between p-3 border rounded-lg">
-                  <div className="flex items-center space-x-3">
-                    {(() => {
-                      const Icon = getAccountIcon(account);
-                      return <Icon className="h-4 w-4 text-gray-600 dark:text-gray-400 dark:text-gray-500" />;
-                    })()}
-                    <div>
-                      <p className="font-medium">{account.name}</p>
-                      <p className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">{(account as FinancialAccount).institution}</p>
+                .map((account) =>
+                  account ? (
+                    <div
+                      key={account.id}
+                      className="flex items-center justify-between rounded-lg border p-3"
+                    >
+                      <div className="flex items-center space-x-3">
+                        {(() => {
+                          const Icon = getAccountIcon(account);
+                          return (
+                            <Icon className="h-4 w-4 text-gray-600 dark:text-gray-400 dark:text-gray-500" />
+                          );
+                        })()}
+                        <div>
+                          <p className="font-medium">{account.name}</p>
+                          <p className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">
+                            {(account as FinancialAccount).institution}
+                          </p>
+                        </div>
+                      </div>
+                      <span className="font-medium">{formatCurrency(account.value || 0)}</span>
                     </div>
-                  </div>
-                  <span className="font-medium">{formatCurrency(account.value || 0)}</span>
-                </div>
-              ) : null)}
+                  ) : null,
+                )}
             </div>
           </CardContent>
         </Card>
@@ -368,4 +435,4 @@ export default function FinancialAccounts() {
       <FinancialAccountsContent />
     </ErrorBoundary>
   );
-} 
+}

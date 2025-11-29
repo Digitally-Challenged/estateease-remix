@@ -1,14 +1,14 @@
-import React from 'react';
-import * as Dialog from '@radix-ui/react-dialog';
-import { X } from 'lucide-react';
-import { Button } from './button';
-import { cn } from '~/lib/utils';
+import React from "react";
+import * as Dialog from "@radix-ui/react-dialog";
+import X from "lucide-react/dist/esm/icons/x";
+import { Button } from "./button";
+import { cn } from "~/lib/utils";
 
 export interface ModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   children: React.ReactNode;
-  size?: 'sm' | 'md' | 'lg' | 'xl' | 'full';
+  size?: "sm" | "md" | "lg" | "xl" | "full";
   title?: string;
   description?: string;
   showCloseButton?: boolean;
@@ -24,25 +24,25 @@ export interface ConfirmDialogProps {
   message: string;
   confirmText?: string;
   cancelText?: string;
-  variant?: 'default' | 'destructive';
+  variant?: "default" | "destructive";
   onConfirm: () => void | Promise<void>;
   onCancel?: () => void;
   loading?: boolean;
 }
 
 const sizeClasses = {
-  sm: 'max-w-md',
-  md: 'max-w-lg',
-  lg: 'max-w-2xl',
-  xl: 'max-w-4xl',
-  full: 'max-w-[95vw] max-h-[95vh]',
+  sm: "max-w-md",
+  md: "max-w-lg",
+  lg: "max-w-2xl",
+  xl: "max-w-4xl",
+  full: "max-w-[95vw] max-h-[95vh]",
 };
 
 export function Modal({
   open,
   onOpenChange,
   children,
-  size = 'md',
+  size = "md",
   title,
   description,
   showCloseButton = true,
@@ -53,18 +53,18 @@ export function Modal({
   return (
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
       <Dialog.Portal>
-        <Dialog.Overlay 
+        <Dialog.Overlay
           className={cn(
-            "fixed inset-0 z-50 bg-black/50 backdrop-blur-sm data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
-            overlayClassName
+            "data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-50 bg-black/50 backdrop-blur-sm",
+            overlayClassName,
           )}
         />
         <Dialog.Content
           className={cn(
-            "fixed left-[50%] top-[50%] z-50 grid w-full translate-x-[-50%] translate-y-[-50%] gap-4 border border-gray-200 bg-white p-6 shadow-lg duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] rounded-lg",
+            "data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] fixed left-[50%] top-[50%] z-50 grid w-full translate-x-[-50%] translate-y-[-50%] gap-4 rounded-lg border border-gray-200 bg-white p-6 shadow-lg duration-200",
             sizeClasses[size],
-            size === 'full' && 'h-[95vh] overflow-auto',
-            contentClassName
+            size === "full" && "h-[95vh] overflow-auto",
+            contentClassName,
           )}
         >
           {(title || showCloseButton) && (
@@ -91,9 +91,7 @@ export function Modal({
               )}
             </div>
           )}
-          <div className={cn("flex-1", className)}>
-            {children}
-          </div>
+          <div className={cn("flex-1", className)}>{children}</div>
         </Dialog.Content>
       </Dialog.Portal>
     </Dialog.Root>
@@ -105,9 +103,9 @@ export function ConfirmDialog({
   onOpenChange,
   title,
   message,
-  confirmText = 'Confirm',
-  cancelText = 'Cancel',
-  variant = 'default',
+  confirmText = "Confirm",
+  cancelText = "Cancel",
+  variant = "default",
   onConfirm,
   onCancel,
   loading = false,
@@ -118,7 +116,7 @@ export function ConfirmDialog({
       onOpenChange(false);
     } catch (error) {
       // Error handling should be done in onConfirm
-      console.error('Confirm action failed:', error);
+      console.error("Confirm action failed:", error);
     }
   };
 
@@ -128,26 +126,16 @@ export function ConfirmDialog({
   };
 
   return (
-    <Modal
-      open={open}
-      onOpenChange={onOpenChange}
-      size="sm"
-      title={title}
-      showCloseButton={false}
-    >
+    <Modal open={open} onOpenChange={onOpenChange} size="sm" title={title} showCloseButton={false}>
       <div className="space-y-4">
         <p className="text-sm text-gray-600">{message}</p>
-        
-        <div className="flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2 space-y-2 space-y-reverse sm:space-y-0">
-          <Button
-            variant="outline"
-            onClick={handleCancel}
-            disabled={loading}
-          >
+
+        <div className="flex flex-col-reverse space-y-2 space-y-reverse sm:flex-row sm:justify-end sm:space-x-2 sm:space-y-0">
+          <Button variant="outline" onClick={handleCancel} disabled={loading}>
             {cancelText}
           </Button>
           <Button
-            variant={variant === 'destructive' ? 'destructive' : 'primary'}
+            variant={variant === "destructive" ? "destructive" : "primary"}
             onClick={handleConfirm}
             loading={loading}
             disabled={loading}
@@ -161,7 +149,13 @@ export function ConfirmDialog({
 }
 
 // Modal components for composition
-export const ModalHeader = ({ children, className }: { children: React.ReactNode; className?: string }) => (
+export const ModalHeader = ({
+  children,
+  className,
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) => (
   <div className={cn("flex flex-col space-y-1.5 text-center sm:text-left", className)}>
     {children}
   </div>
@@ -170,7 +164,13 @@ export const ModalHeader = ({ children, className }: { children: React.ReactNode
 export const ModalTitle = Dialog.Title;
 export const ModalDescription = Dialog.Description;
 
-export const ModalFooter = ({ children, className }: { children: React.ReactNode; className?: string }) => (
+export const ModalFooter = ({
+  children,
+  className,
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) => (
   <div className={cn("flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2", className)}>
     {children}
   </div>

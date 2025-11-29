@@ -1,37 +1,36 @@
-import * as React from "react"
-import { cn } from "~/lib/utils"
+import * as React from "react";
+import { cn } from "~/lib/utils";
 
-export interface TextareaProps
-  extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
+export interface TextareaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
   /**
    * Error state - shows red border
    */
-  error?: boolean
+  error?: boolean;
   /**
    * Auto-resize to fit content
    */
-  autoResize?: boolean
+  autoResize?: boolean;
   /**
    * Show character count
    */
-  showCount?: boolean
+  showCount?: boolean;
   /**
    * Makes the textarea take full width of its container
    */
-  fullWidth?: boolean
+  fullWidth?: boolean;
 }
 
 /**
  * Textarea component with auto-resize and character count features
- * 
+ *
  * @example
  * ```tsx
- * <Textarea 
+ * <Textarea
  *   placeholder="Enter your message..."
  *   rows={3}
  * />
- * 
- * <Textarea 
+ *
+ * <Textarea
  *   placeholder="Description"
  *   autoResize
  *   showCount
@@ -40,36 +39,39 @@ export interface TextareaProps
  * ```
  */
 const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
-  ({ 
-    className, 
-    error = false,
-    autoResize = false,
-    showCount = false,
-    fullWidth = true,
-    maxLength,
-    onChange,
-    ...props 
-  }, ref) => {
-    const [value, setValue] = React.useState(props.defaultValue || props.value || "")
-    const textareaRef = React.useRef<HTMLTextAreaElement>(null)
-    
+  (
+    {
+      className,
+      error = false,
+      autoResize = false,
+      showCount = false,
+      fullWidth = true,
+      maxLength,
+      onChange,
+      ...props
+    },
+    ref,
+  ) => {
+    const [value, setValue] = React.useState(props.defaultValue || props.value || "");
+    const textareaRef = React.useRef<HTMLTextAreaElement>(null);
+
     // Combine refs
-    React.useImperativeHandle(ref, () => textareaRef.current!, [])
-    
+    React.useImperativeHandle(ref, () => textareaRef.current!, []);
+
     // Auto-resize functionality
     React.useEffect(() => {
       if (autoResize && textareaRef.current) {
-        const textarea = textareaRef.current
-        textarea.style.height = "auto"
-        textarea.style.height = `${textarea.scrollHeight}px`
+        const textarea = textareaRef.current;
+        textarea.style.height = "auto";
+        textarea.style.height = `${textarea.scrollHeight}px`;
       }
-    }, [value, autoResize])
-    
+    }, [value, autoResize]);
+
     const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-      setValue(e.target.value)
-      onChange?.(e)
-    }
-    
+      setValue(e.target.value);
+      onChange?.(e);
+    };
+
     const textareaClasses = cn(
       "flex min-h-[80px] w-full rounded-md border bg-secondary-50 px-3 py-2 text-sm transition-colors placeholder:text-secondary-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
       {
@@ -78,8 +80,8 @@ const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
         "w-full": fullWidth,
         "resize-none": autoResize,
       },
-      className
-    )
+      className,
+    );
 
     return (
       <div className={cn("space-y-1", fullWidth && "w-full")}>
@@ -92,15 +94,15 @@ const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
           {...props}
         />
         {showCount && (
-          <div className="text-xs text-secondary-500 text-right">
+          <div className="text-right text-xs text-secondary-500">
             {String(value).length}
             {maxLength && ` / ${maxLength}`}
           </div>
         )}
       </div>
-    )
-  }
-)
-Textarea.displayName = "Textarea"
+    );
+  },
+);
+Textarea.displayName = "Textarea";
 
-export { Textarea }
+export { Textarea };

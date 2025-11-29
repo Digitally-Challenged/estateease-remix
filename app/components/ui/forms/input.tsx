@@ -1,44 +1,43 @@
-import * as React from "react"
-import { cn } from "~/lib/utils"
-import { AlertCircle } from "lucide-react"
+import * as React from "react";
+import { cn } from "~/lib/utils";
+import AlertCircle from "lucide-react/dist/esm/icons/alert-circle";
 
-export interface InputProps
-  extends React.InputHTMLAttributes<HTMLInputElement> {
+export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   /**
    * Error state - shows red border and error icon
    */
-  error?: boolean
+  error?: boolean;
   /**
    * Error message to display
    */
-  errorMessage?: string
+  errorMessage?: string;
   /**
    * Label for the input field
    */
-  label?: string
+  label?: string;
   /**
    * Helper text displayed below the input
    */
-  helperText?: string
+  helperText?: string;
   /**
    * Makes the input take full width of its container
    */
-  fullWidth?: boolean
+  fullWidth?: boolean;
 }
 
 /**
  * Input component with error states and helper text
- * 
+ *
  * @example
  * ```tsx
- * <Input 
+ * <Input
  *   label="Email"
  *   type="email"
  *   placeholder="john@example.com"
  *   helperText="We'll never share your email"
  * />
- * 
- * <Input 
+ *
+ * <Input
  *   label="Password"
  *   type="password"
  *   error
@@ -47,21 +46,24 @@ export interface InputProps
  * ```
  */
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
-  ({ 
-    className, 
-    type = "text",
-    error = false,
-    errorMessage,
-    label,
-    helperText,
-    fullWidth = true,
-    id,
-    ...props 
-  }, ref) => {
+  (
+    {
+      className,
+      type = "text",
+      error = false,
+      errorMessage,
+      label,
+      helperText,
+      fullWidth = true,
+      id,
+      ...props
+    },
+    ref,
+  ) => {
     // Generate a unique ID - must be called unconditionally
-    const generatedId = React.useId()
-    const inputId = id || generatedId
-    
+    const generatedId = React.useId();
+    const inputId = id || generatedId;
+
     const inputClasses = cn(
       "flex h-10 w-full rounded-md border bg-secondary-50 px-3 py-2 text-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-secondary-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
       {
@@ -70,18 +72,15 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
         "pr-10": error, // Make room for error icon
         "w-full": fullWidth,
       },
-      className
-    )
+      className,
+    );
 
     return (
       <div className={cn("space-y-1", fullWidth && "w-full")}>
         {label && (
-          <label 
-            htmlFor={inputId}
-            className="block text-sm font-medium text-secondary-700"
-          >
+          <label htmlFor={inputId} className="block text-sm font-medium text-secondary-700">
             {label}
-            {props.required && <span className="text-error-500 ml-1">*</span>}
+            {props.required && <span className="ml-1 text-error-500">*</span>}
           </label>
         )}
         <div className="relative">
@@ -113,9 +112,9 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           </p>
         )}
       </div>
-    )
-  }
-)
-Input.displayName = "Input"
+    );
+  },
+);
+Input.displayName = "Input";
 
-export { Input }
+export { Input };

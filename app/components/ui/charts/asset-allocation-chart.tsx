@@ -1,8 +1,8 @@
-import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts';
-import { ChartContainer } from './chart-container';
-import { CATEGORY_COLORS, getCategoryColor, getChartTheme } from './chart-colors';
-import { useTheme } from '~/utils/theme';
-import { formatCurrency } from '~/utils/format';
+import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from "recharts";
+import { ChartContainer } from "./chart-container";
+import { CATEGORY_COLORS, getCategoryColor, getChartTheme } from "./chart-colors";
+import { useTheme } from "~/utils/theme";
+import { formatCurrency } from "~/utils/format";
 
 interface AssetAllocationData {
   name: string;
@@ -21,10 +21,10 @@ interface AssetAllocationChartProps {
  * Pie chart showing asset allocation by category
  * Displays the portfolio distribution across different asset types
  */
-export function AssetAllocationChart({ 
-  data, 
+export function AssetAllocationChart({
+  data,
   height = 300,
-  showLegend = true 
+  showLegend = true,
 }: AssetAllocationChartProps) {
   const { theme } = useTheme();
   const chartTheme = getChartTheme(theme);
@@ -36,9 +36,20 @@ export function AssetAllocationChart({
   // Get color for specific category, fallback to index-based color
   const getSliceColor = (entry: AssetAllocationData, index: number) => {
     // Try to match by category name to our standard categories
-    const categoryKey = entry.name.toUpperCase().replace(/\s+/g, '_');
-    if (categoryKey in { REAL_ESTATE: 1, FINANCIAL_ACCOUNT: 1, BUSINESS_INTEREST: 1, INSURANCE_POLICY: 1, PERSONAL_PROPERTY: 1 }) {
-      return getCategoryColor(categoryKey as keyof typeof import('./chart-colors').chartColors.categories);
+    const categoryKey = entry.name.toUpperCase().replace(/\s+/g, "_");
+    if (
+      categoryKey in
+      {
+        REAL_ESTATE: 1,
+        FINANCIAL_ACCOUNT: 1,
+        BUSINESS_INTEREST: 1,
+        INSURANCE_POLICY: 1,
+        PERSONAL_PROPERTY: 1,
+      }
+    ) {
+      return getCategoryColor(
+        categoryKey as keyof typeof import("./chart-colors").chartColors.categories,
+      );
     }
     return CATEGORY_COLORS[index % CATEGORY_COLORS.length];
   };
@@ -57,30 +68,41 @@ export function AssetAllocationChart({
       payload: AssetAllocationData;
     }>;
   }
-  
+
   const CustomTooltip = ({ active, payload }: TooltipProps) => {
     if (!active || !payload || payload.length === 0) return null;
-    
+
     const data = payload[0].payload;
     return (
-      <div 
-        className="p-3 rounded-lg shadow-lg border"
+      <div
+        className="rounded-lg border p-3 shadow-lg"
         style={{
           backgroundColor: chartTheme.tooltipBg,
           borderColor: chartTheme.tooltipBorder,
           color: chartTheme.textColor,
         }}
       >
-        <p className="font-medium" style={{ color: chartTheme.textColor }}>{data.name}</p>
+        <p className="font-medium" style={{ color: chartTheme.textColor }}>
+          {data.name}
+        </p>
         <div className="mt-2 space-y-1 text-sm">
           <p style={{ color: chartTheme.textColor, opacity: 0.8 }}>
-            Value: <span className="font-medium" style={{ color: chartTheme.textColor }}>{formatCurrency(data.value)}</span>
+            Value:{" "}
+            <span className="font-medium" style={{ color: chartTheme.textColor }}>
+              {formatCurrency(data.value)}
+            </span>
           </p>
           <p style={{ color: chartTheme.textColor, opacity: 0.8 }}>
-            Percentage: <span className="font-medium" style={{ color: chartTheme.textColor }}>{formatPercentage(data.percentage)}</span>
+            Percentage:{" "}
+            <span className="font-medium" style={{ color: chartTheme.textColor }}>
+              {formatPercentage(data.percentage)}
+            </span>
           </p>
           <p style={{ color: chartTheme.textColor, opacity: 0.8 }}>
-            Assets: <span className="font-medium" style={{ color: chartTheme.textColor }}>{data.count}</span>
+            Assets:{" "}
+            <span className="font-medium" style={{ color: chartTheme.textColor }}>
+              {data.count}
+            </span>
           </p>
         </div>
       </div>
@@ -107,14 +129,10 @@ export function AssetAllocationChart({
           </Pie>
           <Tooltip content={<CustomTooltip />} />
           {showLegend && (
-            <Legend 
-              verticalAlign="bottom" 
+            <Legend
+              verticalAlign="bottom"
               height={36}
-              formatter={(value: string) => (
-                <span style={{ fontSize: '14px' }}>
-                  {value}
-                </span>
-              )}
+              formatter={(value: string) => <span style={{ fontSize: "14px" }}>{value}</span>}
             />
           )}
         </PieChart>

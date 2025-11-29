@@ -4,5 +4,5 @@ export {
   ListEmptyState,
   type EmptyStateProps,
   type EmptyStateType,
-  type EmptyStateAction
-} from './empty-state';
+  type EmptyStateAction,
+} from "./empty-state";

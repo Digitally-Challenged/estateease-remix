@@ -4,23 +4,23 @@
  * Script to add documents tables to the existing database
  */
 
-import Database from 'better-sqlite3';
-import path from 'path';
-import { fileURLToPath } from 'url';
-import process from 'process';
+import Database from "better-sqlite3";
+import path from "path";
+import { fileURLToPath } from "url";
+import process from "process";
 
 // Get __dirname equivalent in ES modules
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Database path
-const dbPath = path.join(__dirname, '../data/estateease.db');
+const dbPath = path.join(__dirname, "../data/estateease.db");
 const db = new Database(dbPath);
 
 // Enable foreign keys
-db.pragma('foreign_keys = ON');
+db.pragma("foreign_keys = ON");
 
-console.log('Adding documents tables to database...\n');
+console.log("Adding documents tables to database...\n");
 
 try {
   // Create documents table
@@ -62,7 +62,7 @@ try {
       FOREIGN KEY (user_id) REFERENCES users(id)
     )
   `);
-  console.log('✅ Created documents table');
+  console.log("✅ Created documents table");
 
   // Create document access log table
   db.exec(`
@@ -79,7 +79,7 @@ try {
       FOREIGN KEY (user_id) REFERENCES users(id)
     )
   `);
-  console.log('✅ Created document_access_log table');
+  console.log("✅ Created document_access_log table");
 
   // Create indexes
   db.exec(`
@@ -88,13 +88,12 @@ try {
     CREATE INDEX IF NOT EXISTS idx_documents_status ON documents(status);
     CREATE INDEX IF NOT EXISTS idx_documents_related ON documents(related_entity_type, related_entity_id);
   `);
-  console.log('✅ Created document indexes');
+  console.log("✅ Created document indexes");
 
-  console.log('\n✅ Document tables added successfully!');
-
+  console.log("\n✅ Document tables added successfully!");
 } catch (error) {
-  console.error('❌ Error adding document tables:', error);
+  console.error("❌ Error adding document tables:", error);
   process.exit(1);
 } finally {
   db.close();
-} 
+}

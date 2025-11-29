@@ -25,7 +25,7 @@ export const FEDERAL_ESTATE_TAX_EXEMPTION = {
  * Federal Estate Tax Rate
  * Source: IRC Section 2001(c)
  */
-export const FEDERAL_ESTATE_TAX_RATE = 0.40;
+export const FEDERAL_ESTATE_TAX_RATE = 0.4;
 
 /**
  * Gift Tax Annual Exclusion for 2025
@@ -47,7 +47,7 @@ export const GST_TAX = {
   /** GST exemption matches estate tax exemption */
   EXEMPTION: 13_990_000,
   /** GST tax rate */
-  RATE: 0.40,
+  RATE: 0.4,
   YEAR: 2025,
 } as const;
 
@@ -68,28 +68,28 @@ export const STATE_TAX_INFO = {
   },
   /** States with estate tax (2025) */
   ESTATE_TAX_STATES: [
-    { state: 'Connecticut', exemption: 12_920_000, minRate: 0.12, maxRate: 0.12 },
-    { state: 'Hawaii', exemption: 5_490_000, minRate: 0.10, maxRate: 0.20 },
-    { state: 'Illinois', exemption: 4_000_000, minRate: 0.008, maxRate: 0.16 },
-    { state: 'Maine', exemption: 6_810_000, minRate: 0.08, maxRate: 0.12 },
-    { state: 'Maryland', exemption: 5_000_000, minRate: 0.008, maxRate: 0.16 },
-    { state: 'Massachusetts', exemption: 2_000_000, minRate: 0.008, maxRate: 0.16 },
-    { state: 'Minnesota', exemption: 3_000_000, minRate: 0.13, maxRate: 0.16 },
-    { state: 'New York', exemption: 6_940_000, minRate: 0.032, maxRate: 0.16 },
-    { state: 'Oregon', exemption: 1_000_000, minRate: 0.10, maxRate: 0.16 },
-    { state: 'Rhode Island', exemption: 1_774_583, minRate: 0.008, maxRate: 0.16 },
-    { state: 'Vermont', exemption: 5_000_000, minRate: 0.16, maxRate: 0.16 },
-    { state: 'Washington', exemption: 2_193_000, minRate: 0.10, maxRate: 0.20 },
-    { state: 'District of Columbia', exemption: 4_710_760, minRate: 0.12, maxRate: 0.16 },
+    { state: "Connecticut", exemption: 12_920_000, minRate: 0.12, maxRate: 0.12 },
+    { state: "Hawaii", exemption: 5_490_000, minRate: 0.1, maxRate: 0.2 },
+    { state: "Illinois", exemption: 4_000_000, minRate: 0.008, maxRate: 0.16 },
+    { state: "Maine", exemption: 6_810_000, minRate: 0.08, maxRate: 0.12 },
+    { state: "Maryland", exemption: 5_000_000, minRate: 0.008, maxRate: 0.16 },
+    { state: "Massachusetts", exemption: 2_000_000, minRate: 0.008, maxRate: 0.16 },
+    { state: "Minnesota", exemption: 3_000_000, minRate: 0.13, maxRate: 0.16 },
+    { state: "New York", exemption: 6_940_000, minRate: 0.032, maxRate: 0.16 },
+    { state: "Oregon", exemption: 1_000_000, minRate: 0.1, maxRate: 0.16 },
+    { state: "Rhode Island", exemption: 1_774_583, minRate: 0.008, maxRate: 0.16 },
+    { state: "Vermont", exemption: 5_000_000, minRate: 0.16, maxRate: 0.16 },
+    { state: "Washington", exemption: 2_193_000, minRate: 0.1, maxRate: 0.2 },
+    { state: "District of Columbia", exemption: 4_710_760, minRate: 0.12, maxRate: 0.16 },
   ],
   /** States with inheritance tax (2025) */
   INHERITANCE_TAX_STATES: [
-    'Iowa', // Phasing out by 2025
-    'Kentucky',
-    'Maryland', // Has both estate and inheritance tax
-    'Nebraska',
-    'New Jersey',
-    'Pennsylvania',
+    "Iowa", // Phasing out by 2025
+    "Kentucky",
+    "Maryland", // Has both estate and inheritance tax
+    "Nebraska",
+    "New Jersey",
+    "Pennsylvania",
   ],
 } as const;
 
@@ -172,9 +172,9 @@ export const LIFE_INSURANCE_GUIDELINES = {
  */
 export const DISABILITY_INSURANCE_GUIDELINES = {
   /** Recommended income replacement percentage */
-  INCOME_REPLACEMENT_PERCENTAGE: 0.60,
+  INCOME_REPLACEMENT_PERCENTAGE: 0.6,
   /** Maximum benefit period options (years) */
-  BENEFIT_PERIODS: [2, 5, 10, 'TO_AGE_65', 'LIFETIME'] as const,
+  BENEFIT_PERIODS: [2, 5, 10, "TO_AGE_65", "LIFETIME"] as const,
   /** Typical elimination periods (days) */
   ELIMINATION_PERIODS: [30, 60, 90, 180] as const,
 } as const;
@@ -276,7 +276,7 @@ export const SOCIAL_SECURITY_2025 = {
     BORN_1943_1954: 66,
     BORN_1955: 66.17, // 66 and 2 months
     BORN_1956: 66.33, // 66 and 4 months
-    BORN_1957: 66.5,  // 66 and 6 months
+    BORN_1957: 66.5, // 66 and 6 months
     BORN_1958: 66.67, // 66 and 8 months
     BORN_1959: 66.83, // 66 and 10 months
     BORN_1960_OR_LATER: 67,
@@ -302,20 +302,20 @@ export const MEDICARE_IRMAA_2025 = {
   /** Income thresholds for single filers */
   SINGLE_THRESHOLDS: [
     { income: 106_000, partB: 0, partD: 0 },
-    { income: 133_000, partB: 73.90, partD: 12.90 },
-    { income: 167_000, partB: 184.70, partD: 33.30 },
-    { income: 200_000, partB: 295.50, partD: 53.80 },
-    { income: 500_000, partB: 406.30, partD: 74.20 },
-    { income: Infinity, partB: 443.00, partD: 81.00 },
+    { income: 133_000, partB: 73.9, partD: 12.9 },
+    { income: 167_000, partB: 184.7, partD: 33.3 },
+    { income: 200_000, partB: 295.5, partD: 53.8 },
+    { income: 500_000, partB: 406.3, partD: 74.2 },
+    { income: Infinity, partB: 443.0, partD: 81.0 },
   ],
   /** Income thresholds for married filing jointly */
   MARRIED_THRESHOLDS: [
     { income: 212_000, partB: 0, partD: 0 },
-    { income: 266_000, partB: 73.90, partD: 12.90 },
-    { income: 334_000, partB: 184.70, partD: 33.30 },
-    { income: 400_000, partB: 295.50, partD: 53.80 },
-    { income: 750_000, partB: 406.30, partD: 74.20 },
-    { income: Infinity, partB: 443.00, partD: 81.00 },
+    { income: 266_000, partB: 73.9, partD: 12.9 },
+    { income: 334_000, partB: 184.7, partD: 33.3 },
+    { income: 400_000, partB: 295.5, partD: 53.8 },
+    { income: 750_000, partB: 406.3, partD: 74.2 },
+    { income: Infinity, partB: 443.0, partD: 81.0 },
   ],
 } as const;
 
@@ -343,7 +343,7 @@ export const CAPITAL_GAINS_TAX_2025 = {
       HEAD_OF_HOUSEHOLD: 566_700,
     },
     /** 20% rate applies above 15% thresholds */
-    RATE_20: 0.20,
+    RATE_20: 0.2,
   },
   /** Net Investment Income Tax */
   NIIT: {

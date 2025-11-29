@@ -2,6 +2,8 @@
  * Export all validation schemas for easy importing
  */
 
+import { z } from "zod";
+
 // Asset validation exports
 export {
   assetSchema,
@@ -22,8 +24,8 @@ export {
   type ValidatedUpdateAsset,
   type ValidatedAssetSearch,
   type ValidatedAssetForm,
-  type ValidatedBulkAsset
-} from './asset-schemas';
+  type ValidatedBulkAsset,
+} from "./asset-schemas";
 
 // Trust validation exports
 export {
@@ -45,8 +47,8 @@ export {
   type ValidatedTrustSearch,
   type ValidatedTrustForm,
   type ValidatedBeneficiary,
-  type ValidatedTrustee
-} from './trust-schemas';
+  type ValidatedTrustee,
+} from "./trust-schemas";
 
 // Family validation exports
 export {
@@ -75,18 +77,108 @@ export {
   type ValidatedFamilySearch,
   type ValidatedFamilyMemberForm,
   type ValidatedProfessionalMemberForm,
-  type ValidatedContactInfo
-} from './family-schemas';
+  type ValidatedContactInfo,
+} from "./family-schemas";
+
+// Will validation exports
+export {
+  willSchema,
+  createWillSchema,
+  updateWillSchema,
+  willFormSchema,
+  willStatusSchema,
+  validateWillStatus,
+  formatWillValidationErrors,
+  type ValidatedWill,
+  type ValidatedCreateWill,
+  type ValidatedUpdateWill,
+  type ValidatedWillForm,
+} from "./will-schemas";
+
+// Power of Attorney validation exports
+export {
+  powerOfAttorneySchema,
+  createPowerOfAttorneySchema,
+  updatePowerOfAttorneySchema,
+  powerOfAttorneyFormSchema,
+  poaTypeSchema,
+  poaStatusSchema,
+  validatePOAType,
+  validatePOAStatus,
+  formatPowerOfAttorneyValidationErrors,
+  type ValidatedPowerOfAttorney,
+  type ValidatedCreatePowerOfAttorney,
+  type ValidatedUpdatePowerOfAttorney,
+  type ValidatedPowerOfAttorneyForm,
+} from "./power-of-attorney-schemas";
+
+// Authentication validation exports
+export {
+  registerSchema,
+  loginSchema,
+  passwordResetRequestSchema,
+  passwordResetSchema,
+  changePasswordSchema,
+  profileUpdateSchema,
+  sessionSchema,
+  twoFactorSetupSchema,
+  twoFactorVerifySchema,
+  registerFormSchema,
+  loginFormSchema,
+  passwordResetRequestFormSchema,
+  passwordResetFormSchema,
+  changePasswordFormSchema,
+  profileUpdateFormSchema,
+  passwordSchema,
+  emailSchema,
+  nameSchema,
+  phoneSchema,
+  validateEmail,
+  validatePassword,
+  formatAuthValidationErrors,
+  type ValidatedRegister,
+  type ValidatedLogin,
+  type ValidatedPasswordResetRequest,
+  type ValidatedPasswordReset,
+  type ValidatedChangePassword,
+  type ValidatedProfileUpdate,
+  type ValidatedSession,
+  type ValidatedTwoFactorSetup,
+  type ValidatedTwoFactorVerify,
+  type ValidatedRegisterForm,
+  type ValidatedLoginForm,
+  type ValidatedPasswordResetRequestForm,
+  type ValidatedPasswordResetForm,
+  type ValidatedChangePasswordForm,
+  type ValidatedProfileUpdateForm,
+} from "./auth-schemas";
+
+// Additional validation error formatters
+export const formatProfileValidationErrors = (error: z.ZodError) => {
+  const formatted: Record<string, string[]> = {};
+
+  if (error.issues) {
+    for (const issue of error.issues) {
+      const path = issue.path.join(".");
+      if (!formatted[path]) {
+        formatted[path] = [];
+      }
+      formatted[path].push(issue.message);
+    }
+  }
+
+  return formatted;
+};
 
 /**
  * Common validation utilities
  */
 export const ValidationErrors = {
-  INVALID_ENUM: 'INVALID_ENUM',
-  REQUIRED_FIELD: 'REQUIRED_FIELD',
-  INVALID_FORMAT: 'INVALID_FORMAT',
-  OUT_OF_RANGE: 'OUT_OF_RANGE',
-  BUSINESS_RULE_VIOLATION: 'BUSINESS_RULE_VIOLATION'
+  INVALID_ENUM: "INVALID_ENUM",
+  REQUIRED_FIELD: "REQUIRED_FIELD",
+  INVALID_FORMAT: "INVALID_FORMAT",
+  OUT_OF_RANGE: "OUT_OF_RANGE",
+  BUSINESS_RULE_VIOLATION: "BUSINESS_RULE_VIOLATION",
 } as const;
 
 /**
@@ -101,36 +193,40 @@ export interface ValidationResult<T> {
 /**
  * Format validation errors from Zod error
  */
-function formatValidationErrors(error: { issues: Array<{ path: (string | number)[]; message: string }> }): Record<string, string[]> {
+function formatValidationErrors(error: {
+  issues: Array<{ path: (string | number)[]; message: string }>;
+}): Record<string, string[]> {
   const formatted: Record<string, string[]> = {};
-  
+
   for (const issue of error.issues) {
-    const path = issue.path.join('.');
+    const path = issue.path.join(".");
     if (!formatted[path]) {
       formatted[path] = [];
     }
     formatted[path].push(issue.message);
   }
-  
+
   return formatted;
 }
 
 /**
  * Create a validation result from a Zod parse attempt
  */
-export function createValidationResult<T>(
-  parseResult: { success: boolean; data?: T; error?: { issues: Array<{ path: (string | number)[]; message: string }> } }
-): ValidationResult<T> {
+export function createValidationResult<T>(parseResult: {
+  success: boolean;
+  data?: T;
+  error?: { issues: Array<{ path: (string | number)[]; message: string }> };
+}): ValidationResult<T> {
   if (parseResult.success) {
     return {
       success: true,
-      data: parseResult.data
+      data: parseResult.data,
     };
   }
-  
+
   return {
     success: false,
-    errors: formatValidationErrors(parseResult.error!)
+    errors: formatValidationErrors(parseResult.error!),
   };
 }
 
@@ -140,13 +236,11 @@ export function createValidationResult<T>(
 export function validateEnum<T extends Record<string, string>>(
   value: string,
   enumObject: T,
-  fieldName: string
+  fieldName: string,
 ): T[keyof T] {
   const validValues = Object.values(enumObject);
   if (!validValues.includes(value as T[keyof T])) {
-    throw new Error(
-      `Invalid ${fieldName}: ${value}. Must be one of: ${validValues.join(', ')}`
-    );
+    throw new Error(`Invalid ${fieldName}: ${value}. Must be one of: ${validValues.join(", ")}`);
   }
   return value as T[keyof T];
 }
@@ -160,15 +254,15 @@ export const ValidationPatterns = {
   SSN: /^\d{3}-\d{2}-\d{4}$/,
   TAX_ID: /^\d{2}-\d{7}$/,
   ZIP_CODE: /^\d{5}(-\d{4})?$/,
-  CURRENCY: /^\$?[\d,]+(\.\d{2})?$/
+  CURRENCY: /^\$?[\d,]+(\.\d{2})?$/,
 } as const;
 
 /**
  * Sanitize user input for validation
  */
 export function sanitizeInput(input: unknown): string {
-  if (typeof input !== 'string') {
-    return '';
+  if (typeof input !== "string") {
+    return "";
   }
   return input.trim();
 }
@@ -178,7 +272,7 @@ export function sanitizeInput(input: unknown): string {
  */
 export function parseCurrency(value: string): number {
   if (!value) return 0;
-  const numericValue = parseFloat(value.replace(/[$,]/g, ''));
+  const numericValue = parseFloat(value.replace(/[$,]/g, ""));
   return isNaN(numericValue) ? 0 : numericValue;
 }
 
@@ -190,4 +284,3 @@ export function validatePercentage(value: number, allowNegative = false): boolea
   if (value > 100) return false;
   return true;
 }
-

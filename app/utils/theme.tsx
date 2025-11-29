@@ -1,6 +1,6 @@
-import { createContext, useContext, useEffect, useState, ReactNode, useCallback } from 'react';
+import { createContext, useContext, useEffect, useState, ReactNode, useCallback } from "react";
 
-type Theme = 'light' | 'dark';
+type Theme = "light" | "dark";
 
 interface ThemeContextType {
   theme: Theme;
@@ -17,23 +17,23 @@ interface ThemeProviderProps {
 
 // Helper to get initial theme
 function getInitialTheme(): Theme {
-  if (typeof window === 'undefined') {
-    return 'light';
+  if (typeof window === "undefined") {
+    return "light";
   }
-  
-  const savedTheme = localStorage.getItem('theme') as Theme;
-  if (savedTheme === 'light' || savedTheme === 'dark') {
+
+  const savedTheme = localStorage.getItem("theme") as Theme;
+  if (savedTheme === "light" || savedTheme === "dark") {
     return savedTheme;
   }
-  
-  const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+
+  const systemTheme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
   return systemTheme;
 }
 
-export function ThemeProvider({ children, defaultTheme = 'light' }: ThemeProviderProps) {
+export function ThemeProvider({ children, defaultTheme = "light" }: ThemeProviderProps) {
   const [theme, setThemeState] = useState<Theme>(() => {
     // Use lazy initial state to avoid hydration mismatch
-    if (typeof window !== 'undefined') {
+    if (typeof window !== "undefined") {
       return getInitialTheme();
     }
     return defaultTheme;
@@ -50,14 +50,14 @@ export function ThemeProvider({ children, defaultTheme = 'light' }: ThemeProvide
 
   // Update DOM and localStorage when theme changes
   useEffect(() => {
-    if (mounted && typeof window !== 'undefined') {
-      document.documentElement.setAttribute('data-theme', theme);
-      localStorage.setItem('theme', theme);
+    if (mounted && typeof window !== "undefined") {
+      document.documentElement.setAttribute("data-theme", theme);
+      localStorage.setItem("theme", theme);
       // Also update class for Tailwind dark mode
-      if (theme === 'dark') {
-        document.documentElement.classList.add('dark');
+      if (theme === "dark") {
+        document.documentElement.classList.add("dark");
       } else {
-        document.documentElement.classList.remove('dark');
+        document.documentElement.classList.remove("dark");
       }
     }
   }, [theme, mounted]);
@@ -67,7 +67,7 @@ export function ThemeProvider({ children, defaultTheme = 'light' }: ThemeProvide
   }, []);
 
   const toggleTheme = useCallback(() => {
-    setTheme(theme === 'light' ? 'dark' : 'light');
+    setTheme(theme === "light" ? "dark" : "light");
   }, [theme, setTheme]);
 
   return (
@@ -80,7 +80,7 @@ export function ThemeProvider({ children, defaultTheme = 'light' }: ThemeProvide
 export function useTheme() {
   const context = useContext(ThemeContext);
   if (context === undefined) {
-    throw new Error('useTheme must be used within a ThemeProvider');
+    throw new Error("useTheme must be used within a ThemeProvider");
   }
   return context;
 }

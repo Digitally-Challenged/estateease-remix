@@ -13,56 +13,55 @@ import type { ValidatedBeneficiary, ValidatedTrustee } from "~/lib/validation/tr
 
 interface TrustFormProps {
   trust?: Trust;
-  mode: 'create' | 'edit';
+  mode: "create" | "edit";
 }
-
 
 export function TrustForm({ trust, mode }: TrustFormProps) {
   const navigation = useNavigation();
   const isSubmitting = navigation.state === "submitting";
-  
+
   // Form state
-  const [trustType, setTrustType] = useState<string>(trust?.type || '');
+  const [trustType, setTrustType] = useState<string>(trust?.type || "");
   const [beneficiaries, setBeneficiaries] = useState<ValidatedBeneficiary[]>(
-    trust?.beneficiaries.map(b => ({
+    trust?.beneficiaries.map((b) => ({
       id: `${b.name}-${Math.random()}`,
       name: b.name,
       relationship: b.relationship,
       percentage: b.percentage || 0,
-      contingent: b.type === 'contingent',
-      notes: b.conditions || ''
-    })) || []
+      contingent: b.type === "contingent",
+      notes: b.conditions || "",
+    })) || [],
   );
   const [trustees, setTrustees] = useState<ValidatedTrustee[]>(
-    trust?.trustees.map(t => ({
+    trust?.trustees.map((t) => ({
       id: `${t.name}-${Math.random()}`,
       name: t.name,
-      type: t.type === 'primary' ? 'INDIVIDUAL' : 'CORPORATE',
-      isPrimary: t.type === 'primary',
-      isSuccessor: t.type === 'successor',
+      type: t.type === "primary" ? "INDIVIDUAL" : "CORPORATE",
+      isPrimary: t.type === "primary",
+      isSuccessor: t.type === "successor",
       contactInfo: {
-        email: '',
-        phone: '',
-        address: ''
+        email: "",
+        phone: "",
+        address: "",
       },
-      notes: ''
-    })) || []
+      notes: "",
+    })) || [],
   );
 
   // Validation state
-  const [beneficiaryPercentageError, setBeneficiaryPercentageError] = useState<string>('');
+  const [beneficiaryPercentageError, setBeneficiaryPercentageError] = useState<string>("");
 
   // Validate beneficiary percentages
   const validateBeneficiaryPercentages = (beneficiaries: ValidatedBeneficiary[]) => {
-    const primaryBeneficiaries = beneficiaries.filter(b => !b.contingent);
+    const primaryBeneficiaries = beneficiaries.filter((b) => !b.contingent);
     const totalPercentage = primaryBeneficiaries.reduce((sum, b) => sum + b.percentage, 0);
-    
+
     if (primaryBeneficiaries.length > 0 && Math.abs(totalPercentage - 100) > 0.01) {
-      setBeneficiaryPercentageError('Primary beneficiary percentages must sum to 100%');
+      setBeneficiaryPercentageError("Primary beneficiary percentages must sum to 100%");
       return false;
     }
-    
-    setBeneficiaryPercentageError('');
+
+    setBeneficiaryPercentageError("");
     return true;
   };
 
@@ -78,9 +77,9 @@ export function TrustForm({ trust, mode }: TrustFormProps) {
       event.preventDefault();
       return;
     }
-    
+
     // Ensure at least one primary trustee
-    const primaryTrustees = trustees.filter(t => t.isPrimary);
+    const primaryTrustees = trustees.filter((t) => t.isPrimary);
     if (primaryTrustees.length === 0) {
       event.preventDefault();
       // You might want to show an error message here
@@ -91,26 +90,24 @@ export function TrustForm({ trust, mode }: TrustFormProps) {
   return (
     <Form method="post" className="space-y-6" onSubmit={handleSubmit}>
       <input type="hidden" name="intent" value={mode} />
-      {mode === 'edit' && trust && (
-        <input type="hidden" name="trustId" value={trust.id} />
-      )}
-      
+      {mode === "edit" && trust && <input type="hidden" name="trustId" value={trust.id} />}
+
       {/* Hidden fields for complex data */}
       <input type="hidden" name="beneficiaries" value={JSON.stringify(beneficiaries)} />
       <input type="hidden" name="trustees" value={JSON.stringify(trustees)} />
-      
+
       <Card>
         <CardHeader>
-          <CardTitle>{mode === 'create' ? 'Create New Trust' : 'Edit Trust'}</CardTitle>
+          <CardTitle>{mode === "create" ? "Create New Trust" : "Edit Trust"}</CardTitle>
           <CardDescription>
-            {mode === 'create' 
-              ? 'Enter the details for the new trust' 
-              : 'Update the trust information'}
+            {mode === "create"
+              ? "Enter the details for the new trust"
+              : "Update the trust information"}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
           {/* Basic Information */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <FormField label="Trust Name" required>
               <Input
                 name="name"
@@ -119,7 +116,7 @@ export function TrustForm({ trust, mode }: TrustFormProps) {
                 placeholder="e.g., Coleman Family Revocable Trust"
               />
             </FormField>
-            
+
             <FormField label="Trust Type" required>
               <Select
                 name="type"
@@ -128,14 +125,14 @@ export function TrustForm({ trust, mode }: TrustFormProps) {
                 required
                 placeholder="Select trust type"
                 options={[
-                  { value: 'REVOCABLE', label: 'Revocable' },
-                  { value: 'IRREVOCABLE', label: 'Irrevocable' }
+                  { value: "REVOCABLE", label: "Revocable" },
+                  { value: "IRREVOCABLE", label: "Irrevocable" },
                 ]}
               />
             </FormField>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <FormField label="Tax ID (EIN)">
               <Input
                 name="taxId"
@@ -145,12 +142,14 @@ export function TrustForm({ trust, mode }: TrustFormProps) {
                 title="Format: XX-XXXXXXX"
               />
             </FormField>
-            
+
             <FormField label="Date Established">
               <Input
                 type="date"
                 name="establishedDate"
-                defaultValue={trust?.dateCreated ? new Date(trust.dateCreated).toISOString().split('T')[0] : ''}
+                defaultValue={
+                  trust?.dateCreated ? new Date(trust.dateCreated).toISOString().split("T")[0] : ""
+                }
               />
             </FormField>
           </div>
@@ -175,7 +174,7 @@ export function TrustForm({ trust, mode }: TrustFormProps) {
 
           {/* Grantor Information */}
           <div className="border-t pt-4">
-            <h3 className="text-lg font-medium text-gray-900 mb-3">Grantor Information</h3>
+            <h3 className="mb-3 text-lg font-medium text-gray-900">Grantor Information</h3>
             <FormField label="Grantor Name" required>
               <Input
                 name="grantor"
@@ -188,16 +187,13 @@ export function TrustForm({ trust, mode }: TrustFormProps) {
 
           {/* Trustee Management */}
           <div className="border-t pt-4">
-            <h3 className="text-lg font-medium text-gray-900 mb-3">Trustees</h3>
-            <TrusteeManager
-              trustees={trustees}
-              onChange={setTrustees}
-            />
+            <h3 className="mb-3 text-lg font-medium text-gray-900">Trustees</h3>
+            <TrusteeManager trustees={trustees} onChange={setTrustees} />
           </div>
 
           {/* Beneficiary Management */}
           <div className="border-t pt-4">
-            <h3 className="text-lg font-medium text-gray-900 mb-3">Beneficiaries</h3>
+            <h3 className="mb-3 text-lg font-medium text-gray-900">Beneficiaries</h3>
             <BeneficiaryManager
               beneficiaries={beneficiaries}
               onChange={handleBeneficiariesChange}
@@ -207,47 +203,31 @@ export function TrustForm({ trust, mode }: TrustFormProps) {
 
           {/* Legal Information */}
           <div className="border-t pt-4">
-            <h3 className="text-lg font-medium text-gray-900 mb-3">Legal Information</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <h3 className="mb-3 text-lg font-medium text-gray-900">Legal Information</h3>
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               <FormField label="Attorney Name">
-                <Input
-                  name="attorneyName"
-                  placeholder="Name of attorney who created the trust"
-                />
+                <Input name="attorneyName" placeholder="Name of attorney who created the trust" />
               </FormField>
-              
+
               <FormField label="Law Firm">
-                <Input
-                  name="lawFirm"
-                  placeholder="Name of law firm"
-                />
+                <Input name="lawFirm" placeholder="Name of law firm" />
               </FormField>
             </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+
+            <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2">
               <FormField label="State Established">
-                <Input
-                  name="establishedState"
-                  placeholder="State where trust was established"
-                />
+                <Input name="establishedState" placeholder="State where trust was established" />
               </FormField>
-              
+
               <FormField label="Governing Law">
-                <Input
-                  name="governingLaw"
-                  placeholder="Governing law jurisdiction"
-                />
+                <Input name="governingLaw" placeholder="Governing law jurisdiction" />
               </FormField>
             </div>
           </div>
 
           {/* Form Actions */}
-          <div className="flex justify-end space-x-3 pt-4 border-t">
-            <Button
-              type="button"
-              variant="secondary"
-              onClick={() => window.history.back()}
-            >
+          <div className="flex justify-end space-x-3 border-t pt-4">
+            <Button type="button" variant="secondary" onClick={() => window.history.back()}>
               Cancel
             </Button>
             <Button
@@ -255,9 +235,13 @@ export function TrustForm({ trust, mode }: TrustFormProps) {
               disabled={isSubmitting || !!beneficiaryPercentageError}
               loading={isSubmitting}
             >
-              {isSubmitting 
-                ? (mode === 'create' ? 'Creating Trust...' : 'Updating Trust...') 
-                : (mode === 'create' ? 'Create Trust' : 'Update Trust')}
+              {isSubmitting
+                ? mode === "create"
+                  ? "Creating Trust..."
+                  : "Updating Trust..."
+                : mode === "create"
+                  ? "Create Trust"
+                  : "Update Trust"}
             </Button>
           </div>
         </CardContent>

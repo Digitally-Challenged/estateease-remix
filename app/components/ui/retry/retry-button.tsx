@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { RefreshCw, AlertCircle } from "lucide-react";
+import RefreshCw from "lucide-react/dist/esm/icons/refresh-cw";
+import AlertCircle from "lucide-react/dist/esm/icons/alert-circle";
 import { cn } from "~/lib/utils";
 
 export interface RetryButtonProps {
@@ -7,8 +8,8 @@ export interface RetryButtonProps {
   disabled?: boolean;
   maxRetries?: number;
   retryDelay?: number;
-  variant?: 'default' | 'outline' | 'ghost';
-  size?: 'sm' | 'md' | 'lg';
+  variant?: "default" | "outline" | "ghost";
+  size?: "sm" | "md" | "lg";
   showCount?: boolean;
   autoRetry?: boolean;
   autoRetryDelay?: number;
@@ -24,13 +25,13 @@ export function RetryButton({
   disabled = false,
   maxRetries = 3,
   retryDelay = 1000,
-  variant = 'default',
-  size = 'md',
+  variant = "default",
+  size = "md",
   showCount = true,
   autoRetry = false,
   autoRetryDelay = 5000,
   className,
-  children = "Try Again"
+  children = "Try Again",
 }: RetryButtonProps) {
   const [isRetrying, setIsRetrying] = useState(false);
   const [retryCount, setRetryCount] = useState(0);
@@ -47,17 +48,17 @@ export function RetryButton({
     try {
       // Add delay for better UX (prevents button mashing)
       if (retryCount > 0 && retryDelay > 0) {
-        await new Promise(resolve => setTimeout(resolve, retryDelay));
+        await new Promise((resolve) => setTimeout(resolve, retryDelay));
       }
 
       await onRetry();
-      
+
       // Reset retry count on success
       setRetryCount(0);
     } catch (error) {
       const newRetryCount = retryCount + 1;
       setRetryCount(newRetryCount);
-      setLastError(error instanceof Error ? error.message : 'Operation failed');
+      setLastError(error instanceof Error ? error.message : "Operation failed");
 
       // Auto-retry if enabled and within limits
       if (autoRetry && newRetryCount < maxRetries) {
@@ -76,26 +77,29 @@ export function RetryButton({
     "inline-flex items-center font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 transition-all duration-200",
     {
       // Variants
-      "bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500 disabled:bg-blue-300": variant === 'default',
-      "border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 focus:ring-blue-500 disabled:bg-gray-100 disabled:text-gray-400": variant === 'outline',
-      "text-blue-600 hover:bg-blue-50 focus:ring-blue-500 disabled:text-blue-300": variant === 'ghost',
-      
+      "bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500 disabled:bg-blue-300":
+        variant === "default",
+      "border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 focus:ring-blue-500 disabled:bg-gray-100 disabled:text-gray-400":
+        variant === "outline",
+      "text-blue-600 hover:bg-blue-50 focus:ring-blue-500 disabled:text-blue-300":
+        variant === "ghost",
+
       // Sizes
-      "px-3 py-1.5 text-sm": size === 'sm',
-      "px-4 py-2 text-sm": size === 'md',
-      "px-6 py-3 text-base": size === 'lg',
-      
+      "px-3 py-1.5 text-sm": size === "sm",
+      "px-4 py-2 text-sm": size === "md",
+      "px-6 py-3 text-base": size === "lg",
+
       // States
       "opacity-50 cursor-not-allowed": !canRetry && !isRetrying,
-      "cursor-wait": isRetrying
+      "cursor-wait": isRetrying,
     },
-    className
+    className,
   );
 
   const iconSize = {
     sm: "h-3 w-3",
     md: "h-4 w-4",
-    lg: "h-5 w-5"
+    lg: "h-5 w-5",
   }[size];
 
   return (
@@ -106,14 +110,8 @@ export function RetryButton({
         className={buttonClasses}
         aria-label={`Retry operation (${retryCount}/${maxRetries} attempts)`}
       >
-        <RefreshCw 
-          className={cn(
-            iconSize, 
-            "mr-2",
-            { "animate-spin": isRetrying }
-          )} 
-        />
-        {isRetrying ? 'Retrying...' : children}
+        <RefreshCw className={cn(iconSize, "mr-2", { "animate-spin": isRetrying })} />
+        {isRetrying ? "Retrying..." : children}
         {showCount && retryCount > 0 && (
           <span className="ml-1 text-xs opacity-75">
             ({retryCount}/{maxRetries})
@@ -124,7 +122,7 @@ export function RetryButton({
       {/* Error message */}
       {lastError && (
         <div className="flex items-center text-sm text-red-600">
-          <AlertCircle className="h-4 w-4 mr-1 flex-shrink-0" />
+          <AlertCircle className="mr-1 h-4 w-4 flex-shrink-0" />
           <span className="truncate">{lastError}</span>
         </div>
       )}
@@ -156,13 +154,13 @@ export function useRetry<T>(
     retryDelay?: number;
     exponentialBackoff?: boolean;
     shouldRetry?: (error: unknown, attemptNumber: number) => boolean;
-  } = {}
+  } = {},
 ) {
   const {
     maxRetries = 3,
     retryDelay = 1000,
     exponentialBackoff = false,
-    shouldRetry = () => true
+    shouldRetry = () => true,
   } = options;
 
   const [isRetrying, setIsRetrying] = useState(false);
@@ -190,11 +188,9 @@ export function useRetry<T>(
         }
 
         // Calculate delay with optional exponential backoff
-        const delay = exponentialBackoff 
-          ? retryDelay * Math.pow(2, attempt)
-          : retryDelay;
+        const delay = exponentialBackoff ? retryDelay * Math.pow(2, attempt) : retryDelay;
 
-        await new Promise(resolve => setTimeout(resolve, delay));
+        await new Promise((resolve) => setTimeout(resolve, delay));
       }
     }
 
@@ -214,7 +210,7 @@ export function useRetry<T>(
     retryCount,
     lastError,
     reset,
-    canRetry: retryCount < maxRetries
+    canRetry: retryCount < maxRetries,
   };
 }
 
@@ -223,13 +219,13 @@ export function useRetry<T>(
  */
 export function withRetry<P extends object>(
   Component: React.ComponentType<P>,
-  retryOptions?: Partial<RetryButtonProps>
+  retryOptions?: Partial<RetryButtonProps>,
 ) {
   return function WithRetryComponent(
-    props: P & { 
+    props: P & {
       onError?: (error: Error) => void;
       retryProps?: Partial<RetryButtonProps>;
-    }
+    },
   ) {
     const [error, setError] = useState<Error | null>(null);
     const { onError, retryProps, ...componentProps } = props;
@@ -246,30 +242,17 @@ export function withRetry<P extends object>(
 
     if (error) {
       return (
-        <div className="flex flex-col items-center justify-center p-6 space-y-4">
+        <div className="flex flex-col items-center justify-center space-y-4 p-6">
           <div className="text-center">
-            <AlertCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">
-              Something went wrong
-            </h3>
-            <p className="text-gray-600 mb-4">
-              {error.message}
-            </p>
+            <AlertCircle className="mx-auto mb-4 h-12 w-12 text-red-500" />
+            <h3 className="mb-2 text-lg font-medium text-gray-900">Something went wrong</h3>
+            <p className="mb-4 text-gray-600">{error.message}</p>
           </div>
-          <RetryButton
-            onRetry={handleRetry}
-            {...retryOptions}
-            {...retryProps}
-          />
+          <RetryButton onRetry={handleRetry} {...retryOptions} {...retryProps} />
         </div>
       );
     }
 
-    return (
-      <Component 
-        {...(componentProps as P)}
-        onError={handleError}
-      />
-    );
+    return <Component {...(componentProps as P)} onError={handleError} />;
   };
 }

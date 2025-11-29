@@ -1,1155 +1,906 @@
-# EstateEase Remix - Estate Planning Management System
+# Claude Code Configuration for Claude Flow
 
-## Project Context
-EstateEase is a comprehensive estate planning management system for Nicholas and Kelsey Coleman, managing a $7.2M+ portfolio across multiple trusts, properties, and business interests.
+## 🚨 CRITICAL: PARALLEL EXECUTION AFTER SWARM INIT
 
-## Current Implementation Status (2025-07-07)
+**MANDATORY RULE**: Once swarm is initialized with memory, ALL subsequent operations MUST be parallel:
 
-### ✅ Completed Features
+1. **TodoWrite** → Always batch 5-10+ todos in ONE call
+2. **Task spawning** → Spawn ALL agents in ONE message
+3. **File operations** → Batch ALL reads/writes together
+4. **NEVER** operate sequentially after swarm init
 
-1. **Database Integration**
-   - SQLite database with better-sqlite3
-   - Professional schema with 15+ normalized tables
-   - Full type-safe data access layer (DAL)
-   - All routes connected to real database
+## 🚨 CRITICAL: CONCURRENT EXECUTION FOR ALL ACTIONS
 
-2. **CRUD Operations**
-   - Assets: Create, Read, Update, Delete with ownership tracking
-   - Trusts: Full management (pending forms)
-   - Family/Contacts: Full management (pending forms)
-   - Soft delete pattern for data integrity
+**ABSOLUTE RULE**: ALL operations MUST be concurrent/parallel in a single message:
 
-3. **Real-time Financial Calculations**
-   - Net worth tracking
-   - Asset allocation analysis
-   - Estate tax projections
-   - Cash flow analysis
-   - Liquidity calculations
-   - Trust value tracking
+### 🔴 MANDATORY CONCURRENT PATTERNS:
 
-4. **UI/UX Implementation**
-   - Dashboard with real-time stats
-   - Asset management with add/edit forms
-   - Trust overview with beneficiary tracking
-   - Family & professional team directory
-   - Financial overview page with insights
-   - Responsive design with Tailwind CSS
+1. **TodoWrite**: ALWAYS batch ALL todos in ONE call (5-10+ todos minimum)
+2. **Task tool**: ALWAYS spawn ALL agents in ONE message with full instructions
+3. **File operations**: ALWAYS batch ALL reads/writes/edits in ONE message
+4. **Bash commands**: ALWAYS batch ALL terminal operations in ONE message
+5. **Memory operations**: ALWAYS batch ALL memory store/retrieve in ONE message
 
-### 🗂️ Key Files & Locations
+### ⚡ GOLDEN RULE: "1 MESSAGE = ALL RELATED OPERATIONS"
 
-```
-app/
-├── lib/
-│   ├── database.ts              # Database connection & initialization
-│   ├── dal.ts                   # Data access layer - all queries
-│   ├── dal-crud.ts              # CRUD operations for all entities
-│   └── financial-calculations.ts # Financial calculation utilities
-├── routes/
-│   ├── dashboard._index.tsx     # Main dashboard (DB connected)
-│   ├── assets._index.tsx        # Assets overview (DB connected)
-│   ├── assets.new.tsx           # Create new asset
-│   ├── assets.$assetId.edit.tsx # Edit existing asset
-│   ├── trusts._index.tsx        # Trusts overview (DB connected)
-│   ├── family._index.tsx        # Family overview (DB connected)
-│   └── financial-overview.tsx   # Financial calculations page
-├── components/
-│   └── forms/
-│       └── asset-form.tsx       # Reusable asset form component
-└── db/
-    └── data-migrations/
-        ├── 001-initial-user-data.sql
-        └── 002-initial-assets-data.sql
+**Examples of CORRECT concurrent execution:**
+
+```javascript
+// ✅ CORRECT: Everything in ONE message
+[Single Message]:
+  - TodoWrite { todos: [10+ todos with all statuses/priorities] }
+  - Task("Agent 1 with full instructions and hooks")
+  - Task("Agent 2 with full instructions and hooks")
+  - Task("Agent 3 with full instructions and hooks")
+  - Read("file1.js")
+  - Read("file2.js")
+  - Read("file3.js")
+  - Write("output1.js", content)
+  - Write("output2.js", content)
+  - Bash("npm install")
+  - Bash("npm test")
+  - Bash("npm run build")
 ```
 
-### 🚀 Quick Commands
+**Examples of WRONG sequential execution:**
+
+```javascript
+// ❌ WRONG: Multiple messages (NEVER DO THIS)
+Message 1: TodoWrite { todos: [single todo] }
+Message 2: Task("Agent 1")
+Message 3: Task("Agent 2")
+Message 4: Read("file1.js")
+Message 5: Write("output1.js")
+Message 6: Bash("npm install")
+// This is 6x slower and breaks coordination!
+```
+
+### 🎯 CONCURRENT EXECUTION CHECKLIST:
+
+Before sending ANY message, ask yourself:
+
+- ✅ Are ALL related TodoWrite operations batched together?
+- ✅ Are ALL Task spawning operations in ONE message?
+- ✅ Are ALL file operations (Read/Write/Edit) batched together?
+- ✅ Are ALL bash commands grouped in ONE message?
+- ✅ Are ALL memory operations concurrent?
+
+If ANY answer is "No", you MUST combine operations into a single message!
+
+## 🚀 CRITICAL: Claude Code Does ALL Real Work
+
+### 🎯 CLAUDE CODE IS THE ONLY EXECUTOR
+
+**ABSOLUTE RULE**: Claude Code performs ALL actual work:
+
+### ✅ Claude Code ALWAYS Handles:
+
+- 🔧 **ALL file operations** (Read, Write, Edit, MultiEdit, Glob, Grep)
+- 💻 **ALL code generation** and programming tasks
+- 🖥️ **ALL bash commands** and system operations
+- 🏗️ **ALL actual implementation** work
+- 🔍 **ALL project navigation** and code analysis
+- 📝 **ALL TodoWrite** and task management
+- 🔄 **ALL git operations** (commit, push, merge)
+- 📦 **ALL package management** (npm, pip, etc.)
+- 🧪 **ALL testing** and validation
+- 🔧 **ALL debugging** and troubleshooting
+
+### 🧠 Claude Flow MCP Tools ONLY Handle:
+
+- 🎯 **Coordination only** - Planning Claude Code's actions
+- 💾 **Memory management** - Storing decisions and context
+- 🤖 **Neural features** - Learning from Claude Code's work
+- 📊 **Performance tracking** - Monitoring Claude Code's efficiency
+- 🐝 **Swarm orchestration** - Coordinating multiple Claude Code instances
+- 🔗 **GitHub integration** - Advanced repository coordination
+
+### 🚨 CRITICAL SEPARATION OF CONCERNS:
+
+**❌ MCP Tools NEVER:**
+
+- Write files or create content
+- Execute bash commands
+- Generate code
+- Perform file operations
+- Handle TodoWrite operations
+- Execute system commands
+- Do actual implementation work
+
+**✅ MCP Tools ONLY:**
+
+- Coordinate and plan
+- Store memory and context
+- Track performance
+- Orchestrate workflows
+- Provide intelligence insights
+
+### ⚠️ Key Principle:
+
+**MCP tools coordinate, Claude Code executes.** Think of MCP tools as the "brain" that plans and coordinates, while Claude Code is the "hands" that do all the actual work.
+
+### 🔄 WORKFLOW EXECUTION PATTERN:
+
+**✅ CORRECT Workflow:**
+
+1. **MCP**: `mcp__claude-flow__swarm_init` (coordination setup)
+2. **MCP**: `mcp__claude-flow__agent_spawn` (planning agents)
+3. **MCP**: `mcp__claude-flow__task_orchestrate` (task coordination)
+4. **Claude Code**: `Task` tool to spawn agents with coordination instructions
+5. **Claude Code**: `TodoWrite` with ALL todos batched (5-10+ in ONE call)
+6. **Claude Code**: `Read`, `Write`, `Edit`, `Bash` (actual work)
+7. **MCP**: `mcp__claude-flow__memory_usage` (store results)
+
+**❌ WRONG Workflow:**
+
+1. **MCP**: `mcp__claude-flow__terminal_execute` (DON'T DO THIS)
+2. **MCP**: File creation via MCP (DON'T DO THIS)
+3. **MCP**: Code generation via MCP (DON'T DO THIS)
+4. **Claude Code**: Sequential Task calls (DON'T DO THIS)
+5. **Claude Code**: Individual TodoWrite calls (DON'T DO THIS)
+
+### 🚨 REMEMBER:
+
+- **MCP tools** = Coordination, planning, memory, intelligence
+- **Claude Code** = All actual execution, coding, file operations
+
+## 🚀 CRITICAL: Parallel Execution & Batch Operations
+
+### 🚨 MANDATORY RULE #1: BATCH EVERYTHING
+
+**When using swarms, you MUST use BatchTool for ALL operations:**
+
+1. **NEVER** send multiple messages for related operations
+2. **ALWAYS** combine multiple tool calls in ONE message
+3. **PARALLEL** execution is MANDATORY, not optional
+
+### ⚡ THE GOLDEN RULE OF SWARMS
+
+```
+If you need to do X operations, they should be in 1 message, not X messages
+```
+
+### 🚨 MANDATORY TODO AND TASK BATCHING
+
+**CRITICAL RULE FOR TODOS AND TASKS:**
+
+1. **TodoWrite** MUST ALWAYS include ALL todos in ONE call (5-10+ todos)
+2. **Task** tool calls MUST be batched - spawn multiple agents in ONE message
+3. **NEVER** update todos one by one - this breaks parallel coordination
+4. **NEVER** spawn agents sequentially - ALL agents spawn together
+
+### 📦 BATCH TOOL EXAMPLES
+
+**✅ CORRECT - Everything in ONE Message:**
+
+```javascript
+[Single Message with BatchTool]:
+  // MCP coordination setup
+  mcp__claude-flow__swarm_init { topology: "mesh", maxAgents: 6 }
+  mcp__claude-flow__agent_spawn { type: "researcher" }
+  mcp__claude-flow__agent_spawn { type: "coder" }
+  mcp__claude-flow__agent_spawn { type: "analyst" }
+  mcp__claude-flow__agent_spawn { type: "tester" }
+  mcp__claude-flow__agent_spawn { type: "coordinator" }
+
+  // Claude Code execution - ALL in parallel
+  Task("You are researcher agent. MUST coordinate via hooks...")
+  Task("You are coder agent. MUST coordinate via hooks...")
+  Task("You are analyst agent. MUST coordinate via hooks...")
+  Task("You are tester agent. MUST coordinate via hooks...")
+  TodoWrite { todos: [5-10 todos with all priorities and statuses] }
+
+  // File operations in parallel
+  Bash "mkdir -p app/{src,tests,docs}"
+  Write "app/package.json"
+  Write "app/README.md"
+  Write "app/src/index.js"
+```
+
+**❌ WRONG - Multiple Messages (NEVER DO THIS):**
+
+```javascript
+Message 1: mcp__claude-flow__swarm_init
+Message 2: Task("researcher agent")
+Message 3: Task("coder agent")
+Message 4: TodoWrite({ todo: "single todo" })
+Message 5: Bash "mkdir src"
+Message 6: Write "package.json"
+// This is 6x slower and breaks parallel coordination!
+```
+
+### 🎯 BATCH OPERATIONS BY TYPE
+
+**Todo and Task Operations (Single Message):**
+
+- **TodoWrite** → ALWAYS include 5-10+ todos in ONE call
+- **Task agents** → Spawn ALL agents with full instructions in ONE message
+- **Agent coordination** → ALL Task calls must include coordination hooks
+- **Status updates** → Update ALL todo statuses together
+- **NEVER** split todos or Task calls across messages!
+
+**File Operations (Single Message):**
+
+- Read 10 files? → One message with 10 Read calls
+- Write 5 files? → One message with 5 Write calls
+- Edit 1 file many times? → One MultiEdit call
+
+**Swarm Operations (Single Message):**
+
+- Need 8 agents? → One message with swarm_init + 8 agent_spawn calls
+- Multiple memories? → One message with all memory_usage calls
+- Task + monitoring? → One message with task_orchestrate + swarm_monitor
+
+**Command Operations (Single Message):**
+
+- Multiple directories? → One message with all mkdir commands
+- Install + test + lint? → One message with all npm commands
+- Git operations? → One message with all git commands
+
+## 🚀 Quick Setup (Stdio MCP - Recommended)
+
+### 1. Add MCP Server (Stdio - No Port Needed)
 
 ```bash
-# Start development server
-npm run dev
-
-# Initialize/reset database
-npm run db:init
-
-# Run linter
-npm run lint
-
-# Run tests (when implemented)
-npm run test
+# Add Claude Flow MCP server to Claude Code using stdio
+claude mcp add claude-flow npx claude-flow@alpha mcp start
 ```
 
-### 📊 Database Schema Overview
+### 2. Use MCP Tools for Coordination in Claude Code
 
-- **Users**: Multi-tenant support with external IDs
-- **Trusts**: Revocable/irrevocable with trustee/beneficiary tracking
-- **Assets**: 20+ types across 5 categories (real estate, financial, insurance, business, personal)
-- **Ownership**: Complex structures (trust, joint, individual, business entity)
-- **Family Members**: Relationships, contact info, legal roles
-- **Professionals**: Attorneys, advisors, CPAs with specializations
-- **Legal Roles**: Executor, trustee, POA assignments
-- **Healthcare**: Medical directives and proxy tracking
+Once configured, Claude Flow MCP tools enhance Claude Code's coordination:
 
-### 🔧 Technical Stack
+**Initialize a swarm:**
 
-- **Framework**: Remix v2.16.8 with Vite
-- **Language**: TypeScript (strict mode)
-- **Database**: SQLite with better-sqlite3
-- **Styling**: Tailwind CSS
-- **UI Components**: Radix UI primitives
-- **Validation**: Zod schemas
-- **Icons**: Lucide React
+- Use the `mcp__claude-flow__swarm_init` tool to set up coordination topology
+- Choose: mesh, hierarchical, ring, or star
+- This creates a coordination framework for Claude Code's work
 
-### 📈 Next Implementation Priorities
+**Spawn agents:**
 
-1. **Trust CRUD Forms**: Create/edit forms for trust management
-2. **Family Member Forms**: Add/edit family members and contacts
-3. **Search & Filtering**: Global search across all entities
-4. **Document Upload**: Attach documents to assets/trusts
-5. **Authentication**: User login (if needed)
+- Use `mcp__claude-flow__agent_spawn` tool to create specialized coordinators
+- Agent types represent different thinking patterns, not actual coders
+- They help Claude Code approach problems from different angles
 
-### 📋 Constants Improvement - COMPLETED (2025-01-07)
+**Orchestrate tasks:**
 
-**Status**: ✅ 6 of 7 core tasks completed. Critical issues discovered during verification.
+- Use `mcp__claude-flow__task_orchestrate` tool to coordinate complex workflows
+- This breaks down tasks for Claude Code to execute systematically
+- The agents don't write code - they coordinate Claude Code's actions
 
-#### Completed Tasks:
-1. **Missing Enums** ✅ - Added 5 enums with 76 total values
-2. **Financial Constants** ✅ - Created with 2025 tax rates, exemptions, life expectancy tables
-3. **UI Constants** ✅ - Added pagination, timeouts, animations, breakpoints
-4. **Validation Constants** ✅ - Created with regex patterns, field limits, error messages
-5. **JSDoc Documentation** ✅ - All enums documented with examples and context
-6. **Asset Form Updated** ✅ - Now uses type-safe enums with dynamic options
+## Available MCP Tools for Coordination
 
-#### Critical Issues Found (Updated 2025-01-07):
-- **DAL Bug**: Code queries non-existent lookup tables (`asset_categories`, `ownership_types`)
-  - **Root Cause**: Assets table uses TEXT fields, not foreign keys to lookup tables
-  - **Schema Reality**: `category TEXT NOT NULL`, `ownership_type TEXT NOT NULL`
-- **Missing Enum**: OwnershipType enum not defined but used throughout
-- **Case Mismatch**: 
-  - Asset categories: Database uses UPPERCASE (`REAL_ESTATE`), enums use lowercase (`real_estate`)
-  - Ownership types: Database uses lowercase (`trust`), no enum exists yet
+### Coordination Tools:
 
-### ✅ Critical Issues Remediation - COMPLETED (2025-07-07)
+- `mcp__claude-flow__swarm_init` - Set up coordination topology for Claude Code
+- `mcp__claude-flow__agent_spawn` - Create cognitive patterns to guide Claude Code
+- `mcp__claude-flow__task_orchestrate` - Break down and coordinate complex tasks
 
-**Status**: **ALL ISSUES RESOLVED** - 5 specialized agents successfully coordinated to fix critical database issues.
+### Monitoring Tools:
 
-#### 🎉 **Mission Accomplished Summary**
+- `mcp__claude-flow__swarm_status` - Monitor coordination effectiveness
+- `mcp__claude-flow__agent_list` - View active cognitive patterns
+- `mcp__claude-flow__agent_metrics` - Track coordination performance
+- `mcp__claude-flow__task_status` - Check workflow progress
+- `mcp__claude-flow__task_results` - Review coordination outcomes
 
-| Agent | Task | Status | Result |
-|-------|------|--------|--------|
-| 1 | Fix DAL Bug | ✅ **COMPLETE** | Asset CRUD operations work without errors |
-| 2 | Create OwnershipType Enum | ✅ **COMPLETE** | No TypeScript errors, forms functional |
-| 3 | Standardize Case Convention | ✅ **COMPLETE** | All enums use UPPERCASE matching database |
-| 4 | Add Zod Validation | ✅ **COMPLETE** | Runtime validation prevents invalid data |
-| 5 | Test All Fixes | ✅ **COMPLETE** | Application fully verified and operational |
+### Memory & Neural Tools:
 
-#### 🔧 **Key Achievements**
+- `mcp__claude-flow__memory_usage` - Persistent memory across sessions
+- `mcp__claude-flow__neural_status` - Neural pattern effectiveness
+- `mcp__claude-flow__neural_train` - Improve coordination patterns
+- `mcp__claude-flow__neural_patterns` - Analyze thinking approaches
 
-1. **Database Integration Fixed**: 
-   - Removed non-existent lookup table queries from `dal-crud.ts`
-   - Direct TEXT field storage with UPPERCASE conversion
-   - No more "table not found" errors
+### GitHub Integration Tools (NEW!):
 
-2. **Type Safety Restored**: 
-   - Created complete OwnershipType enum (INDIVIDUAL, JOINT, TRUST, BUSINESS)
-   - All TypeScript compilation errors resolved
-   - Full enum integration in forms and validation
+- `mcp__claude-flow__github_swarm` - Create specialized GitHub management swarms
+- `mcp__claude-flow__repo_analyze` - Deep repository analysis with AI
+- `mcp__claude-flow__pr_enhance` - AI-powered pull request improvements
+- `mcp__claude-flow__issue_triage` - Intelligent issue classification
+- `mcp__claude-flow__code_review` - Automated code review with swarms
 
-3. **Data Consistency Achieved**: 
-   - All 13 enums standardized to UPPERCASE format (76+ total values)
-   - Database storage matches enum values exactly
-   - Enhanced `formatEnumLabel()` function for proper display
+### System Tools:
 
-4. **Validation Layer Added**: 
-   - Comprehensive Zod schemas for assets, trusts, and family members
-   - Runtime enum validation prevents invalid data
-   - User-friendly error messages and type safety
+- `mcp__claude-flow__benchmark_run` - Measure coordination efficiency
+- `mcp__claude-flow__features_detect` - Available capabilities
+- `mcp__claude-flow__swarm_monitor` - Real-time coordination tracking
 
-5. **Testing Verified**: 
-   - $3.1M+ portfolio fully accessible and manageable
-   - All CRUD operations functional
-   - Linting passes with zero errors
+## Workflow Examples (Coordination-Focused)
 
-#### 📊 **Application Status - Fully Operational**
+### Research Coordination Example
 
-- **Net Worth Tracking**: $3,118,958 correctly calculated
-- **Asset Management**: All 5+ assets with proper UPPERCASE categorization
-- **Trust Management**: Both trusts with beneficiary tracking working
-- **Family Directory**: Complete contact and professional relationships
-- **Financial Analytics**: Real-time calculations and projections functional
-- **Forms & Validation**: All enum dropdowns and validation working properly
+**Context:** Claude Code needs to research a complex topic systematically
 
-#### 🚀 **Next Development Phase Ready**
+**Step 1:** Set up research coordination
 
-The application is now production-ready for:
-- Trust CRUD forms implementation
-- Family member management features
-- Global search functionality
-- Document upload capabilities
-- Authentication integration
+- Tool: `mcp__claude-flow__swarm_init`
+- Parameters: `{"topology": "mesh", "maxAgents": 5, "strategy": "balanced"}`
+- Result: Creates a mesh topology for comprehensive exploration
 
-### ✅ Data Architecture Cleanup Completed (2025-07-07)
+**Step 2:** Define research perspectives
 
-**Legacy Data Files Removed:**
-- `app/data/initial-assets.ts` (465 lines) - Hardcoded asset data migrated to database
-- `app/data/initial-enhanced-assets.ts` (3 lines) - Empty array export
-- `app/data/estate-plan-data.ts` (540+ lines) - Legacy trust and asset data
+- Tool: `mcp__claude-flow__agent_spawn`
+- Parameters: `{"type": "researcher", "name": "Literature Review"}`
+- Tool: `mcp__claude-flow__agent_spawn`
+- Parameters: `{"type": "analyst", "name": "Data Analysis"}`
+- Result: Different cognitive patterns for Claude Code to use
 
-**Route Migration Completed:**
-- `app/routes/assets.real-estate.tsx` - Now uses database via DAL instead of hardcoded data
-- Proper Remix loader pattern with database queries
-- Updated to work with actual database schema (ownership_type, asset_details, etc.)
-- All TypeScript errors resolved
+**Step 3:** Coordinate research execution
 
-**Benefits Achieved:**
-- **Single Source of Truth**: Database is now the only data source
-- **Reduced Codebase**: Eliminated 1000+ lines of legacy hardcoded data
-- **Better Architecture**: Database-first design with proper data loading
-- **Type Safety**: Routes use actual database types, not legacy interfaces
-- **Maintainability**: No duplicate or stale data to manage
+- Tool: `mcp__claude-flow__task_orchestrate`
+- Parameters: `{"task": "Research neural architecture search papers", "strategy": "adaptive"}`
+- Result: Claude Code systematically searches, reads, and analyzes papers
 
-The application now has a clean, database-driven architecture with all $7.2M+ portfolio data managed through SQLite.
+**What Actually Happens:**
 
-#### Phase 2: Data Integrity & Validation
+1. The swarm sets up a coordination framework
+2. Each agent MUST use Claude Flow hooks for coordination:
+   - `npx claude-flow@alpha hooks pre-task` before starting
+   - `npx claude-flow@alpha hooks post-edit` after each file operation
+   - `npx claude-flow@alpha hooks notification` to share decisions
+3. Claude Code uses its native Read, WebSearch, and Task tools
+4. The swarm coordinates through shared memory and hooks
+5. Results are synthesized by Claude Code with full coordination history
 
-**Task 4: Add Database Constraints** 🟡
-- Add CHECK constraints to enforce valid enum values
-- Create migration script for existing data
-- Document valid values in schema comments
+### Development Coordination Example
 
-**Task 5: Runtime Validation** 🟡
-- Add Zod schemas that validate against enum values
-- Implement validation middleware for API routes
-- Add client-side validation using same schemas
+**Context:** Claude Code needs to build a complex system with multiple components
 
-**Task 6: Type Generation** 🟡
-- Generate TypeScript types from database schema
-- Ensure automatic sync between DB and code
-- Add pre-commit hook to verify alignment
+**Step 1:** Set up development coordination
 
-#### Phase 3: Long-term Improvements
+- Tool: `mcp__claude-flow__swarm_init`
+- Parameters: `{"topology": "hierarchical", "maxAgents": 8, "strategy": "specialized"}`
+- Result: Hierarchical structure for organized development
 
-**Task 7: Migrate to Lookup Tables** 🟢
-- Create proper lookup tables for categories and types
-- Benefits: referential integrity, easier updates, better performance
-- Migration strategy to preserve existing data
-- **PostgreSQL Ready**: Lookup tables are preferred over PostgreSQL enums
+**Step 2:** Define development perspectives
 
-**Task 8: Add Database Abstraction Layer** 🟢
-- Create DatabaseAdapter interface for SQLite/PostgreSQL portability
-- Abstract connection management and query parameterization
-- Handle database-specific features (JSON operations, date formats)
-- Enables seamless PostgreSQL migration
+- Tool: `mcp__claude-flow__agent_spawn`
+- Parameters: `{"type": "architect", "name": "System Design"}`
+- Result: Architectural thinking pattern for Claude Code
 
-**Task 9: Add Enum Management UI** 🟢
-- Admin interface to manage enum values
-- Audit trail for changes
-- Impact analysis before modifications
+**Step 3:** Coordinate implementation
 
-#### PostgreSQL Migration Considerations:
+- Tool: `mcp__claude-flow__task_orchestrate`
+- Parameters: `{"task": "Implement user authentication with JWT", "strategy": "parallel"}`
+- Result: Claude Code implements features using its native tools
 
-**Database Portability Checklist:**
-- ✅ Use lookup tables instead of database enums (PostgreSQL enums are inflexible)
-- ✅ Store dates as ISO 8601 strings (portable between SQLite TEXT and PostgreSQL TIMESTAMP)
-- ✅ Handle booleans in application layer (SQLite uses 0/1, PostgreSQL uses true/false)
-- ✅ Parse JSON in application (portable between SQLite TEXT and PostgreSQL JSONB)
-- ⚠️ Abstract query parameterization (SQLite uses ?, PostgreSQL uses $1, $2)
-- ⚠️ Add connection pooling support for PostgreSQL
-- ⚠️ Prepare migration scripts for data type conversions
+**What Actually Happens:**
 
-**Recommended Database Abstraction:**
-```typescript
-interface DatabaseAdapter {
-  query<T>(sql: string, params: any[]): T[];
-  execute(sql: string, params: any[]): void;
-  transaction<T>(fn: () => T): T;
+1. The swarm creates a development coordination plan
+2. Each agent coordinates using mandatory hooks:
+   - Pre-task hooks for context loading
+   - Post-edit hooks for progress tracking
+   - Memory storage for cross-agent coordination
+3. Claude Code uses Write, Edit, Bash tools for implementation
+4. Agents share progress through Claude Flow memory
+5. All code is written by Claude Code with full coordination
+
+### GitHub Repository Management Example (NEW!)
+
+**Context:** Claude Code needs to manage a complex GitHub repository
+
+**Step 1:** Initialize GitHub swarm
+
+- Tool: `mcp__claude-flow__github_swarm`
+- Parameters: `{"repository": "owner/repo", "agents": 5, "focus": "maintenance"}`
+- Result: Specialized swarm for repository management
+
+**Step 2:** Analyze repository health
+
+- Tool: `mcp__claude-flow__repo_analyze`
+- Parameters: `{"deep": true, "include": ["issues", "prs", "code"]}`
+- Result: Comprehensive repository analysis
+
+**Step 3:** Enhance pull requests
+
+- Tool: `mcp__claude-flow__pr_enhance`
+- Parameters: `{"pr_number": 123, "add_tests": true, "improve_docs": true}`
+- Result: AI-powered PR improvements
+
+## Best Practices for Coordination
+
+### ✅ DO:
+
+- Use MCP tools to coordinate Claude Code's approach to complex tasks
+- Let the swarm break down problems into manageable pieces
+- Use memory tools to maintain context across sessions
+- Monitor coordination effectiveness with status tools
+- Train neural patterns for better coordination over time
+- Leverage GitHub tools for repository management
+
+### ❌ DON'T:
+
+- Expect agents to write code (Claude Code does all implementation)
+- Use MCP tools for file operations (use Claude Code's native tools)
+- Try to make agents execute bash commands (Claude Code handles this)
+- Confuse coordination with execution (MCP coordinates, Claude executes)
+
+## Memory and Persistence
+
+The swarm provides persistent memory that helps Claude Code:
+
+- Remember project context across sessions
+- Track decisions and rationale
+- Maintain consistency in large projects
+- Learn from previous coordination patterns
+- Store GitHub workflow preferences
+
+## Performance Benefits
+
+When using Claude Flow coordination with Claude Code:
+
+- **84.8% SWE-Bench solve rate** - Better problem-solving through coordination
+- **32.3% token reduction** - Efficient task breakdown reduces redundancy
+- **2.8-4.4x speed improvement** - Parallel coordination strategies
+- **27+ neural models** - Diverse cognitive approaches
+- **GitHub automation** - Streamlined repository management
+
+## Claude Code Hooks Integration
+
+Claude Flow includes powerful hooks that automate coordination:
+
+### Pre-Operation Hooks
+
+- **Auto-assign agents** before file edits based on file type
+- **Validate commands** before execution for safety
+- **Prepare resources** automatically for complex operations
+- **Optimize topology** based on task complexity analysis
+- **Cache searches** for improved performance
+- **GitHub context** loading for repository operations
+
+### Post-Operation Hooks
+
+- **Auto-format code** using language-specific formatters
+- **Train neural patterns** from successful operations
+- **Update memory** with operation context
+- **Analyze performance** and identify bottlenecks
+- **Track token usage** for efficiency metrics
+- **Sync GitHub** state for consistency
+
+### Session Management
+
+- **Generate summaries** at session end
+- **Persist state** across Claude Code sessions
+- **Track metrics** for continuous improvement
+- **Restore previous** session context automatically
+- **Export workflows** for reuse
+
+### Advanced Features (v2.0.0!)
+
+- **🚀 Automatic Topology Selection** - Optimal swarm structure for each task
+- **⚡ Parallel Execution** - 2.8-4.4x speed improvements
+- **🧠 Neural Training** - Continuous learning from operations
+- **📊 Bottleneck Analysis** - Real-time performance optimization
+- **🤖 Smart Auto-Spawning** - Zero manual agent management
+- **🛡️ Self-Healing Workflows** - Automatic error recovery
+- **💾 Cross-Session Memory** - Persistent learning & context
+- **🔗 GitHub Integration** - Repository-aware swarms
+
+### Configuration
+
+Hooks are pre-configured in `.claude/settings.json`. Key features:
+
+- Automatic agent assignment for different file types
+- Code formatting on save
+- Neural pattern learning from edits
+- Session state persistence
+- Performance tracking and optimization
+- Intelligent caching and token reduction
+- GitHub workflow automation
+
+See `.claude/commands/` for detailed documentation on all features.
+
+## Integration Tips
+
+1. **Start Simple**: Begin with basic swarm init and single agent
+2. **Scale Gradually**: Add more agents as task complexity increases
+3. **Use Memory**: Store important decisions and context
+4. **Monitor Progress**: Regular status checks ensure effective coordination
+5. **Train Patterns**: Let neural agents learn from successful coordinations
+6. **Enable Hooks**: Use the pre-configured hooks for automation
+7. **GitHub First**: Use GitHub tools for repository management
+
+## 🧠 SWARM ORCHESTRATION PATTERN
+
+### You are the SWARM ORCHESTRATOR. **IMMEDIATELY SPAWN AGENTS IN PARALLEL** to execute tasks
+
+### 🚨 CRITICAL INSTRUCTION: You are the SWARM ORCHESTRATOR
+
+**MANDATORY**: When using swarms, you MUST:
+
+1. **SPAWN ALL AGENTS IN ONE BATCH** - Use multiple tool calls in a SINGLE message
+2. **EXECUTE TASKS IN PARALLEL** - Never wait for one task before starting another
+3. **USE BATCHTOOL FOR EVERYTHING** - Multiple operations = Single message with multiple tools
+4. **ALL AGENTS MUST USE COORDINATION TOOLS** - Every spawned agent MUST use claude-flow hooks and memory
+
+### 🎯 AGENT COUNT CONFIGURATION
+
+**CRITICAL: Dynamic Agent Count Rules**
+
+1. **Check CLI Arguments First**: If user runs `npx claude-flow@alpha --agents 5`, use 5 agents
+2. **Auto-Decide if No Args**: Without CLI args, analyze task complexity:
+   - Simple tasks (1-3 components): 3-4 agents
+   - Medium tasks (4-6 components): 5-7 agents
+   - Complex tasks (7+ components): 8-12 agents
+3. **Agent Type Distribution**: Balance agent types based on task:
+   - Always include 1 coordinator
+   - For code-heavy tasks: more coders
+   - For design tasks: more architects/analysts
+   - For quality tasks: more testers/reviewers
+
+**Example Auto-Decision Logic:**
+
+```javascript
+// If CLI args provided: npx claude-flow@alpha --agents 6
+maxAgents = CLI_ARGS.agents || determineAgentCount(task);
+
+function determineAgentCount(task) {
+  // Analyze task complexity
+  if (task.includes(["API", "database", "auth", "tests"])) return 8;
+  if (task.includes(["frontend", "backend"])) return 6;
+  if (task.includes(["simple", "script"])) return 3;
+  return 5; // default
 }
 ```
 
-#### Implementation Order & Priority:
+## 📋 MANDATORY AGENT COORDINATION PROTOCOL
 
-1. **Fix DAL Bug** (P0 - Application broken without this)
-2. **Create OwnershipType** (P0 - Forms broken without this)
-3. **Case Standardization** (P1 - Data integrity issues)
-4. **Add Constraints** (P1 - Prevent bad data)
-5. **Runtime Validation** (P2 - Better error handling)
-6. **Type Generation** (P2 - Developer experience)
-7. **Lookup Tables** (P3 - Long-term architecture)
-8. **Enum Management** (P3 - Nice to have)
+### 🔴 CRITICAL: Every Agent MUST Follow This Protocol
 
-#### Success Criteria:
-- ✅ All CRUD operations work without errors
-- ✅ Forms properly validate enum values
-- ✅ No case sensitivity issues in lookups
-- ✅ Database enforces valid enum values
-- ✅ TypeScript types match database constraints
+When you spawn an agent using the Task tool, that agent MUST:
 
-#### Risk Mitigation:
-- Create database backup before changes
-- Test each fix in isolation
-- Maintain backwards compatibility
-- Document all breaking changes
-- Add comprehensive error logging
+**1️⃣ BEFORE Starting Work:**
 
-### 🔑 Key Design Patterns
-
-1. **Soft Deletes**: All deletions set `is_active = 0`
-2. **Audit Trail Ready**: `created_at`, `updated_at` on all tables
-3. **Type Safety**: Full TypeScript with Zod validation
-4. **Error Handling**: Proper error boundaries and user feedback
-5. **Performance**: Prepared statements, connection pooling
-
-### 💡 Important Notes
-
-- **No Auth**: Currently using `userId = 'user-nick-001'` as default
-- **Seed Data**: Database initialized with Coleman family data
-- **Financial Calculations**: Simplified tax calculations (consult professional)
-- **Production Ready**: Core functionality complete, needs auth for multi-user
-
-### 💰 Financial Overview Features
-
-The `/financial-overview` page provides:
-- Total net worth calculation
-- Asset allocation by category
-- Ownership structure breakdown
-- Trust asset values
-- Federal estate tax analysis
-- Monthly cash flow projections
-- Liquidity ratio analysis
-
-### 🔒 Security Considerations
-
-- Implement authentication before production
-- Add encryption for sensitive fields (SSN, Tax IDs)
-- Enable audit logging for compliance
-- Regular backups of SQLite database
-- Consider row-level security for multi-user
-
-### 👨‍💻 Development Workflow
-
-1. **Make Changes**: Edit files as needed
-2. **Lint Check**: Run `npm run lint` (must pass)
-3. **Test Locally**: Verify functionality
-4. **Database Changes**: Update schema and run `npm run db:init`
-5. **Add Features**: Follow existing patterns for consistency
-
-### ✅ TypeScript Error Remediation Complete (2025-07-07)
-
-**🎉 MAJOR MILESTONE ACHIEVED**: Systematic TypeScript error cleanup completed successfully.
-
-#### **Results Summary**
-- **Before**: 67 TypeScript errors
-- **After**: 15 TypeScript errors (77.6% reduction)
-- **Linting**: ✅ All ESLint checks passing (0 errors)
-- **All 7 Priority Tasks**: ✅ Completed
-
-#### **Key Fixes Applied**
-1. ✅ **Zod Validation Schema Errors** - Restructured base schemas to work with extend/partial
-2. ✅ **Asset Route Null Handling** - Added comprehensive null checks and type guards
-3. ✅ **Asset Form Type Mismatches** - Updated OwnershipInfo interface to use proper enums
-4. ✅ **Button Component asChild Props** - Added React.cloneElement pattern for composition
-5. ✅ **Property Details Type Errors** - Fixed database vs interface field name mismatches
-6. ✅ **Search Component Types** - Added proper type annotations for implicit any parameters
-7. ✅ **Dashboard Loader Types** - Fixed snake_case vs camelCase property access
-
-#### **Type Safety Improvements**
-- **Enhanced Button Component**: Added asChild prop with proper TypeScript support
-- **Fixed OwnershipType Enum**: Updated interface to use UPPERCASE enum values
-- **Comprehensive Null Handling**: Added proper null checks throughout data access layers
-- **Zod Schema Architecture**: Separated base schemas from refined validation schemas
-- **Database Field Alignment**: Fixed mismatches between DB fields and TypeScript interfaces
-
-#### **Production Readiness Status**
-- **Core Functionality**: ✅ All CRUD operations type-safe and working
-- **Data Integrity**: ✅ Proper validation and enum constraints
-- **Component Library**: ✅ Enhanced with composition patterns
-- **Error Handling**: ✅ Comprehensive null/undefined checks
-- **Form Validation**: ✅ Type-safe Zod schemas with enum validation
-
-### ✅ Testing Results (2025-07-07)
-
-All major features tested and working:
-- Dashboard displays correct $3.1M net worth
-- Assets page shows all 5 assets with proper categorization
-- Trusts page displays both trusts with beneficiaries
-- Family page shows all relationships and professionals
-- Financial overview calculates all metrics correctly
-- CRUD operations functional via forms
-- Development server running on port 5174
-- **NEW**: TypeScript compilation successful with minimal remaining errors
-- **NEW**: ESLint passing with zero warnings or errors
-
-### 🐛 Remaining Issues (15 TypeScript Errors)
-
-The remaining 15 TypeScript errors are in lower-priority areas:
-1. **Real Estate Analytics**: Mathematical operations on potentially undefined values
-2. **Unused React Imports**: Some components import React but use JSX without explicit React usage
-3. **Radix UI Compatibility**: Minor type mismatches in advanced component usage
-
-These remaining errors do not impact core functionality and can be addressed in future iterations.
-
-### 🎨 Frontend UI Review (2025-07-07)
-
-#### Current UI Status
-- **Strong Foundation**: Clean architecture with Remix + TypeScript + Tailwind CSS
-- **Layout System**: AppLayout with sidebar navigation and header
-- **Existing Components**: Card system, Badge, AssetForm
-- **Working Pages**: Dashboard, Assets, Family, Financial Overview, Trusts
-
-#### Missing Critical Components
-1. **Core UI Library**: No Button, Input, Select, Table, Modal components
-2. **Features**: Search is UI-only, many routes unimplemented
-3. **UX Elements**: No loading states, error boundaries, empty states
-4. **Data Viz**: Recharts installed but not used
-
-This project is production-ready for single-user use. Add authentication and security enhancements for multi-user deployment.
-
-## 🚀 Frontend Enhancement Plan
-
-### Priority Implementation Roadmap
-
-#### Priority 1: Core UI Component Library
-Create a comprehensive, reusable component library following React/Remix best practices.
-
-**Components to Build:**
-1. **Button Component** (`/app/components/ui/button.tsx`)
-   - Variants: primary, secondary, destructive, outline, ghost, link
-   - Sizes: sm, md, lg
-   - States: loading, disabled, focused
-   - Props: leftIcon, rightIcon, fullWidth
-   - Accessibility: ARIA labels, keyboard navigation
-
-2. **Form Components** (`/app/components/ui/forms/`)
-   - Input: text, number, email, password, with error states
-   - Textarea: auto-resize option, character count
-   - Select: native and custom with search
-   - Checkbox & Radio: with labels and groups
-   - Switch: toggle components
-   - Form Field wrapper: label, error, helper text
-
-3. **Table Component** (`/app/components/ui/table/`)
-   - Sortable columns
-   - Pagination
-   - Row selection
-   - Empty state
-   - Loading skeleton
-   - Responsive design (cards on mobile)
-
-4. **Modal/Dialog** (`/app/components/ui/modal.tsx`)
-   - Use Radix UI Dialog (already installed)
-   - Sizes: sm, md, lg, xl
-   - Animations with Tailwind
-   - Backdrop click to close
-   - ESC key handling
-
-5. **Loading Components** (`/app/components/ui/loading/`)
-   - Spinner: various sizes
-   - Skeleton: for content placeholders
-   - Progress bar: for long operations
-   - Page loader: full-page loading state
-
-6. **Toast/Notifications** (`/app/components/ui/toast/`)
-   - Success, error, warning, info variants
-   - Auto-dismiss with timer
-   - Action buttons
-   - Queue management
-   - Position: top-right, top-center, bottom-center
-
-#### Priority 2: Missing Route Implementation
-Complete all navigation routes with proper data integration.
-
-**Routes to Implement:**
-1. **Real Estate** (`/app/routes/real-estate/`)
-   - _index.tsx: Property portfolio overview
-   - $propertyId.tsx: Individual property details
-   - new.tsx: Add new property
-   - analytics.tsx: Market analysis
-
-2. **Business Interests** (`/app/routes/business/`)
-   - _index.tsx: Business holdings overview
-   - $businessId.tsx: Business details
-   - new.tsx: Add new business
-   - valuation.tsx: Business valuations
-
-3. **Legal Documents** (`/app/routes/documents/`)
-   - _index.tsx: Document library
-   - upload.tsx: Document upload with preview
-   - $documentId.tsx: Document viewer
-   - categories.tsx: Document organization
-
-4. **Healthcare** (`/app/routes/healthcare/`)
-   - directives.tsx: Healthcare directives
-   - contacts.tsx: Medical contacts
-   - history.tsx: Medical history tracking
-
-5. **Tax Planning** (`/app/routes/tax-planning/`)
-   - overview.tsx: Tax summary
-   - projections.tsx: Tax projections
-   - strategies.tsx: Tax optimization
-
-6. **Insurance** (`/app/routes/insurance/`)
-   - policies.tsx: Policy overview
-   - claims.tsx: Claims tracking
-   - coverage-analysis.tsx: Coverage gaps
-
-7. **Settings** (`/app/routes/settings/`)
-   - profile.tsx: User profile
-   - preferences.tsx: App preferences
-   - security.tsx: Security settings
-   - data.tsx: Data import/export
-
-#### Priority 3: Data Visualization
-Implement charts and graphs using Recharts for financial insights.
-
-**Visualizations to Add:**
-1. **Dashboard Charts**
-   - Net worth trend line chart
-   - Asset allocation pie chart
-   - Monthly cash flow bar chart
-
-2. **Financial Overview**
-   - Estate tax projection chart
-   - Liquidity analysis gauge
-   - Trust value comparison
-
-3. **Asset Analytics**
-   - Performance over time
-   - Category breakdown
-   - Geographic distribution (for real estate)
-
-4. **Reusable Chart Components**
-   - ChartContainer: responsive wrapper
-   - ChartTooltip: custom tooltips
-   - ChartLegend: interactive legends
-   - ChartExport: PNG/PDF export
-
-#### Priority 4: Search Functionality
-Implement full-text search across all entities.
-
-**Search Features:**
-1. **Global Search**
-   - Search across assets, trusts, contacts
-   - Fuzzy matching
-   - Search history
-   - Quick actions from results
-
-2. **Filters & Facets**
-   - Category filters
-   - Date range filters
-   - Value range filters
-   - Ownership filters
-
-3. **Search UI Components**
-   - SearchBar: with autocomplete
-   - SearchResults: grouped by type
-   - SearchFilters: collapsible sidebar
-   - SearchEmpty: helpful empty state
-
-4. **Backend Integration**
-   - Add search indexes to database
-   - Implement search queries in DAL
-   - Add search API routes
-
-#### Priority 5: Error Handling & Empty States
-Improve UX with proper error handling and informative empty states.
-
-**Error Handling:**
-1. **Error Boundaries**
-   - Root error boundary
-   - Route-level boundaries
-   - Component-level for critical features
-   - Error logging service
-
-2. **Error UI Components**
-   - ErrorFallback: friendly error display
-   - RetryButton: retry failed operations
-   - ErrorDetails: collapsible technical details
-
-3. **Empty States**
-   - Asset empty state: "Add your first asset"
-   - Trust empty state: "Create a trust"
-   - Search empty: "No results found"
-   - Dashboard empty: onboarding flow
-
-4. **Loading States**
-   - Skeleton screens for all lists
-   - Inline loading for forms
-   - Optimistic UI updates
-   - Progress indicators
-
-### Optimized Frontend Directory Structure
-
-```mermaid
-graph TD
-    A[app/] --> B[components/]
-    A --> C[routes/]
-    A --> D[hooks/]
-    A --> E[utils/]
-    A --> F[styles/]
-    A --> G[constants/]
-    
-    B --> B1[ui/]
-    B --> B2[features/]
-    B --> B3[layout/]
-    B --> B4[forms/]
-    
-    B1 --> B1A[button.tsx]
-    B1 --> B1B[input.tsx]
-    B1 --> B1C[select.tsx]
-    B1 --> B1D[table/]
-    B1 --> B1E[modal.tsx]
-    B1 --> B1F[toast/]
-    B1 --> B1G[loading/]
-    B1 --> B1H[error/]
-    B1 --> B1I[empty-state.tsx]
-    
-    B2 --> B2A[search/]
-    B2 --> B2B[charts/]
-    B2 --> B2C[dashboard/]
-    B2 --> B2D[assets/]
-    
-    B3 --> B3A[app-layout.tsx]
-    B3 --> B3B[sidebar.tsx]
-    B3 --> B3C[header.tsx]
-    B3 --> B3D[footer.tsx]
-    
-    B4 --> B4A[form-field.tsx]
-    B4 --> B4B[form-section.tsx]
-    B4 --> B4C[asset-form.tsx]
-    B4 --> B4D[trust-form.tsx]
-    
-    C --> C1[dashboard/]
-    C --> C2[assets/]
-    C --> C3[trusts/]
-    C --> C4[family/]
-    C --> C5[documents/]
-    C --> C6[real-estate/]
-    C --> C7[business/]
-    C --> C8[settings/]
-    
-    D --> D1[useSearch.ts]
-    D --> D2[useToast.ts]
-    D --> D3[useModal.ts]
-    D --> D4[useTable.ts]
-    
-    E --> E1[cn.ts]
-    E --> E2[format.ts]
-    E --> E3[validation.ts]
-    E --> E4[charts.ts]
+```bash
+# Check previous work and load context
+npx claude-flow@alpha hooks pre-task --description "[agent task]" --auto-spawn-agents false
+npx claude-flow@alpha hooks session-restore --session-id "swarm-[id]" --load-memory true
 ```
 
-### Implementation Guidelines
-
-#### Component Development Standards
-1. **TypeScript First**: Full type safety with explicit props interfaces
-2. **Composition Pattern**: Build complex components from simple ones
-3. **Accessibility**: ARIA labels, keyboard navigation, screen reader support
-4. **Documentation**: JSDoc comments and usage examples
-5. **Testing**: Unit tests for logic, integration tests for interactions
-
-#### Styling Consistency
-1. **Design Tokens**: Create CSS variables for colors, spacing, typography
-2. **Tailwind Config**: Extend with custom theme values
-3. **Component Variants**: Use cva (class-variance-authority) for variant styles
-4. **Dark Mode**: Prepare components for future dark mode support
-5. **Responsive**: Mobile-first approach with proper breakpoints
-
-#### Performance Optimization
-1. **Code Splitting**: Lazy load heavy components (charts, modals)
-2. **Memoization**: Use React.memo for expensive renders
-3. **Virtual Scrolling**: For large lists and tables
-4. **Image Optimization**: Lazy loading and proper sizing
-5. **Bundle Size**: Monitor and optimize component imports
-
-#### Developer Experience
-1. **Storybook**: Set up for component development
-2. **Type Generation**: Auto-generate types from database
-3. **Linting**: Strict ESLint rules for consistency
-4. **Formatting**: Prettier with team config
-5. **Git Hooks**: Pre-commit checks for quality
-
-### ✅ Implementation Status (Completed 2025-07-07)
-
-All 5 priorities have been successfully implemented:
-
-1. ✅ **Core UI Component Library** - Complete library with Button, Form components, Loading states, Table, Modal, Toast notifications
-2. ✅ **Missing Route Implementation** - Real Estate, Settings, Legal Documents, Healthcare, Tax Planning, Insurance routes
-3. ✅ **Data Visualization** - Recharts integration with Net Worth trends, Asset allocation, Cash flow, Estate tax projections
-4. ✅ **Search Functionality** - Full-text search across all entities with fuzzy matching, filters, and autocomplete
-5. ✅ **Error Handling & Empty States** - Comprehensive error boundaries, retry mechanisms, loading skeletons, and empty states
-
-### 🚨 Critical Frontend Issues Identified (2025-07-07)
-
-Despite the completed implementation, several critical issues have been identified that make the frontend non-production ready:
-
-#### **Major Problems:**
-1. **Incomplete Routes** - Many routes are placeholders or missing functionality
-2. **Unfinished Components** - Components lack proper implementation details
-3. **Inconsistent Styling** - No unified design system or theme
-4. **Missing Global CSS** - No centralized styling foundation
-5. **Broken Dark Mode** - Inconsistent or non-functional dark mode support
-6. **Poor UX Consistency** - Components don't follow unified patterns
-7. **Missing Design Tokens** - No systematic approach to colors, spacing, typography
-
-#### **Root Cause Analysis:**
-- **Rushed Implementation** - Agents focused on quantity over quality
-- **Lack of Design Foundation** - No established design system before building components
-- **Missing Global Styles** - Components built in isolation without unified theming
-- **No Design Review** - Components created without comprehensive design validation
-
-### 🛠️ Frontend Remediation Plan - Complete Rebuild
-
-The frontend requires a systematic rebuild with proper design foundation:
-
-#### **Phase 1: Design System Foundation** 🔴 CRITICAL
-1. **Global CSS Setup**
-   - Create comprehensive design tokens (colors, spacing, typography, shadows)
-   - Implement proper dark/light mode system
-   - Establish consistent component base styles
-   - Add CSS custom properties for theming
-
-2. **Design System Core**
-   - Define color palette (primary, secondary, neutral, semantic colors)
-   - Typography scale and font system
-   - Spacing and sizing scales
-   - Border radius and shadow systems
-   - Animation and transition standards
-
-#### **Phase 2: Component Library Rebuild** 🔴 CRITICAL  
-1. **Base Components**
-   - Button: Complete redesign with proper variants and states
-   - Input/Form: Unified form component system
-   - Typography: Heading, Text, Caption components
-   - Layout: Container, Grid, Stack, Divider components
-
-2. **Complex Components**
-   - Navigation: Sidebar and header redesign
-   - Tables: Proper data table with sorting, filtering
-   - Modals: Consistent modal system
-   - Charts: Unified chart theming
-
-#### **Phase 3: Route Implementation** 🟡 HIGH
-1. **Complete Missing Routes**
-   - Finish all placeholder routes with real functionality
-   - Ensure consistent layout and navigation
-   - Add proper loading and error states
-   - Implement proper data fetching patterns
-
-2. **Page Consistency**
-   - Unified page layouts and headers
-   - Consistent spacing and typography
-   - Proper responsive breakpoints
-   - Accessible navigation patterns
-
-#### **Phase 4: Testing & Polish** 🟡 MEDIUM
-1. **Visual Testing**
-   - Component library documentation
-   - Visual regression testing
-   - Accessibility auditing
-   - Performance optimization
-
-### 🎯 Success Criteria for Remediation
-- ✅ Consistent visual design across all pages
-- ✅ Functional dark/light mode toggle
-- ✅ Complete and functional routes
-- ✅ Proper responsive design
-- ✅ Accessibility compliance (WCAG 2.1)
-- ✅ Performance benchmarks met
-- ✅ Component library documentation
-
-## 🚀 Updated Frontend Development Plan (Post TypeScript Remediation)
-
-### **Current Status: PHASE 0 COMPLETE ✅**
-
-With TypeScript errors reduced by 77.6% and core type safety established, EstateEase is now ready for systematic frontend enhancement.
-
-### **PHASE 1: Trust & Family CRUD Implementation** 🔴 **NEXT PRIORITY**
-
-**Duration**: 1-2 weeks  
-**Goal**: Complete the missing CRUD functionality for core estate planning entities
-
-#### **1.1 Trust Management Forms**
-- **Trust Creation Form** (`/app/routes/trusts.new.tsx`)
-  - Multi-step form for trust setup
-  - Trustee and beneficiary management
-  - Tax ID and legal document integration
-  - Validation using existing trust schemas
-
-- **Trust Edit Form** (`/app/routes/trusts.$trustId.edit.tsx`)
-  - In-place editing of trust details
-  - Dynamic beneficiary percentage validation
-  - Trustee succession planning interface
-
-#### **1.2 Family Member Management**
-- **Family Member Forms** (`/app/routes/family.new.tsx`, `/app/routes/family.$memberId.edit.tsx`)
-  - Contact information management
-  - Legal role assignments
-  - Relationship tracking
-  - Emergency contact setup
-
-- **Professional Team Management**
-  - Attorney, CPA, and advisor contact forms
-  - Specialization and credential tracking
-  - Preferred provider designation
-
-#### **1.3 Form Enhancement Requirements**
-- **Type Safety**: Leverage existing Zod schemas for validation
-- **User Experience**: Multi-step forms with progress indicators
-- **Error Handling**: Comprehensive validation with user-friendly messages
-- **Data Persistence**: Auto-save functionality for long forms
-
-### **PHASE 2: Advanced UI Components** 🟡 **HIGH PRIORITY**
-
-**Duration**: 2-3 weeks  
-**Goal**: Build production-quality component library
-
-#### **2.1 Enhanced Form Components** (Building on existing Button improvements)
-- **FormField Wrapper**: Consistent label, error, and help text styling
-- **Select Component**: Enhanced with search, multi-select, and async loading
-- **Date Picker**: Estate planning specific date selection (with validation for birthdates, etc.)
-- **Currency Input**: Automatic formatting for asset values
-- **Percentage Input**: For ownership and beneficiary percentages
-
-#### **2.2 Data Display Components**
-- **DataTable**: Sortable, filterable tables for assets, trusts, family members
-- **StatCard**: Enhanced metrics display for financial summaries
-- **ProgressBar**: For estate planning completion tracking
-- **Timeline**: For asset acquisition history and legal milestone tracking
-
-#### **2.3 Navigation & Layout**
-- **Enhanced Sidebar**: Collapsible with estate planning workflow organization
-- **Breadcrumb Navigation**: Clear hierarchy for complex nested forms
-- **Page Headers**: Consistent action buttons and metadata display
-
-### **PHASE 3: Advanced Features & Integrations** 🟢 **MEDIUM PRIORITY**
-
-**Duration**: 2-3 weeks  
-**Goal**: Add sophisticated estate planning tools
-
-#### **3.1 Document Management System**
-- **Document Upload**: PDF and image handling for legal documents
-- **Document Categorization**: Wills, trusts, deeds, insurance policies
-- **Version Control**: Track document updates and revisions
-- **OCR Integration**: Extract key information from uploaded documents
-
-#### **3.2 Reporting & Analytics**
-- **Estate Summary Reports**: Comprehensive PDF generation
-- **Tax Planning Reports**: Estate tax projections and optimization suggestions
-- **Asset Performance Tracking**: Growth and valuation history
-- **Beneficiary Impact Analysis**: Distribution scenario modeling
-
-#### **3.3 Collaboration Features**
-- **Commenting System**: Notes on assets, trusts, and family members
-- **Activity Timeline**: Track all changes and updates
-- **Professional Access**: Limited views for attorneys and advisors
-- **Audit Trail**: Comprehensive change logging for legal compliance
-
-### **PHASE 4: Production Hardening** 🟢 **LOW PRIORITY**
-
-**Duration**: 1-2 weeks  
-**Goal**: Production deployment readiness
-
-#### **4.1 Authentication & Security**
-- **User Authentication**: Login system with estate planning specific roles
-- **Data Encryption**: Sensitive field encryption (SSNs, Tax IDs)
-- **Access Control**: Role-based permissions for family members and professionals
-- **Session Management**: Secure session handling with timeout
-
-#### **4.2 Performance & Optimization**
-- **Code Splitting**: Lazy loading for heavy components
-- **Image Optimization**: Asset image compression and lazy loading
-- **Database Optimization**: Query optimization and connection pooling
-- **Caching Strategy**: Redis integration for frequently accessed data
-
-#### **4.3 Deployment & Monitoring**
-- **Production Build**: Optimized build process
-- **Error Monitoring**: Sentry integration for error tracking
-- **Performance Monitoring**: Core Web Vitals tracking
-- **Backup Strategy**: Automated database backups
-
-### **Immediate Next Steps (This Week)**
-
-1. **Trust Creation Form** - Start with basic trust setup form
-2. **Trust Edit Form** - Enable editing of existing trusts
-3. **Beneficiary Management** - Dynamic add/remove with percentage validation
-4. **Form Testing** - Comprehensive validation testing
-
-### **Success Metrics**
-
-#### **Phase 1 Complete When:**
-- ✅ All trust CRUD operations functional
-- ✅ Family member management complete
-- ✅ Professional team management working
-- ✅ Forms pass validation and error handling tests
-
-#### **Phase 2 Complete When:**
-- ✅ Component library documented with Storybook
-- ✅ All forms use enhanced UI components
-- ✅ Tables support sorting, filtering, and pagination
-- ✅ Responsive design verified across devices
-
-#### **Phase 3 Complete When:**
-- ✅ Document upload and management working
-- ✅ PDF report generation functional
-- ✅ Activity timeline and audit trail complete
-- ✅ Professional collaboration features enabled
-
-#### **Phase 4 Complete When:**
-- ✅ Authentication system integrated
-- ✅ Security audit passed
-- ✅ Performance benchmarks met
-- ✅ Production deployment successful
-
-### **Technical Architecture Notes**
-
-- **Type Safety First**: All new components must pass TypeScript compilation
-- **Validation Strategy**: Use existing Zod schemas, extend as needed
-- **Component Composition**: Follow asChild pattern established in Button component
-- **Database Integration**: Leverage existing DAL, enhance as needed for complex queries
-- **Error Handling**: Use established error boundary patterns
-
-## 📋 Component Refactoring Status
-
-### Overview
-Based on component analysis, we have **65+ components** with mixed implementation quality. The TypeScript remediation has improved the foundation significantly.
-
-### Component Quality Assessment
-
-#### **🟢 Excellent (Keep with Minor Enhancements)**
-- **Error Boundary** - Production-ready error handling with retry logic
-- **Skeleton Components** - Comprehensive loading state system
-- **Button** - Well-implemented with CVA variants and accessibility
-- **Card System** - Complete compound component pattern
-- **Asset Allocation Chart** - Proper TypeScript interfaces and responsive design
-
-#### **🟡 Good (Refactor for Design System Integration)**
-- **Input/Form Controls** - Solid foundation, needs theming consistency
-- **Chart Components** - Good structure, needs standardized theming
-- **Search Components** - Complex functionality, needs performance optimization
-- **Loading Components** - Need design system color integration
-
-#### **🔴 Poor (Major Refactoring Required)**
-- **Asset Form** - Uses native HTML, inconsistent with component library
-- **Header Component** - Hardcoded data, no theming system
-- **Layout Components** - Need dynamic data integration and theming
-
-### Refactoring Strategy
-
-#### **Phase 1: Design System Foundation** (1-2 weeks)
-*Establish theming without creating new files*
-
-1. **Update Global CSS** (`/app/tailwind.css`)
-   ```css
-   /* Add CSS custom properties for design tokens */
-   :root {
-     /* Primary palette */
-     --primary-50: #eff6ff;
-     --primary-500: #3b82f6; 
-     --primary-900: #1e3a8a;
-     
-     /* Semantic colors */
-     --success: #10b981;
-     --warning: #f59e0b;
-     --error: #ef4444;
-     
-     /* Spacing scale */
-     --space-xs: 0.25rem;
-     --space-sm: 0.5rem;
-     --space-md: 1rem;
-     /* etc... */
-   }
-   
-   [data-theme="dark"] {
-     --primary-50: #1e3a8a;
-     --primary-500: #60a5fa;
-     --primary-900: #eff6ff;
-   }
-   ```
-
-2. **Extend Tailwind Config** (`/tailwind.config.js`)
-   ```js
-   theme: {
-     extend: {
-       colors: {
-         primary: {
-           50: 'var(--primary-50)',
-           500: 'var(--primary-500)',
-           900: 'var(--primary-900)',
-         }
-       }
-     }
-   }
-   ```
-
-3. **Create Theme Context** (`/app/utils/theme.tsx`)
-   - Theme provider with localStorage persistence
-   - Dark/light mode toggle functionality
-   - Type-safe theme context
-
-#### **Phase 2: Core Component Refactoring** (2-3 weeks)
-*Refactor existing components to use design system*
-
-**Week 1: Foundation Components**
-
-1. **Button Component** (`/app/components/ui/button.tsx`)
-   - ✅ Already excellent, minor updates to use design tokens
-   - Update CVA variants to use CSS custom properties
-   - Add theme-aware hover states
-
-2. **Form Components** (`/app/components/ui/forms/*.tsx`)
-   - Update color schemes to use design tokens
-   - Standardize error state styling
-   - Ensure dark mode compatibility
-   - Add consistent focus ring system
-
-**Week 2: Layout Components**
-
-3. **Header Component** (`/app/components/layout/header.tsx`)
-   - Remove hardcoded user data, integrate with Remix loaders
-   - Add theme toggle functionality
-   - Update styling to use design tokens
-   - Make stats dynamic from database
-
-4. **Sidebar Component** (`/app/components/layout/sidebar.tsx`)
-   - Integrate theme system
-   - Update navigation states with design tokens
-   - Ensure accessibility compliance
-
-5. **App Layout** (`/app/components/layout/app-layout.tsx`)
-   - Wrap with theme provider
-   - Update background and text colors for themes
-   - Ensure consistent spacing with design tokens
-
-**Week 3: Complex Components**
-
-6. **Asset Form** (`/app/components/forms/asset-form.tsx`)
-   - **MAJOR REFACTOR**: Replace native HTML elements with component library
-   - Use FormField, Input, Select components consistently
-   - Integrate proper validation and error handling
-   - Update styling to match design system
-
-#### **Phase 3: Data & Interaction Components** (1-2 weeks)
-
-**Chart Components** (`/app/components/ui/charts/*.tsx`)
-- Standardize color palette across all charts
-- Create shared chart theme configuration
-- Ensure dark mode compatibility
-- Update tooltip styling consistency
-
-**Search Components** (`/app/components/ui/search/*.tsx`)
-- Optimize performance for large datasets
-- Update styling to use design tokens
-- Improve keyboard navigation
-- Add loading states during search
-
-#### **Phase 4: Route Integration & Testing** (1 week)
-
-**Route Component Updates**
-- Update all route components to use refactored components
-- Ensure consistent page layouts
-- Test theme switching across all pages
-- Verify responsive design works correctly
-
-### Implementation Guidelines
-
-#### **React Remix UI/UX Best Practices**
-
-1. **Component Composition Over Inheritance**
-   ```tsx
-   // Good: Composable components
-   <Card>
-     <CardHeader>
-       <CardTitle>Asset Details</CardTitle>
-     </CardHeader>
-     <CardContent>
-       {/* content */}
-     </CardContent>
-   </Card>
-   ```
-
-2. **Progressive Enhancement**
-   ```tsx
-   // Use Remix Form for progressive enhancement
-   <Form method="post" replace>
-     <FormField name="assetName">
-       <Input placeholder="Asset name" />
-     </FormField>
-   </Form>
-   ```
-
-3. **Type-Safe Theme System**
-   ```tsx
-   // Theme-aware components
-   const { theme, toggleTheme } = useTheme();
-   
-   // CSS custom properties for consistency
-   className="bg-primary-500 text-primary-50"
-   ```
-
-4. **Accessible Component Patterns**
-   ```tsx
-   // Proper ARIA labels and keyboard navigation
-   <button
-     aria-label="Toggle theme"
-     aria-pressed={theme === 'dark'}
-     onKeyDown={handleKeyDown}
-   >
-   ```
-
-5. **Performance Optimization**
-   ```tsx
-   // Memo for expensive components
-   const ChartComponent = memo(({ data }) => {
-     return <Chart data={data} />;
-   });
-   
-   // Lazy loading for heavy components
-   const LazyChart = lazy(() => import('./chart'));
-   ```
-
-### Refactoring Checklist
-
-#### **For Each Component:**
-- [ ] Remove hardcoded colors, use design tokens
-- [ ] Ensure dark/light theme compatibility  
-- [ ] Update TypeScript interfaces for theme props
-- [ ] Add proper accessibility attributes
-- [ ] Test responsive behavior
-- [ ] Verify integration with existing pages
-- [ ] Update documentation/comments
-
-#### **Quality Gates:**
-- [ ] ESLint passes with zero errors
-- [ ] TypeScript compilation successful
-- [ ] All existing functionality preserved
-- [ ] Theme switching works correctly
-- [ ] Responsive design maintained
-- [ ] Accessibility audit passes
-
-### Success Metrics
-
-#### **Design System Adoption**
-- [ ] All components use CSS custom properties
-- [ ] Consistent color usage across application
-- [ ] Functional dark/light mode toggle
-- [ ] Zero hardcoded styling values
-
-#### **Component Quality**
-- [ ] All components follow composition patterns
-- [ ] Consistent TypeScript interfaces
-- [ ] Proper error handling integration
-- [ ] Accessibility compliance (WCAG 2.1)
-
-#### **Performance**
-- [ ] No degradation in page load times
-- [ ] Smooth theme transitions
-- [ ] Optimized bundle size
-- [ ] Responsive design maintained
-
-### Risk Mitigation
-
-1. **Incremental Refactoring** - One component category at a time
-2. **Backup Strategy** - Git branches for each phase
-3. **Testing Protocol** - Test each component after refactoring
-4. **Rollback Plan** - Ability to revert any problematic changes
-5. **Documentation** - Document all breaking changes
-
-This plan refactors existing components systematically while creating minimal new files, following React Remix best practices throughout.
+**2️⃣ DURING Work (After EVERY Major Step):**
+
+```bash
+# Store progress in memory after each file operation
+npx claude-flow@alpha hooks post-edit --file "[filepath]" --memory-key "swarm/[agent]/[step]"
+
+# Store decisions and findings
+npx claude-flow@alpha hooks notification --message "[what was done]" --telemetry true
+
+# Check coordination with other agents
+npx claude-flow@alpha hooks pre-search --query "[what to check]" --cache-results true
+```
+
+**3️⃣ AFTER Completing Work:**
+
+```bash
+# Save all results and learnings
+npx claude-flow@alpha hooks post-task --task-id "[task]" --analyze-performance true
+npx claude-flow@alpha hooks session-end --export-metrics true --generate-summary true
+```
+
+### 🎯 AGENT PROMPT TEMPLATE
+
+When spawning agents, ALWAYS include these coordination instructions:
+
+```
+You are the [Agent Type] agent in a coordinated swarm.
+
+MANDATORY COORDINATION:
+1. START: Run `npx claude-flow@alpha hooks pre-task --description "[your task]"`
+2. DURING: After EVERY file operation, run `npx claude-flow@alpha hooks post-edit --file "[file]" --memory-key "agent/[step]"`
+3. MEMORY: Store ALL decisions using `npx claude-flow@alpha hooks notification --message "[decision]"`
+4. END: Run `npx claude-flow@alpha hooks post-task --task-id "[task]" --analyze-performance true`
+
+Your specific task: [detailed task description]
+
+REMEMBER: Coordinate with other agents by checking memory BEFORE making decisions!
+```
+
+### ⚡ PARALLEL EXECUTION IS MANDATORY
+
+**THIS IS WRONG ❌ (Sequential - NEVER DO THIS):**
+
+```
+Message 1: Initialize swarm
+Message 2: Spawn agent 1
+Message 3: Spawn agent 2
+Message 4: TodoWrite (single todo)
+Message 5: Create file 1
+Message 6: TodoWrite (another single todo)
+```
+
+**THIS IS CORRECT ✅ (Parallel - ALWAYS DO THIS):**
+
+```
+Message 1: [BatchTool]
+  // MCP coordination setup
+  - mcp__claude-flow__swarm_init
+  - mcp__claude-flow__agent_spawn (researcher)
+  - mcp__claude-flow__agent_spawn (coder)
+  - mcp__claude-flow__agent_spawn (analyst)
+  - mcp__claude-flow__agent_spawn (tester)
+  - mcp__claude-flow__agent_spawn (coordinator)
+
+Message 2: [BatchTool - Claude Code execution]
+  // Task agents with full coordination instructions
+  - Task("You are researcher agent. MANDATORY: Run hooks pre-task, post-edit, post-task. Task: Research API patterns")
+  - Task("You are coder agent. MANDATORY: Run hooks pre-task, post-edit, post-task. Task: Implement REST endpoints")
+  - Task("You are analyst agent. MANDATORY: Run hooks pre-task, post-edit, post-task. Task: Analyze performance")
+  - Task("You are tester agent. MANDATORY: Run hooks pre-task, post-edit, post-task. Task: Write comprehensive tests")
+
+  // TodoWrite with ALL todos batched
+  - TodoWrite { todos: [
+      {id: "research", content: "Research API patterns", status: "in_progress", priority: "high"},
+      {id: "design", content: "Design database schema", status: "pending", priority: "high"},
+      {id: "implement", content: "Build REST endpoints", status: "pending", priority: "high"},
+      {id: "test", content: "Write unit tests", status: "pending", priority: "medium"},
+      {id: "docs", content: "Create API documentation", status: "pending", priority: "low"},
+      {id: "deploy", content: "Setup deployment", status: "pending", priority: "medium"}
+    ]}
+
+  // File operations in parallel
+  - Write "api/package.json"
+  - Write "api/server.js"
+  - Write "api/routes/users.js"
+  - Bash "mkdir -p api/{routes,models,tests}"
+```
+
+### 🎯 MANDATORY SWARM PATTERN
+
+When given ANY complex task with swarms:
+
+```
+STEP 1: IMMEDIATE PARALLEL SPAWN (Single Message!)
+[BatchTool]:
+  // IMPORTANT: Check CLI args for agent count, otherwise auto-decide based on task complexity
+  - mcp__claude-flow__swarm_init {
+      topology: "hierarchical",
+      maxAgents: CLI_ARGS.agents || AUTO_DECIDE(task_complexity), // Use CLI args or auto-decide
+      strategy: "parallel"
+    }
+
+  // Spawn agents based on maxAgents count and task requirements
+  // If CLI specifies 3 agents, spawn 3. If no args, auto-decide optimal count (3-12)
+  - mcp__claude-flow__agent_spawn { type: "architect", name: "System Designer" }
+  - mcp__claude-flow__agent_spawn { type: "coder", name: "API Developer" }
+  - mcp__claude-flow__agent_spawn { type: "coder", name: "Frontend Dev" }
+  - mcp__claude-flow__agent_spawn { type: "analyst", name: "DB Designer" }
+  - mcp__claude-flow__agent_spawn { type: "tester", name: "QA Engineer" }
+  - mcp__claude-flow__agent_spawn { type: "researcher", name: "Tech Lead" }
+  - mcp__claude-flow__agent_spawn { type: "coordinator", name: "PM" }
+  - TodoWrite { todos: [multiple todos at once] }
+
+STEP 2: PARALLEL TASK EXECUTION (Single Message!)
+[BatchTool]:
+  - mcp__claude-flow__task_orchestrate { task: "main task", strategy: "parallel" }
+  - mcp__claude-flow__memory_usage { action: "store", key: "init", value: {...} }
+  - Multiple Read operations
+  - Multiple Write operations
+  - Multiple Bash commands
+
+STEP 3: CONTINUE PARALLEL WORK (Never Sequential!)
+```
+
+### 📊 VISUAL TASK TRACKING FORMAT
+
+Use this format when displaying task progress:
+
+```
+📊 Progress Overview
+   ├── Total Tasks: X
+   ├── ✅ Completed: X (X%)
+   ├── 🔄 In Progress: X (X%)
+   ├── ⭕ Todo: X (X%)
+   └── ❌ Blocked: X (X%)
+
+📋 Todo (X)
+   └── 🔴 001: [Task description] [PRIORITY] ▶
+
+🔄 In progress (X)
+   ├── 🟡 002: [Task description] ↳ X deps ▶
+   └── 🔴 003: [Task description] [PRIORITY] ▶
+
+✅ Completed (X)
+   ├── ✅ 004: [Task description]
+   └── ... (more completed tasks)
+
+Priority indicators: 🔴 HIGH/CRITICAL, 🟡 MEDIUM, 🟢 LOW
+Dependencies: ↳ X deps | Actionable: ▶
+```
+
+### 🎯 REAL EXAMPLE: Full-Stack App Development
+
+**Task**: "Build a complete REST API with authentication, database, and tests"
+
+**🚨 MANDATORY APPROACH - Everything in Parallel:**
+
+```javascript
+// ✅ CORRECT: SINGLE MESSAGE with ALL operations
+[BatchTool - Message 1]:
+  // Initialize and spawn ALL agents at once
+  mcp__claude-flow__swarm_init { topology: "hierarchical", maxAgents: 8, strategy: "parallel" }
+  mcp__claude-flow__agent_spawn { type: "architect", name: "System Designer" }
+  mcp__claude-flow__agent_spawn { type: "coder", name: "API Developer" }
+  mcp__claude-flow__agent_spawn { type: "coder", name: "Auth Expert" }
+  mcp__claude-flow__agent_spawn { type: "analyst", name: "DB Designer" }
+  mcp__claude-flow__agent_spawn { type: "tester", name: "Test Engineer" }
+  mcp__claude-flow__agent_spawn { type: "coordinator", name: "Lead" }
+
+  // Update ALL todos at once - NEVER split todos!
+  TodoWrite { todos: [
+    { id: "design", content: "Design API architecture", status: "in_progress", priority: "high" },
+    { id: "auth", content: "Implement authentication", status: "pending", priority: "high" },
+    { id: "db", content: "Design database schema", status: "pending", priority: "high" },
+    { id: "api", content: "Build REST endpoints", status: "pending", priority: "high" },
+    { id: "tests", content: "Write comprehensive tests", status: "pending", priority: "medium" },
+    { id: "docs", content: "Document API endpoints", status: "pending", priority: "low" },
+    { id: "deploy", content: "Setup deployment pipeline", status: "pending", priority: "medium" },
+    { id: "monitor", content: "Add monitoring", status: "pending", priority: "medium" }
+  ]}
+
+  // Start orchestration
+  mcp__claude-flow__task_orchestrate { task: "Build REST API", strategy: "parallel" }
+
+  // Store initial memory
+  mcp__claude-flow__memory_usage { action: "store", key: "project/init", value: { started: Date.now() } }
+
+[BatchTool - Message 2]:
+  // Create ALL directories at once
+  Bash("mkdir -p test-app/{src,tests,docs,config}")
+  Bash("mkdir -p test-app/src/{models,routes,middleware,services}")
+  Bash("mkdir -p test-app/tests/{unit,integration}")
+
+  // Write ALL base files at once
+  Write("test-app/package.json", packageJsonContent)
+  Write("test-app/.env.example", envContent)
+  Write("test-app/README.md", readmeContent)
+  Write("test-app/src/server.js", serverContent)
+  Write("test-app/src/config/database.js", dbConfigContent)
+
+[BatchTool - Message 3]:
+  // Read multiple files for context
+  Read("test-app/package.json")
+  Read("test-app/src/server.js")
+  Read("test-app/.env.example")
+
+  // Run multiple commands
+  Bash("cd test-app && npm install")
+  Bash("cd test-app && npm run lint")
+  Bash("cd test-app && npm test")
+```
+
+### 🚫 NEVER DO THIS (Sequential = WRONG):
+
+```javascript
+// ❌ WRONG: Multiple messages, one operation each
+Message 1: mcp__claude-flow__swarm_init
+Message 2: mcp__claude-flow__agent_spawn (just one agent)
+Message 3: mcp__claude-flow__agent_spawn (another agent)
+Message 4: TodoWrite (single todo)
+Message 5: Write (single file)
+// This is 5x slower and wastes swarm coordination!
+```
+
+### 🔄 MEMORY COORDINATION PATTERN
+
+Every agent coordination step MUST use memory:
+
+```
+// After each major decision or implementation
+mcp__claude-flow__memory_usage
+  action: "store"
+  key: "swarm-{id}/agent-{name}/{step}"
+  value: {
+    timestamp: Date.now(),
+    decision: "what was decided",
+    implementation: "what was built",
+    nextSteps: ["step1", "step2"],
+    dependencies: ["dep1", "dep2"]
+  }
+
+// To retrieve coordination data
+mcp__claude-flow__memory_usage
+  action: "retrieve"
+  key: "swarm-{id}/agent-{name}/{step}"
+
+// To check all swarm progress
+mcp__claude-flow__memory_usage
+  action: "list"
+  pattern: "swarm-{id}/*"
+```
+
+### ⚡ PERFORMANCE TIPS
+
+1. **Batch Everything**: Never operate on single files when multiple are needed
+2. **Parallel First**: Always think "what can run simultaneously?"
+3. **Memory is Key**: Use memory for ALL cross-agent coordination
+4. **Monitor Progress**: Use mcp**claude-flow**swarm_monitor for real-time tracking
+5. **Auto-Optimize**: Let hooks handle topology and agent selection
+
+### 🎨 VISUAL SWARM STATUS
+
+When showing swarm status, use this format:
+
+```
+🐝 Swarm Status: ACTIVE
+├── 🏗️ Topology: hierarchical
+├── 👥 Agents: 6/8 active
+├── ⚡ Mode: parallel execution
+├── 📊 Tasks: 12 total (4 complete, 6 in-progress, 2 pending)
+└── 🧠 Memory: 15 coordination points stored
+
+Agent Activity:
+├── 🟢 architect: Designing database schema...
+├── 🟢 coder-1: Implementing auth endpoints...
+├── 🟢 coder-2: Building user CRUD operations...
+├── 🟢 analyst: Optimizing query performance...
+├── 🟡 tester: Waiting for auth completion...
+└── 🟢 coordinator: Monitoring progress...
+```
+
+## 📝 CRITICAL: TODOWRITE AND TASK TOOL BATCHING
+
+### 🚨 MANDATORY BATCHING RULES FOR TODOS AND TASKS
+
+**TodoWrite Tool Requirements:**
+
+1. **ALWAYS** include 5-10+ todos in a SINGLE TodoWrite call
+2. **NEVER** call TodoWrite multiple times in sequence
+3. **BATCH** all todo updates together - status changes, new todos, completions
+4. **INCLUDE** all priority levels (high, medium, low) in one call
+
+**Task Tool Requirements:**
+
+1. **SPAWN** all agents using Task tool in ONE message
+2. **NEVER** spawn agents one by one across multiple messages
+3. **INCLUDE** full task descriptions and coordination instructions
+4. **BATCH** related Task calls together for parallel execution
+
+**Example of CORRECT TodoWrite usage:**
+
+```javascript
+// ✅ CORRECT - All todos in ONE call
+TodoWrite { todos: [
+  { id: "1", content: "Initialize system", status: "completed", priority: "high" },
+  { id: "2", content: "Analyze requirements", status: "in_progress", priority: "high" },
+  { id: "3", content: "Design architecture", status: "pending", priority: "high" },
+  { id: "4", content: "Implement core", status: "pending", priority: "high" },
+  { id: "5", content: "Build features", status: "pending", priority: "medium" },
+  { id: "6", content: "Write tests", status: "pending", priority: "medium" },
+  { id: "7", content: "Add monitoring", status: "pending", priority: "medium" },
+  { id: "8", content: "Documentation", status: "pending", priority: "low" },
+  { id: "9", content: "Performance tuning", status: "pending", priority: "low" },
+  { id: "10", content: "Deploy to production", status: "pending", priority: "high" }
+]}
+```
+
+**Example of WRONG TodoWrite usage:**
+
+```javascript
+// ❌ WRONG - Multiple TodoWrite calls
+Message 1: TodoWrite { todos: [{ id: "1", content: "Task 1", ... }] }
+Message 2: TodoWrite { todos: [{ id: "2", content: "Task 2", ... }] }
+Message 3: TodoWrite { todos: [{ id: "3", content: "Task 3", ... }] }
+// This breaks parallel coordination!
+```
+
+## Claude Flow v2.0.0 Features
+
+Claude Flow extends the base coordination with:
+
+- **🔗 GitHub Integration** - Deep repository management
+- **🎯 Project Templates** - Quick-start for common projects
+- **📊 Advanced Analytics** - Detailed performance insights
+- **🤖 Custom Agent Types** - Domain-specific coordinators
+- **🔄 Workflow Automation** - Reusable task sequences
+- **🛡️ Enhanced Security** - Safer command execution
+
+## Support
+
+- Documentation: https://github.com/ruvnet/claude-flow
+- Issues: https://github.com/ruvnet/claude-flow/issues
+- Examples: https://github.com/ruvnet/claude-flow/tree/main/examples
+
+---
+
+Remember: **Claude Flow coordinates, Claude Code creates!** Start with `mcp__claude-flow__swarm_init` to enhance your development workflow.

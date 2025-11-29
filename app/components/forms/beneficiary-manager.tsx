@@ -1,10 +1,10 @@
-import { useState } from "react";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/forms/input";
 import { FormField } from "~/components/ui/forms/form-field";
 import { Select } from "~/components/ui/forms/select";
 import { Textarea } from "~/components/ui/forms/textarea";
-import { Plus, Trash2 } from "lucide-react";
+import Plus from "lucide-react/dist/esm/icons/plus";
+import Trash2 from "lucide-react/dist/esm/icons/trash-2";
 import type { ValidatedBeneficiary } from "~/lib/validation/trust-schemas";
 
 interface BeneficiaryManagerProps {
@@ -14,51 +14,41 @@ interface BeneficiaryManagerProps {
 }
 
 export function BeneficiaryManager({ beneficiaries, onChange, error }: BeneficiaryManagerProps) {
-  const [nextId, setNextId] = useState(beneficiaries.length + 1);
-
   const addBeneficiary = () => {
     const newBeneficiary: ValidatedBeneficiary = {
-      id: `beneficiary-${nextId}`,
-      name: '',
-      relationship: '',
+      id: `beneficiary-${Date.now()}`, // Use timestamp for unique ID
+      name: "",
+      relationship: "",
       percentage: 0,
       contingent: false,
-      notes: ''
+      notes: "",
     };
-    
+
     onChange([...beneficiaries, newBeneficiary]);
-    setNextId(nextId + 1);
   };
 
   const removeBeneficiary = (id: string) => {
-    onChange(beneficiaries.filter(b => b.id !== id));
+    onChange(beneficiaries.filter((b) => b.id !== id));
   };
 
   const updateBeneficiary = (id: string, updates: Partial<ValidatedBeneficiary>) => {
-    onChange(beneficiaries.map(b => 
-      b.id === id ? { ...b, ...updates } : b
-    ));
+    onChange(beneficiaries.map((b) => (b.id === id ? { ...b, ...updates } : b)));
   };
 
   // Calculate total percentage for primary beneficiaries
-  const primaryBeneficiaries = beneficiaries.filter(b => !b.contingent);
+  const primaryBeneficiaries = beneficiaries.filter((b) => !b.contingent);
   const totalPercentage = primaryBeneficiaries.reduce((sum, b) => sum + b.percentage, 0);
 
   return (
     <div className="space-y-4">
       {/* Add Beneficiary Button */}
-      <div className="flex justify-between items-center">
+      <div className="flex items-center justify-between">
         <div className="text-sm text-gray-600">
           Primary beneficiaries total: {totalPercentage.toFixed(1)}%
-          {error && <div className="text-red-600 mt-1">{error}</div>}
+          {error && <div className="mt-1 text-red-600">{error}</div>}
         </div>
-        <Button
-          type="button"
-          variant="outline"
-          size="sm"
-          onClick={addBeneficiary}
-        >
-          <Plus className="h-4 w-4 mr-2" />
+        <Button type="button" variant="outline" size="sm" onClick={addBeneficiary}>
+          <Plus className="mr-2 h-4 w-4" />
           Add Beneficiary
         </Button>
       </div>
@@ -66,10 +56,10 @@ export function BeneficiaryManager({ beneficiaries, onChange, error }: Beneficia
       {/* Beneficiary List */}
       <div className="space-y-4">
         {beneficiaries.map((beneficiary, index) => (
-          <div key={beneficiary.id} className="border rounded-lg p-4 bg-gray-50">
-            <div className="flex justify-between items-start mb-3">
+          <div key={beneficiary.id} className="rounded-lg border bg-gray-50 p-4">
+            <div className="mb-3 flex items-start justify-between">
               <h4 className="font-medium text-gray-900">
-                Beneficiary {index + 1} {beneficiary.contingent && '(Contingent)'}
+                Beneficiary {index + 1} {beneficiary.contingent && "(Contingent)"}
               </h4>
               <Button
                 type="button"
@@ -82,7 +72,7 @@ export function BeneficiaryManager({ beneficiaries, onChange, error }: Beneficia
               </Button>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               <FormField label="Name" required>
                 <Input
                   value={beneficiary.name}
@@ -95,19 +85,23 @@ export function BeneficiaryManager({ beneficiaries, onChange, error }: Beneficia
               <FormField label="Relationship" required>
                 <Input
                   value={beneficiary.relationship}
-                  onChange={(e) => updateBeneficiary(beneficiary.id, { relationship: e.target.value })}
+                  onChange={(e) =>
+                    updateBeneficiary(beneficiary.id, { relationship: e.target.value })
+                  }
                   placeholder="e.g., Spouse, Child, Sibling"
                   required
                 />
               </FormField>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+            <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2">
               <FormField label="Percentage" required>
                 <Input
                   type="number"
-                  value={beneficiary.percentage}
-                  onChange={(e) => updateBeneficiary(beneficiary.id, { percentage: Number(e.target.value) })}
+                  value={beneficiary.percentage.toString()}
+                  onChange={(e) =>
+                    updateBeneficiary(beneficiary.id, { percentage: Number(e.target.value) })
+                  }
                   min="0"
                   max="100"
                   step="0.1"
@@ -117,11 +111,15 @@ export function BeneficiaryManager({ beneficiaries, onChange, error }: Beneficia
 
               <FormField label="Beneficiary Type">
                 <Select
-                  value={beneficiary.contingent ? 'contingent' : 'primary'}
-                  onChange={(e) => updateBeneficiary(beneficiary.id, { contingent: e.target.value === 'contingent' })}
+                  value={beneficiary.contingent ? "contingent" : "primary"}
+                  onChange={(e) =>
+                    updateBeneficiary(beneficiary.id, {
+                      contingent: e.target.value === "contingent",
+                    })
+                  }
                   options={[
-                    { value: 'primary', label: 'Primary' },
-                    { value: 'contingent', label: 'Contingent' }
+                    { value: "primary", label: "Primary" },
+                    { value: "contingent", label: "Contingent" },
                   ]}
                 />
               </FormField>
@@ -130,7 +128,7 @@ export function BeneficiaryManager({ beneficiaries, onChange, error }: Beneficia
             <div className="mt-4">
               <FormField label="Notes">
                 <Textarea
-                  value={beneficiary.notes || ''}
+                  value={beneficiary.notes || ""}
                   onChange={(e) => updateBeneficiary(beneficiary.id, { notes: e.target.value })}
                   placeholder="Additional notes or conditions..."
                   rows={2}
@@ -142,7 +140,7 @@ export function BeneficiaryManager({ beneficiaries, onChange, error }: Beneficia
       </div>
 
       {beneficiaries.length === 0 && (
-        <div className="text-center py-8 text-gray-500">
+        <div className="py-8 text-center text-gray-500">
           No beneficiaries added yet. Click &quot;Add Beneficiary&quot; to get started.
         </div>
       )}

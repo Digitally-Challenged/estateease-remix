@@ -1,141 +1,197 @@
-import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
-import { Button } from "~/components/ui/button";
-import { Input } from "~/components/ui/forms/input";
-import { 
-  MessageSquare, 
-  Send, 
-  Sparkles,
-  Info,
-  BookOpen,
-  Shield,
-  TrendingUp
-} from "lucide-react";
+import type { LoaderFunctionArgs, ActionFunctionArgs } from "@remix-run/node";
+import { json } from "@remix-run/node";
+import { useLoaderData } from "@remix-run/react";
+import { useState, useCallback } from "react";
+import { requireUser } from "~/lib/auth.server";
+import { getAssets, getFamilyMembers, getTrusts, getProfessionals } from "~/lib/dal";
+import { nlpProcessor } from "~/lib/ai-natural-language";
+import { aiInsights } from "~/lib/ai-insights";
+import { AIChatbot } from "~/components/ai/ai-chatbot";
+import type { QueryAnalysis, ConversationContext } from "~/lib/ai-natural-language";
+
+export async function loader({ request }: LoaderFunctionArgs) {
+  const user = await requireUser(request);
+  const userId = 1; // Default user for now
+
+  // Load user's estate data for context
+  const [assets, familyMembers, trusts, professionals] = await Promise.all([
+    getAssets(userId),
+    getFamilyMembers(userId),
+    getTrusts(userId),
+    getProfessionals(userId),
+  ]);
+
+  // Calculate basic estate metrics for context
+  const totalEstateValue = assets.reduce((sum, asset) => sum + asset.value, 0);
+
+  const initialContext: Partial<ConversationContext> = {
+    userId: user.id || "default",
+    sessionId: `session-${Date.now()}`,
+    userProfile: {
+      estateValue: totalEstateValue,
+      primaryConcerns: ["tax-planning", "asset-protection"], // Could be derived from data
+      knowledgeLevel:
+        totalEstateValue > 5000000
+          ? "advanced"
+          : totalEstateValue > 1000000
+            ? "intermediate"
+            : "beginner",
+    },
+  };
+
+  return json({
+    user,
+    initialContext,
+    estateMetrics: {
+      totalValue: totalEstateValue,
+      assetCount: assets.length,
+      trustCount: trusts.length,
+      familyMemberCount: familyMembers.length,
+    },
+  });
+}
+
+export async function action({ request }: ActionFunctionArgs) {
+  const user = await requireUser(request);
+  const formData = await request.formData();
+  const query = formData.get("query") as string;
+  const action = formData.get("action") as string;
+
+  if (action === "analyze-query") {
+    try {
+      const analysis = await nlpProcessor.analyzeQuery(query);
+      return json({ analysis });
+    } catch (error) {
+      console.error("Error analyzing query:", error);
+      return json({ error: "Failed to analyze query" }, { status: 500 });
+    }
+  }
+
+  if (action === "generate-response") {
+    try {
+      const analysisData = formData.get("analysis");
+      const analysis: QueryAnalysis = analysisData ? JSON.parse(analysisData as string) : null;
+
+      if (!analysis) {
+        return json({ error: "Missing analysis data" }, { status: 400 });
+      }
+
+      const response = nlpProcessor.generateContextualResponse(query, analysis);
+      return json({ response });
+    } catch (error) {
+      console.error("Error generating response:", error);
+      return json({ error: "Failed to generate response" }, { status: 500 });
+    }
+  }
+
+  return json({ error: "Invalid action" }, { status: 400 });
+}
 
 export default function Chatbot() {
-  const suggestedQuestions = [
-    {
-      category: "Estate Planning Basics",
-      icon: BookOpen,
-      questions: [
-        "What documents do I need for a complete estate plan?",
-        "How often should I update my estate plan?",
-        "What's the difference between a will and a trust?"
-      ]
-    },
-    {
-      category: "Tax Planning",
-      icon: TrendingUp,
-      questions: [
-        "How can I minimize estate taxes?",
-        "What is the current federal estate tax exemption?",
-        "Should I consider gifting strategies?"
-      ]
-    },
-    {
-      category: "Asset Protection",
-      icon: Shield,
-      questions: [
-        "How can I protect my assets from creditors?",
-        "What types of trusts offer the best protection?",
-        "Should I consider an LLC for my properties?"
-      ]
+  const { user, initialContext, estateMetrics } = useLoaderData<typeof loader>();
+
+  const handleQueryAnalyze = useCallback(async (query: string): Promise<QueryAnalysis> => {
+    try {
+      const formData = new FormData();
+      formData.append("query", query);
+      formData.append("action", "analyze-query");
+
+      const response = await fetch("/chatbot", {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await response.json();
+
+      if (data.error) {
+        throw new Error(data.error);
+      }
+
+      return data.analysis;
+    } catch (error) {
+      console.error("Error analyzing query:", error);
+      // Return fallback analysis
+      return {
+        intent: "question",
+        category: "estate",
+        confidence: 50,
+        entities: [],
+        suggestedResponses: [],
+      };
     }
-  ];
+  }, []);
+
+  const handleResponseGenerate = useCallback(
+    async (query: string, analysis: QueryAnalysis): Promise<string> => {
+      try {
+        const formData = new FormData();
+        formData.append("query", query);
+        formData.append("analysis", JSON.stringify(analysis));
+        formData.append("action", "generate-response");
+
+        const response = await fetch("/chatbot", {
+          method: "POST",
+          body: formData,
+        });
+
+        const data = await response.json();
+
+        if (data.error) {
+          throw new Error(data.error);
+        }
+
+        return data.response;
+      } catch (error) {
+        console.error("Error generating response:", error);
+        return "I apologize, but I'm having trouble processing your request right now. Please try again or contact support if the issue persists.";
+      }
+    },
+    [],
+  );
+
+  const handleFeedback = useCallback((messageId: string, feedback: "positive" | "negative") => {
+    // Log feedback for AI improvement
+    console.log(`Feedback for message ${messageId}: ${feedback}`);
+    // In a real implementation, this would be sent to an analytics service
+  }, []);
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
-      {/* Header */}
-      <div className="text-center">
-        <div className="flex items-center justify-center mb-4">
-          <div className="h-12 w-12 rounded-full bg-indigo-100 flex items-center justify-center">
-            <Sparkles className="h-6 w-6 text-indigo-600" />
+    <div className="space-y-6">
+      {/* Estate Context Banner */}
+      <div className="rounded-lg border border-indigo-200 bg-gradient-to-r from-indigo-50 to-blue-50 p-6 dark:border-indigo-700 dark:from-indigo-900/20 dark:to-blue-900/20">
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-lg font-semibold text-indigo-900 dark:text-indigo-100">
+              AI Advisor with Your Estate Context
+            </h2>
+            <p className="mt-1 text-sm text-indigo-700 dark:text-indigo-300">
+              I have access to your estate information to provide personalized guidance
+            </p>
           </div>
-        </div>
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">AI Estate Planning Advisor</h1>
-        <p className="text-gray-600 dark:text-gray-400 dark:text-gray-500 mt-2">Get personalized guidance for your estate planning questions</p>
-      </div>
-
-      {/* Info Banner */}
-      <Card className="bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-700">
-        <CardContent className="flex items-start space-x-3 p-4">
-          <Info className="h-5 w-5 text-blue-600 dark:text-blue-400 mt-0.5" />
-          <div className="text-sm text-blue-900">
-            <p className="font-medium">How it works:</p>
-            <p className="mt-1">Ask questions about estate planning, taxes, trusts, or any related topic. Our AI advisor will provide personalized guidance based on your estate structure.</p>
+          <div className="grid grid-cols-2 gap-4 text-sm">
+            <div className="text-center">
+              <div className="font-bold text-indigo-900 dark:text-indigo-100">
+                ${estateMetrics.totalValue.toLocaleString()}
+              </div>
+              <div className="text-indigo-600 dark:text-indigo-400">Total Estate Value</div>
+            </div>
+            <div className="text-center">
+              <div className="font-bold text-indigo-900 dark:text-indigo-100">
+                {estateMetrics.assetCount}
+              </div>
+              <div className="text-indigo-600 dark:text-indigo-400">Assets Tracked</div>
+            </div>
           </div>
-        </CardContent>
-      </Card>
-
-      {/* Chat Interface */}
-      <Card className="h-[400px] flex flex-col">
-        <CardHeader className="border-b border-gray-200 dark:border-gray-700">
-          <div className="flex items-center space-x-2">
-            <MessageSquare className="h-5 w-5 text-gray-600 dark:text-gray-400 dark:text-gray-500" />
-            <CardTitle className="text-lg">Chat with AI Advisor</CardTitle>
-          </div>
-        </CardHeader>
-        <CardContent className="flex-1 p-6 flex items-center justify-center">
-          <div className="text-center text-gray-500 dark:text-gray-400 dark:text-gray-500">
-            <MessageSquare className="h-12 w-12 mx-auto mb-3 text-gray-300" />
-            <p className="text-lg font-medium">Start a conversation</p>
-            <p className="text-sm mt-1">Ask any estate planning question to get started</p>
-          </div>
-        </CardContent>
-        <div className="border-t border-gray-200 dark:border-gray-700 p-4">
-          <div className="flex space-x-2">
-            <Input 
-              placeholder="Type your estate planning question..." 
-              className="flex-1"
-            />
-            <Button>
-              <Send className="h-4 w-4" />
-            </Button>
-          </div>
-        </div>
-      </Card>
-
-      {/* Suggested Questions */}
-      <div>
-        <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Suggested Questions</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {suggestedQuestions.map((category) => {
-            const Icon = category.icon;
-            return (
-              <Card key={category.category}>
-                <CardHeader className="pb-3">
-                  <div className="flex items-center space-x-2">
-                    <Icon className="h-4 w-4 text-gray-600 dark:text-gray-400 dark:text-gray-500" />
-                    <CardTitle className="text-sm">{category.category}</CardTitle>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <ul className="space-y-2">
-                    {category.questions.map((question, index) => (
-                      <li key={index}>
-                        <button className="text-sm text-left text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:text-blue-200 hover:underline">
-                          {question}
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
-                </CardContent>
-              </Card>
-            );
-          })}
         </div>
       </div>
 
-      {/* Coming Soon Notice */}
-      <Card className="bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700">
-        <CardContent className="text-center py-8">
-          <Sparkles className="h-8 w-8 text-gray-400 dark:text-gray-500 mx-auto mb-3" />
-          <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">AI Advisor Coming Soon!</h3>
-          <p className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500 mt-2 max-w-md mx-auto">
-            We&apos;re building an intelligent AI advisor to help answer your estate planning questions. 
-            This feature will be available in the next update.
-          </p>
-        </CardContent>
-      </Card>
+      {/* AI Chatbot Component */}
+      <AIChatbot
+        initialContext={initialContext}
+        onQueryAnalyze={handleQueryAnalyze}
+        onResponseGenerate={handleResponseGenerate}
+        onFeedback={handleFeedback}
+      />
     </div>
   );
-} 
+}

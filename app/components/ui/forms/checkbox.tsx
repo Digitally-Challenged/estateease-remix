@@ -1,33 +1,32 @@
-import * as React from "react"
-import { cn } from "~/lib/utils"
+import * as React from "react";
+import { cn } from "~/lib/utils";
 
-export interface CheckboxProps
-  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'type'> {
+export interface CheckboxProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "type"> {
   /**
    * Label text to display next to the checkbox
    */
-  label?: string
+  label?: string;
   /**
    * Error state - shows red border
    */
-  error?: boolean
+  error?: boolean;
   /**
    * Helper text to display below the checkbox
    */
-  helperText?: string
+  helperText?: string;
 }
 
 /**
  * Checkbox component with label and custom styling
- * 
+ *
  * @example
  * ```tsx
- * <Checkbox 
+ * <Checkbox
  *   label="I agree to the terms and conditions"
  *   required
  * />
- * 
- * <Checkbox 
+ *
+ * <Checkbox
  *   label="Subscribe to newsletter"
  *   helperText="We'll send you updates once a week"
  *   defaultChecked
@@ -35,24 +34,17 @@ export interface CheckboxProps
  * ```
  */
 const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
-  ({ 
-    className,
-    label,
-    error = false,
-    helperText,
-    id,
-    ...props 
-  }, ref) => {
-    const generatedId = React.useId()
-    const checkboxId = id || generatedId
-    
+  ({ className, label, error = false, helperText, id, ...props }, ref) => {
+    const generatedId = React.useId();
+    const checkboxId = id || generatedId;
+
     const checkboxClasses = cn(
       "h-4 w-4 shrink-0 rounded border border-secondary-300 bg-secondary-50 text-primary-600 focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
       {
         "border-error-500": error,
       },
-      className
-    )
+      className,
+    );
 
     return (
       <div className="space-y-1">
@@ -67,9 +59,9 @@ const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
             {...props}
           />
           {label && (
-            <label 
+            <label
               htmlFor={checkboxId}
-              className="ml-3 text-sm font-medium leading-none cursor-pointer select-none text-secondary-700"
+              className="ml-3 cursor-pointer select-none text-sm font-medium leading-none text-secondary-700"
             >
               {label}
             </label>
@@ -81,10 +73,10 @@ const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
           </p>
         )}
       </div>
-    )
-  }
-)
-Checkbox.displayName = "Checkbox"
+    );
+  },
+);
+Checkbox.displayName = "Checkbox";
 
 /**
  * Group of checkboxes with a common label
@@ -93,23 +85,23 @@ export interface CheckboxGroupProps {
   /**
    * Group label
    */
-  label?: string
+  label?: string;
   /**
    * Whether any checkbox in the group is required
    */
-  required?: boolean
+  required?: boolean;
   /**
    * Error message for the group
    */
-  error?: string
+  error?: string;
   /**
    * Helper text for the group
    */
-  helperText?: string
+  helperText?: string;
   /**
    * Child checkboxes
    */
-  children: React.ReactNode
+  children: React.ReactNode;
 }
 
 export function CheckboxGroup({
@@ -124,24 +116,18 @@ export function CheckboxGroup({
       {label && (
         <legend className="text-sm font-medium text-secondary-700">
           {label}
-          {required && <span className="text-error-500 ml-1">*</span>}
+          {required && <span className="ml-1 text-error-500">*</span>}
         </legend>
       )}
-      <div className="space-y-2">
-        {children}
-      </div>
+      <div className="space-y-2">{children}</div>
       {error && (
         <p className="text-sm text-error-500" role="alert">
           {error}
         </p>
       )}
-      {helperText && !error && (
-        <p className="text-sm text-secondary-500">
-          {helperText}
-        </p>
-      )}
+      {helperText && !error && <p className="text-sm text-secondary-500">{helperText}</p>}
     </fieldset>
-  )
+  );
 }
 
-export { Checkbox }
+export { Checkbox };

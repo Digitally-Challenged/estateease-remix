@@ -1,10 +1,14 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
-import { createPortal } from 'react-dom';
-import { X, CheckCircle, AlertCircle, AlertTriangle, Info } from 'lucide-react';
-import { Button } from './button';
-import { cn } from '~/lib/utils';
+import React, { createContext, useContext, useEffect, useState } from "react";
+import { createPortal } from "react-dom";
+import X from "lucide-react/dist/esm/icons/x";
+import CheckCircle from "lucide-react/dist/esm/icons/check-circle";
+import AlertCircle from "lucide-react/dist/esm/icons/alert-circle";
+import AlertTriangle from "lucide-react/dist/esm/icons/alert-triangle";
+import Info from "lucide-react/dist/esm/icons/info";
+import { Button } from "./button";
+import { cn } from "~/lib/utils";
 
-export type ToastVariant = 'success' | 'error' | 'warning' | 'info';
+export type ToastVariant = "success" | "error" | "warning" | "info";
 
 export interface ToastAction {
   label: string;
@@ -24,10 +28,16 @@ export interface Toast {
 interface ToastContextValue {
   toasts: Toast[];
   toast: {
-    success: (title: string, options?: Omit<Toast, 'id' | 'variant' | 'title' | 'createdAt'>) => void;
-    error: (title: string, options?: Omit<Toast, 'id' | 'variant' | 'title' | 'createdAt'>) => void;
-    warning: (title: string, options?: Omit<Toast, 'id' | 'variant' | 'title' | 'createdAt'>) => void;
-    info: (title: string, options?: Omit<Toast, 'id' | 'variant' | 'title' | 'createdAt'>) => void;
+    success: (
+      title: string,
+      options?: Omit<Toast, "id" | "variant" | "title" | "createdAt">,
+    ) => void;
+    error: (title: string, options?: Omit<Toast, "id" | "variant" | "title" | "createdAt">) => void;
+    warning: (
+      title: string,
+      options?: Omit<Toast, "id" | "variant" | "title" | "createdAt">,
+    ) => void;
+    info: (title: string, options?: Omit<Toast, "id" | "variant" | "title" | "createdAt">) => void;
   };
   removeToast: (id: string) => void;
 }
@@ -37,38 +47,38 @@ const ToastContext = createContext<ToastContextValue | null>(null);
 export function useToast() {
   const context = useContext(ToastContext);
   if (!context) {
-    throw new Error('useToast must be used within a ToastProvider');
+    throw new Error("useToast must be used within a ToastProvider");
   }
   return context;
 }
 
 const toastVariantStyles = {
   success: {
-    container: 'border-green-200 bg-green-50',
-    icon: 'text-green-600',
-    title: 'text-green-900',
-    description: 'text-green-700',
+    container: "border-green-200 bg-green-50",
+    icon: "text-green-600",
+    title: "text-green-900",
+    description: "text-green-700",
     IconComponent: CheckCircle,
   },
   error: {
-    container: 'border-red-200 bg-red-50',
-    icon: 'text-red-600',
-    title: 'text-red-900',
-    description: 'text-red-700',
+    container: "border-red-200 bg-red-50",
+    icon: "text-red-600",
+    title: "text-red-900",
+    description: "text-red-700",
     IconComponent: AlertCircle,
   },
   warning: {
-    container: 'border-yellow-200 bg-yellow-50',
-    icon: 'text-yellow-600',
-    title: 'text-yellow-900',
-    description: 'text-yellow-700',
+    container: "border-yellow-200 bg-yellow-50",
+    icon: "text-yellow-600",
+    title: "text-yellow-900",
+    description: "text-yellow-700",
     IconComponent: AlertTriangle,
   },
   info: {
-    container: 'border-blue-200 bg-blue-50',
-    icon: 'text-blue-600',
-    title: 'text-blue-900',
-    description: 'text-blue-700',
+    container: "border-blue-200 bg-blue-50",
+    icon: "text-blue-600",
+    title: "text-blue-900",
+    description: "text-blue-700",
     IconComponent: Info,
   },
 };
@@ -88,9 +98,9 @@ function ToastItem({ toast, onRemove }: { toast: Toast; onRemove: (id: string) =
       const elapsed = Date.now() - startTime;
       const remaining = Math.max(0, duration - elapsed);
       const progressPercent = (remaining / duration) * 100;
-      
+
       setProgress(progressPercent);
-      
+
       if (remaining <= 0) {
         setIsExiting(true);
         setTimeout(() => onRemove(toast.id), 300);
@@ -111,37 +121,33 @@ function ToastItem({ toast, onRemove }: { toast: Toast; onRemove: (id: string) =
       className={cn(
         "relative overflow-hidden rounded-lg border p-4 shadow-lg transition-all duration-300 ease-in-out",
         variant.container,
-        isExiting ? "transform translate-x-full opacity-0" : "transform translate-x-0 opacity-100"
+        isExiting ? "translate-x-full transform opacity-0" : "translate-x-0 transform opacity-100",
       )}
       role="alert"
       aria-live="polite"
     >
       {/* Progress bar */}
       {(toast.duration ?? 5000) > 0 && (
-        <div className="absolute bottom-0 left-0 h-1 bg-black/10 w-full">
-          <div 
-            className="h-full bg-black/20 transition-all duration-50 ease-linear"
+        <div className="absolute bottom-0 left-0 h-1 w-full bg-black/10">
+          <div
+            className="duration-50 h-full bg-black/20 transition-all ease-linear"
             style={{ width: `${progress}%` }}
           />
         </div>
       )}
 
       <div className="flex items-start space-x-3">
-        <IconComponent className={cn("h-5 w-5 mt-0.5 flex-shrink-0", variant.icon)} />
-        
-        <div className="flex-1 min-w-0">
+        <IconComponent className={cn("mt-0.5 h-5 w-5 flex-shrink-0", variant.icon)} />
+
+        <div className="min-w-0 flex-1">
           <div className="flex items-start justify-between">
             <div className="flex-1">
-              <h4 className={cn("text-sm font-medium", variant.title)}>
-                {toast.title}
-              </h4>
+              <h4 className={cn("text-sm font-medium", variant.title)}>{toast.title}</h4>
               {toast.description && (
-                <p className={cn("mt-1 text-sm", variant.description)}>
-                  {toast.description}
-                </p>
+                <p className={cn("mt-1 text-sm", variant.description)}>{toast.description}</p>
               )}
             </div>
-            
+
             <Button
               variant="ghost"
               size="sm"
@@ -152,7 +158,7 @@ function ToastItem({ toast, onRemove }: { toast: Toast; onRemove: (id: string) =
               <span className="sr-only">Close</span>
             </Button>
           </div>
-          
+
           {toast.action && (
             <div className="mt-3">
               <Button
@@ -172,17 +178,17 @@ function ToastItem({ toast, onRemove }: { toast: Toast; onRemove: (id: string) =
 }
 
 function ToastContainer({ toasts, onRemove }: { toasts: Toast[]; onRemove: (id: string) => void }) {
-  if (typeof document === 'undefined') return null;
+  if (typeof document === "undefined") return null;
 
   return createPortal(
-    <div className="fixed top-4 right-4 z-50 w-full max-w-sm space-y-2 pointer-events-none">
-      <div className="space-y-2 pointer-events-auto">
+    <div className="pointer-events-none fixed right-4 top-4 z-50 w-full max-w-sm space-y-2">
+      <div className="pointer-events-auto space-y-2">
         {toasts.map((toast) => (
           <ToastItem key={toast.id} toast={toast} onRemove={onRemove} />
         ))}
       </div>
     </div>,
-    document.body
+    document.body,
   );
 }
 
@@ -190,10 +196,14 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
   const [toasts, setToasts] = useState<Toast[]>([]);
 
   const removeToast = (id: string) => {
-    setToasts(prev => prev.filter(toast => toast.id !== id));
+    setToasts((prev) => prev.filter((toast) => toast.id !== id));
   };
 
-  const addToast = (variant: ToastVariant, title: string, options: Omit<Toast, 'id' | 'variant' | 'title' | 'createdAt'> = {}) => {
+  const addToast = (
+    variant: ToastVariant,
+    title: string,
+    options: Omit<Toast, "id" | "variant" | "title" | "createdAt"> = {},
+  ) => {
     const id = Math.random().toString(36).substring(2) + Date.now().toString(36);
     const toast: Toast = {
       id,
@@ -204,7 +214,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
       ...options,
     };
 
-    setToasts(prev => {
+    setToasts((prev) => {
       // Limit to 5 toasts maximum
       const newToasts = [toast, ...prev].slice(0, 5);
       return newToasts;
@@ -214,10 +224,10 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
   const contextValue: ToastContextValue = {
     toasts,
     toast: {
-      success: (title, options) => addToast('success', title, options),
-      error: (title, options) => addToast('error', title, options),
-      warning: (title, options) => addToast('warning', title, options),
-      info: (title, options) => addToast('info', title, options),
+      success: (title, options) => addToast("success", title, options),
+      error: (title, options) => addToast("error", title, options),
+      warning: (title, options) => addToast("warning", title, options),
+      info: (title, options) => addToast("info", title, options),
     },
     removeToast,
   };

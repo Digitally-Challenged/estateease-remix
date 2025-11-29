@@ -1,8 +1,17 @@
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { ChartContainer } from './chart-container';
-import { ChartTooltip } from './chart-tooltip';
-import { CHART_COLORS } from './chart-colors';
-import { formatCurrency } from '~/utils/format';
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from "recharts";
+import { ChartContainer } from "./chart-container";
+import { ChartTooltip } from "./chart-tooltip";
+import { CHART_COLORS } from "./chart-colors";
+import { formatCurrency } from "~/utils/format";
 
 interface CashFlowDataPoint {
   month: string;
@@ -33,47 +42,27 @@ export function CashFlowChart({ data, height = 300 }: CashFlowChartProps) {
   return (
     <ChartContainer height={height}>
       <ResponsiveContainer width="100%" height="100%">
-        <BarChart 
-          data={data} 
-          margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
-        >
+        <BarChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
           <CartesianGrid strokeDasharray="3 3" stroke={CHART_COLORS.grid} />
-          <XAxis 
-            dataKey="month" 
+          <XAxis dataKey="month" stroke={CHART_COLORS.axis} style={{ fontSize: "12px" }} />
+          <YAxis
             stroke={CHART_COLORS.axis}
-            style={{ fontSize: '12px' }}
-          />
-          <YAxis 
-            stroke={CHART_COLORS.axis}
-            style={{ fontSize: '12px' }}
+            style={{ fontSize: "12px" }}
             tickFormatter={formatYAxis}
           />
-          <Tooltip 
-            content={
-              <ChartTooltip 
-                valueFormatter={formatCurrency}
-              />
-            }
-          />
-          <Legend 
-            wrapperStyle={{ fontSize: '14px' }}
-          />
-          <Bar 
-            dataKey="income" 
-            name="Income"
-            fill={CHART_COLORS.secondary} 
-            radius={[4, 4, 0, 0]}
-          />
-          <Bar 
-            dataKey="expenses" 
+          <Tooltip content={<ChartTooltip valueFormatter={formatCurrency} />} />
+          <Legend wrapperStyle={{ fontSize: "14px" }} />
+          <Bar dataKey="income" name="Income" fill={CHART_COLORS.secondary} radius={[4, 4, 0, 0]} />
+          <Bar
+            dataKey="expenses"
             name="Expenses"
-            fill={CHART_COLORS.tertiary} 
+            fill={CHART_COLORS.tertiary}
             radius={[4, 4, 0, 0]}
           />
-          <Bar 
-            dataKey="netFlow" 
+          <Bar
+            dataKey="netFlow"
             name="Net Flow"
-            fill={CHART_COLORS.primary} 
+            fill={CHART_COLORS.primary}
             radius={[4, 4, 0, 0]}
           />
         </BarChart>

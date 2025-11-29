@@ -6,8 +6,8 @@ export {
   type ErrorBoundaryProps,
   type ErrorFallbackProps,
   type ErrorInfo,
-  type ErrorBoundaryState
-} from './error-boundary';
+  type ErrorBoundaryState,
+} from "./error-boundary";
 
 export {
   ErrorDisplay,
@@ -15,5 +15,5 @@ export {
   ErrorBanner,
   useErrorState,
   type ErrorDisplayProps,
-  type ErrorType
-} from './error-display';
+  type ErrorType,
+} from "./error-display";

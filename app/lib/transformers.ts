@@ -13,8 +13,8 @@ import type {
   DatabaseHealthcareDirective,
   DatabaseBeneficiary,
   DatabaseProfessional,
-  DatabaseEmergencyContact
-} from './dal';
+  DatabaseEmergencyContact,
+} from "./dal";
 
 import type {
   FamilyMember,
@@ -22,14 +22,10 @@ import type {
   HealthcareDirective,
   Beneficiary,
   Professional,
-  EmergencyContact
-} from '../types/people';
+  EmergencyContact,
+} from "../types/people";
 
-import type {
-  Trust,
-  Trustee,
-  TrustBeneficiary
-} from '../types/trusts';
+import type { Trust, Trustee, TrustBeneficiary } from "../types/trusts";
 
 import type {
   AnyEnhancedAsset,
@@ -40,8 +36,10 @@ import type {
   BusinessInterest,
   Vehicle,
   PersonalProperty,
-  Debt
-} from '../types/assets';
+  Debt,
+} from "../types/assets";
+
+import type { Will, PowerOfAttorney, Gift } from "../types/documents";
 
 import {
   AssetCategory,
@@ -49,8 +47,8 @@ import {
   FinancialAccountType,
   InsurancePolicyType,
   VehicleType,
-  DebtType
-} from '../types/enums';
+  DebtType,
+} from "../types/enums";
 
 // =============================================
 // UTILITY FUNCTIONS
@@ -92,11 +90,13 @@ function toBoolean(value: number | null | undefined): boolean {
 /**
  * Convert database preferred contact to typed value
  */
-function toPreferredContact(value: string | null | undefined): 'phone' | 'email' | 'text' | undefined {
+function toPreferredContact(
+  value: string | null | undefined,
+): "phone" | "email" | "text" | undefined {
   if (!value) return undefined;
   const lowerValue = value.toLowerCase();
-  if (lowerValue === 'phone' || lowerValue === 'email' || lowerValue === 'text') {
-    return lowerValue as 'phone' | 'email' | 'text';
+  if (lowerValue === "phone" || lowerValue === "email" || lowerValue === "text") {
+    return lowerValue as "phone" | "email" | "text";
   }
   return undefined;
 }
@@ -111,7 +111,7 @@ function toPreferredContact(value: string | null | undefined): 'phone' | 'email'
 export function transformDatabaseAsset(dbAsset: DatabaseAsset): AnyEnhancedAsset {
   const ownershipDetails = parseJsonField(dbAsset.ownership_details, {}) as Record<string, unknown>;
   const assetDetails = parseJsonField(dbAsset.asset_details, {}) as Record<string, unknown>;
-  
+
   // Base asset properties
   const baseAsset = {
     id: dbAsset.asset_id,
@@ -119,126 +119,143 @@ export function transformDatabaseAsset(dbAsset: DatabaseAsset): AnyEnhancedAsset
     value: dbAsset.value,
     notes: dbAsset.notes || undefined,
     ownership: {
-      type: dbAsset.ownership_type.toLowerCase() as OwnershipInfo['type'],
-      percentage: ownershipDetails.percentage || 100,
-      trustId: ownershipDetails.trustId,
-      businessEntityId: ownershipDetails.businessEntityId,
-      ...ownershipDetails
-    } as OwnershipInfo
+      type: dbAsset.ownership_type.toLowerCase() as OwnershipInfo["type"],
+      percentage: Number(ownershipDetails.percentage || 100),
+      trustId: ownershipDetails.trustId as string | undefined,
+      businessEntityId: ownershipDetails.businessEntityId as string | undefined,
+      businessId: ownershipDetails.businessId as string | undefined,
+      owners: ownershipDetails.owners as OwnershipInfo["owners"],
+      survivorshipRights: ownershipDetails.survivorshipRights as boolean | undefined,
+      tenancyType: ownershipDetails.tenancyType as OwnershipInfo["tenancyType"],
+      notes: ownershipDetails.notes as string | undefined,
+    } as OwnershipInfo,
   };
 
   // Return type-specific asset based on category
   switch (dbAsset.category) {
-    case 'REAL_ESTATE':
+    case "REAL_ESTATE":
       return {
         ...baseAsset,
         category: AssetCategory.REAL_ESTATE,
-        propertyType: assetDetails.propertyType || PropertyType.SINGLE_FAMILY,
-        address: assetDetails.address || '',
-        mortgageBalance: assetDetails.mortgageBalance || 0,
-        monthlyRent: assetDetails.monthlyRent || 0,
-        annualPropertyTax: assetDetails.annualPropertyTax || 0,
-        annualInsurance: assetDetails.annualInsurance || 0,
-        lastAppraisalDate: assetDetails.lastAppraisalDate,
-        lastAppraisalValue: assetDetails.lastAppraisalValue
+        propertyType: (assetDetails.propertyType as PropertyType) || PropertyType.SINGLE_FAMILY,
+        address: String(assetDetails.address || ""),
+        mortgageBalance: Number(assetDetails.mortgageBalance || 0),
+        monthlyRent: Number(assetDetails.monthlyRent || 0),
+        annualPropertyTax: Number(assetDetails.annualPropertyTax || 0),
+        annualInsurance: Number(assetDetails.annualInsurance || 0),
+        lastAppraisalDate: assetDetails.lastAppraisalDate as string | undefined,
+        lastAppraisalValue: assetDetails.lastAppraisalValue as number | undefined,
       } as RealEstateAsset;
-      
-    case 'FINANCIAL_ACCOUNT':
+
+    case "FINANCIAL_ACCOUNT":
+      const accountType = (dbAsset.account_type ||
+        assetDetails.accountType) as FinancialAccountType;
+      const institutionName = String(
+        dbAsset.institution_name || assetDetails.institutionName || "",
+      );
+      const accountNumber = String(dbAsset.account_number || assetDetails.accountNumber || "");
+      const routingNumber = String(dbAsset.routing_number || assetDetails.routingNumber || "");
+
       return {
         ...baseAsset,
         category: AssetCategory.FINANCIAL_ACCOUNT,
-        accountType: assetDetails.accountType || FinancialAccountType.CHECKING,
-        institution: assetDetails.institution || '',
-        institutionName: dbAsset.institution_name || assetDetails.institutionName || '',
-        accountNumber: dbAsset.account_number || assetDetails.accountNumber || '',
-        routingNumber: dbAsset.routing_number || assetDetails.routingNumber || '',
-        interestRate: assetDetails.interestRate,
-        maturityDate: assetDetails.maturityDate,
-        beneficiaries: assetDetails.beneficiaries,
+        accountType: accountType || FinancialAccountType.CHECKING,
+        institution: institutionName,
+        institutionName: institutionName,
+        accountNumber: accountNumber,
+        routingNumber: routingNumber || undefined,
+        interestRate: assetDetails.interestRate as number | undefined,
+        maturityDate: assetDetails.maturityDate as string | undefined,
+        beneficiaries: assetDetails.beneficiaries as FinancialAccount["beneficiaries"],
         details: {
           ...assetDetails,
-          institutionName: dbAsset.institution_name || assetDetails.institutionName || '',
-          accountType: dbAsset.account_type || assetDetails.accountType || '',
-          accountNumber: dbAsset.account_number || assetDetails.accountNumber || '',
-          routingNumber: dbAsset.routing_number || assetDetails.routingNumber || ''
-        }
+          institutionName,
+          accountType: String(accountType || ""),
+          accountNumber,
+          routingNumber,
+        },
       } as FinancialAccount;
-      
-    case 'INSURANCE_POLICY':
+
+    case "INSURANCE_POLICY":
       return {
         ...baseAsset,
         category: AssetCategory.INSURANCE_POLICY,
-        policyType: assetDetails.policyType || InsurancePolicyType.LIFE,
-        insurer: assetDetails.insurer || '',
-        policyNumber: assetDetails.policyNumber || '',
-        coverageAmount: assetDetails.coverageAmount || dbAsset.value,
-        premium: assetDetails.premium || { amount: 0, frequency: 'monthly' },
-        deductible: assetDetails.deductible || 0,
-        beneficiaries: assetDetails.beneficiaries,
-        expirationDate: assetDetails.expirationDate
+        policyType: (assetDetails.policyType as InsurancePolicyType) || InsurancePolicyType.LIFE,
+        insurer: String(assetDetails.insurer || ""),
+        policyNumber: String(assetDetails.policyNumber || ""),
+        coverageAmount: Number(assetDetails.coverageAmount || dbAsset.value),
+        premium: (assetDetails.premium as InsurancePolicy["premium"]) || {
+          amount: 0,
+          frequency: "monthly",
+        },
+        deductible: Number(assetDetails.deductible || 0),
+        beneficiaries: assetDetails.beneficiaries as InsurancePolicy["beneficiaries"],
+        expirationDate: assetDetails.expirationDate as string | undefined,
       } as InsurancePolicy;
-      
-    case 'BUSINESS_INTEREST':
+
+    case "BUSINESS_INTEREST":
       return {
         ...baseAsset,
         category: AssetCategory.BUSINESS_INTEREST,
-        businessType: assetDetails.businessType || '',
-        businessName: assetDetails.businessName || dbAsset.name,
-        taxId: assetDetails.taxId || '',
-        percentageOwned: assetDetails.percentageOwned || 100,
-        valuationMethod: assetDetails.valuationMethod || 'income_approach',
-        valuationDate: assetDetails.valuationDate || new Date().toISOString(),
-        annualRevenue: assetDetails.annualRevenue,
-        annualProfit: assetDetails.annualProfit,
-        incorporationType: dbAsset.incorporation_type || assetDetails.incorporationType,
-        stateOfIncorporation: dbAsset.state_of_incorporation || assetDetails.stateOfIncorporation,
-        ein: dbAsset.ein || assetDetails.ein
+        businessType: String(assetDetails.businessType || ""),
+        businessName: String(assetDetails.businessName || dbAsset.name),
+        taxId: String(assetDetails.taxId || ""),
+        percentageOwned: Number(assetDetails.percentageOwned || 100),
+        valuationMethod:
+          (assetDetails.valuationMethod as BusinessInterest["valuationMethod"]) ||
+          "income_approach",
+        valuationDate: String(assetDetails.valuationDate || new Date().toISOString()),
+        annualRevenue: assetDetails.annualRevenue as number | undefined,
+        annualProfit: assetDetails.annualProfit as number | undefined,
+        incorporationType: assetDetails.incorporationType as string | undefined,
+        stateOfIncorporation: assetDetails.stateOfIncorporation as string | undefined,
+        ein: assetDetails.ein as string | undefined,
       } as BusinessInterest;
-      
-    case 'VEHICLE':
+
+    case "VEHICLE":
       return {
         ...baseAsset,
         category: AssetCategory.VEHICLE,
-        vehicleType: assetDetails.vehicleType || VehicleType.CAR,
-        year: assetDetails.year || new Date().getFullYear(),
-        make: assetDetails.make || '',
-        model: assetDetails.model || '',
-        vin: assetDetails.vin || '',
-        loanBalance: assetDetails.loanBalance,
-        monthlyPayment: assetDetails.monthlyPayment
+        vehicleType: (assetDetails.vehicleType as VehicleType) || VehicleType.CAR,
+        year: Number(assetDetails.year || new Date().getFullYear()),
+        make: String(assetDetails.make || ""),
+        model: String(assetDetails.model || ""),
+        vin: String(assetDetails.vin || ""),
+        loanBalance: assetDetails.loanBalance as number | undefined,
+        monthlyPayment: assetDetails.monthlyPayment as number | undefined,
       } as Vehicle;
-      
-    case 'PERSONAL_PROPERTY':
+
+    case "PERSONAL_PROPERTY":
       return {
         ...baseAsset,
         category: AssetCategory.PERSONAL_PROPERTY,
-        itemType: assetDetails.itemType || '',
-        description: assetDetails.description || dbAsset.name,
-        location: assetDetails.location,
-        purchaseDate: assetDetails.purchaseDate,
-        purchasePrice: assetDetails.purchasePrice
+        itemType: String(assetDetails.itemType || ""),
+        description: String(assetDetails.description || dbAsset.name),
+        location: assetDetails.location as string | undefined,
+        purchaseDate: assetDetails.purchaseDate as string | undefined,
+        purchasePrice: assetDetails.purchasePrice as number | undefined,
       } as PersonalProperty;
-      
-    case 'DEBT':
+
+    case "DEBT":
       return {
         ...baseAsset,
         category: AssetCategory.DEBT,
-        debtType: assetDetails.debtType || DebtType.OTHER,
-        creditor: assetDetails.creditor || '',
-        accountNumber: assetDetails.accountNumber,
-        originalAmount: assetDetails.originalAmount || dbAsset.value,
-        currentBalance: assetDetails.currentBalance || dbAsset.value,
-        interestRate: assetDetails.interestRate || 0,
-        monthlyPayment: assetDetails.monthlyPayment || 0,
-        maturityDate: assetDetails.maturityDate
+        debtType: (assetDetails.debtType as DebtType) || DebtType.OTHER,
+        creditor: String(assetDetails.creditor || ""),
+        accountNumber: assetDetails.accountNumber as string | undefined,
+        originalAmount: Number(assetDetails.originalAmount || dbAsset.value),
+        currentBalance: Number(assetDetails.currentBalance || dbAsset.value),
+        interestRate: Number(assetDetails.interestRate || 0),
+        monthlyPayment: Number(assetDetails.monthlyPayment || 0),
+        maturityDate: assetDetails.maturityDate as string | undefined,
       } as Debt;
-      
+
     default:
       // Fallback for unknown categories
       return {
         ...baseAsset,
         category: dbAsset.category as AssetCategory,
-        ...assetDetails
+        ...assetDetails,
       } as AnyEnhancedAsset;
   }
 }
@@ -254,33 +271,40 @@ export function transformAssetToDatabase(asset: Partial<AnyEnhancedAsset>): {
 } {
   const ownershipDetails: Record<string, unknown> = {};
   const assetDetails: Record<string, unknown> = {};
-  
+
   // Extract ownership details
   if (asset.ownership) {
     ownershipDetails.percentage = asset.ownership.percentage || 100;
     if (asset.ownership.trustId) ownershipDetails.trustId = asset.ownership.trustId;
-    if (asset.ownership.businessEntityId) ownershipDetails.businessEntityId = asset.ownership.businessEntityId;
+    if (asset.ownership.businessEntityId)
+      ownershipDetails.businessEntityId = asset.ownership.businessEntityId;
     if (asset.ownership.owners) ownershipDetails.owners = asset.ownership.owners;
-    if (asset.ownership.survivorshipRights !== undefined) ownershipDetails.survivorshipRights = asset.ownership.survivorshipRights;
+    if (asset.ownership.survivorshipRights !== undefined)
+      ownershipDetails.survivorshipRights = asset.ownership.survivorshipRights;
     if (asset.ownership.tenancyType) ownershipDetails.tenancyType = asset.ownership.tenancyType;
     if (asset.ownership.notes) ownershipDetails.notes = asset.ownership.notes;
   }
-  
+
   // Extract category-specific details
   switch (asset.category) {
     case AssetCategory.REAL_ESTATE: {
       const realEstate = asset as Partial<RealEstateAsset>;
       if (realEstate.propertyType) assetDetails.propertyType = realEstate.propertyType;
       if (realEstate.address) assetDetails.address = realEstate.address;
-      if (realEstate.mortgageBalance !== undefined) assetDetails.mortgageBalance = realEstate.mortgageBalance;
+      if (realEstate.mortgageBalance !== undefined)
+        assetDetails.mortgageBalance = realEstate.mortgageBalance;
       if (realEstate.monthlyRent !== undefined) assetDetails.monthlyRent = realEstate.monthlyRent;
-      if (realEstate.annualPropertyTax !== undefined) assetDetails.annualPropertyTax = realEstate.annualPropertyTax;
-      if (realEstate.annualInsurance !== undefined) assetDetails.annualInsurance = realEstate.annualInsurance;
-      if (realEstate.lastAppraisalDate) assetDetails.lastAppraisalDate = realEstate.lastAppraisalDate;
-      if (realEstate.lastAppraisalValue !== undefined) assetDetails.lastAppraisalValue = realEstate.lastAppraisalValue;
+      if (realEstate.annualPropertyTax !== undefined)
+        assetDetails.annualPropertyTax = realEstate.annualPropertyTax;
+      if (realEstate.annualInsurance !== undefined)
+        assetDetails.annualInsurance = realEstate.annualInsurance;
+      if (realEstate.lastAppraisalDate)
+        assetDetails.lastAppraisalDate = realEstate.lastAppraisalDate;
+      if (realEstate.lastAppraisalValue !== undefined)
+        assetDetails.lastAppraisalValue = realEstate.lastAppraisalValue;
       break;
     }
-      
+
     case AssetCategory.FINANCIAL_ACCOUNT: {
       const financial = asset as Partial<FinancialAccount>;
       if (financial.accountType) assetDetails.accountType = financial.accountType;
@@ -291,36 +315,39 @@ export function transformAssetToDatabase(asset: Partial<AnyEnhancedAsset>): {
       if (financial.beneficiaries) assetDetails.beneficiaries = financial.beneficiaries;
       break;
     }
-      
+
     case AssetCategory.INSURANCE_POLICY: {
       const insurance = asset as Partial<InsurancePolicy>;
       if (insurance.policyType) assetDetails.policyType = insurance.policyType;
       if (insurance.insurer) assetDetails.insurer = insurance.insurer;
       if (insurance.policyNumber) assetDetails.policyNumber = insurance.policyNumber;
-      if (insurance.coverageAmount !== undefined) assetDetails.coverageAmount = insurance.coverageAmount;
+      if (insurance.coverageAmount !== undefined)
+        assetDetails.coverageAmount = insurance.coverageAmount;
       if (insurance.premium) assetDetails.premium = insurance.premium;
       if (insurance.deductible !== undefined) assetDetails.deductible = insurance.deductible;
       if (insurance.beneficiaries) assetDetails.beneficiaries = insurance.beneficiaries;
       if (insurance.expirationDate) assetDetails.expirationDate = insurance.expirationDate;
       break;
     }
-      
+
     case AssetCategory.BUSINESS_INTEREST: {
       const business = asset as Partial<BusinessInterest>;
       if (business.businessType) assetDetails.businessType = business.businessType;
       if (business.businessName) assetDetails.businessName = business.businessName;
       if (business.taxId) assetDetails.taxId = business.taxId;
-      if (business.percentageOwned !== undefined) assetDetails.percentageOwned = business.percentageOwned;
+      if (business.percentageOwned !== undefined)
+        assetDetails.percentageOwned = business.percentageOwned;
       if (business.valuationMethod) assetDetails.valuationMethod = business.valuationMethod;
       if (business.valuationDate) assetDetails.valuationDate = business.valuationDate;
       if (business.annualRevenue !== undefined) assetDetails.annualRevenue = business.annualRevenue;
       if (business.annualProfit !== undefined) assetDetails.annualProfit = business.annualProfit;
       if (business.incorporationType) assetDetails.incorporationType = business.incorporationType;
-      if (business.stateOfIncorporation) assetDetails.stateOfIncorporation = business.stateOfIncorporation;
+      if (business.stateOfIncorporation)
+        assetDetails.stateOfIncorporation = business.stateOfIncorporation;
       if (business.ein) assetDetails.ein = business.ein;
       break;
     }
-      
+
     case AssetCategory.VEHICLE: {
       const vehicle = asset as Partial<Vehicle>;
       if (vehicle.vehicleType) assetDetails.vehicleType = vehicle.vehicleType;
@@ -329,10 +356,11 @@ export function transformAssetToDatabase(asset: Partial<AnyEnhancedAsset>): {
       if (vehicle.model) assetDetails.model = vehicle.model;
       if (vehicle.vin) assetDetails.vin = vehicle.vin;
       if (vehicle.loanBalance !== undefined) assetDetails.loanBalance = vehicle.loanBalance;
-      if (vehicle.monthlyPayment !== undefined) assetDetails.monthlyPayment = vehicle.monthlyPayment;
+      if (vehicle.monthlyPayment !== undefined)
+        assetDetails.monthlyPayment = vehicle.monthlyPayment;
       break;
     }
-      
+
     case AssetCategory.PERSONAL_PROPERTY: {
       const personal = asset as Partial<PersonalProperty>;
       if (personal.itemType) assetDetails.itemType = personal.itemType;
@@ -342,7 +370,7 @@ export function transformAssetToDatabase(asset: Partial<AnyEnhancedAsset>): {
       if (personal.purchasePrice !== undefined) assetDetails.purchasePrice = personal.purchasePrice;
       break;
     }
-      
+
     case AssetCategory.DEBT: {
       const debt = asset as Partial<Debt>;
       if (debt.debtType) assetDetails.debtType = debt.debtType;
@@ -356,12 +384,12 @@ export function transformAssetToDatabase(asset: Partial<AnyEnhancedAsset>): {
       break;
     }
   }
-  
+
   return {
-    category: toUpperCase(asset.category) || 'PERSONAL_PROPERTY',
-    ownership_type: toUpperCase(asset.ownership?.type) || 'INDIVIDUAL',
+    category: toUpperCase(asset.category) || "PERSONAL_PROPERTY",
+    ownership_type: toUpperCase(asset.ownership?.type) || "INDIVIDUAL",
     ownership_details: JSON.stringify(ownershipDetails),
-    asset_details: JSON.stringify(assetDetails)
+    asset_details: JSON.stringify(assetDetails),
   };
 }
 
@@ -375,19 +403,19 @@ export function transformAssetToDatabase(asset: Partial<AnyEnhancedAsset>): {
 export function transformDatabaseTrust(
   dbTrust: DatabaseTrust,
   trustees: DatabaseTrustTrustee[],
-  beneficiaries: DatabaseTrustBeneficiary[]
+  beneficiaries: DatabaseTrustBeneficiary[],
 ): Trust {
   return {
     id: dbTrust.trust_id,
     name: dbTrust.name,
-    type: dbTrust.trust_type_code as Trust['type'],
-    taxId: dbTrust.tax_id || '',
+    type: dbTrust.trust_type_code as Trust["type"],
+    taxId: dbTrust.tax_id || "",
     dateCreated: dbTrust.date_created,
     grantor: dbTrust.grantor,
     trustees: trustees.map(transformDatabaseTrustee),
     beneficiaries: beneficiaries.map(transformDatabaseTrustBeneficiary),
-    purpose: dbTrust.purpose || '',
-    isActive: toBoolean(dbTrust.is_active)
+    purpose: dbTrust.purpose || "",
+    isActive: toBoolean(dbTrust.is_active),
   };
 }
 
@@ -397,24 +425,26 @@ export function transformDatabaseTrust(
 export function transformDatabaseTrustee(dbTrustee: DatabaseTrustTrustee): Trustee {
   return {
     name: dbTrustee.trustee_name,
-    type: dbTrustee.trustee_type_code as Trustee['type'],
+    type: dbTrustee.trustee_type_code as Trustee["type"],
     powers: parseJsonArray(dbTrustee.powers),
     startDate: dbTrustee.start_date || undefined,
     endDate: dbTrustee.end_date || undefined,
-    orderOfSuccession: dbTrustee.order_of_succession || undefined
+    orderOfSuccession: dbTrustee.order_of_succession || undefined,
   };
 }
 
 /**
  * Transform database trust beneficiary to application type
  */
-export function transformDatabaseTrustBeneficiary(dbBenef: DatabaseTrustBeneficiary): TrustBeneficiary {
+export function transformDatabaseTrustBeneficiary(
+  dbBenef: DatabaseTrustBeneficiary,
+): TrustBeneficiary {
   return {
     name: dbBenef.beneficiary_name,
-    type: dbBenef.beneficiary_type_code as TrustBeneficiary['type'],
-    relationship: dbBenef.relationship_type_code || '',
+    type: dbBenef.beneficiary_type_code as TrustBeneficiary["type"],
+    relationship: dbBenef.relationship_type_code || "",
     percentage: dbBenef.percentage || undefined,
-    conditions: dbBenef.conditions || undefined
+    conditions: dbBenef.conditions || undefined,
   };
 }
 
@@ -425,7 +455,7 @@ export function transformTrustToDatabase(trust: Partial<Trust>): {
   trust_type_code: string | null;
 } {
   return {
-    trust_type_code: toUpperCase(trust.type)
+    trust_type_code: toUpperCase(trust.type),
   };
 }
 
@@ -440,7 +470,7 @@ export function transformDatabaseFamilyMember(dbMember: DatabaseFamilyMember): F
   return {
     id: dbMember.family_member_id,
     name: dbMember.name,
-    relationship: dbMember.relationship_code.toLowerCase() as FamilyMember['relationship'],
+    relationship: dbMember.relationship_code.toLowerCase() as FamilyMember["relationship"],
     dateOfBirth: dbMember.date_of_birth || undefined,
     isMinor: toBoolean(dbMember.is_minor),
     isDependent: toBoolean(dbMember.is_dependent),
@@ -449,15 +479,18 @@ export function transformDatabaseFamilyMember(dbMember: DatabaseFamilyMember): F
       secondaryPhone: dbMember.secondary_phone || undefined,
       email: dbMember.email || undefined,
       preferredContact: toPreferredContact(dbMember.preferred_contact),
-      address: (dbMember.street1 && dbMember.city && dbMember.state && dbMember.zip_code) ? {
-        street1: dbMember.street1,
-        street2: dbMember.street2 || undefined,
-        city: dbMember.city,
-        state: dbMember.state,
-        zipCode: dbMember.zip_code
-      } : undefined
+      address:
+        dbMember.street1 && dbMember.city && dbMember.state && dbMember.zip_code
+          ? {
+              street1: dbMember.street1,
+              street2: dbMember.street2 || undefined,
+              city: dbMember.city,
+              state: dbMember.state,
+              zipCode: dbMember.zip_code,
+            }
+          : undefined,
     },
-    notes: dbMember.notes || undefined
+    notes: dbMember.notes || undefined,
   };
 }
 
@@ -483,30 +516,38 @@ export function transformFamilyMemberToDatabase(member: Partial<FamilyMember>): 
   notes?: string | null;
 } {
   const result: ReturnType<typeof transformFamilyMemberToDatabase> = {
-    relationship_code: toUpperCase(member.relationship)
+    relationship_code: toUpperCase(member.relationship),
   };
-  
+
   if (member.name !== undefined) result.name = member.name;
   if (member.dateOfBirth !== undefined) result.date_of_birth = member.dateOfBirth || null;
   if (member.isMinor !== undefined) result.is_minor = member.isMinor ? 1 : 0;
   if (member.isDependent !== undefined) result.is_dependent = member.isDependent ? 1 : 0;
   if (member.notes !== undefined) result.notes = member.notes || null;
-  
+
   if (member.contactInfo) {
-    if (member.contactInfo.primaryPhone !== undefined) result.primary_phone = member.contactInfo.primaryPhone || null;
-    if (member.contactInfo.secondaryPhone !== undefined) result.secondary_phone = member.contactInfo.secondaryPhone || null;
+    if (member.contactInfo.primaryPhone !== undefined)
+      result.primary_phone = member.contactInfo.primaryPhone || null;
+    if (member.contactInfo.secondaryPhone !== undefined)
+      result.secondary_phone = member.contactInfo.secondaryPhone || null;
     if (member.contactInfo.email !== undefined) result.email = member.contactInfo.email || null;
-    if (member.contactInfo.preferredContact !== undefined) result.preferred_contact = member.contactInfo.preferredContact || null;
-    
+    if (member.contactInfo.preferredContact !== undefined)
+      result.preferred_contact = member.contactInfo.preferredContact || null;
+
     if (member.contactInfo.address) {
-      if (member.contactInfo.address.street1 !== undefined) result.street1 = member.contactInfo.address.street1 || null;
-      if (member.contactInfo.address.street2 !== undefined) result.street2 = member.contactInfo.address.street2 || null;
-      if (member.contactInfo.address.city !== undefined) result.city = member.contactInfo.address.city || null;
-      if (member.contactInfo.address.state !== undefined) result.state = member.contactInfo.address.state || null;
-      if (member.contactInfo.address.zipCode !== undefined) result.zip_code = member.contactInfo.address.zipCode || null;
+      if (member.contactInfo.address.street1 !== undefined)
+        result.street1 = member.contactInfo.address.street1 || null;
+      if (member.contactInfo.address.street2 !== undefined)
+        result.street2 = member.contactInfo.address.street2 || null;
+      if (member.contactInfo.address.city !== undefined)
+        result.city = member.contactInfo.address.city || null;
+      if (member.contactInfo.address.state !== undefined)
+        result.state = member.contactInfo.address.state || null;
+      if (member.contactInfo.address.zipCode !== undefined)
+        result.zip_code = member.contactInfo.address.zipCode || null;
     }
   }
-  
+
   return result;
 }
 
@@ -520,54 +561,68 @@ export function transformFamilyMemberToDatabase(member: Partial<FamilyMember>): 
 export function transformDatabaseLegalRole(dbRole: DatabaseLegalRole): LegalRole {
   return {
     id: dbRole.legal_role_id,
-    roleType: dbRole.role_type_code.toLowerCase() as LegalRole['roleType'],
-    personId: dbRole.person_id || '',
+    roleType: dbRole.role_type_code.toLowerCase() as LegalRole["roleType"],
+    personId: dbRole.person_id || "",
     personName: dbRole.person_name,
     isPrimary: toBoolean(dbRole.is_primary),
     orderOfPrecedence: dbRole.order_of_precedence || undefined,
     specificPowers: parseJsonArray(dbRole.specific_powers),
     compensation: {
-      type: (dbRole.compensation_type || 'none') as 'none' | 'hourly' | 'percentage' | 'flat_fee',
+      type: (dbRole.compensation_type || "none") as "none" | "hourly" | "percentage" | "flat_fee",
       amount: dbRole.compensation_amount || undefined,
-      details: dbRole.compensation_details || undefined
+      details: dbRole.compensation_details || undefined,
     },
     startDate: dbRole.start_date || undefined,
     endDate: dbRole.end_date || undefined,
     endConditions: dbRole.end_conditions || undefined,
-    notes: dbRole.notes || undefined
+    notes: dbRole.notes || undefined,
   };
 }
 
 /**
  * Transform database healthcare directive to application type
  */
-export function transformDatabaseHealthcareDirective(dbDirective: DatabaseHealthcareDirective): HealthcareDirective {
+export function transformDatabaseHealthcareDirective(
+  dbDirective: DatabaseHealthcareDirective,
+): HealthcareDirective {
   const base = {
     id: dbDirective.directive_id,
-    type: dbDirective.directive_type_code as HealthcareDirective['type'],
+    type: dbDirective.directive_type_code as HealthcareDirective["type"],
     dateCreated: dbDirective.date_created,
-    lastUpdated: dbDirective.last_updated
+    lastUpdated: dbDirective.last_updated,
   };
 
-  if (dbDirective.directive_type_code === 'healthcare_proxy') {
+  if (dbDirective.directive_type_code === "healthcare_proxy") {
     return {
       ...base,
       personId: dbDirective.person_id || undefined,
       personName: dbDirective.person_name || undefined,
-      isPrimary: toBoolean(dbDirective.is_primary)
+      isPrimary: toBoolean(dbDirective.is_primary),
     };
   } else {
     return {
       ...base,
       decisions: {
-        lifeSustaining: dbDirective.life_sustaining_decision as 'continue' | 'discontinue' | 'depends' | undefined,
-        artificialNutrition: dbDirective.artificial_nutrition_decision as 'continue' | 'discontinue' | 'depends' | undefined,
+        lifeSustaining: dbDirective.life_sustaining_decision as
+          | "continue"
+          | "discontinue"
+          | "depends"
+          | undefined,
+        artificialNutrition: dbDirective.artificial_nutrition_decision as
+          | "continue"
+          | "discontinue"
+          | "depends"
+          | undefined,
         painManagement: dbDirective.pain_management_instructions || undefined,
         organDonation: toBoolean(dbDirective.organ_donation),
-        bodyDisposition: dbDirective.body_disposition as 'burial' | 'cremation' | 'donation' | undefined
+        bodyDisposition: dbDirective.body_disposition as
+          | "burial"
+          | "cremation"
+          | "donation"
+          | undefined,
       },
       religiousPreferences: dbDirective.religious_preferences || undefined,
-      additionalInstructions: dbDirective.additional_instructions || undefined
+      additionalInstructions: dbDirective.additional_instructions || undefined,
     };
   }
 }
@@ -579,7 +634,7 @@ export function transformDatabaseBeneficiary(dbBenef: DatabaseBeneficiary): Bene
   return {
     id: dbBenef.beneficiary_id,
     name: dbBenef.name,
-    relationship: dbBenef.relationship_code as Beneficiary['relationship'],
+    relationship: dbBenef.relationship_code as Beneficiary["relationship"],
     percentage: dbBenef.percentage || undefined,
     isPrimary: toBoolean(dbBenef.is_primary),
     isContingent: toBoolean(dbBenef.is_contingent),
@@ -588,9 +643,9 @@ export function transformDatabaseBeneficiary(dbBenef: DatabaseBeneficiary): Bene
     contactInfo: {
       primaryPhone: dbBenef.primary_phone || undefined,
       email: dbBenef.email || undefined,
-      preferredContact: toPreferredContact(dbBenef.preferred_contact)
+      preferredContact: toPreferredContact(dbBenef.preferred_contact),
     },
-    notes: dbBenef.notes || undefined
+    notes: dbBenef.notes || undefined,
   };
 }
 
@@ -601,7 +656,7 @@ export function transformDatabaseProfessional(dbProf: DatabaseProfessional): Pro
   return {
     id: dbProf.professional_id,
     name: dbProf.name,
-    type: dbProf.professional_type_code as Professional['type'],
+    type: dbProf.professional_type_code as Professional["type"],
     firm: dbProf.firm || undefined,
     title: dbProf.title || undefined,
     specializations: parseJsonArray(dbProf.specializations),
@@ -610,42 +665,46 @@ export function transformDatabaseProfessional(dbProf: DatabaseProfessional): Pro
       secondaryPhone: dbProf.secondary_phone || undefined,
       email: dbProf.email || undefined,
       preferredContact: toPreferredContact(dbProf.preferred_contact),
-      address: dbProf.street1 ? {
-        street1: dbProf.street1,
-        street2: dbProf.street2 || undefined,
-        city: dbProf.city || '',
-        state: dbProf.state || '',
-        zipCode: dbProf.zip_code || ''
-      } : undefined
+      address: dbProf.street1
+        ? {
+            street1: dbProf.street1,
+            street2: dbProf.street2 || undefined,
+            city: dbProf.city || "",
+            state: dbProf.state || "",
+            zipCode: dbProf.zip_code || "",
+          }
+        : undefined,
     },
     credentials: parseJsonArray(dbProf.credentials),
     yearsExperience: dbProf.years_experience || undefined,
     isPreferredProvider: toBoolean(dbProf.is_preferred_provider),
-    notes: dbProf.notes || undefined
+    notes: dbProf.notes || undefined,
   };
 }
 
 /**
  * Transform database emergency contact to application type
  */
-export function transformDatabaseEmergencyContact(dbContact: DatabaseEmergencyContact): EmergencyContact {
+export function transformDatabaseEmergencyContact(
+  dbContact: DatabaseEmergencyContact,
+): EmergencyContact {
   return {
     id: dbContact.contact_id,
     name: dbContact.name,
     relationship: dbContact.relationship_code,
-    contactType: dbContact.contact_type as EmergencyContact['contactType'],
+    contactType: dbContact.contact_type as EmergencyContact["contactType"],
     contactInfo: {
       primaryPhone: dbContact.primary_phone,
       secondaryPhone: dbContact.secondary_phone || undefined,
       email: dbContact.email || undefined,
-      preferredContact: toPreferredContact(dbContact.preferred_contact)
+      preferredContact: toPreferredContact(dbContact.preferred_contact),
     },
     priority: dbContact.priority,
     availability: dbContact.availability || undefined,
     medicalAuthority: toBoolean(dbContact.medical_authority),
     canMakeDecisions: toBoolean(dbContact.can_make_decisions),
     languages: parseJsonArray(dbContact.languages),
-    notes: dbContact.notes || undefined
+    notes: dbContact.notes || undefined,
   };
 }
 
@@ -694,8 +753,8 @@ export function transformDashboardStats(stats: {
     assetsByCategory: (stats.assets_by_category || []).map((cat) => ({
       category: cat.category,
       value: cat.category_value || 0,
-      count: cat.category_count || 0
-    }))
+      count: cat.category_count || 0,
+    })),
   };
 }
 
@@ -765,24 +824,126 @@ export function transformFinancialOverview(data: {
       joint: 0,
       individual: 0,
       business: 0,
-      total: 0
+      total: 0,
     },
     trustValues: data.trustValues || {},
     estateTax: data.estateTax || {
       taxableEstate: 0,
       estateTax: 0,
       effectiveRate: 0,
-      exemption: 0
+      exemption: 0,
     },
     cashFlow: data.cashFlow || {
       monthlyIncome: 0,
       annualIncome: 0,
-      incomeGeneratingAssets: 0
+      incomeGeneratingAssets: 0,
     },
     liquidity: data.liquidity || {
       liquidAssets: 0,
       illiquidAssets: 0,
-      liquidityRatio: 0
-    }
+      liquidityRatio: 0,
+    },
+  };
+}
+
+/**
+ * Transform database will to application type
+ */
+export function transformDatabaseWill(dbWill: any): Will {
+  return {
+    id: dbWill.id,
+    userId: dbWill.user_id,
+    documentName: dbWill.document_name,
+    testatorName: dbWill.testator_name,
+    dateCreated: dbWill.date_created,
+    dateSigned: dbWill.date_signed,
+    status: dbWill.status,
+    executorPrimary: dbWill.executor_primary,
+    executorSecondary: dbWill.executor_secondary,
+    witness1Name: dbWill.witness1_name,
+    witness2Name: dbWill.witness2_name,
+    notaryName: dbWill.notary_name,
+    notaryState: dbWill.notary_state,
+    specificBequests: dbWill.specific_bequests,
+    residuaryClause: dbWill.residuary_clause,
+    guardianNominations: dbWill.guardian_nominations,
+    funeralWishes: dbWill.funeral_wishes,
+    otherProvisions: dbWill.other_provisions,
+    revokesPrior: toBoolean(dbWill.revokes_prior),
+    codicilCount: dbWill.codicil_count || 0,
+    attorneyName: dbWill.attorney_name,
+    lawFirm: dbWill.law_firm,
+    notes: dbWill.notes,
+    isActive: toBoolean(dbWill.is_active),
+    createdAt: dbWill.created_at,
+    updatedAt: dbWill.updated_at,
+  };
+}
+
+/**
+ * Transform database power of attorney to application type
+ */
+export function transformDatabasePowerOfAttorney(dbPoa: any): PowerOfAttorney {
+  return {
+    id: dbPoa.id,
+    userId: dbPoa.user_id,
+    documentName: dbPoa.document_name,
+    type: dbPoa.type,
+    principalName: dbPoa.principal_name,
+    agentPrimary: dbPoa.agent_primary,
+    agentSecondary: dbPoa.agent_secondary,
+    effectiveDate: dbPoa.effective_date,
+    terminationDate: dbPoa.termination_date,
+    durable: toBoolean(dbPoa.durable),
+    springCondition: dbPoa.springing_condition,
+    powersGranted: dbPoa.powers_granted,
+    limitations: dbPoa.limitations,
+    healthcarePowers: dbPoa.healthcare_powers,
+    financialPowers: dbPoa.financial_powers,
+    realEstatePowers: dbPoa.real_estate_powers,
+    businessPowers: dbPoa.business_powers,
+    taxPowers: dbPoa.tax_powers,
+    giftPowers: dbPoa.gift_powers,
+    trustPowers: dbPoa.trust_powers,
+    specialInstructions: dbPoa.special_instructions,
+    witness1Name: dbPoa.witness1_name,
+    witness2Name: dbPoa.witness2_name,
+    notaryName: dbPoa.notary_name,
+    notaryState: dbPoa.notary_state,
+    dateSigned: dbPoa.date_signed,
+    status: dbPoa.status,
+    attorneyName: dbPoa.attorney_name,
+    lawFirm: dbPoa.law_firm,
+    notes: dbPoa.notes,
+    isActive: toBoolean(dbPoa.is_active),
+    createdAt: dbPoa.created_at,
+    updatedAt: dbPoa.updated_at,
+  };
+}
+
+/**
+ * Transform database gift to application type
+ */
+export function transformDatabaseGift(dbGift: any): Gift {
+  return {
+    id: dbGift.id,
+    userId: dbGift.user_id,
+    donorName: dbGift.donor_name,
+    recipientName: dbGift.recipient_name,
+    giftDate: dbGift.gift_date,
+    giftType: dbGift.gift_type,
+    description: dbGift.description,
+    fairMarketValue: dbGift.fair_market_value,
+    annualExclusionApplied: dbGift.annual_exclusion_applied || 0,
+    lifetimeExemptionUsed: dbGift.lifetime_exemption_used || 0,
+    giftSplitElection: toBoolean(dbGift.gift_split_election),
+    splitWithSpouse: dbGift.split_with_spouse,
+    generationAssignment: dbGift.generation_assignment,
+    gstExemptionAllocated: dbGift.gst_exemption_allocated || 0,
+    form709Filed: toBoolean(dbGift.form_709_filed),
+    notes: dbGift.notes,
+    isActive: toBoolean(dbGift.is_active),
+    createdAt: dbGift.created_at,
+    updatedAt: dbGift.updated_at,
   };
 }

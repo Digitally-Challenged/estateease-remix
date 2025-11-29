@@ -1,6 +1,6 @@
-import { PieChart, Pie, Cell, ResponsiveContainer } from 'recharts';
-import { ChartContainer } from './chart-container';
-import { CHART_COLORS } from './chart-colors';
+import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
+import { ChartContainer } from "./chart-container";
+import { CHART_COLORS } from "./chart-colors";
 
 interface LiquidityGaugeProps {
   percentage: number;
@@ -12,12 +12,16 @@ interface LiquidityGaugeProps {
  * Gauge chart showing liquidity percentage
  * Displays the ratio of liquid assets to total assets
  */
-export function LiquidityGauge({ percentage, height = 200, targetPercentage = 20 }: LiquidityGaugeProps) {
+export function LiquidityGauge({
+  percentage,
+  height = 200,
+  targetPercentage = 20,
+}: LiquidityGaugeProps) {
   // Convert percentage to gauge data
   const value = Math.min(100, Math.max(0, percentage));
   const gaugeData = [
-    { name: 'Value', value: value },
-    { name: 'Remaining', value: 100 - value }
+    { name: "Value", value: value },
+    { name: "Remaining", value: 100 - value },
   ];
 
   // Determine color based on liquidity level
@@ -32,7 +36,7 @@ export function LiquidityGauge({ percentage, height = 200, targetPercentage = 20
 
   return (
     <ChartContainer height={height}>
-      <div className="relative w-full h-full">
+      <div className="relative h-full w-full">
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>
             <Pie
@@ -50,37 +54,44 @@ export function LiquidityGauge({ percentage, height = 200, targetPercentage = 20
             </Pie>
           </PieChart>
         </ResponsiveContainer>
-        
+
         {/* Center label */}
-        <div className="absolute inset-0 flex items-center justify-center" style={{ paddingTop: '20%' }}>
+        <div
+          className="absolute inset-0 flex items-center justify-center"
+          style={{ paddingTop: "20%" }}
+        >
           <div className="text-center">
-            <div className="text-3xl font-bold text-gray-900">
-              {formatPercentage(value)}
-            </div>
-            <div className="text-sm text-gray-600 mt-1">
-              Liquidity Ratio
-            </div>
+            <div className="text-3xl font-bold text-gray-900">{formatPercentage(value)}</div>
+            <div className="mt-1 text-sm text-gray-600">Liquidity Ratio</div>
           </div>
         </div>
-        
+
         {/* Min/Max labels */}
         <div className="absolute bottom-0 left-0 right-0 flex justify-between px-8 pb-2">
           <span className="text-xs text-gray-500">0%</span>
           <span className="text-xs text-gray-500">100%</span>
         </div>
-        
+
         {/* Status indicator */}
         <div className="absolute bottom-8 left-0 right-0 text-center">
-          <span className={`text-xs font-medium ${
-            value < 10 ? 'text-red-600' :
-            value < targetPercentage ? 'text-yellow-600' :
-            value > 50 ? 'text-blue-600' :
-            'text-green-600'
-          }`}>
-            {value < 10 ? 'Low Liquidity' :
-             value < targetPercentage ? 'Below Target' :
-             value > 50 ? 'High Liquidity' :
-             'Good Liquidity'}
+          <span
+            className={`text-xs font-medium ${
+              value < 10
+                ? "text-red-600"
+                : value < targetPercentage
+                  ? "text-yellow-600"
+                  : value > 50
+                    ? "text-blue-600"
+                    : "text-green-600"
+            }`}
+          >
+            {value < 10
+              ? "Low Liquidity"
+              : value < targetPercentage
+                ? "Below Target"
+                : value > 50
+                  ? "High Liquidity"
+                  : "Good Liquidity"}
           </span>
         </div>
       </div>

@@ -1,7 +1,7 @@
-import * as React from "react"
-import { cva, type VariantProps } from "class-variance-authority"
-import { cn } from "~/lib/utils"
-import { Loader2 } from "lucide-react"
+import * as React from "react";
+import { cva, type VariantProps } from "class-variance-authority";
+import { cn } from "~/lib/utils";
+import Loader2 from "lucide-react/dist/esm/icons/loader-2";
 
 /**
  * Button variants using class-variance-authority with design tokens
@@ -11,11 +11,16 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        primary: "bg-primary-600 text-white hover:bg-primary-700 active:bg-primary-800 focus-visible:ring-primary-500",
-        secondary: "bg-secondary-100 text-secondary-900 hover:bg-secondary-200 active:bg-secondary-300 focus-visible:ring-secondary-500",
-        destructive: "bg-error-500 text-white hover:bg-error-600 active:bg-error-700 focus-visible:ring-error-500",
-        outline: "border border-secondary-300 bg-transparent text-secondary-900 hover:bg-secondary-50 active:bg-secondary-100 focus-visible:ring-secondary-500",
-        ghost: "text-secondary-900 hover:bg-secondary-100 active:bg-secondary-200 focus-visible:ring-secondary-500",
+        primary:
+          "bg-primary-600 text-white hover:bg-primary-700 active:bg-primary-800 focus-visible:ring-primary-500",
+        secondary:
+          "bg-secondary-100 text-secondary-900 hover:bg-secondary-200 active:bg-secondary-300 focus-visible:ring-secondary-500",
+        destructive:
+          "bg-error-500 text-white hover:bg-error-600 active:bg-error-700 focus-visible:ring-error-500",
+        outline:
+          "border border-secondary-300 bg-transparent text-secondary-900 hover:bg-secondary-50 active:bg-secondary-100 focus-visible:ring-secondary-500",
+        ghost:
+          "text-secondary-900 hover:bg-secondary-100 active:bg-secondary-200 focus-visible:ring-secondary-500",
         link: "text-primary-600 underline-offset-4 hover:underline active:text-primary-800 focus-visible:ring-primary-500",
       },
       size: {
@@ -31,8 +36,8 @@ const buttonVariants = cva(
       variant: "primary",
       size: "md",
     },
-  }
-)
+  },
+);
 
 export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
@@ -40,59 +45,62 @@ export interface ButtonProps
   /**
    * Shows a loading spinner and disables the button
    */
-  loading?: boolean
+  loading?: boolean;
   /**
    * Icon to display on the left side of the button
    */
-  leftIcon?: React.ReactNode
+  leftIcon?: React.ReactNode;
   /**
    * Icon to display on the right side of the button
    */
-  rightIcon?: React.ReactNode
+  rightIcon?: React.ReactNode;
   /**
    * Makes the button take full width of its container
    */
-  fullWidth?: boolean
+  fullWidth?: boolean;
   /**
    * When true, Button will render as its child element, merging props and className
    */
-  asChild?: boolean
+  asChild?: boolean;
 }
 
 /**
  * Button component with multiple variants, sizes, and states
- * 
+ *
  * @example
  * ```tsx
  * <Button variant="primary" size="md">
  *   Click me
  * </Button>
- * 
+ *
  * <Button variant="destructive" loading>
  *   Deleting...
  * </Button>
- * 
+ *
  * <Button variant="outline" leftIcon={<Plus />}>
  *   Add Item
  * </Button>
  * ```
  */
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ 
-    className, 
-    variant, 
-    size, 
-    fullWidth,
-    loading = false,
-    leftIcon,
-    rightIcon,
-    disabled,
-    children,
-    asChild = false,
-    ...props 
-  }, ref) => {
+  (
+    {
+      className,
+      variant,
+      size,
+      fullWidth,
+      loading = false,
+      leftIcon,
+      rightIcon,
+      disabled,
+      children,
+      asChild = false,
+      ...props
+    },
+    ref,
+  ) => {
     const buttonClasses = cn(buttonVariants({ variant, size, fullWidth, className }));
-    
+
     if (asChild && React.isValidElement(children)) {
       return React.cloneElement(children, {
         className: cn(buttonClasses, children.props.className),
@@ -101,17 +109,10 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         ...children.props,
       });
     }
-    
+
     return (
-      <button
-        className={buttonClasses}
-        ref={ref}
-        disabled={disabled || loading}
-        {...props}
-      >
-        {loading && (
-          <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden="true" />
-        )}
+      <button className={buttonClasses} ref={ref} disabled={disabled || loading} {...props}>
+        {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden="true" />}
         {!loading && leftIcon && (
           <span className="mr-2" aria-hidden="true">
             {leftIcon}
@@ -124,9 +125,9 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
           </span>
         )}
       </button>
-    )
-  }
-)
-Button.displayName = "Button"
+    );
+  },
+);
+Button.displayName = "Button";
 
-export { Button, buttonVariants }
+export { Button, buttonVariants };

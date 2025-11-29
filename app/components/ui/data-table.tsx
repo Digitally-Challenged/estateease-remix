@@ -1,299 +1,295 @@
-import React, { useMemo, useState } from 'react';
-import { ChevronUpIcon, ChevronDownIcon, ChevronsUpDownIcon } from 'lucide-react';
-import { Button } from './button';
-import { cn } from '~/lib/utils';
+import React, { useState, useMemo, useCallback } from "react";
+import ChevronDown from "lucide-react/dist/esm/icons/chevron-down";
+import ChevronUp from "lucide-react/dist/esm/icons/chevron-up";
+import ChevronsUpDown from "lucide-react/dist/esm/icons/chevrons-up-down";
+import ChevronLeft from "lucide-react/dist/esm/icons/chevron-left";
+import ChevronRight from "lucide-react/dist/esm/icons/chevron-right";
+import Search from "lucide-react/dist/esm/icons/search";
+import { cn } from "~/lib/utils";
+import { Input } from "~/components/ui/forms/input";
+import { Select } from "~/components/ui/forms/select";
+import { useDebouncedValue } from "~/hooks/use-debounced-value";
 
 export interface Column<T> {
   key: keyof T | string;
   header: string;
   sortable?: boolean;
-  render?: (item: T, value: unknown) => React.ReactNode;
+  filterable?: boolean;
+  render?: (value: unknown, row: T) => React.ReactNode;
   className?: string;
-  headerClassName?: string;
 }
 
-export interface DataTableProps<T extends Record<string, unknown>> {
+export interface DataTableProps<T> {
   data: T[];
   columns: Column<T>[];
+  searchable?: boolean;
+  searchPlaceholder?: string;
+  itemsPerPageOptions?: number[];
   className?: string;
-  loading?: boolean;
-  emptyState?: React.ReactNode;
+  emptyMessage?: string;
   sortable?: boolean;
-  pagination?: {
-    pageSize: number;
-    showPagination?: boolean;
-  };
-  onRowClick?: (item: T) => void;
 }
 
-type SortDirection = 'asc' | 'desc' | null;
+type SortDirection = "asc" | "desc" | null;
 
-interface SortState {
-  column: string | null;
-  direction: SortDirection;
-}
+// Extract default values outside component
+const DEFAULT_ITEMS_PER_PAGE_OPTIONS = [10, 25, 50, 100];
+const DEFAULT_SEARCH_PLACEHOLDER = "Search...";
+const DEFAULT_EMPTY_MESSAGE = "No data available";
 
-function DefaultEmptyState() {
-  return (
-    <div className="flex flex-col items-center justify-center py-12 text-gray-500">
-      <div className="text-lg font-medium">No data available</div>
-      <div className="text-sm">There are no items to display</div>
-    </div>
-  );
-}
-
-function LoadingSkeleton({ columns }: { columns: Column<Record<string, unknown>>[] }) {
-  return (
-    <>
-      {Array.from({ length: 5 }).map((_, index) => (
-        <tr key={index} className="border-b border-gray-200">
-          {columns.map((column, colIndex) => (
-            <td key={colIndex} className="px-6 py-4">
-              <div className="h-4 bg-gray-200 rounded animate-pulse"></div>
-            </td>
-          ))}
-        </tr>
-      ))}
-    </>
-  );
-}
-
-export function DataTable<T extends Record<string, unknown>>({
+function DataTableComponent<T extends Record<string, unknown>>({
   data,
   columns,
+  searchable = true,
+  searchPlaceholder = DEFAULT_SEARCH_PLACEHOLDER,
+  itemsPerPageOptions = DEFAULT_ITEMS_PER_PAGE_OPTIONS,
   className,
-  loading = false,
-  emptyState,
-  sortable = true,
-  pagination,
-  onRowClick,
+  emptyMessage = DEFAULT_EMPTY_MESSAGE,
 }: DataTableProps<T>) {
-  const [sortState, setSortState] = useState<SortState>({
-    column: null,
-    direction: null,
-  });
+  const [sortColumn, setSortColumn] = useState<string | null>(null);
+  const [sortDirection, setSortDirection] = useState<SortDirection>(null);
+  const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(itemsPerPageOptions[0]);
 
-  const handleSort = (columnKey: string) => {
-    if (!sortable) return;
+  // Use debounced search term
+  const debouncedSearchTerm = useDebouncedValue(searchTerm, 300);
 
-    setSortState(prev => {
-      if (prev.column === columnKey) {
-        if (prev.direction === 'asc') return { column: columnKey, direction: 'desc' };
-        if (prev.direction === 'desc') return { column: null, direction: null };
-      }
-      return { column: columnKey, direction: 'asc' };
-    });
-    setCurrentPage(1); // Reset to first page when sorting
-  };
-
-  const sortedData = useMemo(() => {
-    if (!sortState.column || !sortState.direction) return data;
-
-    return [...data].sort((a, b) => {
-      const aValue = a[sortState.column!];
-      const bValue = b[sortState.column!];
-
-      // Handle null/undefined values
-      if (aValue == null && bValue == null) return 0;
-      if (aValue == null) return sortState.direction === 'asc' ? 1 : -1;
-      if (bValue == null) return sortState.direction === 'asc' ? -1 : 1;
-
-      // Handle different data types
-      if (typeof aValue === 'number' && typeof bValue === 'number') {
-        return sortState.direction === 'asc' ? aValue - bValue : bValue - aValue;
-      }
-
-      if (aValue instanceof Date && bValue instanceof Date) {
-        return sortState.direction === 'asc' 
-          ? aValue.getTime() - bValue.getTime()
-          : bValue.getTime() - aValue.getTime();
-      }
-
-      // String comparison
-      const aStr = String(aValue).toLowerCase();
-      const bStr = String(bValue).toLowerCase();
-      
-      if (sortState.direction === 'asc') {
-        return aStr < bStr ? -1 : aStr > bStr ? 1 : 0;
+  // Handle sorting with useCallback
+  const handleSort = useCallback(
+    (columnKey: string) => {
+      if (sortColumn === columnKey) {
+        setSortDirection(
+          sortDirection === "asc" ? "desc" : sortDirection === "desc" ? null : "asc",
+        );
+        if (sortDirection === "desc") {
+          setSortColumn(null);
+        }
       } else {
-        return aStr > bStr ? -1 : aStr < bStr ? 1 : 0;
+        setSortColumn(columnKey);
+        setSortDirection("asc");
       }
-    });
-  }, [data, sortState]);
+    },
+    [sortColumn, sortDirection],
+  );
 
-  const paginatedData = useMemo(() => {
-    if (!pagination?.pageSize) return sortedData;
-    
-    const startIndex = (currentPage - 1) * pagination.pageSize;
-    const endIndex = startIndex + pagination.pageSize;
-    return sortedData.slice(startIndex, endIndex);
-  }, [sortedData, currentPage, pagination?.pageSize]);
+  // Filter and sort data
+  const processedData = useMemo(() => {
+    let filtered = [...data];
 
-  const totalPages = pagination ? Math.ceil(sortedData.length / pagination.pageSize) : 1;
+    // Search filter with debounced value
+    if (debouncedSearchTerm) {
+      filtered = filtered.filter((row) =>
+        columns.some((column) => {
+          const keyStr = String(column.key);
+          const value = keyStr.includes(".")
+            ? keyStr
+                .split(".")
+                .reduce(
+                  (obj: Record<string, unknown>, key: string) =>
+                    obj?.[key] as Record<string, unknown>,
+                  row as Record<string, unknown>,
+                )
+            : row[column.key as keyof T];
 
-  const getSortIcon = (columnKey: string) => {
-    if (!sortable) return null;
-    
-    if (sortState.column === columnKey) {
-      return sortState.direction === 'asc' ? (
-        <ChevronUpIcon className="w-4 h-4" />
-      ) : (
-        <ChevronDownIcon className="w-4 h-4" />
+          return value?.toString().toLowerCase().includes(debouncedSearchTerm.toLowerCase());
+        }),
       );
     }
-    return <ChevronsUpDownIcon className="w-4 h-4 opacity-50" />;
-  };
 
-  const renderCellValue = (item: T, column: Column<T>) => {
-    const value = typeof column.key === 'string' && column.key.includes('.') 
-      ? column.key.split('.').reduce((obj: Record<string, unknown>, key: string) => obj?.[key] as Record<string, unknown>, item as Record<string, unknown>)
-      : item[column.key as keyof T];
+    // Sort
+    if (sortColumn && sortDirection) {
+      filtered.sort((a, b) => {
+        const aValue = sortColumn.includes(".")
+          ? sortColumn.split(".").reduce((obj, key) => obj?.[key], a as Record<string, unknown>)
+          : a[sortColumn];
+        const bValue = sortColumn.includes(".")
+          ? sortColumn.split(".").reduce((obj, key) => obj?.[key], b as Record<string, unknown>)
+          : b[sortColumn];
 
-    if (column.render) {
-      return column.render(item, value);
+        if (aValue === bValue) return 0;
+
+        const comparison = aValue < bValue ? -1 : 1;
+        return sortDirection === "asc" ? comparison : -comparison;
+      });
     }
 
-    // Handle null/undefined
-    if (value == null) return '—';
+    return filtered;
+  }, [data, debouncedSearchTerm, sortColumn, sortDirection, columns]);
 
-    // Handle dates
-    if (value instanceof Date) {
-      return value.toLocaleDateString();
+  // Pagination
+  const totalPages = Math.ceil(processedData.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const paginatedData = processedData.slice(startIndex, endIndex);
+
+  const handlePageChange = useCallback(
+    (page: number) => {
+      setCurrentPage(Math.max(1, Math.min(page, totalPages)));
+    },
+    [totalPages],
+  );
+
+  const handleItemsPerPageChange = useCallback((value: string) => {
+    setItemsPerPage(Number(value));
+    setCurrentPage(1);
+  }, []);
+
+  const handleSearchChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value);
+    setCurrentPage(1);
+  }, []);
+
+  const SortIcon = React.memo(({ columnKey }: { columnKey: string }) => {
+    if (sortColumn !== columnKey) {
+      return <ChevronsUpDown className="h-4 w-4 text-gray-400" />;
     }
+    return sortDirection === "asc" ? (
+      <ChevronUp className="h-4 w-4 text-primary-600 dark:text-primary-400" />
+    ) : (
+      <ChevronDown className="h-4 w-4 text-primary-600 dark:text-primary-400" />
+    );
+  });
+  SortIcon.displayName = "SortIcon";
 
-    // Handle numbers
-    if (typeof value === 'number') {
-      return value.toLocaleString();
-    }
+  return (
+    <div className={cn("space-y-4", className)}>
+      {/* Search and filters */}
+      {searchable && (
+        <div className="flex items-center justify-between gap-4">
+          <div className="relative max-w-sm flex-1">
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+            <Input
+              type="text"
+              placeholder={searchPlaceholder}
+              value={searchTerm}
+              onChange={handleSearchChange}
+              className="pl-10"
+            />
+          </div>
+          <div className="text-sm text-gray-600 dark:text-gray-400">
+            {processedData.length} {processedData.length === 1 ? "result" : "results"}
+          </div>
+        </div>
+      )}
 
-    // Handle booleans
-    if (typeof value === 'boolean') {
-      return value ? 'Yes' : 'No';
-    }
-
-    return String(value);
-  };
-
-  if (loading) {
-    return (
-      <div className={cn("border border-gray-200 rounded-lg overflow-hidden", className)}>
+      {/* Table */}
+      <div className="overflow-hidden rounded-lg border">
         <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
+          <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+            <thead className="bg-gray-50 dark:bg-gray-800">
               <tr>
-                {columns.map((column, index) => (
-                  <th 
-                    key={index}
+                {columns.map((column) => (
+                  <th
+                    key={String(column.key)}
                     className={cn(
-                      "px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider",
-                      column.headerClassName
+                      "px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400",
+                      column.sortable &&
+                        "cursor-pointer select-none hover:bg-gray-100 dark:hover:bg-gray-700",
+                      column.className,
                     )}
+                    onClick={() => column.sortable && handleSort(String(column.key))}
                   >
-                    {column.header}
+                    <div className="flex items-center gap-1">
+                      {column.header}
+                      {column.sortable && <SortIcon columnKey={String(column.key)} />}
+                    </div>
                   </th>
                 ))}
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              <LoadingSkeleton columns={columns as Column<Record<string, unknown>>[]} />
+            <tbody className="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-gray-900">
+              {paginatedData.length === 0 ? (
+                <tr>
+                  <td
+                    colSpan={columns.length}
+                    className="px-6 py-12 text-center text-gray-500 dark:text-gray-400"
+                  >
+                    {emptyMessage}
+                  </td>
+                </tr>
+              ) : (
+                paginatedData.map((row, rowIndex) => (
+                  <tr key={rowIndex} className="hover:bg-gray-50 dark:hover:bg-gray-800">
+                    {columns.map((column) => {
+                      const keyStr = String(column.key);
+                      const value = keyStr.includes(".")
+                        ? keyStr
+                            .split(".")
+                            .reduce(
+                              (obj: Record<string, unknown>, key: string) =>
+                                obj?.[key] as Record<string, unknown>,
+                              row as Record<string, unknown>,
+                            )
+                        : row[column.key as keyof T];
+
+                      return (
+                        <td
+                          key={String(column.key)}
+                          className={cn(
+                            "whitespace-nowrap px-6 py-4 text-sm text-gray-900 dark:text-gray-100",
+                            column.className,
+                          )}
+                        >
+                          {column.render ? column.render(value, row) : value?.toString() || "-"}
+                        </td>
+                      );
+                    })}
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>
       </div>
-    );
-  }
 
-  if (!data.length) {
-    return (
-      <div className={cn("border border-gray-200 rounded-lg", className)}>
-        {emptyState || <DefaultEmptyState />}
-      </div>
-    );
-  }
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-gray-700 dark:text-gray-300">Show</span>
+            <Select
+              value={String(itemsPerPage)}
+              onChange={(e) => handleItemsPerPageChange(e.target.value)}
+              options={itemsPerPageOptions.map((num) => ({
+                value: String(num),
+                label: String(num),
+              }))}
+              className="w-20"
+            />
+            <span className="text-sm text-gray-700 dark:text-gray-300">entries</span>
+          </div>
 
-  return (
-    <div className={cn("border border-gray-200 rounded-lg overflow-hidden", className)}>
-      <div className="overflow-x-auto">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
-            <tr>
-              {columns.map((column, index) => (
-                <th 
-                  key={index}
-                  className={cn(
-                    "px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider",
-                    sortable && column.sortable !== false && "cursor-pointer hover:bg-gray-100 select-none",
-                    column.headerClassName
-                  )}
-                  onClick={() => column.sortable !== false && handleSort(String(column.key))}
-                >
-                  <div className="flex items-center space-x-1">
-                    <span>{column.header}</span>
-                    {column.sortable !== false && getSortIcon(String(column.key))}
-                  </div>
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
-            {paginatedData.map((item, index) => (
-              <tr 
-                key={index}
-                className={cn(
-                  "hover:bg-gray-50",
-                  onRowClick && "cursor-pointer",
-                )}
-                onClick={() => onRowClick?.(item)}
-              >
-                {columns.map((column, colIndex) => (
-                  <td 
-                    key={colIndex}
-                    className={cn(
-                      "px-6 py-4 whitespace-nowrap text-sm text-gray-900",
-                      column.className
-                    )}
-                  >
-                    {renderCellValue(item, column)}
-                  </td>
-                ))}
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => handlePageChange(currentPage - 1)}
+              disabled={currentPage === 1}
+              className={cn(
+                "rounded-md p-2",
+                currentPage === 1
+                  ? "cursor-not-allowed text-gray-400"
+                  : "text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800",
+              )}
+            >
+              <ChevronLeft className="h-4 w-4" />
+            </button>
 
-      {pagination?.showPagination !== false && pagination && totalPages > 1 && (
-        <div className="bg-white px-4 py-3 border-t border-gray-200 sm:px-6">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-2">
-              <span className="text-sm text-gray-700">
-                Showing {((currentPage - 1) * pagination.pageSize) + 1} to{' '}
-                {Math.min(currentPage * pagination.pageSize, sortedData.length)} of{' '}
-                {sortedData.length} results
-              </span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-                disabled={currentPage === 1}
-              >
-                Previous
-              </Button>
-              <span className="text-sm text-gray-700">
-                Page {currentPage} of {totalPages}
-              </span>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-                disabled={currentPage === totalPages}
-              >
-                Next
-              </Button>
-            </div>
+            <span className="text-sm text-gray-700 dark:text-gray-300">
+              Page {currentPage} of {totalPages}
+            </span>
+
+            <button
+              onClick={() => handlePageChange(currentPage + 1)}
+              disabled={currentPage === totalPages}
+              className={cn(
+                "rounded-md p-2",
+                currentPage === totalPages
+                  ? "cursor-not-allowed text-gray-400"
+                  : "text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800",
+              )}
+            >
+              <ChevronRight className="h-4 w-4" />
+            </button>
           </div>
         </div>
       )}
@@ -301,4 +297,5 @@ export function DataTable<T extends Record<string, unknown>>({
   );
 }
 
-export default DataTable;
+// Export memoized component
+export const DataTable = React.memo(DataTableComponent) as typeof DataTableComponent;

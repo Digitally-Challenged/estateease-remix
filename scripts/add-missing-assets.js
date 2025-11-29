@@ -5,23 +5,23 @@
  * Based on the verification results, adds only actual assets that were missed
  */
 
-import Database from 'better-sqlite3';
-import path from 'path';
-import { fileURLToPath } from 'url';
-import process from 'process';
+import Database from "better-sqlite3";
+import path from "path";
+import { fileURLToPath } from "url";
+import process from "process";
 
 // Get __dirname equivalent in ES modules
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Database path
-const dbPath = path.join(__dirname, '../data/estateease.db');
+const dbPath = path.join(__dirname, "../data/estateease.db");
 const db = new Database(dbPath);
 
 // Enable foreign keys
-db.pragma('foreign_keys = ON');
+db.pragma("foreign_keys = ON");
 
-console.log('Adding missing assets to database...\n');
+console.log("Adding missing assets to database...\n");
 
 // Get user IDs
 const getNickUserId = () => {
@@ -38,7 +38,7 @@ const nickUserId = getNickUserId();
 const kelseyUserId = getKelseyUserId();
 
 if (!nickUserId || !kelseyUserId) {
-  console.error('Could not find Nick or Kelsey user IDs. Make sure users are created first.');
+  console.error("Could not find Nick or Kelsey user IDs. Make sure users are created first.");
   process.exit(1);
 }
 
@@ -48,34 +48,34 @@ console.log(`Found Kelsey user ID: ${kelseyUserId}\n`);
 // Missing assets identified from the verification script
 const missingAssets = [
   // Credit Cards (these are liabilities but should be tracked)
-  { 
-    id: 'cc-7000', 
-    userId: kelseyUserId, 
-    name: 'Chase Credit Card', 
-    category: 'financial_account', 
-    value: -162.00, // Negative value for debt
-    details: { 
-      type: 'credit_card', 
-      institution: 'Chase', 
-      accountNumber: '******8058', 
-      owner: 'Kelsey',
-      notes: 'Personal credit card'
-    } 
+  {
+    id: "cc-7000",
+    userId: kelseyUserId,
+    name: "Chase Credit Card",
+    category: "financial_account",
+    value: -162.0, // Negative value for debt
+    details: {
+      type: "credit_card",
+      institution: "Chase",
+      accountNumber: "******8058",
+      owner: "Kelsey",
+      notes: "Personal credit card",
+    },
   },
-  { 
-    id: 'cc-7001', 
-    userId: kelseyUserId, 
-    name: 'Chase Business Credit Card', 
-    category: 'financial_account', 
-    value: 0.00, 
-    details: { 
-      type: 'credit_card', 
-      institution: 'Chase Business', 
-      owner: 'Kelsey',
-      notes: 'Business credit card - Willow Consulting'
-    } 
+  {
+    id: "cc-7001",
+    userId: kelseyUserId,
+    name: "Chase Business Credit Card",
+    category: "financial_account",
+    value: 0.0,
+    details: {
+      type: "credit_card",
+      institution: "Chase Business",
+      owner: "Kelsey",
+      notes: "Business credit card - Willow Consulting",
+    },
   },
-  
+
   // Additional personal information that should be stored (not as assets but as user metadata)
   // These are not assets, so we'll skip them but note them for future user profile updates:
   // - DOB: Nick 1/5/1985, Kelsey 3/13/1989
@@ -84,67 +84,67 @@ const missingAssets = [
   // - Email: nickcoleman85@gmail.com, kelseyfbrown@gmail.com
   // - Phone: Nick 870-740-0598, Kelsey 501-545-9627
   // - Address: 2211 NW Willow, Bentonville, AR 72712
-  
+
   // Prospective Inheritances (these should be tracked as notes or future assets)
-  { 
-    id: 'pi-8000', 
-    userId: nickUserId, 
-    name: 'Prospective Inheritance - Robert Bobby Coleman', 
-    category: 'personal_property', 
-    value: 0.00, 
-    details: { 
-      propertyType: 'future_inheritance',
-      from: 'Robert Bobby Coleman',
-      beneficiary: 'Nick',
-      notes: 'Future inheritance from father'
-    } 
+  {
+    id: "pi-8000",
+    userId: nickUserId,
+    name: "Prospective Inheritance - Robert Bobby Coleman",
+    category: "personal_property",
+    value: 0.0,
+    details: {
+      propertyType: "future_inheritance",
+      from: "Robert Bobby Coleman",
+      beneficiary: "Nick",
+      notes: "Future inheritance from father",
+    },
   },
-  { 
-    id: 'pi-8001', 
-    userId: nickUserId, 
-    name: 'Prospective Inheritance - Other Coleman Family', 
-    category: 'personal_property', 
-    value: 0.00, 
-    details: { 
-      propertyType: 'future_inheritance',
-      from: 'Other Coleman Family Members',
-      beneficiary: 'Nick',
-      notes: 'Potential future inheritance from extended family'
-    } 
+  {
+    id: "pi-8001",
+    userId: nickUserId,
+    name: "Prospective Inheritance - Other Coleman Family",
+    category: "personal_property",
+    value: 0.0,
+    details: {
+      propertyType: "future_inheritance",
+      from: "Other Coleman Family Members",
+      beneficiary: "Nick",
+      notes: "Potential future inheritance from extended family",
+    },
   },
-  { 
-    id: 'pi-8002', 
-    userId: kelseyUserId, 
-    name: 'Prospective Inheritance - Yvonne Westfall', 
-    category: 'personal_property', 
-    value: 0.00, 
-    details: { 
-      propertyType: 'future_inheritance',
-      from: 'Yvonne Westfall',
-      beneficiary: 'Kelsey',
-      notes: 'Future inheritance from mother'
-    } 
-  }
+  {
+    id: "pi-8002",
+    userId: kelseyUserId,
+    name: "Prospective Inheritance - Yvonne Westfall",
+    category: "personal_property",
+    value: 0.0,
+    details: {
+      propertyType: "future_inheritance",
+      from: "Yvonne Westfall",
+      beneficiary: "Kelsey",
+      notes: "Future inheritance from mother",
+    },
+  },
 ];
 
 // Key appointments and roles (these should be in legal_roles table, not assets)
 const keyAppointments = {
-  executor: 'Surviving spouse, then Institution - Arvest',
-  trustee: 'Surviving spouse, then Institution - Arvest',
-  guardians: 'See Upon Death section for detailed guardian assignments',
+  executor: "Surviving spouse, then Institution - Arvest",
+  trustee: "Surviving spouse, then Institution - Arvest",
+  guardians: "See Upon Death section for detailed guardian assignments",
   financialPOA: {
-    nick: 'Kelsey (if Nick passes)',
-    kelsey: 'Nick (if Kelsey passes)'
+    nick: "Kelsey (if Nick passes)",
+    kelsey: "Nick (if Kelsey passes)",
   },
   medicalPOA: {
-    kelsey: ['Nick Coleman', 'Yvonne Westfall', 'Joy Shepherd', 'Emily Hanzlik']
+    kelsey: ["Nick Coleman", "Yvonne Westfall", "Joy Shepherd", "Emily Hanzlik"],
   },
   successorAgents: {
     kelsey: {
-      primary: 'Yvonne Westfall - 760 N Moore Rd. Hot Springs AR, 71913',
-      secondary: 'Joy Shepard - 98 CR 378 Wynne Arkansas 72396'
-    }
-  }
+      primary: "Yvonne Westfall - 760 N Moore Rd. Hot Springs AR, 71913",
+      secondary: "Joy Shepard - 98 CR 378 Wynne Arkansas 72396",
+    },
+  },
 };
 
 // Important notes about inheritance if no heirs
@@ -178,35 +178,35 @@ const insertAsset = db.prepare(`
 const insertAll = db.transaction(() => {
   let successCount = 0;
   let errorCount = 0;
-  
-  missingAssets.forEach(asset => {
+
+  missingAssets.forEach((asset) => {
     try {
       // Determine ownership type
-      let ownershipType = 'individual';
-      
+      let ownershipType = "individual";
+
       // Prepare ownership details
       const ownershipDetails = {
         owner: asset.details.owner,
-        beneficiary: asset.details.beneficiary
+        beneficiary: asset.details.beneficiary,
       };
-      
+
       // Prepare asset details
       const assetDetails = { ...asset.details };
       delete assetDetails.owner;
       delete assetDetails.beneficiary;
-      
+
       insertAsset.run(
         asset.id,
         asset.userId,
         asset.name,
-        asset.category.toUpperCase().replace(/_/g, '_'),
+        asset.category.toUpperCase().replace(/_/g, "_"),
         asset.value,
         ownershipType,
         JSON.stringify(ownershipDetails),
         JSON.stringify(assetDetails),
-        asset.details.notes || null
+        asset.details.notes || null,
       );
-      
+
       successCount++;
       console.log(`✅ Added: ${asset.name}`);
     } catch (error) {
@@ -214,7 +214,7 @@ const insertAll = db.transaction(() => {
       errorCount++;
     }
   });
-  
+
   console.log(`\nMissing assets migration completed!`);
   console.log(`✅ Successfully inserted: ${successCount} assets`);
   if (errorCount > 0) {
@@ -226,18 +226,22 @@ const insertAll = db.transaction(() => {
 insertAll();
 
 // Also create notes records for important information
-console.log('\n--- Important Information from Excel ---');
-console.log('\nKey Appointments:', JSON.stringify(keyAppointments, null, 2));
-console.log('\nInheritance Notes:', inheritanceNotes);
-console.log('\nTrust Provisions:', trustProvisions);
+console.log("\n--- Important Information from Excel ---");
+console.log("\nKey Appointments:", JSON.stringify(keyAppointments, null, 2));
+console.log("\nInheritance Notes:", inheritanceNotes);
+console.log("\nTrust Provisions:", trustProvisions);
 
 // Get updated count
-const totalAssets = db.prepare('SELECT COUNT(*) as count FROM assets WHERE is_active = 1').get().count;
+const totalAssets = db
+  .prepare("SELECT COUNT(*) as count FROM assets WHERE is_active = 1")
+  .get().count;
 console.log(`\nTotal assets now in database: ${totalAssets}`);
 
 // Show category summary
-console.log('\nAsset Category Summary:');
-const categorySummary = db.prepare(`
+console.log("\nAsset Category Summary:");
+const categorySummary = db
+  .prepare(
+    `
   SELECT 
     category,
     COUNT(*) as count,
@@ -246,13 +250,17 @@ const categorySummary = db.prepare(`
   WHERE is_active = 1
   GROUP BY category
   ORDER BY category
-`).all();
+`,
+  )
+  .all();
 
-categorySummary.forEach(cat => {
-  console.log(`${cat.category}: ${cat.count} assets, Total value: $${cat.total_value.toLocaleString()}`);
+categorySummary.forEach((cat) => {
+  console.log(
+    `${cat.category}: ${cat.count} assets, Total value: $${cat.total_value.toLocaleString()}`,
+  );
 });
 
 // Close the database
 db.close();
 
-console.log('\n✅ Missing assets have been added to the database!'); 
+console.log("\n✅ Missing assets have been added to the database!");

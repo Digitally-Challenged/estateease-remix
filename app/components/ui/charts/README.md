@@ -5,13 +5,15 @@ This directory contains reusable chart components for data visualization using R
 ## Components
 
 ### 1. NetWorthTrendChart
+
 - **Purpose**: Displays net worth trend over time with assets and liabilities
 - **Type**: Line chart
-- **Props**: 
+- **Props**:
   - `data`: Array of `{month, netWorth, assets, liabilities}`
   - `height`: Optional chart height (default: 300px)
 
 ### 2. AssetAllocationChart
+
 - **Purpose**: Shows portfolio distribution by asset category
 - **Type**: Pie chart
 - **Props**:
@@ -20,6 +22,7 @@ This directory contains reusable chart components for data visualization using R
   - `showLegend`: Show/hide legend (default: true)
 
 ### 3. CashFlowChart
+
 - **Purpose**: Monthly cash flow visualization
 - **Type**: Bar chart
 - **Props**:
@@ -27,6 +30,7 @@ This directory contains reusable chart components for data visualization using R
   - `height`: Optional chart height (default: 300px)
 
 ### 4. EstateTaxChart
+
 - **Purpose**: Estate tax projections over time
 - **Type**: Area chart
 - **Props**:
@@ -34,6 +38,7 @@ This directory contains reusable chart components for data visualization using R
   - `height`: Optional chart height (default: 300px)
 
 ### 5. LiquidityGauge
+
 - **Purpose**: Visual gauge showing liquidity percentage
 - **Type**: Semi-circle gauge
 - **Props**:
@@ -44,19 +49,16 @@ This directory contains reusable chart components for data visualization using R
 ## Usage
 
 ```tsx
-import { AssetAllocationChart, NetWorthTrendChart } from '~/components/ui/charts';
+import { AssetAllocationChart, NetWorthTrendChart } from "~/components/ui/charts";
 
 // In your component
-<AssetAllocationChart 
-  data={allocationData} 
-  height={300} 
-  showLegend={true} 
-/>
+<AssetAllocationChart data={allocationData} height={300} showLegend={true} />;
 ```
 
 ## Color Scheme
 
 All charts use a consistent color palette defined in `chart-colors.ts`:
+
 - Primary: Blue (#2563eb)
 - Secondary: Green (#16a34a)
 - Tertiary: Red (#dc2626)
@@ -66,6 +68,7 @@ All charts use a consistent color palette defined in `chart-colors.ts`:
 ## Responsive Design
 
 All charts are wrapped in `ChartContainer` which ensures:
+
 - 100% width responsiveness
 - Consistent height management
 - Proper sizing on all screen sizes
@@ -73,6 +76,7 @@ All charts are wrapped in `ChartContainer` which ensures:
 ## Tooltips
 
 Custom tooltips are implemented for better data display:
+
 - Currency formatting for financial values
 - Percentage formatting where applicable
 - Consistent styling across all charts

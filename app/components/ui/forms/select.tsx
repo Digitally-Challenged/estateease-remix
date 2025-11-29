@@ -1,39 +1,38 @@
-import * as React from "react"
-import { cn } from "~/lib/utils"
-import { ChevronDown } from "lucide-react"
+import * as React from "react";
+import { cn } from "~/lib/utils";
+import ChevronDown from "lucide-react/dist/esm/icons/chevron-down";
 
 export interface SelectOption {
-  value: string
-  label: string
-  disabled?: boolean
+  value: string;
+  label: string;
+  disabled?: boolean;
 }
 
-export interface SelectProps
-  extends Omit<React.SelectHTMLAttributes<HTMLSelectElement>, 'size'> {
+export interface SelectProps extends Omit<React.SelectHTMLAttributes<HTMLSelectElement>, "size"> {
   /**
    * Error state - shows red border
    */
-  error?: boolean
+  error?: boolean;
   /**
    * Options to display in the select
    */
-  options: SelectOption[]
+  options: SelectOption[];
   /**
    * Placeholder text when no value is selected
    */
-  placeholder?: string
+  placeholder?: string;
   /**
    * Makes the select take full width of its container
    */
-  fullWidth?: boolean
+  fullWidth?: boolean;
 }
 
 /**
  * Select component with consistent styling
- * 
+ *
  * @example
  * ```tsx
- * <Select 
+ * <Select
  *   placeholder="Choose an option"
  *   options={[
  *     { value: '1', label: 'Option 1' },
@@ -44,14 +43,17 @@ export interface SelectProps
  * ```
  */
 const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
-  ({ 
-    className, 
-    error = false,
-    options,
-    placeholder = "Select an option",
-    fullWidth = true,
-    ...props 
-  }, ref) => {
+  (
+    {
+      className,
+      error = false,
+      options,
+      placeholder = "Select an option",
+      fullWidth = true,
+      ...props
+    },
+    ref,
+  ) => {
     const selectClasses = cn(
       "relative flex h-10 w-full appearance-none rounded-md border bg-secondary-50 px-3 py-2 pr-10 text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
       {
@@ -59,40 +61,31 @@ const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
         "border-error-500 focus-visible:ring-error-500": error,
         "w-full": fullWidth,
       },
-      className
-    )
+      className,
+    );
 
     return (
       <div className={cn("relative", fullWidth && "w-full")}>
-        <select
-          ref={ref}
-          className={selectClasses}
-          aria-invalid={error}
-          {...props}
-        >
+        <select ref={ref} className={selectClasses} aria-invalid={error} {...props}>
           {placeholder && (
             <option value="" disabled>
               {placeholder}
             </option>
           )}
           {options.map((option) => (
-            <option 
-              key={option.value} 
-              value={option.value}
-              disabled={option.disabled}
-            >
+            <option key={option.value} value={option.value} disabled={option.disabled}>
               {option.label}
             </option>
           ))}
         </select>
-        <ChevronDown 
-          className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-secondary-500" 
+        <ChevronDown
+          className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-secondary-500"
           aria-hidden="true"
         />
       </div>
-    )
-  }
-)
-Select.displayName = "Select"
+    );
+  },
+);
+Select.displayName = "Select";
 
-export { Select }
+export { Select };

@@ -1,6 +1,6 @@
 /**
  * UI Constants for EstateEase Application
- * 
+ *
  * This file contains all UI-related constants including pagination,
  * timeouts, animations, breakpoints, and component sizing.
  */
@@ -38,40 +38,21 @@ export const FILE_UPLOAD = {
   /** Maximum number of files per upload */
   MAX_FILES: 10,
   /** Allowed file types for documents */
-  ALLOWED_DOCUMENT_TYPES: [
-    '.pdf',
-    '.doc',
-    '.docx',
-    '.xls',
-    '.xlsx',
-    '.txt',
-    '.rtf',
-  ] as const,
+  ALLOWED_DOCUMENT_TYPES: [".pdf", ".doc", ".docx", ".xls", ".xlsx", ".txt", ".rtf"] as const,
   /** Allowed file types for images */
-  ALLOWED_IMAGE_TYPES: [
-    '.jpg',
-    '.jpeg',
-    '.png',
-    '.gif',
-    '.webp',
-  ] as const,
+  ALLOWED_IMAGE_TYPES: [".jpg", ".jpeg", ".png", ".gif", ".webp"] as const,
   /** Allowed MIME types for documents */
   ALLOWED_DOCUMENT_MIMES: [
-    'application/pdf',
-    'application/msword',
-    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-    'application/vnd.ms-excel',
-    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-    'text/plain',
-    'text/rtf',
+    "application/pdf",
+    "application/msword",
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    "application/vnd.ms-excel",
+    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    "text/plain",
+    "text/rtf",
   ] as const,
   /** Allowed MIME types for images */
-  ALLOWED_IMAGE_MIMES: [
-    'image/jpeg',
-    'image/png',
-    'image/gif',
-    'image/webp',
-  ] as const,
+  ALLOWED_IMAGE_MIMES: ["image/jpeg", "image/png", "image/gif", "image/webp"] as const,
 } as const;
 
 // ===========================
@@ -144,7 +125,7 @@ export const BREAKPOINTS = {
   /** Extra large devices (large desktops) */
   XL: 1280,
   /** 2X large devices (larger desktops) */
-  '2XL': 1536,
+  "2XL": 1536,
 } as const;
 
 // ===========================
@@ -188,27 +169,27 @@ export const MODAL_SIZES = {
   /** Small modal (confirmations, simple forms) */
   SM: {
     width: 400,
-    maxWidth: '90vw',
+    maxWidth: "90vw",
   },
   /** Medium modal (standard forms) */
   MD: {
     width: 600,
-    maxWidth: '90vw',
+    maxWidth: "90vw",
   },
   /** Large modal (complex forms, previews) */
   LG: {
     width: 800,
-    maxWidth: '90vw',
+    maxWidth: "90vw",
   },
   /** Extra large modal (tables, detailed views) */
   XL: {
     width: 1200,
-    maxWidth: '95vw',
+    maxWidth: "95vw",
   },
   /** Full screen modal */
   FULL: {
-    width: '100vw',
-    height: '100vh',
+    width: "100vw",
+    height: "100vh",
   },
 } as const;
 
@@ -284,14 +265,14 @@ export const CHARTS = {
   LARGE_HEIGHT: 600,
   /** Default color palette */
   COLORS: [
-    '#3B82F6', // blue-500
-    '#10B981', // emerald-500
-    '#F59E0B', // amber-500
-    '#EF4444', // red-500
-    '#8B5CF6', // violet-500
-    '#EC4899', // pink-500
-    '#14B8A6', // teal-500
-    '#F97316', // orange-500
+    "#3B82F6", // blue-500
+    "#10B981", // emerald-500
+    "#F59E0B", // amber-500
+    "#EF4444", // red-500
+    "#8B5CF6", // violet-500
+    "#EC4899", // pink-500
+    "#14B8A6", // teal-500
+    "#F97316", // orange-500
   ] as const,
   /** Chart animation duration */
   ANIMATION_DURATION: 750,
@@ -309,8 +290,8 @@ export const LOADING = {
   MIN_DISPLAY_TIME: 200,
   /** Skeleton loader animation */
   SKELETON: {
-    baseColor: '#f3f4f6',
-    highlightColor: '#e5e7eb',
+    baseColor: "#f3f4f6",
+    highlightColor: "#e5e7eb",
   },
   /** Progress bar steps */
   PROGRESS_STEPS: 100,
@@ -325,7 +306,7 @@ export const LOADING = {
  */
 export const NOTIFICATIONS = {
   /** Toast position on screen */
-  POSITION: 'bottom-right' as const,
+  POSITION: "bottom-right" as const,
   /** Maximum number of toasts visible */
   MAX_VISIBLE: 3,
   /** Offset from screen edge */
@@ -345,55 +326,55 @@ export const NOTIFICATIONS = {
  * US States for business incorporation and other address forms
  */
 export const US_STATES = [
-  { code: 'AL', name: 'Alabama' },
-  { code: 'AK', name: 'Alaska' },
-  { code: 'AZ', name: 'Arizona' },
-  { code: 'AR', name: 'Arkansas' },
-  { code: 'CA', name: 'California' },
-  { code: 'CO', name: 'Colorado' },
-  { code: 'CT', name: 'Connecticut' },
-  { code: 'DE', name: 'Delaware' },
-  { code: 'FL', name: 'Florida' },
-  { code: 'GA', name: 'Georgia' },
-  { code: 'HI', name: 'Hawaii' },
-  { code: 'ID', name: 'Idaho' },
-  { code: 'IL', name: 'Illinois' },
-  { code: 'IN', name: 'Indiana' },
-  { code: 'IA', name: 'Iowa' },
-  { code: 'KS', name: 'Kansas' },
-  { code: 'KY', name: 'Kentucky' },
-  { code: 'LA', name: 'Louisiana' },
-  { code: 'ME', name: 'Maine' },
-  { code: 'MD', name: 'Maryland' },
-  { code: 'MA', name: 'Massachusetts' },
-  { code: 'MI', name: 'Michigan' },
-  { code: 'MN', name: 'Minnesota' },
-  { code: 'MS', name: 'Mississippi' },
-  { code: 'MO', name: 'Missouri' },
-  { code: 'MT', name: 'Montana' },
-  { code: 'NE', name: 'Nebraska' },
-  { code: 'NV', name: 'Nevada' },
-  { code: 'NH', name: 'New Hampshire' },
-  { code: 'NJ', name: 'New Jersey' },
-  { code: 'NM', name: 'New Mexico' },
-  { code: 'NY', name: 'New York' },
-  { code: 'NC', name: 'North Carolina' },
-  { code: 'ND', name: 'North Dakota' },
-  { code: 'OH', name: 'Ohio' },
-  { code: 'OK', name: 'Oklahoma' },
-  { code: 'OR', name: 'Oregon' },
-  { code: 'PA', name: 'Pennsylvania' },
-  { code: 'RI', name: 'Rhode Island' },
-  { code: 'SC', name: 'South Carolina' },
-  { code: 'SD', name: 'South Dakota' },
-  { code: 'TN', name: 'Tennessee' },
-  { code: 'TX', name: 'Texas' },
-  { code: 'UT', name: 'Utah' },
-  { code: 'VT', name: 'Vermont' },
-  { code: 'VA', name: 'Virginia' },
-  { code: 'WA', name: 'Washington' },
-  { code: 'WV', name: 'West Virginia' },
-  { code: 'WI', name: 'Wisconsin' },
-  { code: 'WY', name: 'Wyoming' },
-  { code: 'DC', name: 'Washington, DC' }
+  { code: "AL", name: "Alabama" },
+  { code: "AK", name: "Alaska" },
+  { code: "AZ", name: "Arizona" },
+  { code: "AR", name: "Arkansas" },
+  { code: "CA", name: "California" },
+  { code: "CO", name: "Colorado" },
+  { code: "CT", name: "Connecticut" },
+  { code: "DE", name: "Delaware" },
+  { code: "FL", name: "Florida" },
+  { code: "GA", name: "Georgia" },
+  { code: "HI", name: "Hawaii" },
+  { code: "ID", name: "Idaho" },
+  { code: "IL", name: "Illinois" },
+  { code: "IN", name: "Indiana" },
+  { code: "IA", name: "Iowa" },
+  { code: "KS", name: "Kansas" },
+  { code: "KY", name: "Kentucky" },
+  { code: "LA", name: "Louisiana" },
+  { code: "ME", name: "Maine" },
+  { code: "MD", name: "Maryland" },
+  { code: "MA", name: "Massachusetts" },
+  { code: "MI", name: "Michigan" },
+  { code: "MN", name: "Minnesota" },
+  { code: "MS", name: "Mississippi" },
+  { code: "MO", name: "Missouri" },
+  { code: "MT", name: "Montana" },
+  { code: "NE", name: "Nebraska" },
+  { code: "NV", name: "Nevada" },
+  { code: "NH", name: "New Hampshire" },
+  { code: "NJ", name: "New Jersey" },
+  { code: "NM", name: "New Mexico" },
+  { code: "NY", name: "New York" },
+  { code: "NC", name: "North Carolina" },
+  { code: "ND", name: "North Dakota" },
+  { code: "OH", name: "Ohio" },
+  { code: "OK", name: "Oklahoma" },
+  { code: "OR", name: "Oregon" },
+  { code: "PA", name: "Pennsylvania" },
+  { code: "RI", name: "Rhode Island" },
+  { code: "SC", name: "South Carolina" },
+  { code: "SD", name: "South Dakota" },
+  { code: "TN", name: "Tennessee" },
+  { code: "TX", name: "Texas" },
+  { code: "UT", name: "Utah" },
+  { code: "VT", name: "Vermont" },
+  { code: "VA", name: "Virginia" },
+  { code: "WA", name: "Washington" },
+  { code: "WV", name: "West Virginia" },
+  { code: "WI", name: "Wisconsin" },
+  { code: "WY", name: "Wyoming" },
+  { code: "DC", name: "Washington, DC" },
 ] as const;

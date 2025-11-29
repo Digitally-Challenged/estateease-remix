@@ -5,22 +5,22 @@
  * This includes DOB, phone numbers, email addresses, etc.
  */
 
-import Database from 'better-sqlite3';
-import path from 'path';
-import { fileURLToPath } from 'url';
+import Database from "better-sqlite3";
+import path from "path";
+import { fileURLToPath } from "url";
 
 // Get __dirname equivalent in ES modules
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Database path
-const dbPath = path.join(__dirname, '../data/estateease.db');
+const dbPath = path.join(__dirname, "../data/estateease.db");
 const db = new Database(dbPath);
 
 // Enable foreign keys
-db.pragma('foreign_keys = ON');
+db.pragma("foreign_keys = ON");
 
-console.log('Updating user profiles with Excel data...\n');
+console.log("Updating user profiles with Excel data...\n");
 
 // Update Nick's profile
 const updateNick = db.prepare(`
@@ -32,7 +32,7 @@ const updateNick = db.prepare(`
   WHERE external_id = 'user-nick-001'
 `);
 
-const nickResult = updateNick.run('1985-01-05', '870-740-0598');
+const nickResult = updateNick.run("1985-01-05", "870-740-0598");
 console.log(`✅ Updated Nick's profile: ${nickResult.changes} records updated`);
 
 // Update Kelsey's profile
@@ -45,53 +45,54 @@ const updateKelsey = db.prepare(`
   WHERE external_id = 'user-kelsey-001'
 `);
 
-const kelseyResult = updateKelsey.run('1989-03-13', '501-545-9627');
+const kelseyResult = updateKelsey.run("1989-03-13", "501-545-9627");
 console.log(`✅ Updated Kelsey's profile: ${kelseyResult.changes} records updated`);
 
 // Add family members that are mentioned in the Excel (guardians and beneficiaries)
 const familyMembers = [
   {
     userId: 2, // Kelsey
-    name: 'Yvonne Westfall',
-    relationship: 'parent',
-    notes: 'Kelsey\'s mother. Primary guardian for children. Address: 760 N Moore Rd. Hot Springs AR, 71913'
-  },
-  {
-    userId: 2, // Kelsey  
-    name: 'Joy Shepherd',
-    relationship: 'sibling',
-    notes: 'Secondary guardian option. Address: 98 CR 378 Wynne Arkansas 72396'
+    name: "Yvonne Westfall",
+    relationship: "parent",
+    notes:
+      "Kelsey's mother. Primary guardian for children. Address: 760 N Moore Rd. Hot Springs AR, 71913",
   },
   {
     userId: 2, // Kelsey
-    name: 'Emily Hanzlik',
-    relationship: 'sibling',
-    notes: 'Medical power of attorney option'
+    name: "Joy Shepherd",
+    relationship: "sibling",
+    notes: "Secondary guardian option. Address: 98 CR 378 Wynne Arkansas 72396",
   },
   {
     userId: 2, // Kelsey
-    name: 'Samuel Stephen Hanzlik',
-    relationship: 'sibling',
-    notes: 'Beneficiary if no heirs'
+    name: "Emily Hanzlik",
+    relationship: "sibling",
+    notes: "Medical power of attorney option",
   },
   {
     userId: 2, // Kelsey
-    name: 'Julia Jean Shepherd',
-    relationship: 'other',
-    notes: 'Beneficiary if no heirs (Joy\'s child)'
+    name: "Samuel Stephen Hanzlik",
+    relationship: "sibling",
+    notes: "Beneficiary if no heirs",
   },
   {
     userId: 2, // Kelsey
-    name: 'John Bryant Shepherd IV',
-    relationship: 'other',
-    notes: 'Beneficiary if no heirs (Joy\'s child)'
+    name: "Julia Jean Shepherd",
+    relationship: "other",
+    notes: "Beneficiary if no heirs (Joy's child)",
+  },
+  {
+    userId: 2, // Kelsey
+    name: "John Bryant Shepherd IV",
+    relationship: "other",
+    notes: "Beneficiary if no heirs (Joy's child)",
   },
   {
     userId: 1, // Nick
-    name: 'Robert Bobby Coleman',
-    relationship: 'parent',
-    notes: 'Nick\'s father - prospective inheritance'
-  }
+    name: "Robert Bobby Coleman",
+    relationship: "parent",
+    notes: "Nick's father - prospective inheritance",
+  },
 ];
 
 // Insert family members if they don't exist
@@ -116,7 +117,7 @@ familyMembers.forEach((member, index) => {
     member.userId,
     member.name,
     member.relationship,
-    member.notes
+    member.notes,
   );
   if (result.changes > 0) {
     familyCount++;
@@ -130,80 +131,80 @@ console.log(`\nAdded ${familyCount} new family members`);
 const legalRoles = [
   {
     userId: 1,
-    roleType: 'executor',
-    personName: 'Kelsey Brown Coleman',
+    roleType: "executor",
+    personName: "Kelsey Brown Coleman",
     isPrimary: true,
-    notes: 'Primary executor (surviving spouse)'
+    notes: "Primary executor (surviving spouse)",
   },
   {
     userId: 1,
-    roleType: 'executor', 
-    personName: 'Arvest Bank',
+    roleType: "executor",
+    personName: "Arvest Bank",
     isPrimary: false,
     orderOfPrecedence: 2,
-    notes: 'Secondary executor if spouse unavailable'
+    notes: "Secondary executor if spouse unavailable",
   },
   {
     userId: 2,
-    roleType: 'executor',
-    personName: 'Nicholas Coleman',
+    roleType: "executor",
+    personName: "Nicholas Coleman",
     isPrimary: true,
-    notes: 'Primary executor (surviving spouse)'
+    notes: "Primary executor (surviving spouse)",
   },
   {
     userId: 2,
-    roleType: 'executor',
-    personName: 'Arvest Bank', 
+    roleType: "executor",
+    personName: "Arvest Bank",
     isPrimary: false,
     orderOfPrecedence: 2,
-    notes: 'Secondary executor if spouse unavailable'
+    notes: "Secondary executor if spouse unavailable",
   },
   {
     userId: 1,
-    roleType: 'power_of_attorney',
-    personName: 'Kelsey Brown Coleman',
+    roleType: "power_of_attorney",
+    personName: "Kelsey Brown Coleman",
     isPrimary: true,
-    notes: 'Financial power of attorney if Nick passes'
+    notes: "Financial power of attorney if Nick passes",
   },
   {
     userId: 2,
-    roleType: 'power_of_attorney',
-    personName: 'Nicholas Coleman',
+    roleType: "power_of_attorney",
+    personName: "Nicholas Coleman",
     isPrimary: true,
-    notes: 'Financial power of attorney if Kelsey passes'
+    notes: "Financial power of attorney if Kelsey passes",
   },
   {
     userId: 2,
-    roleType: 'healthcare_proxy',
-    personName: 'Nicholas Coleman',
+    roleType: "healthcare_proxy",
+    personName: "Nicholas Coleman",
     isPrimary: true,
     orderOfPrecedence: 1,
-    notes: 'Primary medical power of attorney'
+    notes: "Primary medical power of attorney",
   },
   {
     userId: 2,
-    roleType: 'healthcare_proxy',
-    personName: 'Yvonne Westfall',
+    roleType: "healthcare_proxy",
+    personName: "Yvonne Westfall",
     isPrimary: false,
     orderOfPrecedence: 2,
-    notes: 'Secondary medical power of attorney'
+    notes: "Secondary medical power of attorney",
   },
   {
     userId: 2,
-    roleType: 'healthcare_proxy',
-    personName: 'Joy Shepherd',
+    roleType: "healthcare_proxy",
+    personName: "Joy Shepherd",
     isPrimary: false,
     orderOfPrecedence: 3,
-    notes: 'Tertiary medical power of attorney'
+    notes: "Tertiary medical power of attorney",
   },
   {
     userId: 2,
-    roleType: 'healthcare_proxy',
-    personName: 'Emily Hanzlik',
+    roleType: "healthcare_proxy",
+    personName: "Emily Hanzlik",
     isPrimary: false,
     orderOfPrecedence: 4,
-    notes: 'Quaternary medical power of attorney'
-  }
+    notes: "Quaternary medical power of attorney",
+  },
 ];
 
 // Insert legal roles
@@ -232,7 +233,7 @@ legalRoles.forEach((role, index) => {
     role.personName,
     role.isPrimary ? 1 : 0,
     role.orderOfPrecedence || null,
-    role.notes
+    role.notes,
   );
   if (result.changes > 0) {
     roleCount++;
@@ -243,24 +244,24 @@ legalRoles.forEach((role, index) => {
 console.log(`\nAdded ${roleCount} new legal roles`);
 
 // Store important notes as a document/note (since we don't have a notes table, we'll output them)
-console.log('\n--- Important Estate Planning Notes ---');
-console.log('\n1. Marriage Information:');
-console.log('   - Date: October 3, 2015');
-console.log('   - Location: Fayetteville, AR');
+console.log("\n--- Important Estate Planning Notes ---");
+console.log("\n1. Marriage Information:");
+console.log("   - Date: October 3, 2015");
+console.log("   - Location: Fayetteville, AR");
 
-console.log('\n2. Guardian Provisions (if both parents pass):');
-console.log('   - Primary Guardian: Yvonne Westfall (Kelsey\'s mother)');
-console.log('   - Financials managed by Arvest Bank until children reach age 35');
-console.log('   - Children become their own trustee at age 35');
-console.log('   - Access to $300K each at age 25 for home purchase');
-console.log('   - Access to funds at age 18 with trustee approval for housing, health, education');
+console.log("\n2. Guardian Provisions (if both parents pass):");
+console.log("   - Primary Guardian: Yvonne Westfall (Kelsey's mother)");
+console.log("   - Financials managed by Arvest Bank until children reach age 35");
+console.log("   - Children become their own trustee at age 35");
+console.log("   - Access to $300K each at age 25 for home purchase");
+console.log("   - Access to funds at age 18 with trustee approval for housing, health, education");
 
-console.log('\n3. No Heirs Provisions:');
-console.log('   - Assets originally Kelsey\'s to be divided equally among Hanzlik family');
-console.log('   - Beneficiaries: Yvonne Westfall, Joy Shepherd, Emily Hanzlik,');
-console.log('     Samuel Hanzlik, Julia Shepherd, John Shepherd IV');
+console.log("\n3. No Heirs Provisions:");
+console.log("   - Assets originally Kelsey's to be divided equally among Hanzlik family");
+console.log("   - Beneficiaries: Yvonne Westfall, Joy Shepherd, Emily Hanzlik,");
+console.log("     Samuel Hanzlik, Julia Shepherd, John Shepherd IV");
 
 // Close database
 db.close();
 
-console.log('\n✅ User profiles and related data have been updated!'); 
+console.log("\n✅ User profiles and related data have been updated!");

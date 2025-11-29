@@ -1,5 +1,8 @@
 import * as React from "react";
-import { AlertTriangle, RefreshCw, Home, Bug } from "lucide-react";
+import AlertTriangle from "lucide-react/dist/esm/icons/alert-triangle";
+import RefreshCw from "lucide-react/dist/esm/icons/refresh-cw";
+import Home from "lucide-react/dist/esm/icons/home";
+import Bug from "lucide-react/dist/esm/icons/bug";
 import { Link } from "@remix-run/react";
 import { cn } from "~/lib/utils";
 
@@ -20,7 +23,7 @@ export interface ErrorBoundaryProps {
   fallback?: React.ComponentType<ErrorFallbackProps>;
   onError?: (error: Error, errorInfo: ErrorInfo) => void;
   isolate?: boolean;
-  level?: 'page' | 'section' | 'component';
+  level?: "page" | "section" | "component";
   resetKeys?: Array<string | number>;
   resetOnPropsChange?: boolean;
 }
@@ -30,7 +33,7 @@ export interface ErrorFallbackProps {
   errorInfo: ErrorInfo | null;
   resetError: () => void;
   retryCount: number;
-  level: 'page' | 'section' | 'component';
+  level: "page" | "section" | "component";
 }
 
 /**
@@ -46,25 +49,25 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
       hasError: false,
       error: null,
       errorInfo: null,
-      retryCount: 0
+      retryCount: 0,
     };
   }
 
   static getDerivedStateFromError(error: Error): Partial<ErrorBoundaryState> {
     return {
       hasError: true,
-      error
+      error,
     };
   }
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
     const enhancedErrorInfo: ErrorInfo = {
-      componentStack: errorInfo.componentStack || '',
-      errorBoundary: this.constructor.name
+      componentStack: errorInfo.componentStack || "",
+      errorBoundary: this.constructor.name,
     };
 
     this.setState({
-      errorInfo: enhancedErrorInfo
+      errorInfo: enhancedErrorInfo,
     });
 
     // Call the onError callback if provided
@@ -73,10 +76,10 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
     }
 
     // Log error to console in development
-    if (process.env.NODE_ENV === 'development') {
-      console.group('🚨 Error Boundary Caught Error');
-      console.error('Error:', error);
-      console.error('Error Info:', enhancedErrorInfo);
+    if (process.env.NODE_ENV === "development") {
+      console.group("🚨 Error Boundary Caught Error");
+      console.error("Error:", error);
+      console.error("Error Info:", enhancedErrorInfo);
       console.groupEnd();
     }
   }
@@ -89,7 +92,7 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
     if (hasError && prevProps.resetKeys !== resetKeys) {
       if (resetKeys && prevProps.resetKeys) {
         const hasResetKeyChanged = resetKeys.some(
-          (key, index) => prevProps.resetKeys![index] !== key
+          (key, index) => prevProps.resetKeys![index] !== key,
         );
         if (hasResetKeyChanged) {
           this.resetError();
@@ -108,11 +111,11 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
       window.clearTimeout(this.resetTimeoutId);
     }
 
-    this.setState(prevState => ({
+    this.setState((prevState) => ({
       hasError: false,
       error: null,
       errorInfo: null,
-      retryCount: prevState.retryCount + 1
+      retryCount: prevState.retryCount + 1,
     }));
   };
 
@@ -124,7 +127,12 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
 
   render() {
     const { hasError, error, errorInfo, retryCount } = this.state;
-    const { children, fallback: FallbackComponent, level = 'component', isolate = false } = this.props;
+    const {
+      children,
+      fallback: FallbackComponent,
+      level = "component",
+      isolate = false,
+    } = this.props;
 
     if (hasError && error) {
       // Use custom fallback component if provided
@@ -166,69 +174,63 @@ export function DefaultErrorFallback({
   resetError,
   retryCount,
   level,
-  isolate = false
+  isolate = false,
 }: ErrorFallbackProps & { isolate?: boolean }) {
-  const isPageLevel = level === 'page';
-  const isSectionLevel = level === 'section';
-  
-  const containerClasses = cn(
-    "flex flex-col items-center justify-center p-6 text-center",
-    {
-      "min-h-screen bg-gray-50": isPageLevel,
-      "min-h-96 bg-gray-50 rounded-lg border": isSectionLevel,
-      "min-h-48 bg-red-50 rounded-md border border-red-200": !isPageLevel && !isSectionLevel,
-      "border-2 border-dashed border-red-300": isolate
-    }
-  );
+  const isPageLevel = level === "page";
+  const isSectionLevel = level === "section";
 
-  const iconClasses = cn(
-    "mb-4 text-red-500",
-    {
-      "h-16 w-16": isPageLevel,
-      "h-12 w-12": isSectionLevel,
-      "h-8 w-8": !isPageLevel && !isSectionLevel
-    }
-  );
+  const containerClasses = cn("flex flex-col items-center justify-center p-6 text-center", {
+    "min-h-screen bg-gray-50": isPageLevel,
+    "min-h-96 bg-gray-50 rounded-lg border": isSectionLevel,
+    "min-h-48 bg-red-50 rounded-md border border-red-200": !isPageLevel && !isSectionLevel,
+    "border-2 border-dashed border-red-300": isolate,
+  });
 
-  const titleClasses = cn(
-    "font-semibold text-gray-900 mb-2",
-    {
-      "text-2xl": isPageLevel,
-      "text-xl": isSectionLevel,
-      "text-lg": !isPageLevel && !isSectionLevel
-    }
-  );
+  const iconClasses = cn("mb-4 text-red-500", {
+    "h-16 w-16": isPageLevel,
+    "h-12 w-12": isSectionLevel,
+    "h-8 w-8": !isPageLevel && !isSectionLevel,
+  });
+
+  const titleClasses = cn("font-semibold text-gray-900 mb-2", {
+    "text-2xl": isPageLevel,
+    "text-xl": isSectionLevel,
+    "text-lg": !isPageLevel && !isSectionLevel,
+  });
 
   const getErrorMessage = () => {
-    if (error.message.includes('ChunkLoadError') || error.message.includes('Loading chunk')) {
+    if (error.message.includes("ChunkLoadError") || error.message.includes("Loading chunk")) {
       return {
         title: "Update Available",
-        message: "A new version of the application is available. Please refresh the page to load the latest version."
+        message:
+          "A new version of the application is available. Please refresh the page to load the latest version.",
       };
     }
 
-    if (error.message.includes('Network')) {
+    if (error.message.includes("Network")) {
       return {
         title: "Connection Problem",
-        message: "Please check your internet connection and try again."
+        message: "Please check your internet connection and try again.",
       };
     }
 
     switch (level) {
-      case 'page':
+      case "page":
         return {
           title: "Something went wrong",
-          message: "We encountered an unexpected error while loading this page. This has been logged and our team will investigate."
+          message:
+            "We encountered an unexpected error while loading this page. This has been logged and our team will investigate.",
         };
-      case 'section':
+      case "section":
         return {
           title: "Section unavailable",
-          message: "This section is temporarily unavailable. You can try refreshing or continue using other parts of the application."
+          message:
+            "This section is temporarily unavailable. You can try refreshing or continue using other parts of the application.",
         };
       default:
         return {
           title: "Component error",
-          message: "This component encountered an error and couldn't be displayed."
+          message: "This component encountered an error and couldn't be displayed.",
         };
     }
   };
@@ -238,23 +240,19 @@ export function DefaultErrorFallback({
   return (
     <div className={containerClasses}>
       <AlertTriangle className={iconClasses} />
-      
-      <h3 className={titleClasses}>
-        {title}
-      </h3>
-      
-      <p className="text-gray-600 max-w-md mb-6">
-        {message}
-      </p>
+
+      <h3 className={titleClasses}>{title}</h3>
+
+      <p className="mb-6 max-w-md text-gray-600">{message}</p>
 
       {/* Error Details (Development Only) */}
-      {process.env.NODE_ENV === 'development' && (
-        <details className="mb-6 text-left w-full max-w-2xl">
+      {process.env.NODE_ENV === "development" && (
+        <details className="mb-6 w-full max-w-2xl text-left">
           <summary className="cursor-pointer text-sm text-gray-500 hover:text-gray-700">
-            <Bug className="inline h-4 w-4 mr-1" />
+            <Bug className="mr-1 inline h-4 w-4" />
             Error Details (Development)
           </summary>
-          <div className="mt-2 p-4 bg-gray-100 rounded text-xs font-mono text-gray-800 overflow-auto">
+          <div className="mt-2 overflow-auto rounded bg-gray-100 p-4 font-mono text-xs text-gray-800">
             <div className="mb-2">
               <strong>Error:</strong> {error.message}
             </div>
@@ -268,40 +266,34 @@ export function DefaultErrorFallback({
                 <pre className="whitespace-pre-wrap">{errorInfo.componentStack}</pre>
               </div>
             )}
-            <div className="mt-2 text-gray-600">
-              Retry count: {retryCount}
-            </div>
+            <div className="mt-2 text-gray-600">Retry count: {retryCount}</div>
           </div>
         </details>
       )}
 
       {/* Action Buttons */}
-      <div className="flex flex-col sm:flex-row gap-3">
+      <div className="flex flex-col gap-3 sm:flex-row">
         <button
           onClick={resetError}
-          className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+          className="inline-flex items-center rounded-md bg-blue-600 px-4 py-2 text-white transition-colors hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
         >
-          <RefreshCw className="h-4 w-4 mr-2" />
+          <RefreshCw className="mr-2 h-4 w-4" />
           Try Again
         </button>
 
         {(isPageLevel || isSectionLevel) && (
           <Link
             to="/"
-            className="inline-flex items-center px-4 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500 transition-colors"
+            className="inline-flex items-center rounded-md bg-gray-100 px-4 py-2 text-gray-700 transition-colors hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500"
           >
-            <Home className="h-4 w-4 mr-2" />
+            <Home className="mr-2 h-4 w-4" />
             Go Home
           </Link>
         )}
       </div>
 
       {/* Retry Information */}
-      {retryCount > 0 && (
-        <p className="mt-4 text-sm text-gray-500">
-          Retry attempt: {retryCount}
-        </p>
-      )}
+      {retryCount > 0 && <p className="mt-4 text-sm text-gray-500">Retry attempt: {retryCount}</p>}
     </div>
   );
 }
@@ -328,7 +320,7 @@ export function useErrorBoundary() {
 
   return {
     captureError,
-    resetError
+    resetError,
   };
 }
 
@@ -337,7 +329,7 @@ export function useErrorBoundary() {
  */
 export function withErrorBoundary<P extends object>(
   Component: React.ComponentType<P>,
-  errorBoundaryProps?: Omit<ErrorBoundaryProps, 'children'>
+  errorBoundaryProps?: Omit<ErrorBoundaryProps, "children">,
 ) {
   const WrappedComponent = (props: P) => (
     <ErrorBoundary {...errorBoundaryProps}>

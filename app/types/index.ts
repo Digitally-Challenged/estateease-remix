@@ -1,8 +1,9 @@
-export * from './enums';
-export * from './assets';
-export * from './people';
-export * from './trusts';
-export * from './user-profiles';
+export * from "./enums";
+export * from "./assets";
+export * from "./people";
+export * from "./trusts";
+export * from "./user-profiles";
+export * from "./documents";
 
 // Navigation types
 export interface NavItem {
@@ -26,4 +27,4 @@ export interface NavCategory {
 }
 
 // Re-export Asset for compatibility
-export type Asset = import('./assets').AnyAsset;
+export type Asset = import("./assets").AnyAsset;

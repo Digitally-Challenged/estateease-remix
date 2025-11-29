@@ -5,8 +5,8 @@ import {
   InsurancePolicyType,
   VehicleType,
   DebtType,
-  OwnershipType
-} from './enums';
+  OwnershipType,
+} from "./enums";
 
 export interface BaseAsset {
   id: string;
@@ -33,7 +33,7 @@ export interface OwnershipInfo {
     other?: Record<string, { percentage: number; isPrimary: boolean }>;
   };
   survivorshipRights?: boolean;
-  tenancyType?: 'joint_tenancy' | 'tenants_in_common' | 'community_property';
+  tenancyType?: "joint_tenancy" | "tenants_in_common" | "community_property";
   notes?: string;
 }
 
@@ -79,7 +79,7 @@ export interface InsurancePolicy extends BaseAsset {
   coverageAmount: number;
   premium: {
     amount: number;
-    frequency: 'monthly' | 'quarterly' | 'semi-annually' | 'annually';
+    frequency: "monthly" | "quarterly" | "semi-annually" | "annually";
   };
   deductible: number;
   beneficiaries?: {
@@ -95,7 +95,7 @@ export interface BusinessInterest extends BaseAsset {
   businessName: string;
   taxId: string;
   percentageOwned: number;
-  valuationMethod: 'income_approach' | 'asset_approach' | 'market_approach';
+  valuationMethod: "income_approach" | "asset_approach" | "market_approach";
   valuationDate: string;
   annualRevenue?: number;
   annualProfit?: number;
@@ -136,6 +136,13 @@ export interface Debt extends BaseAsset {
   maturityDate?: string;
 }
 
-export type AnyAsset = RealEstateAsset | FinancialAccount | InsurancePolicy | BusinessInterest | Vehicle | PersonalProperty | Debt;
+export type AnyAsset =
+  | RealEstateAsset
+  | FinancialAccount
+  | InsurancePolicy
+  | BusinessInterest
+  | Vehicle
+  | PersonalProperty
+  | Debt;
 
 export type AnyEnhancedAsset = AnyAsset;
