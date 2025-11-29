@@ -5,6 +5,7 @@ import { TrustForm } from "~/components/forms/trust-form";
 import { createTrustSchema, formatTrustValidationErrors } from "~/lib/validation/trust-schemas";
 import { createTrust } from "~/lib/dal-crud";
 import type { ValidatedBeneficiary, ValidatedTrustee } from "~/lib/validation/trust-schemas";
+import { requireUser } from "~/lib/auth.server";
 
 interface ActionData {
   error?: string;
@@ -73,7 +74,7 @@ export async function action({ request }: ActionFunctionArgs) {
         establishedState: establishedState || undefined,
         governingLaw: governingLaw || undefined,
       },
-      userId: "user-nick-001", // Default user for now
+      userId: (await requireUser(request)).id,
     };
 
     // Validate the trust data

@@ -8,6 +8,7 @@ import SortDesc from "lucide-react/dist/esm/icons/sort-desc";
 import { searchAll, type SearchOptions, type SearchResult } from "~/lib/dal";
 import { SearchBar } from "~/components/ui/search/search-bar";
 import { SearchResultsGroup } from "~/components/ui/search/search-result";
+import { requireUser } from "~/lib/auth.server";
 
 export const meta: MetaFunction = () => {
   return [
@@ -37,6 +38,9 @@ interface LoaderData {
 }
 
 export async function loader({ request }: LoaderFunctionArgs): Promise<Response> {
+  const user = await requireUser(request);
+  const userId = user.id;
+
   const url = new URL(request.url);
   const query = url.searchParams.get("q") || "";
   const types = url.searchParams.get("types") || "";
@@ -68,7 +72,7 @@ export async function loader({ request }: LoaderFunctionArgs): Promise<Response>
     // Parse search options
     const searchOptions: SearchOptions = {
       query: query.trim(),
-      userId: "user-nick-001",
+      userId: userId,
       limit,
     };
 

@@ -1,4 +1,4 @@
-import { json } from "@remix-run/node";
+import { json, type LoaderFunctionArgs } from "@remix-run/node";
 import { Link, useLoaderData } from "@remix-run/react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "~/components/ui/card";
 import { Button } from "~/components/ui/button";
@@ -17,10 +17,12 @@ import FileText from "lucide-react/dist/esm/icons/file-text";
 import { getAssets } from "~/lib/dal";
 import type { Column } from "~/components/ui/data-table";
 import { formatCurrency } from "~/utils/format";
+import { requireUser } from "~/lib/auth.server";
 
-export async function loader() {
+export async function loader({ request }: LoaderFunctionArgs) {
   try {
-    const userId = "user-nick-001";
+    const user = await requireUser(request);
+    const userId = user.id;
     const allAssets = await getAssets(userId);
 
     // Filter for insurance assets

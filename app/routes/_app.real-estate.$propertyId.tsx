@@ -12,14 +12,22 @@ import ArrowLeft from "lucide-react/dist/esm/icons/arrow-left";
 import Edit from "lucide-react/dist/esm/icons/edit";
 import { getAssets } from "~/lib/dal";
 import { formatCurrency } from "~/utils/format";
+import { requireUser } from "~/lib/auth.server";
 
-export async function loader({ params }: LoaderFunctionArgs) {
+// Helper to convert external_id to numeric user_id
+function getUserIdFromExternalId(externalId: string): number {
+  const match = externalId.match(/(\d+)$/);
+  return match ? parseInt(match[1]) : 1;
+}
+
+export async function loader({ params, request }: LoaderFunctionArgs) {
   const { propertyId } = params;
   if (!propertyId) {
     throw new Response("Property ID is required", { status: 400 });
   }
 
-  const userId = "user-nick-001"; // Default user for now
+  const user = await requireUser(request);
+  const userId = getUserIdFromExternalId(user.id);
   const allAssets = await getAssets(userId);
 
   // Find the specific property
@@ -29,6 +37,12 @@ export async function loader({ params }: LoaderFunctionArgs) {
 
   if (!property) {
     throw new Response("Property not found", { status: 404 });
+  }
+
+  // AUTHORIZATION: Verify ownership (already filtered by userId in getAssets)
+  // Additional check for safety
+  if (property.user_id !== userId) {
+    throw json({ message: "Forbidden" }, { status: 403 });
   }
 
   return json({ property });

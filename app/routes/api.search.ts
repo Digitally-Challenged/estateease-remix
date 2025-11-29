@@ -1,16 +1,21 @@
 import { json, type LoaderFunctionArgs } from "@remix-run/node";
 import { searchAll, type SearchOptions } from "~/lib/dal";
+import { requireUser } from "~/lib/auth.server";
 
 /**
  * Search API endpoint for real-time search functionality
  * Supports query parameter searching with type filtering
+ * Requires authentication - userId is obtained from session only
  */
 export async function loader({ request }: LoaderFunctionArgs) {
+  // Get authenticated user - will redirect to login if not authenticated
+  const user = await requireUser(request);
+  const userId = user.id;
+
   const url = new URL(request.url);
   const query = url.searchParams.get("q");
   const types = url.searchParams.get("types");
   const limit = url.searchParams.get("limit");
-  const userId = url.searchParams.get("userId") || "user-nick-001";
 
   // Return empty results if no query provided
   if (!query || query.trim().length === 0) {

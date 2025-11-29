@@ -1,14 +1,16 @@
-import { json } from "@remix-run/node";
+import { json, type LoaderFunctionArgs } from "@remix-run/node";
 import { Link, useLoaderData, useNavigate } from "@remix-run/react";
 import Plus from "lucide-react/dist/esm/icons/plus";
 import { getAssets } from "~/lib/dal";
 import { ErrorBoundary, EmptyStates, ErrorDisplay } from "~/components/ui";
 import { AssetAccordion } from "~/components/ui/asset-accordion";
 import { AssetCategory } from "~/types/enums";
+import { requireUser } from "~/lib/auth.server";
 
-export function loader() {
+export async function loader({ request }: LoaderFunctionArgs) {
   try {
-    const userId = "user-nick-001"; // Default user for now
+    const user = await requireUser(request);
+    const userId = user.id;
     const assets = getAssets(userId);
 
     return json({ assets, error: null });

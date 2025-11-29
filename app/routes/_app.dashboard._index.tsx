@@ -1,4 +1,4 @@
-import { json } from "@remix-run/node";
+import { json, type LoaderFunctionArgs } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "~/components/ui/card";
 import DollarSign from "lucide-react/dist/esm/icons/dollar-sign";
@@ -11,10 +11,11 @@ import { getDashboardStats, getRecentAssets, getTrusts, getAssets } from "~/lib/
 import { calculateAssetAllocation } from "~/lib/financial-calculations";
 import { AssetAllocationChart, NetWorthTrendChart } from "~/components/ui/charts";
 import { formatCurrency } from "~/utils/format";
+import { requireUser } from "~/lib/auth.server";
 
-export function loader() {
-  // For now, we'll use the default user ID from the seed data
-  const userId = "user-nick-001";
+export async function loader({ request }: LoaderFunctionArgs) {
+  const user = await requireUser(request);
+  const userId = user.id;
 
   const dashboardStats = getDashboardStats(userId);
   const recentAssets = getRecentAssets(userId, 4);

@@ -1,4 +1,4 @@
-import { json } from "@remix-run/node";
+import { json, type LoaderFunctionArgs } from "@remix-run/node";
 import { Link, useLoaderData, useNavigate } from "@remix-run/react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "~/components/ui/card";
 import { Button } from "~/components/ui/button";
@@ -14,10 +14,12 @@ import Edit from "lucide-react/dist/esm/icons/edit";
 import Trash2 from "lucide-react/dist/esm/icons/trash-2";
 import { getBeneficiaries, getTrusts } from "~/lib/dal";
 import type { Column } from "~/components/ui/data-table";
+import { requireUser } from "~/lib/auth.server";
 
-export function loader() {
+export async function loader({ request }: LoaderFunctionArgs) {
   try {
-    const userId = "user-nick-001";
+    const user = await requireUser(request);
+    const userId = user.id;
 
     const beneficiaries = getBeneficiaries(userId);
     const trusts = getTrusts(userId);

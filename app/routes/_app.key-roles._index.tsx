@@ -1,4 +1,4 @@
-import { json } from "@remix-run/node";
+import { json, type LoaderFunctionArgs } from "@remix-run/node";
 import { Link, useLoaderData } from "@remix-run/react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "~/components/ui/card";
 import { Button } from "~/components/ui/button";
@@ -13,10 +13,12 @@ import Users from "lucide-react/dist/esm/icons/users";
 import FileText from "lucide-react/dist/esm/icons/file-text";
 import AlertCircle from "lucide-react/dist/esm/icons/alert-circle";
 import { getLegalRoles, getFamilyMembers } from "~/lib/dal";
+import { requireUser } from "~/lib/auth.server";
 
-export async function loader() {
+export async function loader({ request }: LoaderFunctionArgs) {
   try {
-    const userId = "user-nick-001";
+    const user = await requireUser(request);
+    const userId = user.id;
 
     const [legalRoles, familyMembers] = await Promise.all([
       getLegalRoles(userId),

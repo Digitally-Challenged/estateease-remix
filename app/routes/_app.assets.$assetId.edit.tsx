@@ -11,18 +11,31 @@ import {
   formatValidationErrors,
 } from "~/lib/validation/asset-schemas";
 import type { AnyEnhancedAsset } from "~/types/assets";
+import { requireUser } from "~/lib/auth.server";
 
-export async function loader({ params }: LoaderFunctionArgs) {
+// Helper to convert external_id to numeric user_id
+function getUserIdFromExternalId(externalId: string): number {
+  const match = externalId.match(/(\d+)$/);
+  return match ? parseInt(match[1]) : 1;
+}
+
+export async function loader({ params, request }: LoaderFunctionArgs) {
   const { assetId } = params;
   if (!assetId) {
     throw new Response("Asset ID is required", { status: 400 });
   }
 
-  const userId = "user-nick-001"; // Default user for now
+  const user = await requireUser(request);
+  const userId = getUserIdFromExternalId(user.id);
   const [asset, trusts] = await Promise.all([getAsset(assetId), getTrusts(userId)]);
 
   if (!asset) {
     throw new Response("Asset not found", { status: 404 });
+  }
+
+  // AUTHORIZATION: Verify ownership
+  if (asset.user_id !== userId) {
+    throw json({ message: "Forbidden" }, { status: 403 });
   }
 
   return json({ asset, trusts });

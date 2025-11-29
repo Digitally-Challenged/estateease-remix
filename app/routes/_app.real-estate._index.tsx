@@ -1,4 +1,4 @@
-import { json } from "@remix-run/node";
+import { json, type LoaderFunctionArgs } from "@remix-run/node";
 import { Link, useLoaderData } from "@remix-run/react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "~/components/ui/card";
 import { Button } from "~/components/ui/button";
@@ -12,9 +12,11 @@ import BarChart3 from "lucide-react/dist/esm/icons/bar-chart-3";
 import { getAssets } from "~/lib/dal";
 import type { AnyEnhancedAsset } from "~/types/assets";
 import { formatCurrency } from "~/utils/format";
+import { requireUser } from "~/lib/auth.server";
 
-export async function loader() {
-  const userId = "user-nick-001"; // Default user for now
+export async function loader({ request }: LoaderFunctionArgs) {
+  const user = await requireUser(request);
+  const userId = user.id;
   const allAssets = await getAssets(userId);
 
   // Filter for real estate assets only

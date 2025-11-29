@@ -1,4 +1,4 @@
-import { json } from "@remix-run/node";
+import { json, type LoaderFunctionArgs } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "~/components/ui/card";
 import { FamilyCoordinationWidget } from "~/components/ui/family-coordination-widget";
@@ -22,9 +22,11 @@ import Calendar from "lucide-react/dist/esm/icons/calendar";
 import MessageSquare from "lucide-react/dist/esm/icons/message-square";
 import FileText from "lucide-react/dist/esm/icons/file-text";
 import AlertTriangle from "lucide-react/dist/esm/icons/alert-triangle";
+import { requireUser } from "~/lib/auth.server";
 
-export async function loader() {
-  const userId = "user-nick-001"; // Default user for now
+export async function loader({ request }: LoaderFunctionArgs) {
+  const user = await requireUser(request);
+  const userId = user.id;
 
   try {
     const [

@@ -640,6 +640,7 @@ export function getFamilyMember(userId: string, memberId: string): FamilyMember 
     isExecutor: member.is_executor === 1,
     isPowerOfAttorney: member.is_power_of_attorney === 1,
     isHealthcareProxy: member.is_healthcare_proxy === 1,
+    user_id: member.user_id,
     contactInfo: {
       email: member.email || null,
       primaryPhone: member.phone || null,

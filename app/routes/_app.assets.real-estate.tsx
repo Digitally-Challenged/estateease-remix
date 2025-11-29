@@ -1,4 +1,4 @@
-import { json } from "@remix-run/node";
+import { json, type LoaderFunctionArgs } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "~/components/ui/card";
 import { Badge } from "~/components/ui/badge";
@@ -10,9 +10,11 @@ import AlertCircle from "lucide-react/dist/esm/icons/alert-circle";
 import { AssetCategory } from "~/types/enums";
 import { getAssets } from "~/lib/dal";
 import { formatCurrency } from "~/utils/format";
+import { requireUser } from "~/lib/auth.server";
 
-export const loader = async () => {
-  const userId = "user-nick-001"; // Default user for MVP
+export const loader = async ({ request }: LoaderFunctionArgs) => {
+  const user = await requireUser(request);
+  const userId = user.id;
 
   try {
     const assets = await getAssets(userId);

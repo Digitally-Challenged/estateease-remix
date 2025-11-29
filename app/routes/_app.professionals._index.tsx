@@ -1,4 +1,4 @@
-import { json } from "@remix-run/node";
+import { json, type LoaderFunctionArgs } from "@remix-run/node";
 import { useLoaderData, useNavigate } from "@remix-run/react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "~/components/ui/card";
 import { Button } from "~/components/ui/button";
@@ -21,10 +21,12 @@ import Edit from "lucide-react/dist/esm/icons/edit";
 import Trash2 from "lucide-react/dist/esm/icons/trash-2";
 import { getProfessionals } from "~/lib/dal";
 import type { Column } from "~/components/ui/data-table";
+import { requireUser } from "~/lib/auth.server";
 
-export async function loader() {
+export async function loader({ request }: LoaderFunctionArgs) {
   try {
-    const userId = "user-nick-001";
+    const user = await requireUser(request);
+    const userId = user.id;
     const professionals = await getProfessionals(userId);
 
     // Group by professional type

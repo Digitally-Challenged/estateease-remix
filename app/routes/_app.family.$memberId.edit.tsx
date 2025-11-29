@@ -24,6 +24,12 @@ interface ActionData {
   fieldErrors?: Record<string, string>;
 }
 
+// Helper to convert external_id to numeric user_id
+function getUserIdFromExternalId(externalId: string): number {
+  const match = externalId.match(/(\d+)$/);
+  return match ? parseInt(match[1]) : 1;
+}
+
 export async function loader({ request, params }: LoaderFunctionArgs) {
   const user = await requireUser(request);
   const { memberId } = params;
@@ -36,6 +42,12 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
   if (!familyMember) {
     throw new Response("Not Found", { status: 404 });
+  }
+
+  // AUTHORIZATION: Verify ownership
+  const userId = getUserIdFromExternalId(user.id);
+  if (familyMember.user_id !== userId) {
+    throw json({ message: "Forbidden" }, { status: 403 });
   }
 
   return json({ familyMember });

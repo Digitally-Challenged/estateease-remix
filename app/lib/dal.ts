@@ -283,6 +283,7 @@ export interface AssetData {
   isActive: boolean;
   createdAt: string;
   updatedAt: string;
+  user_id?: number;
 }
 
 
@@ -729,8 +730,36 @@ export function getTrusts(userId?: number): Trust[] {
 }
 
 export function getTrust(trustId: string): Trust | null {
-  const trusts = getTrusts();
-  return trusts.find((trust) => trust.id === trustId) || null;
+  const db = getDatabase();
+  const stmt = db.prepare(`
+    SELECT
+      t.*,
+      tt.code as trust_type_code,
+      tt.name as trust_type_name
+    FROM trusts t
+    JOIN trust_types tt ON t.trust_type_id = tt.id
+    WHERE t.trust_id = ? AND t.is_active = 1
+  `);
+
+  const trust = stmt.get(trustId) as any;
+
+  if (!trust) return null;
+
+  return {
+    id: trust.trust_id,
+    name: trust.name,
+    type: trust.trust_type_code?.toLowerCase() as "revocable" | "irrevocable" | undefined,
+    status: "ACTIVE",
+    taxId: trust.tax_id || undefined,
+    dateCreated: trust.date_created,
+    grantor: trust.grantor,
+    purpose: trust.purpose || undefined,
+    trustees: [],
+    beneficiaries: [],
+    notes: trust.purpose || undefined,
+    legalInfo: {},
+    created_by: trust.created_by,
+  };
 }
 
 // =================================
@@ -1143,6 +1172,7 @@ export function getAsset(assetId: string): AssetData | null {
     isActive: asset.is_active === 1,
     createdAt: asset.created_at,
     updatedAt: asset.updated_at,
+    user_id: asset.user_id,
   };
 }
 

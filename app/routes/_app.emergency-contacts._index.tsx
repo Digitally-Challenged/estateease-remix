@@ -1,4 +1,4 @@
-import { json } from "@remix-run/node";
+import { json, type LoaderFunctionArgs } from "@remix-run/node";
 import { useLoaderData, useNavigate } from "@remix-run/react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "~/components/ui/card";
 import { Button } from "~/components/ui/button";
@@ -16,10 +16,12 @@ import Trash2 from "lucide-react/dist/esm/icons/trash-2";
 import UserCheck from "lucide-react/dist/esm/icons/user-check";
 import { getEmergencyContacts } from "~/lib/dal";
 import type { Column } from "~/components/ui/data-table";
+import { requireUser } from "~/lib/auth.server";
 
-export async function loader() {
+export async function loader({ request }: LoaderFunctionArgs) {
   try {
-    const userId = "user-nick-001";
+    const user = await requireUser(request);
+    const userId = user.id;
     const contacts = await getEmergencyContacts(userId);
 
     // Sort contacts by priority

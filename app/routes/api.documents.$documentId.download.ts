@@ -32,6 +32,19 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
     // Build full file path
     const filePath = path.join(UPLOAD_DIR, document.file_path);
 
+    // SECURITY: Prevent path traversal attacks
+    const resolvedPath = path.resolve(filePath);
+    const resolvedUploadDir = path.resolve(UPLOAD_DIR);
+
+    if (!resolvedPath.startsWith(resolvedUploadDir + path.sep)) {
+      return json({ error: "Invalid file path" }, { status: 400 });
+    }
+
+    // Also reject paths with traversal patterns
+    if (document.file_path.includes('..') || document.file_path.startsWith('/')) {
+      return json({ error: "Invalid file path" }, { status: 400 });
+    }
+
     // Check if file exists
     try {
       await stat(filePath);

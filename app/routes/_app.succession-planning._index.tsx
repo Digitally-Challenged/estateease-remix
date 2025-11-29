@@ -1,4 +1,4 @@
-import { json } from "@remix-run/node";
+import { json, type LoaderFunctionArgs } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "~/components/ui/card";
 import { Badge } from "~/components/ui/badge";
@@ -14,10 +14,12 @@ import TrendingUp from "lucide-react/dist/esm/icons/trending-up";
 import { getTrusts, getBeneficiaries, getLegalRoles, getAssets } from "~/lib/dal";
 import { formatCurrency } from "~/utils/format";
 import type { AnyEnhancedAsset } from "~/types/assets";
+import { requireUser } from "~/lib/auth.server";
 
-export async function loader() {
+export async function loader({ request }: LoaderFunctionArgs) {
   try {
-    const userId = "user-nick-001";
+    const user = await requireUser(request);
+    const userId = user.id;
 
     const [trusts, beneficiaries, legalRoles, assets] = await Promise.all([
       getTrusts(userId),

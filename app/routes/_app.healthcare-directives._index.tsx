@@ -1,4 +1,4 @@
-import { json } from "@remix-run/node";
+import { json, type LoaderFunctionArgs } from "@remix-run/node";
 import { Link, useLoaderData } from "@remix-run/react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "~/components/ui/card";
 import { Button } from "~/components/ui/button";
@@ -12,10 +12,12 @@ import Activity from "lucide-react/dist/esm/icons/activity";
 import AlertCircle from "lucide-react/dist/esm/icons/alert-circle";
 import CheckCircle from "lucide-react/dist/esm/icons/check-circle";
 import { getHealthcareDirectives, getFamilyMembers } from "~/lib/dal";
+import { requireUser } from "~/lib/auth.server";
 
-export async function loader() {
+export async function loader({ request }: LoaderFunctionArgs) {
   try {
-    const userId = "user-nick-001";
+    const user = await requireUser(request);
+    const userId = user.id;
 
     const [healthcareDirectives, familyMembers] = await Promise.all([
       getHealthcareDirectives(userId),

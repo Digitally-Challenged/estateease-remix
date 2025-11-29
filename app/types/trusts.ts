@@ -13,6 +13,7 @@ export interface Trust {
   assets?: string[];
   provisions?: TrustProvision[];
   notes?: string;
+  created_by?: number;
 }
 
 export interface Trustee {

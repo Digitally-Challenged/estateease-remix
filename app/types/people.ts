@@ -21,6 +21,7 @@ export interface ContactInfo {
 export interface FamilyMember {
   id: string;
   userId?: string;
+  user_id?: number;
   firstName?: string;
   lastName?: string;
   middleName?: string;

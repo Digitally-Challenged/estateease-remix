@@ -1,4 +1,4 @@
-import { type ActionFunctionArgs, json, redirect } from "@remix-run/node";
+import { type ActionFunctionArgs, type LoaderFunctionArgs, json, redirect } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import { AssetForm } from "~/components/forms/asset-form";
 import { getTrusts } from "~/lib/dal";
@@ -10,9 +10,11 @@ import {
   validateOwnershipType,
   formatValidationErrors,
 } from "~/lib/validation/asset-schemas";
+import { requireUser } from "~/lib/auth.server";
 
-export async function loader() {
-  const userId = "user-nick-001"; // Default user for now
+export async function loader({ request }: LoaderFunctionArgs) {
+  const user = await requireUser(request);
+  const userId = user.id;
   const trusts = await getTrusts(userId);
 
   return json({ trusts });
@@ -157,7 +159,7 @@ export async function action({ request }: ActionFunctionArgs) {
         percentage: validatedData.percentage,
       },
       details: assetDetails,
-      userId: "user-nick-001", // Default user for now
+      userId: (await requireUser(request)).id,
     } as Parameters<typeof createAsset>[0]);
 
     return redirect(`/assets`);

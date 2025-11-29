@@ -5,6 +5,7 @@ import { TrustForm } from "~/components/forms/trust-form";
 import { updateTrustSchema, formatTrustValidationErrors } from "~/lib/validation/trust-schemas";
 import { getTrust } from "~/lib/dal";
 import { updateTrust } from "~/lib/dal-crud";
+import { requireUser } from "~/lib/auth.server";
 import type { ValidatedBeneficiary, ValidatedTrustee } from "~/lib/validation/trust-schemas";
 import type { Trust } from "~/types";
 
@@ -14,7 +15,14 @@ interface ActionData {
   formData?: Record<string, unknown>;
 }
 
-export async function loader({ params }: LoaderFunctionArgs) {
+// Helper to convert external_id to numeric user_id
+function getUserIdFromExternalId(externalId: string): number {
+  const match = externalId.match(/(\d+)$/);
+  return match ? parseInt(match[1]) : 1;
+}
+
+export async function loader({ params, request }: LoaderFunctionArgs) {
+  const user = await requireUser(request);
   const { trustId } = params;
 
   if (!trustId) {
@@ -26,6 +34,12 @@ export async function loader({ params }: LoaderFunctionArgs) {
 
     if (!trust) {
       throw new Response("Trust not found", { status: 404 });
+    }
+
+    // AUTHORIZATION: Verify ownership
+    const userId = getUserIdFromExternalId(user.id);
+    if (trust.created_by !== userId) {
+      throw json({ message: "Forbidden" }, { status: 403 });
     }
 
     return json({ trust });

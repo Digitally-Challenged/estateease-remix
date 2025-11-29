@@ -1,4 +1,4 @@
-import { json } from "@remix-run/node";
+import { json, type LoaderFunctionArgs } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import {
   getDashboardStats,
@@ -9,10 +9,11 @@ import {
   getProfessionals,
 } from "~/lib/dal";
 import IntelligentDashboard from "~/components/dashboard/intelligent-dashboard";
+import { requireUser } from "~/lib/auth.server";
 
-export async function loader() {
-  // For now, we'll use the default user ID from the seed data
-  const userId = "user-nick-001";
+export async function loader({ request }: LoaderFunctionArgs) {
+  const user = await requireUser(request);
+  const userId = user.id;
 
   const [dashboardStats, recentAssets, trusts, assets, familyMembers, professionals] =
     await Promise.all([
