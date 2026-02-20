@@ -30,7 +30,8 @@ export interface FormFieldProps extends React.HTMLAttributes<HTMLDivElement> {
 
 /**
  * FormField wrapper component for consistent form layouts
- * Provides label, error message, and helper text functionality
+ * Provides label, error message, and helper text functionality.
+ * Auto-generates an id to associate the label with its child input.
  *
  * @example
  * ```tsx
@@ -40,7 +41,7 @@ export interface FormFieldProps extends React.HTMLAttributes<HTMLDivElement> {
  *   error={errors.email}
  *   helperText="We'll never share your email"
  * >
- *   <Input type="email" id="email" />
+ *   <Input type="email" />
  * </FormField>
  * ```
  */
@@ -55,15 +56,25 @@ export function FormField({
   children,
   ...props
 }: FormFieldProps) {
+  const generatedId = React.useId();
+  const fieldId = htmlFor || generatedId;
+
+  // Inject the id into the child element so the label's htmlFor matches
+  const childWithId = React.isValidElement(children)
+    ? React.cloneElement(children as React.ReactElement<{ id?: string }>, {
+        id: (children as React.ReactElement<{ id?: string }>).props.id || fieldId,
+      })
+    : children;
+
   return (
     <div className={cn("space-y-1", containerClassName)} {...props}>
       {label && (
-        <label htmlFor={htmlFor} className="block text-sm font-medium text-secondary-700">
+        <label htmlFor={fieldId} className="block text-sm font-medium text-secondary-700">
           {label}
           {required && <span className="ml-1 text-error-500">*</span>}
         </label>
       )}
-      <div className={className}>{children}</div>
+      <div className={className}>{childWithId}</div>
       {error && (
         <p className="text-sm text-error-500" role="alert">
           {error}
