@@ -21,6 +21,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 }
 
 export async function action({ request }: ActionFunctionArgs) {
+  const user = await requireUser(request);
   const formData = await request.formData();
   const intent = formData.get("intent");
 
@@ -159,7 +160,7 @@ export async function action({ request }: ActionFunctionArgs) {
         percentage: validatedData.percentage,
       },
       details: assetDetails,
-      userId: (await requireUser(request)).id,
+      userId: user.id,
     } as Parameters<typeof createAsset>[0]);
 
     return redirect(`/assets`);

@@ -25,7 +25,10 @@ export interface User {
 /**
  * Session configuration
  */
-const sessionSecret = process.env.SESSION_SECRET || "default-secret-key-change-in-production";
+const sessionSecret = process.env.SESSION_SECRET;
+if (!sessionSecret) {
+  throw new Error("SESSION_SECRET environment variable is required");
+}
 
 const { getSession, commitSession, destroySession } = createCookieSessionStorage({
   cookie: {
@@ -43,7 +46,6 @@ const { getSession, commitSession, destroySession } = createCookieSessionStorage
  * Default user ID for demo/development purposes
  * In a real application, this would come from session/authentication
  */
-// const DEFAULT_USER_ID = "user-nick-001";
 
 /**
  * Hash password using bcrypt
