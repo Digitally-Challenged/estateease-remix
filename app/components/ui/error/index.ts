@@ -15,3 +15,5 @@ export {
   type ErrorDisplayProps,
   type ErrorType,
 } from "./error-display";
+
+export { RouteErrorBoundary } from "./route-error-boundary";

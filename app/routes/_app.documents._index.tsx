@@ -8,6 +8,8 @@ import { DocumentUploadModal } from "~/components/ui/document-upload-modal";
 import { DocumentList } from "~/components/documents/document-list";
 import { getDocuments } from "~/lib/dal-crud";
 
+export { RouteErrorBoundary as ErrorBoundary } from "~/components/ui/error/route-error-boundary";
+
 export async function loader({ request }: LoaderFunctionArgs) {
   const url = new URL(request.url);
   const searchParams = url.searchParams;

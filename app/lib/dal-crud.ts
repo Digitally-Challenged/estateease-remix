@@ -611,8 +611,31 @@ export function getFamilyMember(userId: string, memberId: string): FamilyMember 
     WHERE fm.family_member_id = ? AND fm.is_active = 1
   `;
 
+  interface FamilyMemberRow {
+    family_member_id: string;
+    user_id: string;
+    first_name: string;
+    last_name: string;
+    date_of_birth: string | null;
+    email: string | null;
+    phone: string | null;
+    address: string | null;
+    city: string | null;
+    state: string | null;
+    zip: string | null;
+    notes: string | null;
+    is_emergency_contact: number;
+    is_beneficiary: number;
+    is_trustee: number;
+    is_executor: number;
+    is_power_of_attorney: number;
+    is_healthcare_proxy: number;
+    relationship_type_name: string;
+    relationship_type_code: string;
+  }
+
   const stmt = db.prepare(query);
-  const member = stmt.get(memberId) as any;
+  const member = stmt.get(memberId) as FamilyMemberRow | undefined;
 
   if (!member) {
     return null;

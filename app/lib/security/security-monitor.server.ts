@@ -161,6 +161,19 @@ function checkForSuspiciousActivity(event: Omit<SecurityEvent, "id" | "timestamp
 /**
  * Get recent security events
  */
+interface SecurityEventRow {
+  id: string;
+  timestamp: string;
+  event_type: SecurityEvent["event_type"];
+  user_id: string | null;
+  ip_address: string;
+  user_agent: string;
+  success: number;
+  risk_level: SecurityEvent["risk_level"];
+  details: string;
+  session_id: string | null;
+}
+
 export function getRecentSecurityEvents(limit: number = 50): SecurityEvent[] {
   const db = getDatabase();
 
@@ -173,7 +186,7 @@ export function getRecentSecurityEvents(limit: number = 50): SecurityEvent[] {
       LIMIT ?
     `,
       )
-      .all(limit) as any[];
+      .all(limit) as SecurityEventRow[];
 
     return events.map((event) => ({
       id: event.id,

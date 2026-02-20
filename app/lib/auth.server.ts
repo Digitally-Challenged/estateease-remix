@@ -22,6 +22,19 @@ export interface User {
   updated_at: string;
 }
 
+interface LoginUserRow {
+  id: string;
+  external_id: string;
+  email: string;
+  password_hash: string;
+  is_active: number;
+}
+
+interface PasswordUserRow {
+  id: string;
+  password_hash: string;
+}
+
 /**
  * Session configuration
  */
@@ -217,7 +230,7 @@ export async function login(
       WHERE email = ? AND is_active = 1
     `,
       )
-      .get(credentials.email) as any;
+      .get(credentials.email) as LoginUserRow | undefined;
 
     if (!user) {
       return { success: false, error: "Invalid email or password" };
@@ -288,7 +301,7 @@ export async function changePassword(
       WHERE external_id = ? AND is_active = 1
     `,
       )
-      .get(userId) as any;
+      .get(userId) as PasswordUserRow | undefined;
 
     if (!user) {
       return { success: false, error: "User not found" };

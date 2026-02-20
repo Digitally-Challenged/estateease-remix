@@ -741,7 +741,7 @@ export function getTrust(trustId: string): Trust | null {
     WHERE t.trust_id = ? AND t.is_active = 1
   `);
 
-  const trust = stmt.get(trustId) as any;
+  const trust = stmt.get(trustId) as (DatabaseTrust & { trust_type_code: string; trust_type_name: string }) | undefined;
 
   if (!trust) return null;
 

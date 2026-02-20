@@ -7,6 +7,8 @@ import { AssetAccordion } from "~/components/ui/asset-accordion";
 import { AssetCategory } from "~/types/enums";
 import { requireUser } from "~/lib/auth.server";
 
+export { RouteErrorBoundary as ErrorBoundary } from "~/components/ui/error/route-error-boundary";
+
 export async function loader({ request }: LoaderFunctionArgs) {
   try {
     const user = await requireUser(request);
