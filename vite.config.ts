@@ -8,7 +8,7 @@ declare module "@remix-run/node" {
   }
 }
 
-export default defineConfig({
+export default defineConfig(({ isSsrBuild }) => ({
   plugins: [
     remix({
       future: {
@@ -22,26 +22,28 @@ export default defineConfig({
     tsconfigPaths(),
   ],
   build: {
-    rollupOptions: {
-      output: {
-        manualChunks: {
-          // Core UI components that are used everywhere
-          "ui-core": [
-            "@radix-ui/react-dialog",
-            "@radix-ui/react-dropdown-menu",
-            "@radix-ui/react-accordion",
-            "@radix-ui/react-progress",
-            "@headlessui/react",
-          ],
-          // Chart libraries - loaded on demand
-          charts: ["recharts"],
-          // Heavy utility libraries
-          utils: ["clsx", "class-variance-authority", "tailwind-merge", "zod"],
-          // Excel handling - only loaded when needed
-          excel: ["exceljs"],
+    rollupOptions: isSsrBuild
+      ? {}
+      : {
+          output: {
+            manualChunks: {
+              // Core UI components that are used everywhere
+              "ui-core": [
+                "@radix-ui/react-dialog",
+                "@radix-ui/react-dropdown-menu",
+                "@radix-ui/react-accordion",
+                "@radix-ui/react-progress",
+                "@headlessui/react",
+              ],
+              // Chart libraries - loaded on demand
+              charts: ["recharts"],
+              // Heavy utility libraries
+              utils: ["clsx", "class-variance-authority", "tailwind-merge", "zod"],
+              // Excel handling - only loaded when needed
+              excel: ["exceljs"],
+            },
+          },
         },
-      },
-    },
     // Optimize chunk size
     chunkSizeWarningLimit: 1000,
     // Enable minification
@@ -59,4 +61,4 @@ export default defineConfig({
     include: ["react", "react-dom", "lucide-react", "@remix-run/react", "@remix-run/node"],
     exclude: ["exceljs"], // Exclude heavy dependencies from pre-bundling
   },
-});
+}));
