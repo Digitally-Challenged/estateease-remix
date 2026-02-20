@@ -11,7 +11,7 @@ import FileText from "lucide-react/dist/esm/icons/file-text";
 import ArrowLeft from "lucide-react/dist/esm/icons/arrow-left";
 import Edit from "lucide-react/dist/esm/icons/edit";
 import { getAssets } from "~/lib/dal";
-import { formatCurrency } from "~/utils/format";
+import { formatCurrency, formatDate } from "~/utils/format";
 import { requireUser } from "~/lib/auth.server";
 
 // Helper to convert external_id to numeric user_id
@@ -50,15 +50,6 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
 
 export default function PropertyDetail() {
   const { property } = useLoaderData<typeof loader>();
-
-  const formatDate = (dateString: string | undefined) => {
-    if (!dateString) return "N/A";
-    return new Date(dateString).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
-  };
 
   // Type guards for real estate specific fields
   const hasAddress = "address" in property;

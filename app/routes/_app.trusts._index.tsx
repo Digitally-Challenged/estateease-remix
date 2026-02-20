@@ -11,7 +11,7 @@ import CheckCircle from "lucide-react/dist/esm/icons/check-circle";
 import Plus from "lucide-react/dist/esm/icons/plus";
 import Edit from "lucide-react/dist/esm/icons/edit";
 import { getTrusts, getAssetsByTrust } from "~/lib/dal";
-import { formatCurrency } from "~/utils/format";
+import { formatCurrency, formatDate } from "~/utils/format";
 import { requireUser } from "~/lib/auth.server";
 
 export async function loader({ request }: LoaderFunctionArgs) {
@@ -37,14 +37,6 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
 export default function TrustsOverview() {
   const { trusts } = useLoaderData<typeof loader>();
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
-  };
 
   const getTrustStatusColor = (trustType: string) => {
     if (trustType === "REVOCABLE")

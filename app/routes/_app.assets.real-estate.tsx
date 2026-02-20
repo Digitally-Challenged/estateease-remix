@@ -9,7 +9,7 @@ import TrendingUp from "lucide-react/dist/esm/icons/trending-up";
 import AlertCircle from "lucide-react/dist/esm/icons/alert-circle";
 import { AssetCategory } from "~/types/enums";
 import { getAssets } from "~/lib/dal";
-import { formatCurrency } from "~/utils/format";
+import { formatCurrency, formatDate } from "~/utils/format";
 import { requireUser } from "~/lib/auth.server";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
@@ -31,15 +31,6 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 
 export default function RealEstateAssets() {
   const { realEstateAssets } = useLoaderData<typeof loader>();
-
-  const formatDate = (dateString?: string) => {
-    if (!dateString) return "Not available";
-    return new Date(dateString).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
-  };
 
   const getOwnershipDescription = (asset: (typeof realEstateAssets)[0]) => {
     const ownershipType = asset.ownership.type;
