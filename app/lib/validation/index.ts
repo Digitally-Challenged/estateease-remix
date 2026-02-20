@@ -18,7 +18,6 @@ export {
   financialDataSchema,
   validateAssetCategory,
   validateOwnershipType,
-  formatValidationErrors,
   type ValidatedAsset,
   type ValidatedCreateAsset,
   type ValidatedUpdateAsset,
@@ -40,7 +39,6 @@ export {
   trusteeSchema,
   validateTrustType,
   validateTrustStatus,
-  formatTrustValidationErrors,
   type ValidatedTrust,
   type ValidatedCreateTrust,
   type ValidatedUpdateTrust,
@@ -67,7 +65,6 @@ export {
   legalRoleSchema,
   validateRelationship,
   validateLegalRole,
-  formatFamilyValidationErrors,
   type ValidatedFamilyMember,
   type ValidatedProfessionalMember,
   type ValidatedCreateFamilyMember,
@@ -88,7 +85,6 @@ export {
   willFormSchema,
   willStatusSchema,
   validateWillStatus,
-  formatWillValidationErrors,
   type ValidatedWill,
   type ValidatedCreateWill,
   type ValidatedUpdateWill,
@@ -105,7 +101,6 @@ export {
   poaStatusSchema,
   validatePOAType,
   validatePOAStatus,
-  formatPowerOfAttorneyValidationErrors,
   type ValidatedPowerOfAttorney,
   type ValidatedCreatePowerOfAttorney,
   type ValidatedUpdatePowerOfAttorney,
@@ -135,7 +130,6 @@ export {
   phoneSchema,
   validateEmail,
   validatePassword,
-  formatAuthValidationErrors,
   type ValidatedRegister,
   type ValidatedLogin,
   type ValidatedPasswordResetRequest,
@@ -153,22 +147,18 @@ export {
   type ValidatedProfileUpdateForm,
 } from "./auth-schemas";
 
-// Additional validation error formatters
-export const formatProfileValidationErrors = (error: z.ZodError) => {
-  const formatted: Record<string, string[]> = {};
+// Shared validation helpers (non-circular)
+export { createEnumValidator } from "./helpers";
+import { formatValidationErrors } from "./helpers";
+export { formatValidationErrors };
 
-  if (error.issues) {
-    for (const issue of error.issues) {
-      const path = issue.path.join(".");
-      if (!formatted[path]) {
-        formatted[path] = [];
-      }
-      formatted[path].push(issue.message);
-    }
-  }
-
-  return formatted;
-};
+// Backwards-compatible aliases (all point to same function)
+export { formatValidationErrors as formatProfileValidationErrors };
+export { formatValidationErrors as formatAuthValidationErrors };
+export { formatValidationErrors as formatTrustValidationErrors };
+export { formatValidationErrors as formatFamilyValidationErrors };
+export { formatValidationErrors as formatWillValidationErrors };
+export { formatValidationErrors as formatPowerOfAttorneyValidationErrors };
 
 /**
  * Common validation utilities
@@ -190,24 +180,6 @@ export interface ValidationResult<T> {
   errors?: Record<string, string[]>;
 }
 
-/**
- * Format validation errors from Zod error
- */
-function formatValidationErrors(error: {
-  issues: Array<{ path: (string | number)[]; message: string }>;
-}): Record<string, string[]> {
-  const formatted: Record<string, string[]> = {};
-
-  for (const issue of error.issues) {
-    const path = issue.path.join(".");
-    if (!formatted[path]) {
-      formatted[path] = [];
-    }
-    formatted[path].push(issue.message);
-  }
-
-  return formatted;
-}
 
 /**
  * Create a validation result from a Zod parse attempt

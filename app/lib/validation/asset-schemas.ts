@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { createEnumValidator } from "./helpers";
 import {
   AssetCategory,
   OwnershipType,
@@ -352,36 +353,5 @@ export type ValidatedBulkAsset = z.infer<typeof bulkAssetSchema>;
 /**
  * Validation helper functions
  */
-export const validateAssetCategory = (category: string): AssetCategory => {
-  const result = assetCategorySchema.safeParse(category);
-  if (!result.success) {
-    throw new Error(`Invalid asset category: ${category}`);
-  }
-  return result.data;
-};
-
-export const validateOwnershipType = (ownershipType: string): OwnershipType => {
-  const result = ownershipTypeSchema.safeParse(ownershipType);
-  if (!result.success) {
-    throw new Error(`Invalid ownership type: ${ownershipType}`);
-  }
-  return result.data;
-};
-
-/**
- * Validation error formatter
- * Formats Zod validation errors for user-friendly display
- */
-export const formatValidationErrors = (error: z.ZodError) => {
-  const formatted: Record<string, string[]> = {};
-
-  for (const issue of error.issues) {
-    const path = issue.path.join(".");
-    if (!formatted[path]) {
-      formatted[path] = [];
-    }
-    formatted[path].push(issue.message);
-  }
-
-  return formatted;
-};
+export const validateAssetCategory = createEnumValidator(assetCategorySchema, "asset category");
+export const validateOwnershipType = createEnumValidator(ownershipTypeSchema, "ownership type");

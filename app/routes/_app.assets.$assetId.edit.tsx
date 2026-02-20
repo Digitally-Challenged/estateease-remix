@@ -9,7 +9,7 @@ import {
   validateAssetCategory,
   validateOwnershipType,
   formatValidationErrors,
-} from "~/lib/validation/asset-schemas";
+} from "~/lib/validation";
 import type { AnyEnhancedAsset } from "~/types/assets";
 import { requireUser } from "~/lib/auth.server";
 

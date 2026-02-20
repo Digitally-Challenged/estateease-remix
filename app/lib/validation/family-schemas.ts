@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { createEnumValidator } from "./helpers";
 
 /**
  * Family member relationship validation schema
@@ -420,35 +421,6 @@ export type ValidatedContactInfo = z.infer<typeof contactInfoSchema>;
 /**
  * Validation helper functions
  */
-export const validateRelationship = (relationship: string) => {
-  const result = relationshipSchema.safeParse(relationship);
-  if (!result.success) {
-    throw new Error(`Invalid relationship: ${relationship}`);
-  }
-  return result.data;
-};
+export const validateRelationship = createEnumValidator(relationshipSchema, "relationship");
 
-export const validateLegalRole = (role: string) => {
-  const result = legalRoleSchema.safeParse(role);
-  if (!result.success) {
-    throw new Error(`Invalid legal role: ${role}`);
-  }
-  return result.data;
-};
-
-/**
- * Family validation error formatter
- */
-export const formatFamilyValidationErrors = (error: z.ZodError) => {
-  const formatted: Record<string, string[]> = {};
-
-  for (const issue of error.issues) {
-    const path = issue.path.join(".");
-    if (!formatted[path]) {
-      formatted[path] = [];
-    }
-    formatted[path].push(issue.message);
-  }
-
-  return formatted;
-};
+export const validateLegalRole = createEnumValidator(legalRoleSchema, "legal role");

@@ -2,7 +2,7 @@ import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import { useActionData, useLoaderData } from "@remix-run/react";
 import { TrustForm } from "~/components/forms/trust-form";
-import { updateTrustSchema, formatTrustValidationErrors } from "~/lib/validation/trust-schemas";
+import { updateTrustSchema, formatTrustValidationErrors } from "~/lib/validation";
 import { getTrust } from "~/lib/dal";
 import { updateTrust } from "~/lib/dal-crud";
 import { requireUser } from "~/lib/auth.server";

@@ -15,6 +15,7 @@ import Save from "lucide-react/dist/esm/icons/save";
 import Eye from "lucide-react/dist/esm/icons/eye";
 import EyeOff from "lucide-react/dist/esm/icons/eye-off";
 import { useState } from "react";
+import { z } from "zod";
 import {
   profileUpdateFormSchema,
   changePasswordFormSchema,
@@ -116,8 +117,8 @@ export async function action({ request }: ActionFunctionArgs) {
         );
       }
     }
-  } catch (error: any) {
-    if (error.name === "ZodError") {
+  } catch (error: unknown) {
+    if (error instanceof z.ZodError) {
       return json(
         {
           type: actionType,

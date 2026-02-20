@@ -7,6 +7,7 @@ import { Input } from "~/components/ui/forms/input";
 import { Button } from "~/components/ui/button";
 import { Alert, AlertDescription } from "~/components/ui/alert";
 import { getUser } from "~/lib/auth.server";
+import { z } from "zod";
 import { passwordResetRequestFormSchema, formatAuthValidationErrors } from "~/lib/validation";
 import ArrowLeft from "lucide-react/dist/esm/icons/arrow-left";
 import CheckCircle from "lucide-react/dist/esm/icons/check-circle";
@@ -45,8 +46,8 @@ export async function action({ request }: ActionFunctionArgs) {
     // 4. Send reset email
 
     return json({ success: true, fieldErrors: null });
-  } catch (error: any) {
-    if (error.name === "ZodError") {
+  } catch (error: unknown) {
+    if (error instanceof z.ZodError) {
       return json({ error: null, fieldErrors: formatAuthValidationErrors(error) }, { status: 400 });
     }
 

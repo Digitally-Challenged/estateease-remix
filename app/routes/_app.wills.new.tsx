@@ -15,6 +15,7 @@ import ArrowLeft from "lucide-react/dist/esm/icons/arrow-left";
 import Plus from "lucide-react/dist/esm/icons/plus";
 import Trash2 from "lucide-react/dist/esm/icons/trash-2";
 import { useState } from "react";
+import { z } from "zod";
 import { willFormSchema, formatWillValidationErrors } from "~/lib/validation";
 
 interface ActionData {
@@ -80,8 +81,8 @@ export async function action({ request }: ActionFunctionArgs) {
     });
 
     return redirect("/wills");
-  } catch (error: any) {
-    if (error.name === "ZodError") {
+  } catch (error: unknown) {
+    if (error instanceof z.ZodError) {
       return json(
         {
           error: "Please correct the validation errors below.",

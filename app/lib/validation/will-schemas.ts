@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { createEnumValidator } from "./helpers";
 
 /**
  * Will status validation schema
@@ -154,27 +155,4 @@ export type ValidatedWillForm = z.infer<typeof willFormSchema>;
 /**
  * Validation helper functions
  */
-export const validateWillStatus = (status: string) => {
-  const result = willStatusSchema.safeParse(status);
-  if (!result.success) {
-    throw new Error(`Invalid will status: ${status}`);
-  }
-  return result.data;
-};
-
-/**
- * Will validation error formatter
- */
-export const formatWillValidationErrors = (error: z.ZodError) => {
-  const formatted: Record<string, string[]> = {};
-
-  for (const issue of error.issues) {
-    const path = issue.path.join(".");
-    if (!formatted[path]) {
-      formatted[path] = [];
-    }
-    formatted[path].push(issue.message);
-  }
-
-  return formatted;
-};
+export const validateWillStatus = createEnumValidator(willStatusSchema, "will status");

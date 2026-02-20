@@ -8,6 +8,7 @@ import { Input } from "~/components/ui/forms/input";
 import { Button } from "~/components/ui/button";
 import { Alert, AlertDescription } from "~/components/ui/alert";
 import { getUser, login, createUserSession } from "~/lib/auth.server";
+import { z } from "zod";
 import { loginFormSchema, formatAuthValidationErrors } from "~/lib/validation";
 import Eye from "lucide-react/dist/esm/icons/eye";
 import EyeOff from "lucide-react/dist/esm/icons/eye-off";
@@ -47,8 +48,8 @@ export async function action({ request }: ActionFunctionArgs) {
     }
 
     return createUserSession(result.userId!, "/dashboard");
-  } catch (error: any) {
-    if (error.name === "ZodError") {
+  } catch (error: unknown) {
+    if (error instanceof z.ZodError) {
       return json({ error: null, fieldErrors: formatAuthValidationErrors(error) }, { status: 400 });
     }
 

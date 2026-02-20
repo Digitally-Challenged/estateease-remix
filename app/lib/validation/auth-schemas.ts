@@ -265,19 +265,3 @@ export const validatePassword = (password: string) => {
   return result.data;
 };
 
-/**
- * Authentication validation error formatter
- */
-export const formatAuthValidationErrors = (error: z.ZodError) => {
-  const formatted: Record<string, string[]> = {};
-
-  for (const issue of error.issues) {
-    const path = issue.path.join(".");
-    if (!formatted[path]) {
-      formatted[path] = [];
-    }
-    formatted[path].push(issue.message);
-  }
-
-  return formatted;
-};

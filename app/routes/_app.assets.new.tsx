@@ -9,7 +9,7 @@ import {
   validateAssetCategory,
   validateOwnershipType,
   formatValidationErrors,
-} from "~/lib/validation/asset-schemas";
+} from "~/lib/validation";
 import { requireUser } from "~/lib/auth.server";
 
 export async function loader({ request }: LoaderFunctionArgs) {

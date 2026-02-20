@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { createEnumValidator } from "./helpers";
 
 /**
  * Power of Attorney type validation schema
@@ -202,35 +203,5 @@ export type ValidatedPowerOfAttorneyForm = z.infer<typeof powerOfAttorneyFormSch
 /**
  * Validation helper functions
  */
-export const validatePOAType = (type: string) => {
-  const result = poaTypeSchema.safeParse(type);
-  if (!result.success) {
-    throw new Error(`Invalid POA type: ${type}`);
-  }
-  return result.data;
-};
-
-export const validatePOAStatus = (status: string) => {
-  const result = poaStatusSchema.safeParse(status);
-  if (!result.success) {
-    throw new Error(`Invalid POA status: ${status}`);
-  }
-  return result.data;
-};
-
-/**
- * Power of Attorney validation error formatter
- */
-export const formatPowerOfAttorneyValidationErrors = (error: z.ZodError) => {
-  const formatted: Record<string, string[]> = {};
-
-  for (const issue of error.issues) {
-    const path = issue.path.join(".");
-    if (!formatted[path]) {
-      formatted[path] = [];
-    }
-    formatted[path].push(issue.message);
-  }
-
-  return formatted;
-};
+export const validatePOAType = createEnumValidator(poaTypeSchema, "POA type");
+export const validatePOAStatus = createEnumValidator(poaStatusSchema, "POA status");

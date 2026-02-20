@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { createEnumValidator } from "./helpers";
 
 /**
  * Trust type validation schema
@@ -230,35 +231,5 @@ export type ValidatedTrustee = z.infer<typeof trusteeSchema>;
 /**
  * Validation helper functions
  */
-export const validateTrustType = (type: string) => {
-  const result = trustTypeSchema.safeParse(type);
-  if (!result.success) {
-    throw new Error(`Invalid trust type: ${type}`);
-  }
-  return result.data;
-};
-
-export const validateTrustStatus = (status: string) => {
-  const result = trustStatusSchema.safeParse(status);
-  if (!result.success) {
-    throw new Error(`Invalid trust status: ${status}`);
-  }
-  return result.data;
-};
-
-/**
- * Trust validation error formatter
- */
-export const formatTrustValidationErrors = (error: z.ZodError) => {
-  const formatted: Record<string, string[]> = {};
-
-  for (const issue of error.issues) {
-    const path = issue.path.join(".");
-    if (!formatted[path]) {
-      formatted[path] = [];
-    }
-    formatted[path].push(issue.message);
-  }
-
-  return formatted;
-};
+export const validateTrustType = createEnumValidator(trustTypeSchema, "trust type");
+export const validateTrustStatus = createEnumValidator(trustStatusSchema, "trust status");
