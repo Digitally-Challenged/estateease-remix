@@ -92,10 +92,10 @@ export default function NewEmergencyContact() {
     <div className="mx-auto max-w-2xl space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+          <h1 className="text-3xl font-bold text-gray-900">
             Add Emergency Contact
           </h1>
-          <p className="mt-1 text-gray-600 dark:text-gray-400">Add a new emergency contact</p>
+          <p className="mt-1 text-gray-600">Add a new emergency contact</p>
         </div>
         <Button variant="outline" onClick={handleCancel}>
           <X className="mr-2 h-4 w-4" />
@@ -104,8 +104,8 @@ export default function NewEmergencyContact() {
       </div>
 
       {actionData?.error && (
-        <div className="rounded-md border border-red-200 bg-red-50 p-4 dark:border-red-700 dark:bg-red-900/20">
-          <p className="text-red-600 dark:text-red-400">{actionData.error}</p>
+        <div className="rounded-md border border-red-200 bg-red-50 p-4">
+          <p className="text-red-600">{actionData.error}</p>
         </div>
       )}
 
@@ -218,7 +218,7 @@ export default function NewEmergencyContact() {
                   />
                   <label
                     htmlFor="medicalAuthority"
-                    className="text-sm text-gray-700 dark:text-gray-300"
+                    className="text-sm text-gray-700"
                   >
                     Can make medical decisions
                   </label>
@@ -239,7 +239,7 @@ export default function NewEmergencyContact() {
                   />
                   <label
                     htmlFor="canMakeDecisions"
-                    className="text-sm text-gray-700 dark:text-gray-300"
+                    className="text-sm text-gray-700"
                   >
                     General decisions
                   </label>

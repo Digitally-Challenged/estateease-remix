@@ -72,9 +72,9 @@ interface AnalyticsResults {
 
 // Extract static badge variant logic outside component
 const getRiskBadgeClass = (riskScore: number) => {
-  if (riskScore > 70) return "text-red-600 dark:text-red-400";
-  if (riskScore > 40) return "text-yellow-600 dark:text-yellow-400";
-  return "text-green-600 dark:text-green-400";
+  if (riskScore > 70) return "text-red-600";
+  if (riskScore > 40) return "text-yellow-600";
+  return "text-green-600";
 };
 
 const getRiskLabel = (riskScore: number) => {
@@ -152,11 +152,11 @@ function IntelligentDashboardComponent({
       {/* Header with Intelligent Controls */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="flex items-center text-3xl font-bold text-gray-900 dark:text-gray-100">
-            <Brain className="mr-3 h-8 w-8 text-blue-600 dark:text-blue-400" />
+          <h1 className="flex items-center text-3xl font-bold text-gray-900">
+            <Brain className="mr-3 h-8 w-8 text-blue-600" />
             Intelligent Estate Dashboard
           </h1>
-          <p className="text-gray-600 dark:text-gray-400">
+          <p className="text-gray-600">
             AI-powered analytics with swarm coordination
           </p>
         </div>
@@ -207,30 +207,30 @@ function IntelligentDashboardComponent({
       </div>
 
       {/* Coordination Status Bar */}
-      <Card className="border-blue-200 dark:border-blue-800">
+      <Card className="border-blue-200">
         <CardContent className="p-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-6">
               <div className="flex items-center space-x-2">
-                <Users className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+                <Users className="h-4 w-4 text-blue-600" />
                 <span className="text-sm font-medium">Active Agents:</span>
                 <Badge variant="default">{dashboardState.coordination.activeAgents}</Badge>
               </div>
 
               <div className="flex items-center space-x-2">
-                <Activity className="h-4 w-4 text-green-600 dark:text-green-400" />
+                <Activity className="h-4 w-4 text-green-600" />
                 <span className="text-sm font-medium">Completed Today:</span>
                 <Badge variant="secondary">{coordinationStatus.completedToday}</Badge>
               </div>
 
               <div className="flex items-center space-x-2">
-                <Clock className="h-4 w-4 text-orange-600 dark:text-orange-400" />
+                <Clock className="h-4 w-4 text-orange-600" />
                 <span className="text-sm font-medium">Avg Time:</span>
                 <Badge variant="outline">{coordinationStatus.averageExecutionTime}ms</Badge>
               </div>
 
               <div className="flex items-center space-x-2">
-                <TrendingUp className="h-4 w-4 text-purple-600 dark:text-purple-400" />
+                <TrendingUp className="h-4 w-4 text-purple-600" />
                 <span className="text-sm font-medium">Cache Efficiency:</span>
                 <Badge variant="outline">{coordinationStatus.cacheEfficiency}%</Badge>
               </div>
@@ -239,7 +239,7 @@ function IntelligentDashboardComponent({
             {dashboardState.loading && (
               <div className="flex items-center space-x-2">
                 <div className="h-4 w-4 animate-spin rounded-full border-2 border-blue-600 border-t-transparent"></div>
-                <span className="text-sm text-blue-600 dark:text-blue-400">Processing...</span>
+                <span className="text-sm text-blue-600">Processing...</span>
               </div>
             )}
           </div>
@@ -255,13 +255,13 @@ function IntelligentDashboardComponent({
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">Total Net Worth</CardTitle>
-                  <TrendingUp className="h-4 w-4 text-green-600 dark:text-green-400" />
+                  <TrendingUp className="h-4 w-4 text-green-600" />
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">
                     {formatCurrency(analyticsResults.summary.netWorth.total)}
                   </div>
-                  <p className="text-xs text-green-600 dark:text-green-400">
+                  <p className="text-xs text-green-600">
                     +
                     {(
                       (analyticsResults.summary.netWorth.growth.oneYear /
@@ -300,7 +300,7 @@ function IntelligentDashboardComponent({
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">Liquidity Ratio</CardTitle>
-                  <Activity className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+                  <Activity className="h-4 w-4 text-blue-600" />
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">
@@ -309,10 +309,10 @@ function IntelligentDashboardComponent({
                   <p
                     className={`text-xs ${
                       analyticsResults.summary.liquidity?.riskLevel === "high"
-                        ? "text-red-600 dark:text-red-400"
+                        ? "text-red-600"
                         : analyticsResults.summary.liquidity?.riskLevel === "medium"
-                          ? "text-yellow-600 dark:text-yellow-400"
-                          : "text-green-600 dark:text-green-400"
+                          ? "text-yellow-600"
+                          : "text-green-600"
                     }`}
                   >
                     {analyticsResults.summary.liquidity?.riskLevel || "unknown"} risk
@@ -325,13 +325,13 @@ function IntelligentDashboardComponent({
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">Estate Tax</CardTitle>
-                  <AlertCircle className="h-4 w-4 text-orange-600 dark:text-orange-400" />
+                  <AlertCircle className="h-4 w-4 text-orange-600" />
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">
                     {formatCurrency(analyticsResults.detailed.estateTax?.estimatedTax || 0)}
                   </div>
-                  <p className="text-xs text-orange-600 dark:text-orange-400">
+                  <p className="text-xs text-orange-600">
                     {(analyticsResults.detailed.estateTax?.effectiveRate || 0).toFixed(1)}% effective rate
                   </p>
                 </CardContent>
@@ -345,7 +345,7 @@ function IntelligentDashboardComponent({
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center">
-                  <Brain className="mr-2 h-5 w-5 text-blue-600 dark:text-blue-400" />
+                  <Brain className="mr-2 h-5 w-5 text-blue-600" />
                   AI Recommendations
                 </CardTitle>
                 <CardDescription>
@@ -357,12 +357,12 @@ function IntelligentDashboardComponent({
                   {analyticsResults.recommendations.length > 0 ? (
                     analyticsResults.recommendations.map((recommendation, index) => (
                       <div key={index} className="flex items-start space-x-3">
-                        <CheckCircle className="mt-0.5 h-4 w-4 flex-shrink-0 text-green-600 dark:text-green-400" />
+                        <CheckCircle className="mt-0.5 h-4 w-4 flex-shrink-0 text-green-600" />
                         <span className="text-sm">{recommendation}</span>
                       </div>
                     ))
                   ) : (
-                    <div className="text-sm text-gray-500 dark:text-gray-400">
+                    <div className="text-sm text-gray-500">
                       No recommendations at this time. Your estate plan looks well optimized!
                     </div>
                   )}
@@ -374,7 +374,7 @@ function IntelligentDashboardComponent({
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center">
-                  <AlertCircle className="mr-2 h-5 w-5 text-orange-600 dark:text-orange-400" />
+                  <AlertCircle className="mr-2 h-5 w-5 text-orange-600" />
                   System Alerts
                 </CardTitle>
                 <CardDescription>Important notifications and action items</CardDescription>
@@ -384,12 +384,12 @@ function IntelligentDashboardComponent({
                   {analyticsResults.alerts.length > 0 ? (
                     analyticsResults.alerts.map((alert, index) => (
                       <div key={index} className="flex items-start space-x-3">
-                        <AlertCircle className="mt-0.5 h-4 w-4 flex-shrink-0 text-orange-600 dark:text-orange-400" />
+                        <AlertCircle className="mt-0.5 h-4 w-4 flex-shrink-0 text-orange-600" />
                         <span className="text-sm">{alert}</span>
                       </div>
                     ))
                   ) : (
-                    <div className="text-sm text-gray-500 dark:text-gray-400">
+                    <div className="text-sm text-gray-500">
                       No alerts. All systems operating normally.
                     </div>
                   )}
@@ -402,7 +402,7 @@ function IntelligentDashboardComponent({
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <Settings className="mr-2 h-5 w-5 text-purple-600 dark:text-purple-400" />
+                <Settings className="mr-2 h-5 w-5 text-purple-600" />
                 Performance Insights
               </CardTitle>
               <CardDescription>System optimization recommendations</CardDescription>
@@ -435,7 +435,7 @@ function IntelligentDashboardComponent({
                   <h4 className="mb-2 font-medium">Optimizations</h4>
                   <div className="space-y-1">
                     {performanceInsights.recommendedOptimizations.slice(0, 2).map((opt, index) => (
-                      <div key={index} className="text-xs text-gray-600 dark:text-gray-400">
+                      <div key={index} className="text-xs text-gray-600">
                         {opt}
                       </div>
                     ))}

@@ -143,23 +143,23 @@ export default function EditFamilyMember() {
       <div className="flex items-center gap-4">
         <button
           onClick={() => navigate(-1)}
-          className="rounded-lg p-2 transition-colors hover:bg-gray-100 dark:hover:bg-gray-800"
+          className="rounded-lg p-2 transition-colors hover:bg-gray-100"
         >
           <ArrowLeft className="h-5 w-5" />
         </button>
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+          <h1 className="text-3xl font-bold text-gray-900">
             Edit Family Member
           </h1>
-          <p className="mt-1 text-gray-600 dark:text-gray-400">
+          <p className="mt-1 text-gray-600">
             Update information for {familyMember.name}
           </p>
         </div>
       </div>
 
       {actionData?.error && (
-        <div className="rounded-lg border border-red-200 bg-red-50 p-4 dark:border-red-800 dark:bg-red-900/20">
-          <p className="text-red-800 dark:text-red-200">{actionData.error}</p>
+        <div className="rounded-lg border border-red-200 bg-red-50 p-4">
+          <p className="text-red-800">{actionData.error}</p>
         </div>
       )}
 
@@ -303,7 +303,7 @@ export default function EditFamilyMember() {
               />
               <label
                 htmlFor="isEmergencyContact"
-                className="text-sm font-medium text-gray-700 dark:text-gray-300"
+                className="text-sm font-medium text-gray-700"
               >
                 Emergency Contact
               </label>
@@ -319,14 +319,14 @@ export default function EditFamilyMember() {
               />
               <label
                 htmlFor="showLegalRoles"
-                className="text-sm font-medium text-gray-700 dark:text-gray-300"
+                className="text-sm font-medium text-gray-700"
               >
                 Has Legal Roles in Estate Planning
               </label>
             </div>
 
             {showLegalRoles && (
-              <div className="ml-6 space-y-3 rounded-lg bg-gray-50 p-4 dark:bg-gray-800">
+              <div className="ml-6 space-y-3 rounded-lg bg-gray-50 p-4">
                 <div className="flex items-center gap-2">
                   <input
                     type="checkbox"
@@ -338,7 +338,7 @@ export default function EditFamilyMember() {
                   />
                   <label
                     htmlFor="isBeneficiary"
-                    className="text-sm text-gray-700 dark:text-gray-300"
+                    className="text-sm text-gray-700"
                   >
                     Beneficiary
                   </label>
@@ -353,7 +353,7 @@ export default function EditFamilyMember() {
                     defaultChecked={familyMember.isTrustee}
                     className="h-4 w-4 rounded border-gray-300 text-primary-600"
                   />
-                  <label htmlFor="isTrustee" className="text-sm text-gray-700 dark:text-gray-300">
+                  <label htmlFor="isTrustee" className="text-sm text-gray-700">
                     Trustee
                   </label>
                 </div>
@@ -367,7 +367,7 @@ export default function EditFamilyMember() {
                     defaultChecked={familyMember.isExecutor}
                     className="h-4 w-4 rounded border-gray-300 text-primary-600"
                   />
-                  <label htmlFor="isExecutor" className="text-sm text-gray-700 dark:text-gray-300">
+                  <label htmlFor="isExecutor" className="text-sm text-gray-700">
                     Executor
                   </label>
                 </div>
@@ -383,7 +383,7 @@ export default function EditFamilyMember() {
                   />
                   <label
                     htmlFor="isPowerOfAttorney"
-                    className="text-sm text-gray-700 dark:text-gray-300"
+                    className="text-sm text-gray-700"
                   >
                     Power of Attorney
                   </label>
@@ -400,7 +400,7 @@ export default function EditFamilyMember() {
                   />
                   <label
                     htmlFor="isHealthcareProxy"
-                    className="text-sm text-gray-700 dark:text-gray-300"
+                    className="text-sm text-gray-700"
                   >
                     Healthcare Proxy
                   </label>

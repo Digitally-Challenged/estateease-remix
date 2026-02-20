@@ -61,7 +61,7 @@ export default function DocumentsPage() {
       <div className="flex items-start justify-between">
         <div>
           <h1 className="text-2xl font-bold">Documents</h1>
-          <p className="mt-1 text-gray-600 dark:text-gray-400 dark:text-gray-500">
+          <p className="mt-1 text-gray-600">
             Manage your estate planning documents
           </p>
         </div>
@@ -69,8 +69,8 @@ export default function DocumentsPage() {
       </div>
 
       {error && (
-        <div className="rounded-md border border-red-200 bg-red-50 p-4 dark:border-red-700 dark:bg-red-900/20">
-          <p className="text-red-600 dark:text-red-400">{error}</p>
+        <div className="rounded-md border border-red-200 bg-red-50 p-4">
+          <p className="text-red-600">{error}</p>
         </div>
       )}
 

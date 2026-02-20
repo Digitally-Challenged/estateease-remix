@@ -230,20 +230,20 @@ export function AIChatbot({
             <Brain className="h-6 w-6 text-indigo-600" />
           </div>
         </div>
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+        <h1 className="text-3xl font-bold text-gray-900">
           AI Estate Planning Advisor
         </h1>
-        <p className="mt-2 text-gray-600 dark:text-gray-400">
+        <p className="mt-2 text-gray-600">
           Get personalized guidance powered by advanced AI
         </p>
       </div>
 
       {/* Chat Interface */}
       <Card className="flex h-[600px] flex-col">
-        <CardHeader className="border-b border-gray-200 pb-4 dark:border-gray-700">
+        <CardHeader className="border-b border-gray-200 pb-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
-              <MessageSquare className="h-5 w-5 text-gray-600 dark:text-gray-400" />
+              <MessageSquare className="h-5 w-5 text-gray-600" />
               <CardTitle className="text-lg">Chat with AI Advisor</CardTitle>
             </div>
             <Button onClick={clearConversation} variant="outline" size="sm">
@@ -283,14 +283,14 @@ export function AIChatbot({
                       className={`rounded-lg p-4 ${
                         message.role === "user"
                           ? "bg-blue-600 text-white"
-                          : "bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-gray-100"
+                          : "bg-gray-100 text-gray-900"
                       }`}
                     >
                       <p className="text-sm leading-relaxed">{message.content}</p>
 
                       {/* Assistant message metadata */}
                       {message.role === "assistant" && message.analysis && (
-                        <div className="mt-3 border-t border-gray-200 pt-3 dark:border-gray-600">
+                        <div className="mt-3 border-t border-gray-200 pt-3">
                           <div className="flex items-center space-x-2">
                             {message.confidence && (
                               <Badge variant="outline" className="text-xs">
@@ -352,10 +352,10 @@ export function AIChatbot({
                   <div className="rounded-full bg-indigo-100 p-2 text-indigo-600">
                     <Bot className="h-4 w-4" />
                   </div>
-                  <div className="rounded-lg bg-gray-100 p-4 dark:bg-gray-800">
+                  <div className="rounded-lg bg-gray-100 p-4">
                     <div className="flex items-center space-x-2">
                       <Loader2 className="h-4 w-4 animate-spin" />
-                      <span className="text-sm text-gray-600 dark:text-gray-400">
+                      <span className="text-sm text-gray-600">
                         AI is thinking...
                       </span>
                     </div>
@@ -369,7 +369,7 @@ export function AIChatbot({
         </CardContent>
 
         {/* Input */}
-        <div className="border-t border-gray-200 p-4 dark:border-gray-700">
+        <div className="border-t border-gray-200 p-4">
           <div className="flex space-x-2">
             <Input
               value={inputValue}
@@ -389,7 +389,7 @@ export function AIChatbot({
       {/* Suggested Questions */}
       {messages.length <= 1 && (
         <div>
-          <h2 className="mb-4 text-lg font-semibold text-gray-900 dark:text-gray-100">
+          <h2 className="mb-4 text-lg font-semibold text-gray-900">
             Suggested Questions
           </h2>
           <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
@@ -399,7 +399,7 @@ export function AIChatbot({
                 <Card key={category.category}>
                   <CardHeader className="pb-3">
                     <div className="flex items-center space-x-2">
-                      <Icon className="h-4 w-4 text-gray-600 dark:text-gray-400" />
+                      <Icon className="h-4 w-4 text-gray-600" />
                       <CardTitle className="text-sm">{category.category}</CardTitle>
                     </div>
                   </CardHeader>
@@ -408,7 +408,7 @@ export function AIChatbot({
                       {category.questions.map((question, index) => (
                         <li key={index}>
                           <button
-                            className="text-left text-sm text-blue-600 hover:text-blue-800 hover:underline dark:text-blue-400 dark:hover:text-blue-200"
+                            className="text-left text-sm text-blue-600 hover:text-blue-800 hover:underline"
                             onClick={() => setInputValue(question)}
                           >
                             {question}

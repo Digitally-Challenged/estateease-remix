@@ -38,16 +38,16 @@ export function ProgressBar({
     <div className={cn("space-y-1", className)}>
       {(showLabel || label) && (
         <div className="flex items-center justify-between text-sm">
-          {label && <span className="font-medium text-gray-700 dark:text-gray-300">{label}</span>}
+          {label && <span className="font-medium text-gray-700">{label}</span>}
           {showLabel && (
-            <span className="text-gray-500 dark:text-gray-400">{Math.round(percentage)}%</span>
+            <span className="text-gray-500">{Math.round(percentage)}%</span>
           )}
         </div>
       )}
 
       <div
         className={cn(
-          "w-full overflow-hidden rounded-full bg-gray-200 dark:bg-gray-700",
+          "w-full overflow-hidden rounded-full bg-gray-200",
           sizeStyles[size],
         )}
       >

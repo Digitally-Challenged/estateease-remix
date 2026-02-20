@@ -79,9 +79,9 @@ export default function PropertyDetail() {
 
       {/* Property Title */}
       <div>
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">{property.name}</h1>
+        <h1 className="text-3xl font-bold text-gray-900">{property.name}</h1>
         {hasAddress && property.address && (
-          <div className="mt-2 flex items-center text-gray-600 dark:text-gray-400 dark:text-gray-500">
+          <div className="mt-2 flex items-center text-gray-600">
             <MapPin className="mr-2 h-4 w-4" />
             <span>{property.address || "Address not available"}</span>
           </div>
@@ -92,17 +92,17 @@ export default function PropertyDetail() {
       <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-gray-600 dark:text-gray-400 dark:text-gray-500">
+            <CardTitle className="text-sm font-medium text-gray-600">
               Current Value
             </CardTitle>
-            <DollarSign className="h-4 w-4 text-gray-600 dark:text-gray-400 dark:text-gray-500" />
+            <DollarSign className="h-4 w-4 text-gray-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+            <div className="text-2xl font-bold text-gray-900">
               {formatCurrency(property.value)}
             </div>
             {hasPurchaseInfo && "purchasePrice" in property && property.purchasePrice && (
-              <p className="text-xs text-gray-600 dark:text-gray-400 dark:text-gray-500">
+              <p className="text-xs text-gray-600">
                 {property.purchasePrice > 0 && (
                   <>
                     {(
@@ -119,17 +119,17 @@ export default function PropertyDetail() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-gray-600 dark:text-gray-400 dark:text-gray-500">
+            <CardTitle className="text-sm font-medium text-gray-600">
               Ownership
             </CardTitle>
-            <User className="h-4 w-4 text-gray-600 dark:text-gray-400 dark:text-gray-500" />
+            <User className="h-4 w-4 text-gray-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+            <div className="text-lg font-semibold text-gray-900">
               {property.ownership.type}
             </div>
             {property.ownership.percentage && (
-              <p className="text-xs text-gray-600 dark:text-gray-400 dark:text-gray-500">
+              <p className="text-xs text-gray-600">
                 {property.ownership.percentage}% ownership
               </p>
             )}
@@ -138,17 +138,17 @@ export default function PropertyDetail() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-gray-600 dark:text-gray-400 dark:text-gray-500">
+            <CardTitle className="text-sm font-medium text-gray-600">
               Property Type
             </CardTitle>
-            <Building2 className="h-4 w-4 text-gray-600 dark:text-gray-400 dark:text-gray-500" />
+            <Building2 className="h-4 w-4 text-gray-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+            <div className="text-lg font-semibold text-gray-900">
               {hasPropertyType && property.propertyType ? property.propertyType : "Real Estate"}
             </div>
             {hasPropertyDetails && (
-              <p className="text-xs text-gray-600 dark:text-gray-400 dark:text-gray-500">
+              <p className="text-xs text-gray-600">
                 {"squareFeet" in property && property.squareFeet ? (
                   <>{property.squareFeet.toLocaleString()} sq ft</>
                 ) : null}
@@ -168,7 +168,7 @@ export default function PropertyDetail() {
           <CardContent className="space-y-4">
             {hasPropertyType && property.propertyType && (
               <div className="flex justify-between">
-                <span className="text-gray-600 dark:text-gray-400 dark:text-gray-500">Type</span>
+                <span className="text-gray-600">Type</span>
                 <span className="font-medium">{property.propertyType}</span>
               </div>
             )}
@@ -177,7 +177,7 @@ export default function PropertyDetail() {
               <>
                 {"squareFeet" in property && property.squareFeet && (
                   <div className="flex justify-between">
-                    <span className="text-gray-600 dark:text-gray-400 dark:text-gray-500">
+                    <span className="text-gray-600">
                       Square Feet
                     </span>
                     <span className="font-medium">{property.squareFeet.toLocaleString()}</span>
@@ -186,7 +186,7 @@ export default function PropertyDetail() {
 
                 {"yearBuilt" in property && property.yearBuilt ? (
                   <div className="flex justify-between">
-                    <span className="text-gray-600 dark:text-gray-400 dark:text-gray-500">
+                    <span className="text-gray-600">
                       Year Built
                     </span>
                     <span className="font-medium">{String(property.yearBuilt)}</span>
@@ -195,7 +195,7 @@ export default function PropertyDetail() {
 
                 {"bedrooms" in property && property.bedrooms !== undefined ? (
                   <div className="flex justify-between">
-                    <span className="text-gray-600 dark:text-gray-400 dark:text-gray-500">
+                    <span className="text-gray-600">
                       Bedrooms
                     </span>
                     <span className="font-medium">{String(property.bedrooms)}</span>
@@ -204,7 +204,7 @@ export default function PropertyDetail() {
 
                 {"bathrooms" in property && property.bathrooms !== undefined ? (
                   <div className="flex justify-between">
-                    <span className="text-gray-600 dark:text-gray-400 dark:text-gray-500">
+                    <span className="text-gray-600">
                       Bathrooms
                     </span>
                     <span className="font-medium">{String(property.bathrooms)}</span>
@@ -225,7 +225,7 @@ export default function PropertyDetail() {
               <>
                 {"purchaseDate" in property && property.purchaseDate && (
                   <div className="flex justify-between">
-                    <span className="text-gray-600 dark:text-gray-400 dark:text-gray-500">
+                    <span className="text-gray-600">
                       Purchase Date
                     </span>
                     <span className="font-medium">{formatDate(property.purchaseDate)}</span>
@@ -234,7 +234,7 @@ export default function PropertyDetail() {
 
                 {"purchasePrice" in property && property.purchasePrice && (
                   <div className="flex justify-between">
-                    <span className="text-gray-600 dark:text-gray-400 dark:text-gray-500">
+                    <span className="text-gray-600">
                       Purchase Price
                     </span>
                     <span className="font-medium">{formatCurrency(property.purchasePrice)}</span>
@@ -244,22 +244,22 @@ export default function PropertyDetail() {
             )}
 
             <div className="flex justify-between">
-              <span className="text-gray-600 dark:text-gray-400 dark:text-gray-500">
+              <span className="text-gray-600">
                 Current Value
               </span>
               <span className="font-medium">{formatCurrency(property.value)}</span>
             </div>
 
             {hasPurchaseInfo &&
-              "purchasePrice" in property &&
+"purchasePrice" in property &&
               property.purchasePrice &&
               property.purchasePrice > 0 && (
                 <div className="flex justify-between">
-                  <span className="text-gray-600 dark:text-gray-400 dark:text-gray-500">
+                  <span className="text-gray-600">
                     Appreciation
                   </span>
                   <span
-                    className={`font-medium ${property.value >= property.purchasePrice ? "text-green-600 dark:text-green-400" : "text-red-600 dark:text-red-400"}`}
+                    className={`font-medium ${property.value >= property.purchasePrice ? "text-green-600" : "text-red-600"}`}
                   >
                     {formatCurrency(property.value - property.purchasePrice)}(
                     {(
@@ -283,7 +283,7 @@ export default function PropertyDetail() {
         <CardContent>
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <span className="text-gray-600 dark:text-gray-400 dark:text-gray-500">
+              <span className="text-gray-600">
                 Ownership Type
               </span>
               <Badge variant="secondary">{property.ownership.type}</Badge>
@@ -291,7 +291,7 @@ export default function PropertyDetail() {
 
             {property.ownership.percentage && (
               <div className="flex items-center justify-between">
-                <span className="text-gray-600 dark:text-gray-400 dark:text-gray-500">
+                <span className="text-gray-600">
                   Ownership Percentage
                 </span>
                 <span className="font-medium">{property.ownership.percentage}%</span>
@@ -300,7 +300,7 @@ export default function PropertyDetail() {
 
             {property.ownership.trustId && (
               <div className="flex items-center justify-between">
-                <span className="text-gray-600 dark:text-gray-400 dark:text-gray-500">
+                <span className="text-gray-600">
                   Trust ID
                 </span>
                 <span className="font-medium">{property.ownership.trustId}</span>
@@ -309,7 +309,7 @@ export default function PropertyDetail() {
 
             {property.ownership.businessEntityId && (
               <div className="flex items-center justify-between">
-                <span className="text-gray-600 dark:text-gray-400 dark:text-gray-500">
+                <span className="text-gray-600">
                   Business Entity
                 </span>
                 <span className="font-medium">{property.ownership.businessEntityId}</span>
@@ -327,7 +327,7 @@ export default function PropertyDetail() {
             <CardDescription>Additional information about this property</CardDescription>
           </CardHeader>
           <CardContent>
-            <p className="whitespace-pre-wrap text-gray-700 dark:text-gray-300">{property.notes}</p>
+            <p className="whitespace-pre-wrap text-gray-700">{property.notes}</p>
           </CardContent>
         </Card>
       )}
@@ -340,8 +340,8 @@ export default function PropertyDetail() {
         </CardHeader>
         <CardContent>
           <div className="py-8 text-center">
-            <FileText className="mx-auto mb-4 h-12 w-12 text-gray-400 dark:text-gray-500" />
-            <p className="mb-4 text-gray-600 dark:text-gray-400 dark:text-gray-500">
+            <FileText className="mx-auto mb-4 h-12 w-12 text-gray-400" />
+            <p className="mb-4 text-gray-600">
               No documents uploaded yet
             </p>
             <Button variant="outline">Upload Document</Button>

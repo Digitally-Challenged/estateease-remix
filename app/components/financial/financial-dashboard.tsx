@@ -131,31 +131,31 @@ const MetricCard: React.FC<MetricCardProps> = ({
   critical = false,
 }) => {
   const trendColors = {
-    up: "text-green-600 dark:text-green-400",
-    down: "text-red-600 dark:text-red-400",
-    neutral: "text-gray-600 dark:text-gray-400",
+    up: "text-green-600",
+    down: "text-red-600",
+    neutral: "text-gray-600",
   };
 
   const cardBorder = critical
-    ? "border-red-200 dark:border-red-700 bg-red-50/50 dark:bg-red-900/10"
+    ? "border-red-200 bg-red-50/50"
     : "";
 
   return (
     <Card className={cardBorder}>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle className="text-sm font-medium text-gray-600 dark:text-gray-400">
+        <CardTitle className="text-sm font-medium text-gray-600">
           {title}
         </CardTitle>
         <Icon
-          className={`h-4 w-4 ${critical ? "text-red-600 dark:text-red-400" : "text-gray-600 dark:text-gray-400"}`}
+          className={`h-4 w-4 ${critical ? "text-red-600" : "text-gray-600"}`}
         />
       </CardHeader>
       <CardContent>
-        <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+        <div className="text-2xl font-bold text-gray-900">
           {typeof value === "number" ? formatCurrency(value) : value}
         </div>
         <div className="mt-1 flex items-center justify-between">
-          {subtitle && <p className="text-xs text-gray-600 dark:text-gray-400">{subtitle}</p>}
+          {subtitle && <p className="text-xs text-gray-600">{subtitle}</p>}
           {change !== undefined && (
             <p className={`flex items-center text-xs ${trendColors[trend]}`}>
               {trend === "up" && <TrendingUp className="mr-1 h-3 w-3" />}
@@ -184,7 +184,7 @@ const TaxOptimizationPanel: React.FC<{
       <CardHeader>
         <CardTitle className="flex items-center justify-between">
           <span className="flex items-center">
-            <Shield className="mr-2 h-5 w-5 text-blue-600 dark:text-blue-400" />
+            <Shield className="mr-2 h-5 w-5 text-blue-600" />
             Tax Optimization Center
           </span>
           <Button variant="ghost" size="sm" onClick={() => setShowDetails(!showDetails)}>
@@ -197,15 +197,15 @@ const TaxOptimizationPanel: React.FC<{
         <div className="space-y-4">
           {/* Tax Overview */}
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-            <div className="rounded-lg bg-gray-50 p-4 text-center dark:bg-gray-900">
-              <p className="text-sm text-gray-600 dark:text-gray-400">Current Tax Liability</p>
-              <p className="text-2xl font-bold text-red-600 dark:text-red-400">
+            <div className="rounded-lg bg-gray-50 p-4 text-center">
+              <p className="text-sm text-gray-600">Current Tax Liability</p>
+              <p className="text-2xl font-bold text-red-600">
                 {formatCurrency(taxOptimization.currentLiability)}
               </p>
             </div>
-            <div className="rounded-lg bg-green-50 p-4 text-center dark:bg-green-900/20">
-              <p className="text-sm text-gray-600 dark:text-gray-400">Potential Savings</p>
-              <p className="text-2xl font-bold text-green-600 dark:text-green-400">
+            <div className="rounded-lg bg-green-50 p-4 text-center">
+              <p className="text-sm text-gray-600">Potential Savings</p>
+              <p className="text-2xl font-bold text-green-600">
                 {formatCurrency(taxOptimization.potentialSavings)}
               </p>
             </div>
@@ -213,17 +213,17 @@ const TaxOptimizationPanel: React.FC<{
 
           {/* Urgent Actions */}
           {taxOptimization.urgentActions.length > 0 && (
-            <div className="rounded-r-lg border-l-4 border-orange-400 bg-orange-50 p-4 dark:bg-orange-900/20">
+            <div className="rounded-r-lg border-l-4 border-orange-400 bg-orange-50 p-4">
               <div className="flex items-start">
-                <AlertTriangle className="mr-3 mt-0.5 h-5 w-5 text-orange-600 dark:text-orange-400" />
+                <AlertTriangle className="mr-3 mt-0.5 h-5 w-5 text-orange-600" />
                 <div>
-                  <h4 className="font-medium text-orange-800 dark:text-orange-200">
+                  <h4 className="font-medium text-orange-800">
                     Urgent Actions Required
                   </h4>
                   <div className="mt-2 space-y-2">
                     {taxOptimization.urgentActions.map((action, index) => (
                       <div key={index} className="flex items-center justify-between">
-                        <span className="text-sm text-orange-700 dark:text-orange-300">
+                        <span className="text-sm text-orange-700">
                           {action.name}
                         </span>
                         <Badge variant="destructive" className="text-xs">
@@ -240,18 +240,18 @@ const TaxOptimizationPanel: React.FC<{
           {/* Strategy List */}
           {showDetails && (
             <div className="space-y-3">
-              <h4 className="font-medium text-gray-900 dark:text-gray-100">
+              <h4 className="font-medium text-gray-900">
                 Recommended Strategies
               </h4>
               {taxOptimization.strategies.slice(0, 5).map((strategy, index) => (
                 <div
                   key={index}
-                  className="rounded-lg border p-3 transition-colors hover:bg-gray-50 dark:hover:bg-gray-800"
+                  className="rounded-lg border p-3 transition-colors hover:bg-gray-50"
                 >
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
                       <div className="flex items-center space-x-2">
-                        <h5 className="font-medium text-gray-900 dark:text-gray-100">
+                        <h5 className="font-medium text-gray-900">
                           {strategy.name}
                         </h5>
                         <Badge
@@ -260,30 +260,30 @@ const TaxOptimizationPanel: React.FC<{
                           {strategy.priority}
                         </Badge>
                       </div>
-                      <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
+                      <p className="mt-1 text-sm text-gray-600">
                         {strategy.description}
                       </p>
                       <div className="mt-2 flex items-center space-x-4 text-xs">
-                        <span className="text-green-600 dark:text-green-400">
+                        <span className="text-green-600">
                           Savings: {formatCurrency(strategy.potentialSavings)}
                         </span>
-                        <span className="text-gray-500 dark:text-gray-400">
+                        <span className="text-gray-500">
                           Timeframe: {strategy.timeframe}
                         </span>
                         <span
                           className={`${
                             strategy.riskLevel === "low"
-                              ? "text-green-600 dark:text-green-400"
+                              ? "text-green-600"
                               : strategy.riskLevel === "medium"
-                                ? "text-yellow-600 dark:text-yellow-400"
-                                : "text-red-600 dark:text-red-400"
+                                ? "text-yellow-600"
+                                : "text-red-600"
                           }`}
                         >
                           Risk: {strategy.riskLevel}
                         </span>
                       </div>
                     </div>
-                    <ArrowRight className="mt-1 h-4 w-4 flex-shrink-0 text-gray-400 dark:text-gray-500" />
+                    <ArrowRight className="mt-1 h-4 w-4 flex-shrink-0 text-gray-400" />
                   </div>
                 </div>
               ))}
@@ -306,7 +306,7 @@ const CashFlowAnalysisPanel: React.FC<{
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center">
-          <BarChart3 className="mr-2 h-5 w-5 text-indigo-600 dark:text-indigo-400" />
+          <BarChart3 className="mr-2 h-5 w-5 text-indigo-600" />
           Cash Flow Analysis
         </CardTitle>
         <CardDescription>10-year cash flow projections and liquidity planning</CardDescription>
@@ -315,21 +315,21 @@ const CashFlowAnalysisPanel: React.FC<{
         <div className="space-y-4">
           {/* Current Status */}
           <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-            <div className="rounded-lg bg-blue-50 p-3 text-center dark:bg-blue-900/20">
-              <p className="text-sm text-blue-600 dark:text-blue-400">Current Liquidity</p>
-              <p className="text-lg font-bold text-blue-700 dark:text-blue-300">
+            <div className="rounded-lg bg-blue-50 p-3 text-center">
+              <p className="text-sm text-blue-600">Current Liquidity</p>
+              <p className="text-lg font-bold text-blue-700">
                 {formatPercentage(cashFlow.liquidityTrend[0] || 0)}
               </p>
             </div>
-            <div className="rounded-lg bg-green-50 p-3 text-center dark:bg-green-900/20">
-              <p className="text-sm text-green-600 dark:text-green-400">Positive Years</p>
-              <p className="text-lg font-bold text-green-700 dark:text-green-300">
+            <div className="rounded-lg bg-green-50 p-3 text-center">
+              <p className="text-sm text-green-600">Positive Years</p>
+              <p className="text-lg font-bold text-green-700">
                 {cashFlow.projections.filter((p) => p.netCashFlow > 0).length}/10
               </p>
             </div>
-            <div className="rounded-lg bg-yellow-50 p-3 text-center dark:bg-yellow-900/20">
-              <p className="text-sm text-yellow-600 dark:text-yellow-400">Shortfall Years</p>
-              <p className="text-lg font-bold text-yellow-700 dark:text-yellow-300">
+            <div className="rounded-lg bg-yellow-50 p-3 text-center">
+              <p className="text-sm text-yellow-600">Shortfall Years</p>
+              <p className="text-lg font-bold text-yellow-700">
                 {cashFlow.shortfallYears.length}
               </p>
             </div>
@@ -337,14 +337,14 @@ const CashFlowAnalysisPanel: React.FC<{
 
           {/* Projection Summary */}
           <div className="space-y-3">
-            <h4 className="font-medium text-gray-900 dark:text-gray-100">
+            <h4 className="font-medium text-gray-900">
               10-Year Projection Summary
             </h4>
             {cashFlow.projections.slice(0, 5).map((projection, index) => (
               <div key={index} className="flex items-center justify-between rounded border p-2">
                 <span className="text-sm font-medium">Year {projection.year}</span>
                 <div className="flex items-center space-x-4">
-                  <span className="text-sm text-gray-600 dark:text-gray-400">
+                  <span className="text-sm text-gray-600">
                     {formatCurrency(projection.netCashFlow)}
                   </span>
                   <div className="w-16">
@@ -353,7 +353,7 @@ const CashFlowAnalysisPanel: React.FC<{
                       className="h-2"
                     />
                   </div>
-                  <span className="w-12 text-xs text-gray-500 dark:text-gray-400">
+                  <span className="w-12 text-xs text-gray-500">
                     {formatPercentage(projection.liquidityRatio)}
                   </span>
                 </div>
@@ -363,14 +363,14 @@ const CashFlowAnalysisPanel: React.FC<{
 
           {/* Warnings */}
           {cashFlow.shortfallYears.length > 0 && (
-            <div className="rounded-lg border border-yellow-200 bg-yellow-50 p-3 dark:border-yellow-700 dark:bg-yellow-900/20">
+            <div className="rounded-lg border border-yellow-200 bg-yellow-50 p-3">
               <div className="flex items-start">
-                <Clock className="mr-2 mt-0.5 h-4 w-4 text-yellow-600 dark:text-yellow-400" />
+                <Clock className="mr-2 mt-0.5 h-4 w-4 text-yellow-600" />
                 <div>
-                  <p className="text-sm font-medium text-yellow-800 dark:text-yellow-200">
+                  <p className="text-sm font-medium text-yellow-800">
                     Cash Flow Concerns
                   </p>
-                  <p className="mt-1 text-xs text-yellow-700 dark:text-yellow-300">
+                  <p className="mt-1 text-xs text-yellow-700">
                     Projected shortfalls in years: {cashFlow.shortfallYears.join(", ")}
                   </p>
                 </div>
@@ -391,9 +391,9 @@ const SuccessionPlanningPanel: React.FC<{
   succession: FinancialDashboardProps["dashboardData"]["succession"];
 }> = ({ succession }) => {
   const getReadinessColor = (score: number) => {
-    if (score >= 80) return "text-green-600 dark:text-green-400";
-    if (score >= 60) return "text-yellow-600 dark:text-yellow-400";
-    return "text-red-600 dark:text-red-400";
+    if (score >= 80) return "text-green-600";
+    if (score >= 60) return "text-yellow-600";
+    return "text-red-600";
   };
 
   const getReadinessLevel = (score: number) => {
@@ -415,8 +415,8 @@ const SuccessionPlanningPanel: React.FC<{
       <CardContent>
         <div className="space-y-4">
           {/* Readiness Score */}
-          <div className="rounded-lg bg-gray-50 p-4 text-center dark:bg-gray-900">
-            <p className="mb-2 text-sm text-gray-600 dark:text-gray-400">Succession Readiness</p>
+          <div className="rounded-lg bg-gray-50 p-4 text-center">
+            <p className="mb-2 text-sm text-gray-600">Succession Readiness</p>
             <div className="relative">
               <div className="mx-auto h-24 w-24">
                 <Progress value={succession.readiness} className="h-24 w-24 rounded-full" />
@@ -435,29 +435,29 @@ const SuccessionPlanningPanel: React.FC<{
           {/* Transfer Breakdown */}
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <div className="space-y-3">
-              <h4 className="font-medium text-gray-900 dark:text-gray-100">Transfer Plan</h4>
+              <h4 className="font-medium text-gray-900">Transfer Plan</h4>
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-gray-600 dark:text-gray-400">Generation 1:</span>
+                  <span className="text-gray-600">Generation 1:</span>
                   <span className="font-medium">
                     {formatCurrency(succession.plan.generation1Transfer)}
                   </span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600 dark:text-gray-400">Generation 2:</span>
+                  <span className="text-gray-600">Generation 2:</span>
                   <span className="font-medium">
                     {formatCurrency(succession.plan.generation2Transfer)}
                   </span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600 dark:text-gray-400">Charitable:</span>
+                  <span className="text-gray-600">Charitable:</span>
                   <span className="font-medium">
                     {formatCurrency(succession.plan.charitableGiving)}
                   </span>
                 </div>
                 <div className="flex justify-between border-t pt-2">
-                  <span className="text-gray-600 dark:text-gray-400">Tax-Optimized:</span>
-                  <span className="font-medium text-green-600 dark:text-green-400">
+                  <span className="text-gray-600">Tax-Optimized:</span>
+                  <span className="font-medium text-green-600">
                     {formatCurrency(succession.plan.taxOptimizedTransfer)}
                   </span>
                 </div>
@@ -465,13 +465,13 @@ const SuccessionPlanningPanel: React.FC<{
             </div>
 
             <div className="space-y-3">
-              <h4 className="font-medium text-gray-900 dark:text-gray-100">Liquidity Planning</h4>
-              <div className="rounded-lg bg-blue-50 p-3 dark:bg-blue-900/20">
-                <p className="text-sm text-blue-600 dark:text-blue-400">Liquidity Needs</p>
-                <p className="text-lg font-bold text-blue-700 dark:text-blue-300">
+              <h4 className="font-medium text-gray-900">Liquidity Planning</h4>
+              <div className="rounded-lg bg-blue-50 p-3">
+                <p className="text-sm text-blue-600">Liquidity Needs</p>
+                <p className="text-lg font-bold text-blue-700">
                   {formatCurrency(succession.plan.liquidityNeeds)}
                 </p>
-                <p className="mt-1 text-xs text-blue-600 dark:text-blue-400">
+                <p className="mt-1 text-xs text-blue-600">
                   {formatPercentage(
                     (succession.plan.liquidityNeeds / succession.plan.totalWealth) * 100,
                   )}{" "}
@@ -483,11 +483,11 @@ const SuccessionPlanningPanel: React.FC<{
 
           {/* Next Steps */}
           <div className="space-y-2">
-            <h4 className="font-medium text-gray-900 dark:text-gray-100">Recommended Next Steps</h4>
+            <h4 className="font-medium text-gray-900">Recommended Next Steps</h4>
             {succession.nextSteps.slice(0, 3).map((step, index) => (
               <div key={index} className="flex items-center space-x-2 text-sm">
-                <CheckCircle className="h-4 w-4 flex-shrink-0 text-green-600 dark:text-green-400" />
-                <span className="text-gray-700 dark:text-gray-300">{step}</span>
+                <CheckCircle className="h-4 w-4 flex-shrink-0 text-green-600" />
+                <span className="text-gray-700">{step}</span>
               </div>
             ))}
           </div>
@@ -521,10 +521,10 @@ export const FinancialDashboard: React.FC<FinancialDashboardProps> = ({
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+          <h1 className="text-3xl font-bold text-gray-900">
             Financial Intelligence Dashboard
           </h1>
-          <p className="mt-1 text-gray-600 dark:text-gray-400">
+          <p className="mt-1 text-gray-600">
             Real-time financial analysis and estate planning optimization
           </p>
         </div>

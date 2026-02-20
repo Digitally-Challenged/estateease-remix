@@ -31,15 +31,15 @@ export default function PowersOfAttorneyIndex() {
   const getStatusColor = (status: string) => {
     switch (status) {
       case "ACTIVE":
-        return "text-green-600 bg-green-50 dark:text-green-400 dark:bg-green-900/20";
+        return "text-green-600 bg-green-50";
       case "DRAFT":
-        return "text-yellow-600 bg-yellow-50 dark:text-yellow-400 dark:bg-yellow-900/20";
+        return "text-yellow-600 bg-yellow-50";
       case "REVOKED":
-        return "text-red-600 bg-red-50 dark:text-red-400 dark:bg-red-900/20";
+        return "text-red-600 bg-red-50";
       case "EXPIRED":
-        return "text-gray-600 bg-gray-50 dark:text-gray-400 dark:bg-gray-900/20";
+        return "text-gray-600 bg-gray-50";
       default:
-        return "text-gray-600 bg-gray-50 dark:text-gray-400 dark:bg-gray-900/20";
+        return "text-gray-600 bg-gray-50";
     }
   };
 
@@ -66,10 +66,10 @@ export default function PowersOfAttorneyIndex() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+          <h1 className="text-3xl font-bold text-gray-900">
             Powers of Attorney
           </h1>
-          <p className="mt-1 text-gray-600 dark:text-gray-400">
+          <p className="mt-1 text-gray-600">
             Manage your power of attorney documents
           </p>
         </div>
@@ -84,14 +84,14 @@ export default function PowersOfAttorneyIndex() {
       {powersOfAttorney.length === 0 ? (
         <Card className="p-8 text-center">
           <div className="flex flex-col items-center space-y-4">
-            <div className="rounded-full bg-gray-100 p-4 dark:bg-gray-800">
+            <div className="rounded-full bg-gray-100 p-4">
               <FileCheck className="h-8 w-8 text-gray-400" />
             </div>
             <div>
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+              <h3 className="text-lg font-semibold text-gray-900">
                 No Powers of Attorney Created
               </h3>
-              <p className="mt-1 text-gray-600 dark:text-gray-400">
+              <p className="mt-1 text-gray-600">
                 Create a power of attorney to designate someone to act on your behalf
               </p>
             </div>
@@ -111,14 +111,14 @@ export default function PowersOfAttorneyIndex() {
                 <div className="flex-1 space-y-3">
                   <div className="flex items-start justify-between">
                     <div className="flex items-start gap-3">
-                      <div className="rounded-lg bg-gray-100 p-2 dark:bg-gray-800">
+                      <div className="rounded-lg bg-gray-100 p-2">
                         {getTypeIcon(poa.type)}
                       </div>
                       <div>
-                        <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                        <h3 className="text-lg font-semibold text-gray-900">
                           {poa.documentName}
                         </h3>
-                        <div className="mt-1 flex items-center gap-4 text-sm text-gray-600 dark:text-gray-400">
+                        <div className="mt-1 flex items-center gap-4 text-sm text-gray-600">
                           <span className="flex items-center gap-1">
                             <User className="h-3 w-3" />
                             Principal: {poa.principalName}
@@ -136,47 +136,47 @@ export default function PowersOfAttorneyIndex() {
 
                   <div className="grid grid-cols-1 gap-4 text-sm md:grid-cols-2">
                     <div>
-                      <span className="text-gray-500 dark:text-gray-400">Primary Agent:</span>
-                      <span className="ml-2 font-medium text-gray-900 dark:text-gray-100">
+                      <span className="text-gray-500">Primary Agent:</span>
+                      <span className="ml-2 font-medium text-gray-900">
                         {poa.agentPrimary}
                       </span>
                     </div>
                     {poa.agentSecondary && (
                       <div>
-                        <span className="text-gray-500 dark:text-gray-400">Secondary Agent:</span>
-                        <span className="ml-2 text-gray-900 dark:text-gray-100">
+                        <span className="text-gray-500">Secondary Agent:</span>
+                        <span className="ml-2 text-gray-900">
                           {poa.agentSecondary}
                         </span>
                       </div>
                     )}
                     {poa.effectiveDate && (
                       <div>
-                        <span className="text-gray-500 dark:text-gray-400">Effective Date:</span>
-                        <span className="ml-2 text-gray-900 dark:text-gray-100">
+                        <span className="text-gray-500">Effective Date:</span>
+                        <span className="ml-2 text-gray-900">
                           {formatDate(poa.effectiveDate)}
                         </span>
                       </div>
                     )}
                     {poa.terminationDate && (
                       <div>
-                        <span className="text-gray-500 dark:text-gray-400">Termination Date:</span>
-                        <span className="ml-2 text-gray-900 dark:text-gray-100">
+                        <span className="text-gray-500">Termination Date:</span>
+                        <span className="ml-2 text-gray-900">
                           {formatDate(poa.terminationDate)}
                         </span>
                       </div>
                     )}
                     <div>
-                      <span className="text-gray-500 dark:text-gray-400">Durable:</span>
-                      <span className="ml-2 text-gray-900 dark:text-gray-100">
+                      <span className="text-gray-500">Durable:</span>
+                      <span className="ml-2 text-gray-900">
                         {poa.durable ? "Yes (survives incapacity)" : "No"}
                       </span>
                     </div>
                     {poa.springCondition && (
                       <div className="col-span-2">
-                        <span className="text-gray-500 dark:text-gray-400">
+                        <span className="text-gray-500">
                           Springing Condition:
                         </span>
-                        <span className="ml-2 text-gray-900 dark:text-gray-100">
+                        <span className="ml-2 text-gray-900">
                           {poa.springCondition}
                         </span>
                       </div>
@@ -184,15 +184,15 @@ export default function PowersOfAttorneyIndex() {
                   </div>
 
                   {poa.notes && (
-                    <div className="mt-3 rounded-md bg-gray-50 p-3 dark:bg-gray-800">
-                      <p className="text-sm text-gray-700 dark:text-gray-300">{poa.notes}</p>
+                    <div className="mt-3 rounded-md bg-gray-50 p-3">
+                      <p className="text-sm text-gray-700">{poa.notes}</p>
                     </div>
                   )}
 
                   {poa.attorneyName && (
-                    <div className="text-sm text-gray-600 dark:text-gray-400">
+                    <div className="text-sm text-gray-600">
                       <span>Prepared by: </span>
-                      <span className="text-gray-900 dark:text-gray-100">
+                      <span className="text-gray-900">
                         {poa.attorneyName}
                         {poa.lawFirm && ` - ${poa.lawFirm}`}
                       </span>

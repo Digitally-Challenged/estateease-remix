@@ -45,8 +45,8 @@ export default function PreferencesSettings() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Preferences</h1>
-        <p className="text-gray-600 dark:text-gray-400 dark:text-gray-500">
+        <h1 className="text-3xl font-bold text-gray-900">Preferences</h1>
+        <p className="text-gray-600">
           Customize how EstateEase works for you
         </p>
       </div>
@@ -67,11 +67,11 @@ export default function PreferencesSettings() {
                 <div>
                   <label
                     htmlFor="email-notifications"
-                    className="font-medium text-gray-900 dark:text-gray-100"
+                    className="font-medium text-gray-900"
                   >
                     Email Notifications
                   </label>
-                  <p className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">
+                  <p className="text-sm text-gray-600">
                     Receive important updates via email
                   </p>
                 </div>
@@ -82,11 +82,11 @@ export default function PreferencesSettings() {
                 <div>
                   <label
                     htmlFor="reminder-notifications"
-                    className="font-medium text-gray-900 dark:text-gray-100"
+                    className="font-medium text-gray-900"
                   >
                     Task Reminders
                   </label>
-                  <p className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">
+                  <p className="text-sm text-gray-600">
                     Get reminded about upcoming estate planning tasks
                   </p>
                 </div>
@@ -97,11 +97,11 @@ export default function PreferencesSettings() {
                 <div>
                   <label
                     htmlFor="value-alerts"
-                    className="font-medium text-gray-900 dark:text-gray-100"
+                    className="font-medium text-gray-900"
                   >
                     Value Change Alerts
                   </label>
-                  <p className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">
+                  <p className="text-sm text-gray-600">
                     Be notified of significant asset value changes
                   </p>
                 </div>
@@ -165,11 +165,11 @@ export default function PreferencesSettings() {
               <div>
                 <label
                   htmlFor="compact-view"
-                  className="font-medium text-gray-900 dark:text-gray-100"
+                  className="font-medium text-gray-900"
                 >
                   Compact View
                 </label>
-                <p className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">
+                <p className="text-sm text-gray-600">
                   Show more information in less space
                 </p>
               </div>
@@ -260,11 +260,11 @@ export default function PreferencesSettings() {
               <div>
                 <label
                   htmlFor="high-contrast"
-                  className="font-medium text-gray-900 dark:text-gray-100"
+                  className="font-medium text-gray-900"
                 >
                   High Contrast Mode
                 </label>
-                <p className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">
+                <p className="text-sm text-gray-600">
                   Increase contrast for better visibility
                 </p>
               </div>

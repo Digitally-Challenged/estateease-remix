@@ -28,15 +28,15 @@ export default function WillsIndex() {
   const getStatusColor = (status: string) => {
     switch (status) {
       case "EXECUTED":
-        return "text-green-600 bg-green-50 dark:text-green-400 dark:bg-green-900/20";
+        return "text-green-600 bg-green-50";
       case "SIGNED":
-        return "text-blue-600 bg-blue-50 dark:text-blue-400 dark:bg-blue-900/20";
+        return "text-blue-600 bg-blue-50";
       case "DRAFT":
-        return "text-yellow-600 bg-yellow-50 dark:text-yellow-400 dark:bg-yellow-900/20";
+        return "text-yellow-600 bg-yellow-50";
       case "REVOKED":
-        return "text-red-600 bg-red-50 dark:text-red-400 dark:bg-red-900/20";
+        return "text-red-600 bg-red-50";
       default:
-        return "text-gray-600 bg-gray-50 dark:text-gray-400 dark:bg-gray-900/20";
+        return "text-gray-600 bg-gray-50";
     }
   };
 
@@ -44,8 +44,8 @@ export default function WillsIndex() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Wills</h1>
-          <p className="mt-1 text-gray-600 dark:text-gray-400">
+          <h1 className="text-3xl font-bold text-gray-900">Wills</h1>
+          <p className="mt-1 text-gray-600">
             Manage your last will and testament documents
           </p>
         </div>
@@ -60,14 +60,14 @@ export default function WillsIndex() {
       {wills.length === 0 ? (
         <Card className="p-8 text-center">
           <div className="flex flex-col items-center space-y-4">
-            <div className="rounded-full bg-gray-100 p-4 dark:bg-gray-800">
+            <div className="rounded-full bg-gray-100 p-4">
               <FileText className="h-8 w-8 text-gray-400" />
             </div>
             <div>
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+              <h3 className="text-lg font-semibold text-gray-900">
                 No Wills Created
               </h3>
-              <p className="mt-1 text-gray-600 dark:text-gray-400">
+              <p className="mt-1 text-gray-600">
                 Create your first will to ensure your wishes are documented
               </p>
             </div>
@@ -81,10 +81,10 @@ export default function WillsIndex() {
                 <div className="flex-1 space-y-3">
                   <div className="flex items-start justify-between">
                     <div>
-                      <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                      <h3 className="text-lg font-semibold text-gray-900">
                         {will.documentName}
                       </h3>
-                      <div className="mt-1 flex items-center gap-4 text-sm text-gray-600 dark:text-gray-400">
+                      <div className="mt-1 flex items-center gap-4 text-sm text-gray-600">
                         <span className="flex items-center gap-1">
                           <User className="h-3 w-3" />
                           {will.testatorName}
@@ -104,33 +104,33 @@ export default function WillsIndex() {
 
                   <div className="grid grid-cols-1 gap-4 text-sm md:grid-cols-2">
                     <div>
-                      <span className="text-gray-500 dark:text-gray-400">Primary Executor:</span>
-                      <span className="ml-2 text-gray-900 dark:text-gray-100">
+                      <span className="text-gray-500">Primary Executor:</span>
+                      <span className="ml-2 text-gray-900">
                         {will.executorPrimary || "Not specified"}
                       </span>
                     </div>
                     {will.executorSecondary && (
                       <div>
-                        <span className="text-gray-500 dark:text-gray-400">
+                        <span className="text-gray-500">
                           Secondary Executor:
                         </span>
-                        <span className="ml-2 text-gray-900 dark:text-gray-100">
+                        <span className="ml-2 text-gray-900">
                           {will.executorSecondary}
                         </span>
                       </div>
                     )}
                     {will.dateSigned && (
                       <div>
-                        <span className="text-gray-500 dark:text-gray-400">Date Signed:</span>
-                        <span className="ml-2 text-gray-900 dark:text-gray-100">
+                        <span className="text-gray-500">Date Signed:</span>
+                        <span className="ml-2 text-gray-900">
                           {formatDate(will.dateSigned)}
                         </span>
                       </div>
                     )}
                     {will.attorneyName && (
                       <div>
-                        <span className="text-gray-500 dark:text-gray-400">Attorney:</span>
-                        <span className="ml-2 text-gray-900 dark:text-gray-100">
+                        <span className="text-gray-500">Attorney:</span>
+                        <span className="ml-2 text-gray-900">
                           {will.attorneyName}
                           {will.lawFirm && ` - ${will.lawFirm}`}
                         </span>
@@ -139,13 +139,13 @@ export default function WillsIndex() {
                   </div>
 
                   {will.notes && (
-                    <div className="mt-3 rounded-md bg-gray-50 p-3 dark:bg-gray-800">
-                      <p className="text-sm text-gray-700 dark:text-gray-300">{will.notes}</p>
+                    <div className="mt-3 rounded-md bg-gray-50 p-3">
+                      <p className="text-sm text-gray-700">{will.notes}</p>
                     </div>
                   )}
 
                   {will.status === "DRAFT" && (
-                    <div className="flex items-center gap-2 text-sm text-yellow-600 dark:text-yellow-400">
+                    <div className="flex items-center gap-2 text-sm text-yellow-600">
                       <AlertCircle className="h-4 w-4" />
                       <span>This will is still in draft status and has not been signed</span>
                     </div>

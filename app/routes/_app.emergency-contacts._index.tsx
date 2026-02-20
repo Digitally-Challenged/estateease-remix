@@ -83,10 +83,10 @@ function EmergencyContactsContent() {
     return (
       <div className="space-y-6">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+          <h1 className="text-3xl font-bold text-gray-900">
             Emergency Contacts
           </h1>
-          <p className="mt-2 text-gray-600 dark:text-gray-400 dark:text-gray-500">
+          <p className="mt-2 text-gray-600">
             Manage your emergency contact information
           </p>
         </div>
@@ -105,21 +105,21 @@ function EmergencyContactsContent() {
       <div className="space-y-6">
         <div className="flex items-start justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+            <h1 className="text-3xl font-bold text-gray-900">
               Emergency Contacts
             </h1>
-            <p className="mt-2 text-gray-600 dark:text-gray-400 dark:text-gray-500">
+            <p className="mt-2 text-gray-600">
               Manage your emergency contact information
             </p>
           </div>
         </div>
         <Card className="py-8 text-center">
           <CardContent>
-            <Users className="mx-auto mb-4 h-12 w-12 text-gray-400 dark:text-gray-500" />
-            <h3 className="mb-2 text-lg font-medium text-gray-900 dark:text-gray-100">
+            <Users className="mx-auto mb-4 h-12 w-12 text-gray-400" />
+            <h3 className="mb-2 text-lg font-medium text-gray-900">
               No emergency contacts set up
             </h3>
-            <p className="mb-4 text-gray-600 dark:text-gray-400 dark:text-gray-500">
+            <p className="mb-4 text-gray-600">
               Add emergency contacts to ensure you can be reached in case of an emergency
             </p>
             <Button onClick={() => navigate("/emergency-contacts/new")}>
@@ -136,7 +136,7 @@ function EmergencyContactsContent() {
       key: "priority",
       header: "#",
       render: (_value: unknown, contact: EmergencyContact) => (
-        <span className="font-medium text-gray-600 dark:text-gray-400 dark:text-gray-500">
+        <span className="font-medium text-gray-600">
           {contact?.priority || "-"}
         </span>
       ),
@@ -147,7 +147,7 @@ function EmergencyContactsContent() {
       render: (_value: unknown, contact: EmergencyContact) => (
         <div>
           <p className="font-medium">{contact?.name}</p>
-          <p className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">
+          <p className="text-sm text-gray-600">
             {contact?.relationship}
           </p>
         </div>
@@ -159,16 +159,16 @@ function EmergencyContactsContent() {
       render: (_value: unknown, contact: EmergencyContact) => (
         <div className="text-sm">
           <div className="mb-1 flex items-center space-x-1">
-            <Phone className="h-3 w-3 text-gray-400 dark:text-gray-500" />
+            <Phone className="h-3 w-3 text-gray-400" />
             <span>{contact?.contactInfo?.primaryPhone || "No phone"}</span>
           </div>
           {contact?.contactInfo?.secondaryPhone && (
-            <div className="text-gray-600 dark:text-gray-400 dark:text-gray-500">
+            <div className="text-gray-600">
               Alt: {contact.contactInfo.secondaryPhone}
             </div>
           )}
           {contact?.contactInfo?.email && (
-            <div className="text-gray-600 dark:text-gray-400 dark:text-gray-500">
+            <div className="text-gray-600">
               {contact.contactInfo.email}
             </div>
           )}
@@ -188,7 +188,7 @@ function EmergencyContactsContent() {
                 : "Other"}
           </Badge>
           {contact?.medicalAuthority && (
-            <Badge variant="outline" className="bg-red-50 dark:bg-red-900/20">
+            <Badge variant="outline" className="bg-red-50">
               <Heart className="mr-1 h-3 w-3" />
               Medical
             </Badge>
@@ -202,12 +202,12 @@ function EmergencyContactsContent() {
       render: (_value: unknown, contact: EmergencyContact) => (
         <div className="text-sm">
           {contact?.canMakeDecisions ? (
-            <span className="flex items-center text-green-600 dark:text-green-400">
+            <span className="flex items-center text-green-600">
               <UserCheck className="mr-1 h-4 w-4" />
               Can decide
             </span>
           ) : (
-            <span className="text-gray-400 dark:text-gray-500">Info only</span>
+            <span className="text-gray-400">Info only</span>
           )}
         </div>
       ),
@@ -216,7 +216,7 @@ function EmergencyContactsContent() {
       key: "availability",
       header: "Availability",
       render: (_value: unknown, contact: EmergencyContact) => (
-        <span className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">
+        <span className="text-sm text-gray-600">
           {contact?.availability || "Always"}
         </span>
       ),
@@ -236,7 +236,7 @@ function EmergencyContactsContent() {
           <Button
             size="sm"
             variant="ghost"
-            className="text-red-600 hover:text-red-700 dark:text-red-300 dark:text-red-400"
+            className="text-red-600 hover:text-red-700"
           >
             <Trash2 className="h-4 w-4" />
           </Button>
@@ -250,10 +250,10 @@ function EmergencyContactsContent() {
       {/* Header */}
       <div className="flex items-start justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+          <h1 className="text-3xl font-bold text-gray-900">
             Emergency Contacts
           </h1>
-          <p className="mt-2 text-gray-600 dark:text-gray-400 dark:text-gray-500">
+          <p className="mt-2 text-gray-600">
             Manage your emergency contact information
           </p>
         </div>
@@ -268,11 +268,11 @@ function EmergencyContactsContent() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Contacts</CardTitle>
-            <Users className="h-4 w-4 text-gray-600 dark:text-gray-400 dark:text-gray-500" />
+            <Users className="h-4 w-4 text-gray-600" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{contacts.length}</div>
-            <p className="mt-1 text-xs text-gray-600 dark:text-gray-400 dark:text-gray-500">
+            <p className="mt-1 text-xs text-gray-600">
               Emergency contacts
             </p>
           </CardContent>
@@ -281,11 +281,11 @@ function EmergencyContactsContent() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Primary Contacts</CardTitle>
-            <UserCheck className="h-4 w-4 text-gray-600 dark:text-gray-400 dark:text-gray-500" />
+            <UserCheck className="h-4 w-4 text-gray-600" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{contactsByType.primary.length}</div>
-            <p className="mt-1 text-xs text-gray-600 dark:text-gray-400 dark:text-gray-500">
+            <p className="mt-1 text-xs text-gray-600">
               First to contact
             </p>
           </CardContent>
@@ -294,11 +294,11 @@ function EmergencyContactsContent() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Medical Authority</CardTitle>
-            <Heart className="h-4 w-4 text-gray-600 dark:text-gray-400 dark:text-gray-500" />
+            <Heart className="h-4 w-4 text-gray-600" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{contactsByType.medical.length}</div>
-            <p className="mt-1 text-xs text-gray-600 dark:text-gray-400 dark:text-gray-500">
+            <p className="mt-1 text-xs text-gray-600">
               Can make medical decisions
             </p>
           </CardContent>
@@ -307,11 +307,11 @@ function EmergencyContactsContent() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Decision Makers</CardTitle>
-            <Shield className="h-4 w-4 text-gray-600 dark:text-gray-400 dark:text-gray-500" />
+            <Shield className="h-4 w-4 text-gray-600" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{decisionMakers.length}</div>
-            <p className="mt-1 text-xs text-gray-600 dark:text-gray-400 dark:text-gray-500">
+            <p className="mt-1 text-xs text-gray-600">
               Can make decisions
             </p>
           </CardContent>
@@ -320,15 +320,15 @@ function EmergencyContactsContent() {
 
       {/* Warnings */}
       {contactsByType.primary.length === 0 && (
-        <Card className="border-orange-200 bg-orange-50 dark:border-orange-700 dark:bg-orange-900/20">
+        <Card className="border-orange-200 bg-orange-50">
           <CardHeader>
-            <CardTitle className="flex items-center text-orange-800 dark:text-orange-200">
+            <CardTitle className="flex items-center text-orange-800">
               <AlertCircle className="mr-2 h-5 w-5" />
               No Primary Contact Designated
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="mb-3 text-orange-700 dark:text-orange-300">
+            <p className="mb-3 text-orange-700">
               You should designate at least one primary emergency contact who will be contacted
               first in case of emergency.
             </p>
@@ -340,15 +340,15 @@ function EmergencyContactsContent() {
       )}
 
       {contactsByType.medical.length === 0 && (
-        <Card className="border-yellow-200 bg-yellow-50 dark:border-yellow-700 dark:bg-yellow-900/20">
+        <Card className="border-yellow-200 bg-yellow-50">
           <CardHeader>
-            <CardTitle className="flex items-center text-yellow-800 dark:text-yellow-200">
+            <CardTitle className="flex items-center text-yellow-800">
               <Heart className="mr-2 h-5 w-5" />
               No Medical Decision Maker
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-yellow-700 dark:text-yellow-300">
+            <p className="text-yellow-700">
               Consider designating someone with medical decision-making authority in case
               you&apos;re unable to make medical decisions.
             </p>
@@ -395,7 +395,7 @@ function EmergencyContactsContent() {
                   >
                     <div>
                       <p className="font-medium">{contact.name}</p>
-                      <p className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">
+                      <p className="text-sm text-gray-600">
                         {contact.relationship}
                       </p>
                       <div className="mt-2 flex items-center space-x-3">
@@ -411,7 +411,7 @@ function EmergencyContactsContent() {
                         )}
                       </div>
                     </div>
-                    <div className="text-right text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">
+                    <div className="text-right text-sm text-gray-600">
                       <p>{contact.contactInfo?.primaryPhone || ""}</p>
                       {contact.contactInfo?.email && <p>{contact.contactInfo.email}</p>}
                     </div>

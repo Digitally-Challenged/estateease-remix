@@ -105,10 +105,10 @@ export default function NewHealthcareDirective() {
     <div className="mx-auto max-w-4xl space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+          <h1 className="text-3xl font-bold text-gray-900">
             Add Healthcare Directive
           </h1>
-          <p className="mt-1 text-gray-600 dark:text-gray-400">
+          <p className="mt-1 text-gray-600">
             Create a new healthcare directive or advance directive
           </p>
         </div>
@@ -119,8 +119,8 @@ export default function NewHealthcareDirective() {
       </div>
 
       {actionData?.error && (
-        <div className="rounded-md border border-red-200 bg-red-50 p-4 dark:border-red-700 dark:bg-red-900/20">
-          <p className="text-red-600 dark:text-red-400">{actionData.error}</p>
+        <div className="rounded-md border border-red-200 bg-red-50 p-4">
+          <p className="text-red-600">{actionData.error}</p>
         </div>
       )}
 
@@ -170,14 +170,14 @@ export default function NewHealthcareDirective() {
                   onChange={(e) => setFormData({ ...formData, isPrimary: e.target.checked })}
                   className="rounded border-gray-300"
                 />
-                <label htmlFor="isPrimary" className="text-sm text-gray-700 dark:text-gray-300">
+                <label htmlFor="isPrimary" className="text-sm text-gray-700">
                   This is the primary healthcare agent
                 </label>
               </div>
             </FormField>
 
             <div className="space-y-6">
-              <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">
+              <h3 className="text-lg font-medium text-gray-900">
                 Medical Treatment Preferences
               </h3>
 
@@ -229,7 +229,7 @@ export default function NewHealthcareDirective() {
             </div>
 
             <div className="space-y-6">
-              <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">
+              <h3 className="text-lg font-medium text-gray-900">
                 End-of-Life Preferences
               </h3>
 
@@ -245,7 +245,7 @@ export default function NewHealthcareDirective() {
                   />
                   <label
                     htmlFor="organDonation"
-                    className="text-sm text-gray-700 dark:text-gray-300"
+                    className="text-sm text-gray-700"
                   >
                     I consent to organ and tissue donation
                   </label>
@@ -292,13 +292,13 @@ export default function NewHealthcareDirective() {
               />
             </FormField>
 
-            <div className="rounded-md border border-blue-200 bg-blue-50 p-4 dark:border-blue-700 dark:bg-blue-900/20">
+            <div className="rounded-md border border-blue-200 bg-blue-50 p-4">
               <div className="flex">
                 <div className="ml-3">
-                  <h3 className="text-sm font-medium text-blue-800 dark:text-blue-200">
+                  <h3 className="text-sm font-medium text-blue-800">
                     Important Note
                   </h3>
-                  <div className="mt-2 text-sm text-blue-700 dark:text-blue-300">
+                  <div className="mt-2 text-sm text-blue-700">
                     <p>
                       Healthcare directives should be reviewed by an attorney and properly executed
                       according to your state's laws. This form helps organize your preferences but

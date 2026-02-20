@@ -49,8 +49,8 @@ export default function DistributionPlans() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Distribution Plans</h1>
-        <p className="mt-2 text-gray-600 dark:text-gray-400 dark:text-gray-500">
+        <h1 className="text-3xl font-bold text-gray-900">Distribution Plans</h1>
+        <p className="mt-2 text-gray-600">
           Manage how your assets will be distributed to beneficiaries
         </p>
       </div>
@@ -60,11 +60,11 @@ export default function DistributionPlans() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Estate Value</CardTitle>
-            <DollarSign className="h-4 w-4 text-gray-600 dark:text-gray-400 dark:text-gray-500" />
+            <DollarSign className="h-4 w-4 text-gray-600" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{formatCurrency(totalEstateValue)}</div>
-            <p className="mt-1 text-xs text-gray-600 dark:text-gray-400 dark:text-gray-500">
+            <p className="mt-1 text-xs text-gray-600">
               Current market value
             </p>
           </CardContent>
@@ -73,11 +73,11 @@ export default function DistributionPlans() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Active Trusts</CardTitle>
-            <FileText className="h-4 w-4 text-gray-600 dark:text-gray-400 dark:text-gray-500" />
+            <FileText className="h-4 w-4 text-gray-600" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{trusts.length}</div>
-            <p className="mt-1 text-xs text-gray-600 dark:text-gray-400 dark:text-gray-500">
+            <p className="mt-1 text-xs text-gray-600">
               Distribution vehicles
             </p>
           </CardContent>
@@ -86,11 +86,11 @@ export default function DistributionPlans() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Beneficiaries</CardTitle>
-            <Users className="h-4 w-4 text-gray-600 dark:text-gray-400 dark:text-gray-500" />
+            <Users className="h-4 w-4 text-gray-600" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{beneficiaries.length}</div>
-            <p className="mt-1 text-xs text-gray-600 dark:text-gray-400 dark:text-gray-500">
+            <p className="mt-1 text-xs text-gray-600">
               Recipients
             </p>
           </CardContent>
@@ -99,11 +99,11 @@ export default function DistributionPlans() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Distribution Timeline</CardTitle>
-            <Clock className="h-4 w-4 text-gray-600 dark:text-gray-400 dark:text-gray-500" />
+            <Clock className="h-4 w-4 text-gray-600" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">Staggered</div>
-            <p className="mt-1 text-xs text-gray-600 dark:text-gray-400 dark:text-gray-500">
+            <p className="mt-1 text-xs text-gray-600">
               Age-based distributions
             </p>
           </CardContent>
@@ -124,47 +124,47 @@ export default function DistributionPlans() {
               ({ trust, beneficiaries }: { trust: Record<string, unknown>; beneficiaries: Record<string, unknown>[] }) => (
                 <div
                   key={String(trust.id)}
-                  className="rounded-lg border border-gray-200 p-4 dark:border-gray-700"
+                  className="rounded-lg border border-gray-200 p-4"
                 >
                   <div className="mb-4 flex items-start justify-between">
                     <div>
-                      <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">
+                      <h3 className="text-lg font-medium text-gray-900">
                         {String(trust.name || "")}
                       </h3>
-                      <p className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">
+                      <p className="text-sm text-gray-600">
                         {String(trust.purpose || "")}
                       </p>
                     </div>
-                    <span className="text-sm text-gray-500 dark:text-gray-400 dark:text-gray-500">
+                    <span className="text-sm text-gray-500">
                       Created {new Date(String(trust.dateCreated)).toLocaleDateString()}
                     </span>
                   </div>
 
                   {beneficiaries.length > 0 ? (
                     <div className="space-y-3">
-                      <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                      <h4 className="text-sm font-medium text-gray-700">
                         Beneficiaries:
                       </h4>
                       <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
                         {beneficiaries.map((beneficiary: any, index: number) => (
                           <div
                             key={`beneficiary-${index}`}
-                            className="flex items-center justify-between rounded-lg bg-gray-50 p-3 dark:bg-gray-900"
+                            className="flex items-center justify-between rounded-lg bg-gray-50 p-3"
                           >
                             <div>
-                              <p className="font-medium text-gray-900 dark:text-gray-100">
+                              <p className="font-medium text-gray-900">
                                 {beneficiary.name}
                               </p>
-                              <p className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">
+                              <p className="text-sm text-gray-600">
                                 {beneficiary.relationship}
                               </p>
                             </div>
                             <div className="text-right">
-                              <p className="font-medium text-gray-900 dark:text-gray-100">
+                              <p className="font-medium text-gray-900">
                                 {beneficiary.percentage}%
                               </p>
                               {beneficiary.conditions && (
-                                <p className="text-xs text-gray-600 dark:text-gray-400 dark:text-gray-500">
+                                <p className="text-xs text-gray-600">
                                   {beneficiary.conditions}
                                 </p>
                               )}
@@ -174,7 +174,7 @@ export default function DistributionPlans() {
                       </div>
                     </div>
                   ) : (
-                    <p className="text-sm italic text-gray-600 dark:text-gray-400 dark:text-gray-500">
+                    <p className="text-sm italic text-gray-600">
                       No beneficiaries assigned yet
                     </p>
                   )}
@@ -189,7 +189,7 @@ export default function DistributionPlans() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center">
-            <AlertTriangle className="mr-2 h-5 w-5 text-yellow-600 dark:text-yellow-400" />
+            <AlertTriangle className="mr-2 h-5 w-5 text-yellow-600" />
             Important Distribution Rules
           </CardTitle>
           <CardDescription>Key provisions that affect asset distribution</CardDescription>
@@ -197,44 +197,44 @@ export default function DistributionPlans() {
         <CardContent>
           <div className="space-y-4">
             <div className="flex items-start space-x-3">
-              <CheckCircle className="mt-0.5 h-5 w-5 text-green-600 dark:text-green-400" />
+              <CheckCircle className="mt-0.5 h-5 w-5 text-green-600" />
               <div>
-                <h4 className="font-medium text-gray-900 dark:text-gray-100">
+                <h4 className="font-medium text-gray-900">
                   Age-Based Distributions
                 </h4>
-                <p className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">
+                <p className="text-sm text-gray-600">
                   Children receive $300,000 at age 25, with full control at age 35
                 </p>
               </div>
             </div>
 
             <div className="flex items-start space-x-3">
-              <CheckCircle className="mt-0.5 h-5 w-5 text-green-600 dark:text-green-400" />
+              <CheckCircle className="mt-0.5 h-5 w-5 text-green-600" />
               <div>
-                <h4 className="font-medium text-gray-900 dark:text-gray-100">
+                <h4 className="font-medium text-gray-900">
                   Guardian Provisions
                 </h4>
-                <p className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">
+                <p className="text-sm text-gray-600">
                   Yvonne Westfall named as primary guardian for minor children
                 </p>
               </div>
             </div>
 
             <div className="flex items-start space-x-3">
-              <CheckCircle className="mt-0.5 h-5 w-5 text-green-600 dark:text-green-400" />
+              <CheckCircle className="mt-0.5 h-5 w-5 text-green-600" />
               <div>
-                <h4 className="font-medium text-gray-900 dark:text-gray-100">No Heirs Provision</h4>
-                <p className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">
+                <h4 className="font-medium text-gray-900">No Heirs Provision</h4>
+                <p className="text-sm text-gray-600">
                   If no surviving heirs, assets distributed to Hanzlik family members
                 </p>
               </div>
             </div>
 
             <div className="flex items-start space-x-3">
-              <CheckCircle className="mt-0.5 h-5 w-5 text-green-600 dark:text-green-400" />
+              <CheckCircle className="mt-0.5 h-5 w-5 text-green-600" />
               <div>
-                <h4 className="font-medium text-gray-900 dark:text-gray-100">Trustee Succession</h4>
-                <p className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">
+                <h4 className="font-medium text-gray-900">Trustee Succession</h4>
+                <p className="text-sm text-gray-600">
                   Surviving spouse serves as trustee, followed by Arvest Bank
                 </p>
               </div>

@@ -104,7 +104,7 @@ export function AssetAccordion({ assets, onEdit, onDelete, onAdd }: AssetAccordi
       <div className="mb-4 flex items-center justify-between">
         <div>
           <h2 className="text-xl font-semibold">Total Portfolio Value</h2>
-          <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+          <p className="text-2xl font-bold text-gray-900">
             {formatCurrency(totalValue)}
           </p>
         </div>
@@ -123,7 +123,7 @@ export function AssetAccordion({ assets, onEdit, onDelete, onAdd }: AssetAccordi
               <div key={category} className="overflow-hidden rounded-lg border">
                 {/* Category Header */}
                 <button
-                  className="flex w-full items-center justify-between bg-gray-50 px-4 py-3 transition-colors hover:bg-gray-100 dark:bg-gray-800 dark:hover:bg-gray-700"
+                  className="flex w-full items-center justify-between bg-gray-50 px-4 py-3 transition-colors hover:bg-gray-100"
                   onClick={() => toggleCategory(category)}
                   type="button"
                 >
@@ -158,11 +158,11 @@ export function AssetAccordion({ assets, onEdit, onDelete, onAdd }: AssetAccordi
 
                 {/* Asset List */}
                 {isExpanded && (
-                  <div className="divide-y dark:divide-gray-700">
+                  <div className="divide-y">
                     {categoryAssets.map((asset) => (
                       <div
                         key={asset.id}
-                        className="px-4 py-3 transition-colors hover:bg-gray-50 dark:hover:bg-gray-800"
+                        className="px-4 py-3 transition-colors hover:bg-gray-50"
                       >
                         <div className="flex items-start justify-between">
                           <div className="flex-1">
@@ -180,7 +180,7 @@ export function AssetAccordion({ assets, onEdit, onDelete, onAdd }: AssetAccordi
                             </div>
 
                             {asset.description && (
-                              <p className="mb-1 text-sm text-gray-600 dark:text-gray-400">
+                              <p className="mb-1 text-sm text-gray-600">
                                 {asset.description}
                               </p>
                             )}

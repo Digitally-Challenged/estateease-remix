@@ -105,10 +105,10 @@ export default function NewRole() {
     <div className="mx-auto max-w-4xl space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+          <h1 className="text-3xl font-bold text-gray-900">
             Add Role Assignment
           </h1>
-          <p className="mt-1 text-gray-600 dark:text-gray-400">
+          <p className="mt-1 text-gray-600">
             Assign a legal or fiduciary role to a person
           </p>
         </div>
@@ -119,8 +119,8 @@ export default function NewRole() {
       </div>
 
       {actionData?.error && (
-        <div className="rounded-md border border-red-200 bg-red-50 p-4 dark:border-red-700 dark:bg-red-900/20">
-          <p className="text-red-600 dark:text-red-400">{actionData.error}</p>
+        <div className="rounded-md border border-red-200 bg-red-50 p-4">
+          <p className="text-red-600">{actionData.error}</p>
         </div>
       )}
 
@@ -172,7 +172,7 @@ export default function NewRole() {
                     onChange={(e) => setFormData({ ...formData, isPrimary: e.target.checked })}
                     className="rounded border-gray-300"
                   />
-                  <label htmlFor="isPrimary" className="text-sm text-gray-700 dark:text-gray-300">
+                  <label htmlFor="isPrimary" className="text-sm text-gray-700">
                     Primary person in this role
                   </label>
                 </div>
@@ -214,7 +214,7 @@ export default function NewRole() {
             </FormField>
 
             <div className="space-y-4">
-              <h3 className="flex items-center text-lg font-medium text-gray-900 dark:text-gray-100">
+              <h3 className="flex items-center text-lg font-medium text-gray-900">
                 <DollarSign className="mr-2 h-5 w-5" />
                 Compensation
               </h3>
@@ -297,13 +297,13 @@ export default function NewRole() {
               />
             </FormField>
 
-            <div className="rounded-md border border-amber-200 bg-amber-50 p-4 dark:border-amber-700 dark:bg-amber-900/20">
+            <div className="rounded-md border border-amber-200 bg-amber-50 p-4">
               <div className="flex">
                 <div className="ml-3">
-                  <h3 className="text-sm font-medium text-amber-800 dark:text-amber-200">
+                  <h3 className="text-sm font-medium text-amber-800">
                     Legal Reminder
                   </h3>
-                  <div className="mt-2 text-sm text-amber-700 dark:text-amber-300">
+                  <div className="mt-2 text-sm text-amber-700">
                     <p>
                       Role assignments should be properly documented in legal instruments such as
                       wills, trusts, or powers of attorney. Consult with an attorney to ensure

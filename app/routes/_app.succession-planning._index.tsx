@@ -202,10 +202,10 @@ function SuccessionPlanningContent() {
     return (
       <div className="space-y-6">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+          <h1 className="text-3xl font-bold text-gray-900">
             Succession Planning
           </h1>
-          <p className="mt-2 text-gray-600 dark:text-gray-400 dark:text-gray-500">
+          <p className="mt-2 text-gray-600">
             Visualize your estate succession timeline and transfer process
           </p>
         </div>
@@ -265,8 +265,8 @@ function SuccessionPlanningContent() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Succession Planning</h1>
-        <p className="mt-2 text-gray-600 dark:text-gray-400 dark:text-gray-500">
+        <h1 className="text-3xl font-bold text-gray-900">Succession Planning</h1>
+        <p className="mt-2 text-gray-600">
           Visualize your estate succession timeline and transfer process
         </p>
       </div>
@@ -276,11 +276,11 @@ function SuccessionPlanningContent() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Succession Readiness</CardTitle>
-            <TrendingUp className="h-4 w-4 text-gray-600 dark:text-gray-400 dark:text-gray-500" />
+            <TrendingUp className="h-4 w-4 text-gray-600" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{readinessScore}%</div>
-            <p className="mt-1 text-xs text-gray-600 dark:text-gray-400 dark:text-gray-500">
+            <p className="mt-1 text-xs text-gray-600">
               {readinessScore >= 75
                 ? "Well prepared"
                 : readinessScore >= 50
@@ -293,11 +293,11 @@ function SuccessionPlanningContent() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Estate Value</CardTitle>
-            <TrendingUp className="h-4 w-4 text-gray-600 dark:text-gray-400 dark:text-gray-500" />
+            <TrendingUp className="h-4 w-4 text-gray-600" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{formatCurrency(totalEstateValue)}</div>
-            <p className="mt-1 text-xs text-gray-600 dark:text-gray-400 dark:text-gray-500">
+            <p className="mt-1 text-xs text-gray-600">
               Across {assets.length} assets
             </p>
           </CardContent>
@@ -306,11 +306,11 @@ function SuccessionPlanningContent() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Beneficiaries</CardTitle>
-            <Users className="h-4 w-4 text-gray-600 dark:text-gray-400 dark:text-gray-500" />
+            <Users className="h-4 w-4 text-gray-600" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{beneficiaries.length}</div>
-            <p className="mt-1 text-xs text-gray-600 dark:text-gray-400 dark:text-gray-500">
+            <p className="mt-1 text-xs text-gray-600">
               {primaryBeneficiaries.length} primary, {contingentBeneficiaries.length} contingent
             </p>
           </CardContent>
@@ -335,10 +335,10 @@ function SuccessionPlanningContent() {
                   <div
                     className={`flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full ${
                       phase.status === "active"
-                        ? "bg-blue-100 text-blue-600 dark:text-blue-400"
+                        ? "bg-blue-100 text-blue-600"
                         : phase.status === "ready"
-                          ? "bg-green-100 text-green-600 dark:text-green-400"
-                          : "bg-gray-100 text-gray-400 dark:bg-gray-800 dark:text-gray-500"
+                          ? "bg-green-100 text-green-600"
+                          : "bg-gray-100 text-gray-400"
                     }`}
                   >
                     {phase.status === "active" ? (
@@ -369,7 +369,7 @@ function SuccessionPlanningContent() {
                             : "Incomplete"}
                       </Badge>
                     </div>
-                    <p className="mb-3 text-gray-600 dark:text-gray-400 dark:text-gray-500">
+                    <p className="mb-3 text-gray-600">
                       {phase.description}
                     </p>
 
@@ -377,12 +377,12 @@ function SuccessionPlanningContent() {
                       {phase.items.map((item) => (
                         <div
                           key={item.label}
-                          className="rounded-lg bg-gray-50 p-3 dark:bg-gray-900"
+                          className="rounded-lg bg-gray-50 p-3"
                         >
-                          <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+                          <p className="text-2xl font-bold text-gray-900">
                             {item.type === "percentage" ? `${item.count}%` : item.count}
                           </p>
-                          <p className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">
+                          <p className="text-sm text-gray-600">
                             {item.label}
                           </p>
                         </div>
@@ -419,12 +419,12 @@ function SuccessionPlanningContent() {
                   Trust-Owned Assets
                 </h3>
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                  <div className="rounded-lg bg-blue-50 p-3 dark:bg-blue-900/20">
+                  <div className="rounded-lg bg-blue-50 p-3">
                     <p className="text-sm font-medium text-blue-900">Assets in Trust</p>
                     <p className="text-2xl font-bold text-blue-900">
                       {assetsByOwnership["TRUST"]?.length || 0}
                     </p>
-                    <p className="text-sm text-blue-700 dark:text-blue-300">
+                    <p className="text-sm text-blue-700">
                       {formatCurrency(
                         (assetsByOwnership["TRUST"] || []).reduce(
                           (sum: number, asset) => sum + (asset?.value || 0),
@@ -435,14 +435,14 @@ function SuccessionPlanningContent() {
                   </div>
 
                   <div className="flex items-center justify-center">
-                    <ArrowRight className="h-6 w-6 text-gray-400 dark:text-gray-500" />
+                    <ArrowRight className="h-6 w-6 text-gray-400" />
                   </div>
 
-                  <div className="rounded-lg bg-green-50 p-3 dark:bg-green-900/20">
+                  <div className="rounded-lg bg-green-50 p-3">
                     <p className="text-sm font-medium text-green-900">Trust Beneficiaries</p>
                     {trusts.map((trust) =>
                       trust ? (
-                        <p key={trust.id} className="text-sm text-green-700 dark:text-green-300">
+                        <p key={trust.id} className="text-sm text-green-700">
                           {trust.name}: {trust.beneficiaries?.length || 0} beneficiaries
                         </p>
                       ) : null,
@@ -460,12 +460,12 @@ function SuccessionPlanningContent() {
                   Individually-Owned Assets
                 </h3>
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                  <div className="rounded-lg bg-orange-50 p-3 dark:bg-orange-900/20">
+                  <div className="rounded-lg bg-orange-50 p-3">
                     <p className="text-sm font-medium text-orange-900">Individual Assets</p>
                     <p className="text-2xl font-bold text-orange-900">
                       {assetsByOwnership["INDIVIDUAL"]?.length || 0}
                     </p>
-                    <p className="text-sm text-orange-700 dark:text-orange-300">
+                    <p className="text-sm text-orange-700">
                       {formatCurrency(
                         (assetsByOwnership["INDIVIDUAL"] || []).reduce(
                           (sum: number, asset) => sum + (asset?.value || 0),
@@ -476,7 +476,7 @@ function SuccessionPlanningContent() {
                   </div>
 
                   <div className="flex items-center justify-center">
-                    <ArrowRight className="h-6 w-6 text-gray-400 dark:text-gray-500" />
+                    <ArrowRight className="h-6 w-6 text-gray-400" />
                   </div>
 
                   <div className="rounded-lg bg-purple-50 p-3">
@@ -513,14 +513,14 @@ function SuccessionPlanningContent() {
                   </div>
 
                   <div className="flex items-center justify-center">
-                    <ArrowRight className="h-6 w-6 text-gray-400 dark:text-gray-500" />
+                    <ArrowRight className="h-6 w-6 text-gray-400" />
                   </div>
 
-                  <div className="rounded-lg bg-gray-50 p-3 dark:bg-gray-900">
-                    <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                  <div className="rounded-lg bg-gray-50 p-3">
+                    <p className="text-sm font-medium text-gray-900">
                       Surviving Owner
                     </p>
-                    <p className="text-sm text-gray-700 dark:text-gray-300">
+                    <p className="text-sm text-gray-700">
                       Passes automatically by survivorship
                     </p>
                   </div>
@@ -547,7 +547,7 @@ function SuccessionPlanningContent() {
                     <div className="mb-2 flex items-start justify-between">
                       <div>
                         <p className="font-medium">{role.personName}</p>
-                        <p className="text-sm capitalize text-gray-600 dark:text-gray-400 dark:text-gray-500">
+                        <p className="text-sm capitalize text-gray-600">
                           {role.roleType.replace("_", " ")}
                         </p>
                       </div>
@@ -556,7 +556,7 @@ function SuccessionPlanningContent() {
                       </Badge>
                     </div>
                     {role.specificPowers && role.specificPowers.length > 0 && (
-                      <p className="mt-2 text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">
+                      <p className="mt-2 text-sm text-gray-600">
                         {role.specificPowers.length} specific powers granted
                       </p>
                     )}
@@ -567,12 +567,12 @@ function SuccessionPlanningContent() {
 
           {legalRoles.filter((r) => r && ["executor", "trustee"].includes(r.roleType)).length ===
             0 && (
-            <div className="rounded-lg bg-orange-50 py-8 text-center dark:bg-orange-900/20">
-              <AlertCircle className="mx-auto mb-3 h-12 w-12 text-orange-600 dark:text-orange-400" />
-              <p className="font-medium text-orange-800 dark:text-orange-200">
+            <div className="rounded-lg bg-orange-50 py-8 text-center">
+              <AlertCircle className="mx-auto mb-3 h-12 w-12 text-orange-600" />
+              <p className="font-medium text-orange-800">
                 No Executor or Trustee Assigned
               </p>
-              <p className="mt-1 text-sm text-orange-600 dark:text-orange-400">
+              <p className="mt-1 text-sm text-orange-600">
                 Assign key roles to ensure smooth estate administration
               </p>
             </div>

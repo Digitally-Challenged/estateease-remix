@@ -158,13 +158,13 @@ export default function FamilyOverview() {
       case "spouse":
         return "bg-pink-100 text-pink-800";
       case "sibling":
-        return "bg-blue-100 text-blue-800 dark:text-blue-200";
+        return "bg-blue-100 text-blue-800";
       case "parent":
-        return "bg-green-100 text-green-800 dark:text-green-200";
+        return "bg-green-100 text-green-800";
       case "child":
-        return "bg-yellow-100 text-yellow-800 dark:text-yellow-200";
+        return "bg-yellow-100 text-yellow-800";
       default:
-        return "bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200";
+        return "bg-gray-100 text-gray-800";
     }
   };
 
@@ -173,11 +173,11 @@ export default function FamilyOverview() {
       case "estate_attorney":
         return "bg-purple-100 text-purple-800";
       case "financial_advisor":
-        return "bg-green-100 text-green-800 dark:text-green-200";
+        return "bg-green-100 text-green-800";
       case "accountant":
-        return "bg-blue-100 text-blue-800 dark:text-blue-200";
+        return "bg-blue-100 text-blue-800";
       default:
-        return "bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200";
+        return "bg-gray-100 text-gray-800";
     }
   };
 
@@ -185,10 +185,10 @@ export default function FamilyOverview() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+        <h1 className="text-3xl font-bold text-gray-900">
           Family & Professional Team
         </h1>
-        <p className="text-gray-600 dark:text-gray-400 dark:text-gray-500">
+        <p className="text-gray-600">
           Comprehensive directory of family members, professional team, and emergency contacts
         </p>
       </div>
@@ -197,16 +197,16 @@ export default function FamilyOverview() {
       <div className="grid grid-cols-1 gap-6 md:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-gray-600 dark:text-gray-400 dark:text-gray-500">
+            <CardTitle className="text-sm font-medium text-gray-600">
               Family Members
             </CardTitle>
-            <Heart className="h-4 w-4 text-red-600 dark:text-red-400" />
+            <Heart className="h-4 w-4 text-red-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+            <div className="text-2xl font-bold text-gray-900">
               {familyMembers.length}
             </div>
-            <p className="text-xs text-gray-600 dark:text-gray-400 dark:text-gray-500">
+            <p className="text-xs text-gray-600">
               Including spouse and siblings
             </p>
           </CardContent>
@@ -214,16 +214,16 @@ export default function FamilyOverview() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-gray-600 dark:text-gray-400 dark:text-gray-500">
+            <CardTitle className="text-sm font-medium text-gray-600">
               Professional Team
             </CardTitle>
-            <UserCheck className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+            <UserCheck className="h-4 w-4 text-blue-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+            <div className="text-2xl font-bold text-gray-900">
               {professionals.length}
             </div>
-            <p className="text-xs text-gray-600 dark:text-gray-400 dark:text-gray-500">
+            <p className="text-xs text-gray-600">
               Attorney, advisor, CPA, trustee
             </p>
           </CardContent>
@@ -231,16 +231,16 @@ export default function FamilyOverview() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-gray-600 dark:text-gray-400 dark:text-gray-500">
+            <CardTitle className="text-sm font-medium text-gray-600">
               Emergency Contacts
             </CardTitle>
-            <AlertTriangle className="h-4 w-4 text-yellow-600 dark:text-yellow-400" />
+            <AlertTriangle className="h-4 w-4 text-yellow-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+            <div className="text-2xl font-bold text-gray-900">
               {emergencyContacts.length}
             </div>
-            <p className="text-xs text-gray-600 dark:text-gray-400 dark:text-gray-500">
+            <p className="text-xs text-gray-600">
               24/7 availability
             </p>
           </CardContent>
@@ -248,16 +248,16 @@ export default function FamilyOverview() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-gray-600 dark:text-gray-400 dark:text-gray-500">
+            <CardTitle className="text-sm font-medium text-gray-600">
               Legal Roles
             </CardTitle>
-            <Shield className="h-4 w-4 text-green-600 dark:text-green-400" />
+            <Shield className="h-4 w-4 text-green-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+            <div className="text-2xl font-bold text-gray-900">
               {legalRoles.length}
             </div>
-            <p className="text-xs text-gray-600 dark:text-gray-400 dark:text-gray-500">
+            <p className="text-xs text-gray-600">
               Across all estate functions
             </p>
           </CardContent>
@@ -270,7 +270,7 @@ export default function FamilyOverview() {
           <div className="flex items-center justify-between">
             <div>
               <CardTitle className="flex items-center">
-                <Heart className="mr-2 h-5 w-5 text-red-600 dark:text-red-400" />
+                <Heart className="mr-2 h-5 w-5 text-red-600" />
                 Family Members
               </CardTitle>
               <CardDescription>
@@ -294,11 +294,11 @@ export default function FamilyOverview() {
               return (
                 <div
                   key={member.id}
-                  className="rounded-lg border border-gray-200 p-4 transition-colors hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-900 dark:hover:bg-gray-800"
+                  className="rounded-lg border border-gray-200 p-4 transition-colors hover:bg-gray-50"
                 >
                   <div className="mb-3 flex items-start justify-between">
                     <div>
-                      <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">
+                      <h3 className="text-lg font-medium text-gray-900">
                         {member.name ?? member.fullName}
                       </h3>
                       <Badge className={getRelationshipColor(member.relationship)}>
@@ -324,19 +324,19 @@ export default function FamilyOverview() {
                   {member.contactInfo && (
                     <div className="mb-4 space-y-2">
                       {member.contactInfo.primaryPhone && (
-                        <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
+                        <div className="flex items-center text-sm text-gray-600">
                           <Phone className="mr-2 h-4 w-4" />
                           {formatPhone(member.contactInfo.primaryPhone)}
                         </div>
                       )}
                       {member.contactInfo.email && (
-                        <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
+                        <div className="flex items-center text-sm text-gray-600">
                           <Mail className="mr-2 h-4 w-4" />
                           {member.contactInfo.email}
                         </div>
                       )}
                       {member.contactInfo?.address && (
-                        <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
+                        <div className="flex items-center text-sm text-gray-600">
                           <MapPin className="mr-2 h-4 w-4" />
                           {member.contactInfo.address.city}, {member.contactInfo.address.state}
                         </div>
@@ -347,13 +347,13 @@ export default function FamilyOverview() {
                   {/* Legal Roles */}
                   {(memberLegalRoles.length > 0 || memberHealthcareRoles.length > 0) && (
                     <div className="border-t pt-3">
-                      <h4 className="mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                      <h4 className="mb-2 text-sm font-medium text-gray-700">
                         Estate Planning Roles
                       </h4>
                       <div className="space-y-1">
                         {memberLegalRoles.map((role: DalLegalRole) => (
                           <div key={role.id} className="flex items-center justify-between text-sm">
-                            <span className="capitalize text-gray-900 dark:text-gray-100">
+                            <span className="capitalize text-gray-900">
                               {role.roleType.replace("_", " ")}
                             </span>
                             <Badge variant="outline" className="text-xs">
@@ -368,7 +368,7 @@ export default function FamilyOverview() {
                             key={directive.id}
                             className="flex items-center justify-between text-sm"
                           >
-                            <span className="capitalize text-gray-900 dark:text-gray-100">
+                            <span className="capitalize text-gray-900">
                               {(directive.type ?? directive.directiveType ?? "").replace("_", " ")}
                             </span>
                             <Badge variant="outline" className="text-xs">
@@ -382,7 +382,7 @@ export default function FamilyOverview() {
 
                   {member.notes && (
                     <div className="mt-3 border-t pt-3">
-                      <p className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">
+                      <p className="text-sm text-gray-600">
                         {member.notes}
                       </p>
                     </div>
@@ -398,7 +398,7 @@ export default function FamilyOverview() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center">
-            <UserCheck className="mr-2 h-5 w-5 text-blue-600 dark:text-blue-400" />
+            <UserCheck className="mr-2 h-5 w-5 text-blue-600" />
             Professional Team
           </CardTitle>
           <CardDescription>Estate planning professionals and their specializations</CardDescription>
@@ -408,14 +408,14 @@ export default function FamilyOverview() {
             {professionals.map((professional) => (
               <div
                 key={professional.id}
-                className="rounded-lg border border-gray-200 p-4 transition-colors hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-900 dark:hover:bg-gray-800"
+                className="rounded-lg border border-gray-200 p-4 transition-colors hover:bg-gray-50"
               >
                 <div className="mb-3 flex items-start justify-between">
                   <div>
-                    <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">
+                    <h3 className="text-lg font-medium text-gray-900">
                       {professional.name ?? professional.fullName}
                     </h3>
-                    <p className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">
+                    <p className="text-sm text-gray-600">
                       {professional.firm}
                     </p>
                   </div>
@@ -434,14 +434,14 @@ export default function FamilyOverview() {
                 {/* Specializations */}
                 {professional.specializations && professional.specializations.length > 0 && (
                   <div className="mb-3">
-                    <h4 className="mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">
+                    <h4 className="mb-1 text-sm font-medium text-gray-700">
                       Specializations
                     </h4>
                     <div className="flex flex-wrap gap-1">
                       {professional.specializations.map((spec, index) => (
                         <span
                           key={index}
-                          className="rounded bg-gray-100 px-2 py-1 text-xs text-gray-700 dark:bg-gray-800 dark:text-gray-300"
+                          className="rounded bg-gray-100 px-2 py-1 text-xs text-gray-700"
                         >
                           {spec}
                         </span>
@@ -453,19 +453,19 @@ export default function FamilyOverview() {
                 {/* Contact Information */}
                 <div className="mb-3 space-y-2">
                   {professional.contactInfo.primaryPhone && (
-                    <div className="flex items-center text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">
+                    <div className="flex items-center text-sm text-gray-600">
                       <Phone className="mr-2 h-4 w-4" />
                       {formatPhone(professional.contactInfo.primaryPhone)}
                     </div>
                   )}
                   {professional.contactInfo.email && (
-                    <div className="flex items-center text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">
+                    <div className="flex items-center text-sm text-gray-600">
                       <Mail className="mr-2 h-4 w-4" />
                       {professional.contactInfo.email}
                     </div>
                   )}
                   {professional.contactInfo?.address && (
-                    <div className="flex items-center text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">
+                    <div className="flex items-center text-sm text-gray-600">
                       <MapPin className="mr-2 h-4 w-4" />
                       {professional.contactInfo.address.city},{" "}
                       {professional.contactInfo.address.state}
@@ -477,13 +477,13 @@ export default function FamilyOverview() {
                 <div className="flex items-center justify-between border-t pt-3 text-sm">
                   <div>
                     {professional.credentials && professional.credentials.length > 0 && (
-                      <span className="text-gray-600 dark:text-gray-400 dark:text-gray-500">
+                      <span className="text-gray-600">
                         {professional.credentials.join(", ")}
                       </span>
                     )}
                   </div>
                   {professional.yearsExperience && (
-                    <span className="text-gray-500 dark:text-gray-400 dark:text-gray-500">
+                    <span className="text-gray-500">
                       {professional.yearsExperience} years exp.
                     </span>
                   )}
@@ -491,7 +491,7 @@ export default function FamilyOverview() {
 
                 {professional.notes && (
                   <div className="mt-3 border-t pt-3">
-                    <p className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">
+                    <p className="text-sm text-gray-600">
                       {professional.notes}
                     </p>
                   </div>
@@ -506,7 +506,7 @@ export default function FamilyOverview() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center">
-            <AlertTriangle className="mr-2 h-5 w-5 text-yellow-600 dark:text-yellow-400" />
+            <AlertTriangle className="mr-2 h-5 w-5 text-yellow-600" />
             Emergency Contacts
           </CardTitle>
           <CardDescription>Priority contacts for medical and legal emergencies</CardDescription>
@@ -518,21 +518,21 @@ export default function FamilyOverview() {
               .map((contact) => (
                 <div
                   key={contact.id}
-                  className="flex items-center justify-between rounded-lg border border-gray-200 p-4 transition-colors hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-900 dark:hover:bg-gray-800"
+                  className="flex items-center justify-between rounded-lg border border-gray-200 p-4 transition-colors hover:bg-gray-50"
                 >
                   <div className="flex items-center space-x-4">
-                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-yellow-100 text-sm font-medium text-yellow-800 dark:text-yellow-200">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-yellow-100 text-sm font-medium text-yellow-800">
                       {contact.priority}
                     </div>
                     <div>
-                      <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">
+                      <h3 className="text-lg font-medium text-gray-900">
                         {contact.name}
                       </h3>
-                      <p className="text-sm capitalize text-gray-600 dark:text-gray-400 dark:text-gray-500">
+                      <p className="text-sm capitalize text-gray-600">
                         {contact.relationship} • {contact.contactType}
                       </p>
                       {contact.availability && (
-                        <p className="text-xs text-gray-500 dark:text-gray-400 dark:text-gray-500">
+                        <p className="text-xs text-gray-500">
                           Available: {contact.availability}
                         </p>
                       )}
@@ -541,12 +541,12 @@ export default function FamilyOverview() {
 
                   <div className="text-right">
                     <div className="space-y-1">
-                      <div className="flex items-center text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">
+                      <div className="flex items-center text-sm text-gray-600">
                         <Phone className="mr-2 h-4 w-4" />
                         {formatPhone(contact.contactInfo.primaryPhone)}
                       </div>
                       {contact.contactInfo.email && (
-                        <div className="flex items-center text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">
+                        <div className="flex items-center text-sm text-gray-600">
                           <Mail className="mr-2 h-4 w-4" />
                           {contact.contactInfo.email}
                         </div>

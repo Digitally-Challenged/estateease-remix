@@ -150,23 +150,23 @@ export default function NewTrust() {
   return (
     <div className="mx-auto max-w-4xl py-6">
       <div className="mb-6">
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Create New Trust</h1>
-        <p className="text-gray-600 dark:text-gray-400 dark:text-gray-500">
+        <h1 className="text-3xl font-bold text-gray-900">Create New Trust</h1>
+        <p className="text-gray-600">
           Set up a new trust for your estate planning needs
         </p>
       </div>
 
       {actionData?.error && (
-        <div className="mb-6 rounded-lg border border-red-200 bg-red-50 p-4 dark:border-red-700 dark:bg-red-900/20">
-          <div className="font-medium text-red-800 dark:text-red-200">Error</div>
-          <div className="mt-1 text-sm text-red-600 dark:text-red-400">{actionData.error}</div>
+        <div className="mb-6 rounded-lg border border-red-200 bg-red-50 p-4">
+          <div className="font-medium text-red-800">Error</div>
+          <div className="mt-1 text-sm text-red-600">{actionData.error}</div>
 
           {actionData.fieldErrors && Object.keys(actionData.fieldErrors).length > 0 && (
             <div className="mt-3">
-              <div className="text-sm font-medium text-red-700 dark:text-red-300">
+              <div className="text-sm font-medium text-red-700">
                 Validation Errors:
               </div>
-              <ul className="mt-1 list-inside list-disc text-sm text-red-600 dark:text-red-400">
+              <ul className="mt-1 list-inside list-disc text-sm text-red-600">
                 {Object.entries(actionData.fieldErrors).map(([field, errors]) => (
                   <li key={field}>
                     <strong>{field}:</strong> {Array.isArray(errors) ? errors.join(", ") : errors}

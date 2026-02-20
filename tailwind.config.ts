@@ -2,7 +2,8 @@ import type { Config } from "tailwindcss";
 
 export default {
   content: ["./app/**/{**,.client,.server}/**/*.{js,jsx,ts,tsx}"],
-  darkMode: ["class", '[data-theme="dark"]'],
+  // Dark mode disabled — locked to light mode for local-only use
+  // darkMode: ["class", '[data-theme="dark"]'],
   theme: {
     extend: {
       fontFamily: {

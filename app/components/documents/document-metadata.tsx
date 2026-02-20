@@ -33,14 +33,14 @@ interface DocumentMetadataProps {
 }
 
 const STATUS_STYLES = {
-  verified: "bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400",
-  pending: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400",
-  rejected: "bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400",
-  draft: "bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-400",
+  verified: "bg-green-100 text-green-800",
+  pending: "bg-yellow-100 text-yellow-800",
+  rejected: "bg-red-100 text-red-800",
+  draft: "bg-gray-100 text-gray-800",
 };
 
 const CATEGORY_ICONS = {
-  "estate-planning": "📄",
+"estate-planning": "📄",
   insurance: "🛡️",
   financial: "💰",
   property: "🏠",
@@ -68,7 +68,7 @@ export function DocumentMetadataComponent({
           <div className="text-2xl">{categoryIcon}</div>
           <div>
             <h2 className="text-xl font-semibold">{document.name}</h2>
-            <p className="text-sm text-gray-600 dark:text-gray-400">{document.originalFilename}</p>
+            <p className="text-sm text-gray-600">{document.originalFilename}</p>
           </div>
         </div>
         <Badge className={statusStyle}>{document.status}</Badge>
@@ -78,7 +78,7 @@ export function DocumentMetadataComponent({
       {document.description && (
         <div>
           <h3 className="mb-2 text-sm font-medium">Description</h3>
-          <p className="text-gray-600 dark:text-gray-400">{document.description}</p>
+          <p className="text-gray-600">{document.description}</p>
         </div>
       )}
 
@@ -89,19 +89,19 @@ export function DocumentMetadataComponent({
 
           <div className="flex items-center gap-2 text-sm">
             <FileText className="h-4 w-4 text-gray-500" />
-            <span className="text-gray-600 dark:text-gray-400">Type:</span>
+            <span className="text-gray-600">Type:</span>
             <span className="font-medium">{document.fileType.toUpperCase()}</span>
           </div>
 
           <div className="flex items-center gap-2 text-sm">
             <FileText className="h-4 w-4 text-gray-500" />
-            <span className="text-gray-600 dark:text-gray-400">Size:</span>
+            <span className="text-gray-600">Size:</span>
             <span className="font-medium">{formatFileSize(document.fileSize)}</span>
           </div>
 
           <div className="flex items-center gap-2 text-sm">
             <Calendar className="h-4 w-4 text-gray-500" />
-            <span className="text-gray-600 dark:text-gray-400">Uploaded:</span>
+            <span className="text-gray-600">Uploaded:</span>
             <span className="font-medium">{formatDate(document.uploadedAt)}</span>
           </div>
         </div>
@@ -111,14 +111,14 @@ export function DocumentMetadataComponent({
 
           <div className="flex items-center gap-2 text-sm">
             <Tag className="h-4 w-4 text-gray-500" />
-            <span className="text-gray-600 dark:text-gray-400">Category:</span>
+            <span className="text-gray-600">Category:</span>
             <span className="font-medium capitalize">{document.category.replace(/-/g, " ")}</span>
           </div>
 
           {document.relatedEntityType && (
             <div className="flex items-center gap-2 text-sm">
               <Link2 className="h-4 w-4 text-gray-500" />
-              <span className="text-gray-600 dark:text-gray-400">Related to:</span>
+              <span className="text-gray-600">Related to:</span>
               <span className="font-medium capitalize">
                 {document.relatedEntityType.replace(/-/g, " ")}
               </span>
@@ -128,7 +128,7 @@ export function DocumentMetadataComponent({
           {document.verifiedAt && (
             <div className="flex items-center gap-2 text-sm">
               <Shield className="h-4 w-4 text-green-500" />
-              <span className="text-gray-600 dark:text-gray-400">Verified:</span>
+              <span className="text-gray-600">Verified:</span>
               <span className="font-medium">{formatDate(document.verifiedAt)}</span>
             </div>
           )}
@@ -151,10 +151,10 @@ export function DocumentMetadataComponent({
 
       {/* Expiration Warning */}
       {document.expiresAt && (
-        <div className="rounded-md border border-yellow-200 bg-yellow-50 p-3 dark:border-yellow-700 dark:bg-yellow-900/20">
+        <div className="rounded-md border border-yellow-200 bg-yellow-50 p-3">
           <div className="flex items-center gap-2">
-            <Clock className="h-4 w-4 text-yellow-600 dark:text-yellow-400" />
-            <span className="text-sm font-medium text-yellow-800 dark:text-yellow-300">
+            <Clock className="h-4 w-4 text-yellow-600" />
+            <span className="text-sm font-medium text-yellow-800">
               Document expires on {formatDate(document.expiresAt)}
             </span>
           </div>

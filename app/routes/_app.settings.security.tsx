@@ -17,8 +17,8 @@ export default function SecuritySettings() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Security Settings</h1>
-        <p className="text-gray-600 dark:text-gray-400 dark:text-gray-500">
+        <h1 className="text-3xl font-bold text-gray-900">Security Settings</h1>
+        <p className="text-gray-600">
           Manage your account security and access controls
         </p>
       </div>
@@ -33,8 +33,8 @@ export default function SecuritySettings() {
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
-                <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-400" />
-                <span className="font-medium text-gray-900 dark:text-gray-100">
+                <CheckCircle className="h-5 w-5 text-green-600" />
+                <span className="font-medium text-gray-900">
                   Strong Password
                 </span>
               </div>
@@ -43,8 +43,8 @@ export default function SecuritySettings() {
 
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
-                <AlertTriangle className="h-5 w-5 text-yellow-600 dark:text-yellow-400" />
-                <span className="font-medium text-gray-900 dark:text-gray-100">
+                <AlertTriangle className="h-5 w-5 text-yellow-600" />
+                <span className="font-medium text-gray-900">
                   Two-Factor Authentication
                 </span>
               </div>
@@ -53,10 +53,10 @@ export default function SecuritySettings() {
 
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
-                <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-400" />
-                <span className="font-medium text-gray-900 dark:text-gray-100">Last Login</span>
+                <CheckCircle className="h-5 w-5 text-green-600" />
+                <span className="font-medium text-gray-900">Last Login</span>
               </div>
-              <span className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">
+              <span className="text-sm text-gray-600">
                 Today at 9:15 AM
               </span>
             </div>
@@ -111,22 +111,22 @@ export default function SecuritySettings() {
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <div>
-                <h4 className="font-medium text-gray-900 dark:text-gray-100">Enable 2FA</h4>
-                <p className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">
+                <h4 className="font-medium text-gray-900">Enable 2FA</h4>
+                <p className="text-sm text-gray-600">
                   Require a verification code in addition to your password
                 </p>
               </div>
               <Switch id="enable-2fa" name="enable2fa" defaultChecked={false} />
             </div>
 
-            <div className="rounded-lg border border-yellow-200 bg-yellow-50 p-4 dark:border-yellow-700 dark:bg-yellow-900/20">
+            <div className="rounded-lg border border-yellow-200 bg-yellow-50 p-4">
               <div className="flex">
-                <AlertTriangle className="mt-0.5 h-5 w-5 text-yellow-600 dark:text-yellow-400" />
+                <AlertTriangle className="mt-0.5 h-5 w-5 text-yellow-600" />
                 <div className="ml-3">
-                  <h4 className="text-sm font-medium text-yellow-800 dark:text-yellow-200">
+                  <h4 className="text-sm font-medium text-yellow-800">
                     Recommendation
                   </h4>
-                  <p className="mt-1 text-sm text-yellow-700 dark:text-yellow-300">
+                  <p className="mt-1 text-sm text-yellow-700">
                     We strongly recommend enabling two-factor authentication to protect your estate
                     planning data.
                   </p>
@@ -152,16 +152,16 @@ export default function SecuritySettings() {
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            <div className="rounded-lg border border-gray-200 p-4 dark:border-gray-700">
+            <div className="rounded-lg border border-gray-200 p-4">
               <div className="flex items-start justify-between">
                 <div>
-                  <h4 className="font-medium text-gray-900 dark:text-gray-100">
+                  <h4 className="font-medium text-gray-900">
                     MacBook Pro - Chrome
                   </h4>
-                  <p className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">
+                  <p className="text-sm text-gray-600">
                     Portland, OR • 192.168.1.1
                   </p>
-                  <p className="text-sm text-gray-500 dark:text-gray-400 dark:text-gray-500">
+                  <p className="text-sm text-gray-500">
                     Last active: Just now
                   </p>
                 </div>
@@ -169,16 +169,16 @@ export default function SecuritySettings() {
               </div>
             </div>
 
-            <div className="rounded-lg border border-gray-200 p-4 dark:border-gray-700">
+            <div className="rounded-lg border border-gray-200 p-4">
               <div className="flex items-start justify-between">
                 <div>
-                  <h4 className="font-medium text-gray-900 dark:text-gray-100">
+                  <h4 className="font-medium text-gray-900">
                     iPhone 14 Pro - Safari
                   </h4>
-                  <p className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">
+                  <p className="text-sm text-gray-600">
                     Portland, OR • Mobile Network
                   </p>
-                  <p className="text-sm text-gray-500 dark:text-gray-400 dark:text-gray-500">
+                  <p className="text-sm text-gray-500">
                     Last active: 2 hours ago
                   </p>
                 </div>
@@ -210,11 +210,11 @@ export default function SecuritySettings() {
               <div>
                 <label
                   htmlFor="share-with-spouse"
-                  className="font-medium text-gray-900 dark:text-gray-100"
+                  className="font-medium text-gray-900"
                 >
                   Share with Spouse
                 </label>
-                <p className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">
+                <p className="text-sm text-gray-600">
                   Allow your spouse to view estate planning details
                 </p>
               </div>
@@ -225,11 +225,11 @@ export default function SecuritySettings() {
               <div>
                 <label
                   htmlFor="share-with-advisors"
-                  className="font-medium text-gray-900 dark:text-gray-100"
+                  className="font-medium text-gray-900"
                 >
                   Share with Advisors
                 </label>
-                <p className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">
+                <p className="text-sm text-gray-600">
                   Allow authorized advisors to access specific information
                 </p>
               </div>
@@ -240,11 +240,11 @@ export default function SecuritySettings() {
               <div>
                 <label
                   htmlFor="require-approval"
-                  className="font-medium text-gray-900 dark:text-gray-100"
+                  className="font-medium text-gray-900"
                 >
                   Require Approval for Changes
                 </label>
-                <p className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">
+                <p className="text-sm text-gray-600">
                   Send notifications for all account modifications
                 </p>
               </div>

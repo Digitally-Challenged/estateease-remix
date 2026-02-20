@@ -41,7 +41,7 @@ export default function RealEstateAssets() {
         return {
           type: "Trust Owned",
           details: `Trust ownership ${ownershipDetails.percentage ? `(${ownershipDetails.percentage}%)` : ""}`,
-          color: "bg-blue-100 text-blue-800 dark:text-blue-200",
+          color: "bg-blue-100 text-blue-800",
         };
       case "JOINT":
         return {
@@ -53,13 +53,13 @@ export default function RealEstateAssets() {
         return {
           type: "Business Owned",
           details: "Owned through business entity",
-          color: "bg-green-100 text-green-800 dark:text-green-200",
+          color: "bg-green-100 text-green-800",
         };
       default:
         return {
           type: "Individual",
           details: "Individual ownership",
-          color: "bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200",
+          color: "bg-gray-100 text-gray-800",
         };
     }
   };
@@ -81,10 +81,10 @@ export default function RealEstateAssets() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+        <h1 className="text-3xl font-bold text-gray-900">
           Real Estate Portfolio
         </h1>
-        <p className="text-gray-600 dark:text-gray-400 dark:text-gray-500">
+        <p className="text-gray-600">
           Comprehensive overview of all real estate holdings and their ownership structures
         </p>
       </div>
@@ -93,16 +93,16 @@ export default function RealEstateAssets() {
       <div className="grid grid-cols-1 gap-6 md:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-gray-600 dark:text-gray-400 dark:text-gray-500">
+            <CardTitle className="text-sm font-medium text-gray-600">
               Total Property Value
             </CardTitle>
-            <Building2 className="h-4 w-4 text-gray-600 dark:text-gray-400 dark:text-gray-500" />
+            <Building2 className="h-4 w-4 text-gray-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+            <div className="text-2xl font-bold text-gray-900">
               {formatCurrency(getTotalValue())}
             </div>
-            <p className="text-xs text-gray-600 dark:text-gray-400 dark:text-gray-500">
+            <p className="text-xs text-gray-600">
               {realEstateAssets.length} properties
             </p>
           </CardContent>
@@ -110,16 +110,16 @@ export default function RealEstateAssets() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-gray-600 dark:text-gray-400 dark:text-gray-500">
+            <CardTitle className="text-sm font-medium text-gray-600">
               Net Equity
             </CardTitle>
-            <TrendingUp className="h-4 w-4 text-green-600 dark:text-green-400" />
+            <TrendingUp className="h-4 w-4 text-green-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+            <div className="text-2xl font-bold text-gray-900">
               {formatCurrency(getNetEquity())}
             </div>
-            <p className="text-xs text-gray-600 dark:text-gray-400 dark:text-gray-500">
+            <p className="text-xs text-gray-600">
               After mortgage debt
             </p>
           </CardContent>
@@ -127,16 +127,16 @@ export default function RealEstateAssets() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-gray-600 dark:text-gray-400 dark:text-gray-500">
+            <CardTitle className="text-sm font-medium text-gray-600">
               Monthly Rental Income
             </CardTitle>
-            <DollarSign className="h-4 w-4 text-gray-600 dark:text-gray-400 dark:text-gray-500" />
+            <DollarSign className="h-4 w-4 text-gray-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+            <div className="text-2xl font-bold text-gray-900">
               {formatCurrency(getMonthlyIncome())}
             </div>
-            <p className="text-xs text-gray-600 dark:text-gray-400 dark:text-gray-500">
+            <p className="text-xs text-gray-600">
               From income properties
             </p>
           </CardContent>
@@ -144,16 +144,16 @@ export default function RealEstateAssets() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-gray-600 dark:text-gray-400 dark:text-gray-500">
+            <CardTitle className="text-sm font-medium text-gray-600">
               Total Mortgage Debt
             </CardTitle>
-            <AlertCircle className="h-4 w-4 text-red-600 dark:text-red-400" />
+            <AlertCircle className="h-4 w-4 text-red-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+            <div className="text-2xl font-bold text-gray-900">
               {formatCurrency(getTotalMortgageDebt())}
             </div>
-            <p className="text-xs text-gray-600 dark:text-gray-400 dark:text-gray-500">
+            <p className="text-xs text-gray-600">
               Outstanding balances
             </p>
           </CardContent>
@@ -172,11 +172,11 @@ export default function RealEstateAssets() {
               <CardHeader>
                 <div className="flex items-start justify-between">
                   <div>
-                    <CardTitle className="text-xl text-gray-900 dark:text-gray-100">
+                    <CardTitle className="text-xl text-gray-900">
                       {asset.name}
                     </CardTitle>
                     {asset.address && (
-                      <div className="mt-2 flex items-center text-gray-600 dark:text-gray-400 dark:text-gray-500">
+                      <div className="mt-2 flex items-center text-gray-600">
                         <MapPin className="mr-2 h-4 w-4" />
                         <span className="text-sm">{asset.address}</span>
                       </div>
@@ -184,11 +184,11 @@ export default function RealEstateAssets() {
                   </div>
                   <div className="flex flex-col items-end space-y-2">
                     <div className="text-right">
-                      <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+                      <div className="text-2xl font-bold text-gray-900">
                         {formatCurrency(asset.value)}
                       </div>
                       {asset.propertyType && (
-                        <div className="text-sm capitalize text-gray-600 dark:text-gray-400 dark:text-gray-500">
+                        <div className="text-sm capitalize text-gray-600">
                           {asset.propertyType.replace("_", " ")}
                         </div>
                       )}
@@ -200,15 +200,15 @@ export default function RealEstateAssets() {
 
               <CardContent className="space-y-6">
                 {/* Ownership Details */}
-                <div className="rounded-lg bg-gray-50 p-4 dark:bg-gray-900">
-                  <h4 className="mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                <div className="rounded-lg bg-gray-50 p-4">
+                  <h4 className="mb-2 text-sm font-medium text-gray-700">
                     Ownership Structure
                   </h4>
-                  <p className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">
+                  <p className="text-sm text-gray-600">
                     {ownership.details}
                   </p>
                   {asset.notes && (
-                    <p className="mt-2 text-xs text-gray-500 dark:text-gray-400 dark:text-gray-500">
+                    <p className="mt-2 text-xs text-gray-500">
                       {asset.notes}
                     </p>
                   )}
@@ -217,30 +217,30 @@ export default function RealEstateAssets() {
                 {/* Financial Information */}
                 <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
                   <div className="space-y-2">
-                    <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                    <h4 className="text-sm font-medium text-gray-700">
                       Property Value
                     </h4>
                     <div className="space-y-1">
                       <div className="flex justify-between text-sm">
-                        <span className="text-gray-600 dark:text-gray-400 dark:text-gray-500">
+                        <span className="text-gray-600">
                           Current Value:
                         </span>
-                        <span className="font-medium text-gray-900 dark:text-gray-100">
+                        <span className="font-medium text-gray-900">
                           {formatCurrency(asset.value)}
                         </span>
                       </div>
                       {asset.lastAppraisalValue && (
                         <div className="flex justify-between text-sm">
-                          <span className="text-gray-600 dark:text-gray-400 dark:text-gray-500">
+                          <span className="text-gray-600">
                             Last Appraisal:
                           </span>
-                          <span className="text-gray-900 dark:text-gray-100">
+                          <span className="text-gray-900">
                             {formatCurrency(asset.lastAppraisalValue)}
                           </span>
                         </div>
                       )}
                       {asset.lastAppraisalDate && (
-                        <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400 dark:text-gray-500">
+                        <div className="flex justify-between text-xs text-gray-500">
                           <span>Appraisal Date:</span>
                           <span>{formatDate(asset.lastAppraisalDate)}</span>
                         </div>
@@ -251,27 +251,27 @@ export default function RealEstateAssets() {
                   {/* Debt Information */}
                   {hasMortgage && (
                     <div className="space-y-2">
-                      <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                      <h4 className="text-sm font-medium text-gray-700">
                         Mortgage Information
                       </h4>
                       <div className="space-y-1">
                         <div className="flex justify-between text-sm">
-                          <span className="text-gray-600 dark:text-gray-400 dark:text-gray-500">
+                          <span className="text-gray-600">
                             Outstanding Balance:
                           </span>
-                          <span className="font-medium text-red-600 dark:text-red-400">
+                          <span className="font-medium text-red-600">
                             {formatCurrency(asset.mortgageBalance || 0)}
                           </span>
                         </div>
                         <div className="flex justify-between text-sm">
-                          <span className="text-gray-600 dark:text-gray-400 dark:text-gray-500">
+                          <span className="text-gray-600">
                             Net Equity:
                           </span>
-                          <span className="font-medium text-green-600 dark:text-green-400">
+                          <span className="font-medium text-green-600">
                             {formatCurrency(asset.value - (asset.mortgageBalance || 0))}
                           </span>
                         </div>
-                        <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400 dark:text-gray-500">
+                        <div className="flex justify-between text-xs text-gray-500">
                           <span>Loan-to-Value:</span>
                           <span>
                             {(((asset.mortgageBalance || 0) / asset.value) * 100).toFixed(1)}%
@@ -283,51 +283,51 @@ export default function RealEstateAssets() {
 
                   {/* Income Information */}
                   <div className="space-y-2">
-                    <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                    <h4 className="text-sm font-medium text-gray-700">
                       Income & Expenses
                     </h4>
                     <div className="space-y-1">
                       {hasRentalIncome ? (
                         <>
                           <div className="flex justify-between text-sm">
-                            <span className="text-gray-600 dark:text-gray-400 dark:text-gray-500">
+                            <span className="text-gray-600">
                               Monthly Rent:
                             </span>
-                            <span className="font-medium text-green-600 dark:text-green-400">
+                            <span className="font-medium text-green-600">
                               {formatCurrency(asset.monthlyRent || 0)}
                             </span>
                           </div>
                           <div className="flex justify-between text-sm">
-                            <span className="text-gray-600 dark:text-gray-400 dark:text-gray-500">
+                            <span className="text-gray-600">
                               Annual Income:
                             </span>
-                            <span className="text-gray-900 dark:text-gray-100">
+                            <span className="text-gray-900">
                               {formatCurrency((asset.monthlyRent || 0) * 12)}
                             </span>
                           </div>
                         </>
                       ) : (
-                        <div className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">
+                        <div className="text-sm text-gray-600">
                           Personal residence - No rental income
                         </div>
                       )}
 
                       {asset.annualPropertyTax && (
                         <div className="flex justify-between text-sm">
-                          <span className="text-gray-600 dark:text-gray-400 dark:text-gray-500">
+                          <span className="text-gray-600">
                             Property Tax:
                           </span>
-                          <span className="text-red-600 dark:text-red-400">
+                          <span className="text-red-600">
                             {formatCurrency(asset.annualPropertyTax)} annually
                           </span>
                         </div>
                       )}
                       {asset.annualInsurance && (
                         <div className="flex justify-between text-sm">
-                          <span className="text-gray-600 dark:text-gray-400 dark:text-gray-500">
+                          <span className="text-gray-600">
                             Insurance:
                           </span>
-                          <span className="text-red-600 dark:text-red-400">
+                          <span className="text-red-600">
                             {formatCurrency(asset.annualInsurance)} annually
                           </span>
                         </div>
@@ -339,10 +339,10 @@ export default function RealEstateAssets() {
                 {/* Additional Notes */}
                 {asset.notes && (
                   <div className="border-t pt-4">
-                    <h4 className="mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                    <h4 className="mb-2 text-sm font-medium text-gray-700">
                       Notes
                     </h4>
-                    <p className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">
+                    <p className="text-sm text-gray-600">
                       {asset.notes}
                     </p>
                   </div>
@@ -350,14 +350,14 @@ export default function RealEstateAssets() {
 
                 {/* Action Items */}
                 {asset.ownership.type === "JOINT" && (
-                  <div className="rounded-lg border-t bg-yellow-50 p-3 pt-4 dark:bg-yellow-900/20">
+                  <div className="rounded-lg border-t bg-yellow-50 p-3 pt-4">
                     <div className="flex items-center">
-                      <AlertCircle className="mr-2 h-5 w-5 text-yellow-600 dark:text-yellow-400" />
+                      <AlertCircle className="mr-2 h-5 w-5 text-yellow-600" />
                       <div>
-                        <h4 className="text-sm font-medium text-yellow-800 dark:text-yellow-200">
+                        <h4 className="text-sm font-medium text-yellow-800">
                           Action Required
                         </h4>
-                        <p className="mt-1 text-xs text-yellow-700 dark:text-yellow-300">
+                        <p className="mt-1 text-xs text-yellow-700">
                           Joint ownership property requires succession planning review and potential
                           LLC formation for liability protection.
                         </p>
@@ -375,7 +375,7 @@ export default function RealEstateAssets() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center">
-            <TrendingUp className="mr-2 h-5 w-5 text-blue-600 dark:text-blue-400" />
+            <TrendingUp className="mr-2 h-5 w-5 text-blue-600" />
             Portfolio Analysis & Recommendations
           </CardTitle>
           <CardDescription>Strategic insights for real estate portfolio management</CardDescription>
@@ -383,17 +383,17 @@ export default function RealEstateAssets() {
         <CardContent>
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
             <div className="space-y-4">
-              <h4 className="font-medium text-gray-900 dark:text-gray-100">
+              <h4 className="font-medium text-gray-900">
                 Estate Planning Considerations
               </h4>
               <div className="space-y-3">
                 <div className="flex items-start space-x-3">
                   <div className="mt-2 h-2 w-2 rounded-full bg-blue-500"></div>
                   <div>
-                    <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                    <p className="text-sm font-medium text-gray-900">
                       Trust Protection
                     </p>
-                    <p className="text-xs text-gray-600 dark:text-gray-400 dark:text-gray-500">
+                    <p className="text-xs text-gray-600">
                       Primary residence is properly protected in revocable trusts for probate
                       avoidance
                     </p>
@@ -402,10 +402,10 @@ export default function RealEstateAssets() {
                 <div className="flex items-start space-x-3">
                   <div className="mt-2 h-2 w-2 rounded-full bg-yellow-500"></div>
                   <div>
-                    <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                    <p className="text-sm font-medium text-gray-900">
                       Joint Ownership Risk
                     </p>
-                    <p className="text-xs text-gray-600 dark:text-gray-400 dark:text-gray-500">
+                    <p className="text-xs text-gray-600">
                       Joint properties with brother may need LLC structure for liability protection
                     </p>
                   </div>
@@ -413,10 +413,10 @@ export default function RealEstateAssets() {
                 <div className="flex items-start space-x-3">
                   <div className="mt-2 h-2 w-2 rounded-full bg-green-500"></div>
                   <div>
-                    <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                    <p className="text-sm font-medium text-gray-900">
                       Income Diversification
                     </p>
-                    <p className="text-xs text-gray-600 dark:text-gray-400 dark:text-gray-500">
+                    <p className="text-xs text-gray-600">
                       Farmland provides excellent passive income stream with $5,000/month rental
                     </p>
                   </div>
@@ -425,29 +425,29 @@ export default function RealEstateAssets() {
             </div>
 
             <div className="space-y-4">
-              <h4 className="font-medium text-gray-900 dark:text-gray-100">Financial Metrics</h4>
+              <h4 className="font-medium text-gray-900">Financial Metrics</h4>
               <div className="space-y-3">
-                <div className="flex items-center justify-between rounded bg-gray-50 p-3 dark:bg-gray-900">
-                  <span className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">
+                <div className="flex items-center justify-between rounded bg-gray-50 p-3">
+                  <span className="text-sm text-gray-600">
                     Portfolio LTV Ratio
                   </span>
-                  <span className="font-medium text-gray-900 dark:text-gray-100">
+                  <span className="font-medium text-gray-900">
                     {((getTotalMortgageDebt() / getTotalValue()) * 100).toFixed(1)}%
                   </span>
                 </div>
-                <div className="flex items-center justify-between rounded bg-gray-50 p-3 dark:bg-gray-900">
-                  <span className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">
+                <div className="flex items-center justify-between rounded bg-gray-50 p-3">
+                  <span className="text-sm text-gray-600">
                     Annual Rental Yield
                   </span>
-                  <span className="font-medium text-gray-900 dark:text-gray-100">
+                  <span className="font-medium text-gray-900">
                     {(((getMonthlyIncome() * 12) / getTotalValue()) * 100).toFixed(1)}%
                   </span>
                 </div>
-                <div className="flex items-center justify-between rounded bg-gray-50 p-3 dark:bg-gray-900">
-                  <span className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">
+                <div className="flex items-center justify-between rounded bg-gray-50 p-3">
+                  <span className="text-sm text-gray-600">
                     Equity Percentage
                   </span>
-                  <span className="font-medium text-green-600 dark:text-green-400">
+                  <span className="font-medium text-green-600">
                     {((getNetEquity() / getTotalValue()) * 100).toFixed(1)}%
                   </span>
                 </div>

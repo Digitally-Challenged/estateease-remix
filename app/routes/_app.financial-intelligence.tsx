@@ -61,8 +61,8 @@ export async function loader({ request }: LoaderFunctionArgs) {
     const taxAnalysis = ComprehensiveTaxAnalyzer.analyzeCompleteTaxSituation(
       assets,
       financialProfile.annualIncome,
-      "single",
-      "CA",
+"single",
+"CA",
       0, // No prior gifts
     );
 
@@ -340,11 +340,11 @@ export default function FinancialIntelligence() {
     return (
       <div className="flex min-h-screen items-center justify-center">
         <div className="text-center">
-          <h1 className="mb-4 text-2xl font-bold text-gray-900 dark:text-gray-100">
+          <h1 className="mb-4 text-2xl font-bold text-gray-900">
             Financial Intelligence Dashboard
           </h1>
-          <div className="max-w-md rounded-lg border border-red-200 bg-red-50 p-6 dark:border-red-700 dark:bg-red-900/20">
-            <p className="text-red-800 dark:text-red-200">{data.error}</p>
+          <div className="max-w-md rounded-lg border border-red-200 bg-red-50 p-6">
+            <p className="text-red-800">{data.error}</p>
             <button
               onClick={() => revalidator.revalidate()}
               className="mt-4 rounded bg-red-600 px-4 py-2 text-white transition-colors hover:bg-red-700"
@@ -362,7 +362,7 @@ export default function FinancialIntelligence() {
       <div className="flex min-h-screen items-center justify-center">
         <div className="text-center">
           <div className="mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-b-2 border-blue-600"></div>
-          <p className="text-gray-600 dark:text-gray-400">Loading financial intelligence...</p>
+          <p className="text-gray-600">Loading financial intelligence...</p>
         </div>
       </div>
     );

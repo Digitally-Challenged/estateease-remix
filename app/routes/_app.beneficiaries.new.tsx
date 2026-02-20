@@ -79,8 +79,8 @@ export default function NewBeneficiary() {
     <div className="mx-auto max-w-2xl space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Add Beneficiary</h1>
-          <p className="mt-1 text-gray-600 dark:text-gray-400">
+          <h1 className="text-3xl font-bold text-gray-900">Add Beneficiary</h1>
+          <p className="mt-1 text-gray-600">
             Add a new beneficiary to your estate plan
           </p>
         </div>
@@ -91,8 +91,8 @@ export default function NewBeneficiary() {
       </div>
 
       {actionData?.error && (
-        <div className="rounded-md border border-red-200 bg-red-50 p-4 dark:border-red-700 dark:bg-red-900/20">
-          <p className="text-red-600 dark:text-red-400">{actionData.error}</p>
+        <div className="rounded-md border border-red-200 bg-red-50 p-4">
+          <p className="text-red-600">{actionData.error}</p>
         </div>
       )}
 
@@ -154,7 +154,7 @@ export default function NewBeneficiary() {
                     onChange={(e) => setFormData({ ...formData, isPrimary: e.target.checked })}
                     className="rounded border-gray-300"
                   />
-                  <label htmlFor="isPrimary" className="text-sm text-gray-700 dark:text-gray-300">
+                  <label htmlFor="isPrimary" className="text-sm text-gray-700">
                     Primary beneficiary
                   </label>
                 </div>
@@ -172,7 +172,7 @@ export default function NewBeneficiary() {
                   />
                   <label
                     htmlFor="isContingent"
-                    className="text-sm text-gray-700 dark:text-gray-300"
+                    className="text-sm text-gray-700"
                   >
                     Contingent beneficiary
                   </label>

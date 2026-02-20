@@ -60,10 +60,10 @@ export default function RealEstateOverview() {
       {/* Header */}
       <div className="flex items-start justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+          <h1 className="text-3xl font-bold text-gray-900">
             Real Estate Portfolio
           </h1>
-          <p className="text-gray-600 dark:text-gray-400 dark:text-gray-500">
+          <p className="text-gray-600">
             Manage and track your property investments
           </p>
         </div>
@@ -79,16 +79,16 @@ export default function RealEstateOverview() {
       <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-gray-600 dark:text-gray-400 dark:text-gray-500">
+            <CardTitle className="text-sm font-medium text-gray-600">
               Total Portfolio Value
             </CardTitle>
-            <DollarSign className="h-4 w-4 text-gray-600 dark:text-gray-400 dark:text-gray-500" />
+            <DollarSign className="h-4 w-4 text-gray-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+            <div className="text-2xl font-bold text-gray-900">
               {formatCurrency(totalValue)}
             </div>
-            <p className="text-xs text-gray-600 dark:text-gray-400 dark:text-gray-500">
+            <p className="text-xs text-gray-600">
               Across {realEstateAssets.length} properties
             </p>
           </CardContent>
@@ -96,16 +96,16 @@ export default function RealEstateOverview() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-gray-600 dark:text-gray-400 dark:text-gray-500">
+            <CardTitle className="text-sm font-medium text-gray-600">
               Average Property Value
             </CardTitle>
-            <BarChart3 className="h-4 w-4 text-gray-600 dark:text-gray-400 dark:text-gray-500" />
+            <BarChart3 className="h-4 w-4 text-gray-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+            <div className="text-2xl font-bold text-gray-900">
               {formatCurrency(averageValue)}
             </div>
-            <p className="text-xs text-gray-600 dark:text-gray-400 dark:text-gray-500">
+            <p className="text-xs text-gray-600">
               Per property
             </p>
           </CardContent>
@@ -113,16 +113,16 @@ export default function RealEstateOverview() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-gray-600 dark:text-gray-400 dark:text-gray-500">
+            <CardTitle className="text-sm font-medium text-gray-600">
               Property Types
             </CardTitle>
-            <Building2 className="h-4 w-4 text-gray-600 dark:text-gray-400 dark:text-gray-500" />
+            <Building2 className="h-4 w-4 text-gray-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+            <div className="text-2xl font-bold text-gray-900">
               {Object.keys(propertyTypes).length}
             </div>
-            <p className="text-xs text-gray-600 dark:text-gray-400 dark:text-gray-500">
+            <p className="text-xs text-gray-600">
               Different categories
             </p>
           </CardContent>
@@ -141,16 +141,16 @@ export default function RealEstateOverview() {
               {Object.entries(propertyTypes).map(([type, data]) => (
                 <div key={type} className="flex items-center justify-between">
                   <div>
-                    <p className="font-medium text-gray-900 dark:text-gray-100">{type}</p>
-                    <p className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">
+                    <p className="font-medium text-gray-900">{type}</p>
+                    <p className="text-sm text-gray-600">
                       {data.count} {data.count === 1 ? "property" : "properties"}
                     </p>
                   </div>
                   <div className="text-right">
-                    <p className="font-semibold text-gray-900 dark:text-gray-100">
+                    <p className="font-semibold text-gray-900">
                       {formatCurrency(data.value)}
                     </p>
-                    <p className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">
+                    <p className="text-sm text-gray-600">
                       {((data.value / totalValue) * 100).toFixed(1)}% of portfolio
                     </p>
                   </div>
@@ -170,8 +170,8 @@ export default function RealEstateOverview() {
         <CardContent>
           {realEstateAssets.length === 0 ? (
             <div className="py-12 text-center">
-              <Building2 className="mx-auto mb-4 h-12 w-12 text-gray-400 dark:text-gray-500" />
-              <p className="mb-4 text-gray-600 dark:text-gray-400 dark:text-gray-500">
+              <Building2 className="mx-auto mb-4 h-12 w-12 text-gray-400" />
+              <p className="mb-4 text-gray-600">
                 No properties added yet
               </p>
               <Button asChild>
@@ -191,21 +191,21 @@ export default function RealEstateOverview() {
                 return (
                   <div
                     key={asset.id}
-                    className="flex items-center justify-between rounded-lg border border-gray-200 p-4 transition-colors hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-900 dark:hover:bg-gray-800"
+                    className="flex items-center justify-between rounded-lg border border-gray-200 p-4 transition-colors hover:bg-gray-50"
                   >
                     <div className="flex items-start space-x-4">
-                      <Icon className="mt-1 h-10 w-10 text-gray-600 dark:text-gray-400 dark:text-gray-500" />
+                      <Icon className="mt-1 h-10 w-10 text-gray-600" />
                       <div className="flex-1">
-                        <h3 className="font-medium text-gray-900 dark:text-gray-100">
+                        <h3 className="font-medium text-gray-900">
                           {asset.name}
                         </h3>
                         {address && (
-                          <div className="mt-1 flex items-center text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">
+                          <div className="mt-1 flex items-center text-sm text-gray-600">
                             <MapPin className="mr-1 h-3 w-3" />
                             <span>{address}</span>
                           </div>
                         )}
-                        <div className="mt-2 flex items-center space-x-4 text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">
+                        <div className="mt-2 flex items-center space-x-4 text-sm text-gray-600">
                           <span>Ownership: {asset.ownership.type}</span>
                           {"propertyType" in asset && asset.propertyType && (
                             <span>Type: {asset.propertyType}</span>
@@ -214,7 +214,7 @@ export default function RealEstateOverview() {
                       </div>
                     </div>
                     <div className="text-right">
-                      <p className="font-semibold text-gray-900 dark:text-gray-100">
+                      <p className="font-semibold text-gray-900">
                         {formatCurrency(asset.value)}
                       </p>
                       <div className="mt-2 flex space-x-2">

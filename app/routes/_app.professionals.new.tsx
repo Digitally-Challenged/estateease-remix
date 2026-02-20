@@ -102,8 +102,8 @@ export default function NewProfessional() {
     <div className="mx-auto max-w-4xl space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Add Professional</h1>
-          <p className="mt-1 text-gray-600 dark:text-gray-400">
+          <h1 className="text-3xl font-bold text-gray-900">Add Professional</h1>
+          <p className="mt-1 text-gray-600">
             Add a new professional to your team
           </p>
         </div>
@@ -114,8 +114,8 @@ export default function NewProfessional() {
       </div>
 
       {actionData?.error && (
-        <div className="rounded-md border border-red-200 bg-red-50 p-4 dark:border-red-700 dark:bg-red-900/20">
-          <p className="text-red-600 dark:text-red-400">{actionData.error}</p>
+        <div className="rounded-md border border-red-200 bg-red-50 p-4">
+          <p className="text-red-600">{actionData.error}</p>
         </div>
       )}
 
@@ -206,7 +206,7 @@ export default function NewProfessional() {
             </FormField>
 
             <div className="space-y-4">
-              <h3 className="flex items-center text-lg font-medium text-gray-900 dark:text-gray-100">
+              <h3 className="flex items-center text-lg font-medium text-gray-900">
                 <MapPin className="mr-2 h-5 w-5" />
                 Address
               </h3>

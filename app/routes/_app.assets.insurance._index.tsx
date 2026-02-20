@@ -142,10 +142,10 @@ function InsuranceAssetsContent() {
     return (
       <div className="space-y-6">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+          <h1 className="text-3xl font-bold text-gray-900">
             Insurance Policies
           </h1>
-          <p className="mt-2 text-gray-600 dark:text-gray-400 dark:text-gray-500">
+          <p className="mt-2 text-gray-600">
             Manage your insurance coverage and policies
           </p>
         </div>
@@ -164,21 +164,21 @@ function InsuranceAssetsContent() {
       <div className="space-y-6">
         <div className="flex items-start justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+            <h1 className="text-3xl font-bold text-gray-900">
               Insurance Policies
             </h1>
-            <p className="mt-2 text-gray-600 dark:text-gray-400 dark:text-gray-500">
+            <p className="mt-2 text-gray-600">
               Manage your insurance coverage and policies
             </p>
           </div>
         </div>
         <Card className="py-8 text-center">
           <CardContent>
-            <Shield className="mx-auto mb-4 h-12 w-12 text-gray-400 dark:text-gray-500" />
-            <h3 className="mb-2 text-lg font-medium text-gray-900 dark:text-gray-100">
+            <Shield className="mx-auto mb-4 h-12 w-12 text-gray-400" />
+            <h3 className="mb-2 text-lg font-medium text-gray-900">
               No insurance policies found
             </h3>
-            <p className="mb-4 text-gray-600 dark:text-gray-400 dark:text-gray-500">
+            <p className="mb-4 text-gray-600">
               Add your insurance policies to track coverage and ensure adequate protection
             </p>
             <Button asChild>
@@ -199,10 +199,10 @@ function InsuranceAssetsContent() {
         const ins = asInsurance(asset);
         return (
           <div className="flex items-start space-x-3">
-            <Shield className="mt-0.5 h-5 w-5 text-gray-400 dark:text-gray-500" />
+            <Shield className="mt-0.5 h-5 w-5 text-gray-400" />
             <div>
               <p className="font-medium">{asset?.name}</p>
-              <p className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">
+              <p className="text-sm text-gray-600">
                 {ins.policyNumber && `Policy #${ins.policyNumber}`}
               </p>
             </div>
@@ -293,10 +293,10 @@ function InsuranceAssetsContent() {
       {/* Header */}
       <div className="flex items-start justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+          <h1 className="text-3xl font-bold text-gray-900">
             Insurance Policies
           </h1>
-          <p className="mt-2 text-gray-600 dark:text-gray-400 dark:text-gray-500">
+          <p className="mt-2 text-gray-600">
             Manage your insurance coverage and policies
           </p>
         </div>
@@ -313,11 +313,11 @@ function InsuranceAssetsContent() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Coverage</CardTitle>
-            <TrendingUp className="h-4 w-4 text-gray-600 dark:text-gray-400 dark:text-gray-500" />
+            <TrendingUp className="h-4 w-4 text-gray-600" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{formatCurrency(totalCoverage)}</div>
-            <p className="mt-1 text-xs text-gray-600 dark:text-gray-400 dark:text-gray-500">
+            <p className="mt-1 text-xs text-gray-600">
               Across all policies
             </p>
           </CardContent>
@@ -326,11 +326,11 @@ function InsuranceAssetsContent() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Annual Premiums</CardTitle>
-            <Calendar className="h-4 w-4 text-gray-600 dark:text-gray-400 dark:text-gray-500" />
+            <Calendar className="h-4 w-4 text-gray-600" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{formatCurrency(totalPremiums)}</div>
-            <p className="mt-1 text-xs text-gray-600 dark:text-gray-400 dark:text-gray-500">
+            <p className="mt-1 text-xs text-gray-600">
               Total yearly cost
             </p>
           </CardContent>
@@ -339,11 +339,11 @@ function InsuranceAssetsContent() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Active Policies</CardTitle>
-            <FileText className="h-4 w-4 text-gray-600 dark:text-gray-400 dark:text-gray-500" />
+            <FileText className="h-4 w-4 text-gray-600" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{insuranceAssets.length}</div>
-            <p className="mt-1 text-xs text-gray-600 dark:text-gray-400 dark:text-gray-500">
+            <p className="mt-1 text-xs text-gray-600">
               {expiringPolicies.length > 0 && `${expiringPolicies.length} expiring soon`}
             </p>
           </CardContent>
@@ -352,13 +352,13 @@ function InsuranceAssetsContent() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Policy Types</CardTitle>
-            <Shield className="h-4 w-4 text-gray-600 dark:text-gray-400 dark:text-gray-500" />
+            <Shield className="h-4 w-4 text-gray-600" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
               {Object.values(policyTypes).filter((policies) => policies.length > 0).length}
             </div>
-            <p className="mt-1 text-xs text-gray-600 dark:text-gray-400 dark:text-gray-500">
+            <p className="mt-1 text-xs text-gray-600">
               Categories covered
             </p>
           </CardContent>
@@ -367,9 +367,9 @@ function InsuranceAssetsContent() {
 
       {/* Expiring Policies Alert */}
       {expiringPolicies.length > 0 && (
-        <Card className="border-orange-200 bg-orange-50 dark:border-orange-700 dark:bg-orange-900/20">
+        <Card className="border-orange-200 bg-orange-50">
           <CardHeader>
-            <CardTitle className="flex items-center text-orange-800 dark:text-orange-200">
+            <CardTitle className="flex items-center text-orange-800">
               <AlertCircle className="mr-2 h-5 w-5" />
               Policies Expiring Soon
             </CardTitle>
@@ -379,7 +379,7 @@ function InsuranceAssetsContent() {
               {expiringPolicies.map((policy) =>
                 policy ? (
                   <div key={policy.id} className="flex items-center justify-between">
-                    <span className="text-orange-700 dark:text-orange-300">{policy.name}</span>
+                    <span className="text-orange-700">{policy.name}</span>
                     <Badge variant="destructive">
                       Expires{" "}
                       {new Date(

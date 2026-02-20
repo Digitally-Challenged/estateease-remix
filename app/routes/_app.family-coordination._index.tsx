@@ -229,10 +229,10 @@ export default function FamilyCoordinationDashboard() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+          <h1 className="text-3xl font-bold text-gray-900">
             Family Coordination Center
           </h1>
-          <p className="text-gray-600 dark:text-gray-400">
+          <p className="text-gray-600">
             Optimize family relationships, role assignments, and communication protocols
           </p>
         </div>
@@ -257,10 +257,10 @@ export default function FamilyCoordinationDashboard() {
         <Card className="cursor-pointer transition-shadow hover:shadow-lg">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Schedule Family Meeting</CardTitle>
-            <Calendar className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+            <Calendar className="h-4 w-4 text-blue-600" />
           </CardHeader>
           <CardContent>
-            <p className="text-xs text-gray-600 dark:text-gray-400">
+            <p className="text-xs text-gray-600">
               Coordinate next estate planning discussion
             </p>
             <Button size="sm" className="mt-2 w-full">
@@ -273,10 +273,10 @@ export default function FamilyCoordinationDashboard() {
         <Card className="cursor-pointer transition-shadow hover:shadow-lg">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Update Contact Info</CardTitle>
-            <Phone className="h-4 w-4 text-green-600 dark:text-green-400" />
+            <Phone className="h-4 w-4 text-green-600" />
           </CardHeader>
           <CardContent>
-            <p className="text-xs text-gray-600 dark:text-gray-400">
+            <p className="text-xs text-gray-600">
               {100 - coordinationMetrics.contactCoverage.email}% missing email addresses
             </p>
             <Button size="sm" variant="outline" className="mt-2 w-full">
@@ -288,10 +288,10 @@ export default function FamilyCoordinationDashboard() {
         <Card className="cursor-pointer transition-shadow hover:shadow-lg">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Role Assignments</CardTitle>
-            <Shield className="h-4 w-4 text-purple-600 dark:text-purple-400" />
+            <Shield className="h-4 w-4 text-purple-600" />
           </CardHeader>
           <CardContent>
-            <p className="text-xs text-gray-600 dark:text-gray-400">
+            <p className="text-xs text-gray-600">
               {criticalRoles.length - assignedRoles.length} critical roles unassigned
             </p>
             <Button size="sm" variant="outline" className="mt-2 w-full">
@@ -303,10 +303,10 @@ export default function FamilyCoordinationDashboard() {
         <Card className="cursor-pointer transition-shadow hover:shadow-lg">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Communication Plan</CardTitle>
-            <MessageSquare className="h-4 w-4 text-orange-600 dark:text-orange-400" />
+            <MessageSquare className="h-4 w-4 text-orange-600" />
           </CardHeader>
           <CardContent>
-            <p className="text-xs text-gray-600 dark:text-gray-400">
+            <p className="text-xs text-gray-600">
               Create notification preferences
             </p>
             <Button size="sm" variant="outline" className="mt-2 w-full">
@@ -334,7 +334,7 @@ export default function FamilyCoordinationDashboard() {
               return (
                 <div
                   key={member.id}
-                  className="flex items-center justify-between rounded-lg border border-gray-200 p-3 dark:border-gray-700"
+                  className="flex items-center justify-between rounded-lg border border-gray-200 p-3"
                 >
                   <div className="flex items-center space-x-3">
                     <div
@@ -342,7 +342,7 @@ export default function FamilyCoordinationDashboard() {
                     />
                     <div>
                       <h4 className="font-medium">{member.name ?? member.fullName}</h4>
-                      <p className="text-sm capitalize text-gray-600 dark:text-gray-400">
+                      <p className="text-sm capitalize text-gray-600">
                         {member.relationship.replace("_", " ")}
                       </p>
                     </div>
@@ -354,10 +354,10 @@ export default function FamilyCoordinationDashboard() {
                       </Badge>
                     )}
                     {member.contactInfo?.email && (
-                      <Mail className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+                      <Mail className="h-4 w-4 text-blue-600" />
                     )}
                     {member.contactInfo?.primaryPhone && (
-                      <Phone className="h-4 w-4 text-green-600 dark:text-green-400" />
+                      <Phone className="h-4 w-4 text-green-600" />
                     )}
                   </div>
                 </div>
@@ -435,9 +435,9 @@ export default function FamilyCoordinationDashboard() {
 
       {/* Critical Alerts */}
       {coordinationMetrics.recommendations.length > 0 && (
-        <Card className="border-yellow-200 dark:border-yellow-800">
+        <Card className="border-yellow-200">
           <CardHeader>
-            <CardTitle className="flex items-center text-yellow-800 dark:text-yellow-200">
+            <CardTitle className="flex items-center text-yellow-800">
               <AlertTriangle className="mr-2 h-5 w-5" />
               Coordination Alerts
             </CardTitle>
@@ -446,7 +446,7 @@ export default function FamilyCoordinationDashboard() {
             <div className="space-y-2">
               {coordinationMetrics.recommendations.map((rec, index) => (
                 <div key={index} className="flex items-start space-x-2">
-                  <AlertTriangle className="mt-0.5 h-4 w-4 flex-shrink-0 text-yellow-600 dark:text-yellow-400" />
+                  <AlertTriangle className="mt-0.5 h-4 w-4 flex-shrink-0 text-yellow-600" />
                   <span className="text-sm">{rec}</span>
                 </div>
               ))}

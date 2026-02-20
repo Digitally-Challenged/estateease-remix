@@ -123,13 +123,13 @@ export function DocumentAIAnalysis({
                 <CardTitle>Document Summary</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="leading-relaxed text-gray-700 dark:text-gray-300">
+                <p className="leading-relaxed text-gray-700">
                   {currentAnalysis.summary}
                 </p>
 
                 {currentAnalysis.keyTerms.length > 0 && (
                   <div className="mt-4">
-                    <h4 className="mb-2 font-medium text-gray-900 dark:text-gray-100">Key Terms</h4>
+                    <h4 className="mb-2 font-medium text-gray-900">Key Terms</h4>
                     <div className="flex flex-wrap gap-2">
                       {currentAnalysis.keyTerms.map((term, index) => (
                         <Badge key={index} variant="secondary">
@@ -154,7 +154,7 @@ export function DocumentAIAnalysis({
                   >
                     {currentAnalysis.compliance.score}%
                   </div>
-                  <div className="mb-4 text-sm text-gray-600 dark:text-gray-400">
+                  <div className="mb-4 text-sm text-gray-600">
                     {getComplianceLabel(currentAnalysis.compliance.score)}
                   </div>
                   <Progress value={currentAnalysis.compliance.score} className="h-3" />
@@ -172,14 +172,14 @@ export function DocumentAIAnalysis({
             <CardContent>
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
                 <div>
-                  <h4 className="mb-2 flex items-center font-medium text-gray-900 dark:text-gray-100">
+                  <h4 className="mb-2 flex items-center font-medium text-gray-900">
                     <Users className="mr-2 h-4 w-4" />
                     People
                   </h4>
                   <div className="space-y-1">
                     {currentAnalysis.entities.people.length > 0 ? (
                       currentAnalysis.entities.people.map((person, index) => (
-                        <div key={index} className="text-sm text-gray-600 dark:text-gray-400">
+                        <div key={index} className="text-sm text-gray-600">
                           {person}
                         </div>
                       ))
@@ -190,14 +190,14 @@ export function DocumentAIAnalysis({
                 </div>
 
                 <div>
-                  <h4 className="mb-2 flex items-center font-medium text-gray-900 dark:text-gray-100">
+                  <h4 className="mb-2 flex items-center font-medium text-gray-900">
                     <Clock className="mr-2 h-4 w-4" />
                     Dates
                   </h4>
                   <div className="space-y-1">
                     {currentAnalysis.entities.dates.length > 0 ? (
                       currentAnalysis.entities.dates.map((date, index) => (
-                        <div key={index} className="text-sm text-gray-600 dark:text-gray-400">
+                        <div key={index} className="text-sm text-gray-600">
                           {date}
                         </div>
                       ))
@@ -208,14 +208,14 @@ export function DocumentAIAnalysis({
                 </div>
 
                 <div>
-                  <h4 className="mb-2 flex items-center font-medium text-gray-900 dark:text-gray-100">
+                  <h4 className="mb-2 flex items-center font-medium text-gray-900">
                     <TrendingUp className="mr-2 h-4 w-4" />
                     Amounts
                   </h4>
                   <div className="space-y-1">
                     {currentAnalysis.entities.amounts.length > 0 ? (
                       currentAnalysis.entities.amounts.map((amount, index) => (
-                        <div key={index} className="text-sm text-gray-600 dark:text-gray-400">
+                        <div key={index} className="text-sm text-gray-600">
                           {amount}
                         </div>
                       ))
@@ -226,14 +226,14 @@ export function DocumentAIAnalysis({
                 </div>
 
                 <div>
-                  <h4 className="mb-2 flex items-center font-medium text-gray-900 dark:text-gray-100">
+                  <h4 className="mb-2 flex items-center font-medium text-gray-900">
                     <Target className="mr-2 h-4 w-4" />
                     Properties
                   </h4>
                   <div className="space-y-1">
                     {currentAnalysis.entities.properties.length > 0 ? (
                       currentAnalysis.entities.properties.map((property, index) => (
-                        <div key={index} className="text-sm text-gray-600 dark:text-gray-400">
+                        <div key={index} className="text-sm text-gray-600">
                           {property}
                         </div>
                       ))
@@ -261,10 +261,10 @@ export function DocumentAIAnalysis({
                   {currentAnalysis.riskFactors.map((risk, index) => (
                     <div
                       key={index}
-                      className="flex items-start space-x-3 rounded-lg bg-orange-50 p-3 dark:bg-orange-900/20"
+                      className="flex items-start space-x-3 rounded-lg bg-orange-50 p-3"
                     >
                       <AlertCircle className="mt-0.5 h-5 w-5 text-orange-600" />
-                      <span className="text-sm text-orange-900 dark:text-orange-100">{risk}</span>
+                      <span className="text-sm text-orange-900">{risk}</span>
                     </div>
                   ))}
                 </div>
@@ -287,10 +287,10 @@ export function DocumentAIAnalysis({
                   {currentAnalysis.compliance.issues.map((issue, index) => (
                     <div
                       key={index}
-                      className="flex items-start space-x-3 rounded-lg bg-red-50 p-3 dark:bg-red-900/20"
+                      className="flex items-start space-x-3 rounded-lg bg-red-50 p-3"
                     >
                       <AlertTriangle className="mt-0.5 h-5 w-5 text-red-600" />
-                      <span className="text-sm text-red-900 dark:text-red-100">{issue}</span>
+                      <span className="text-sm text-red-900">{issue}</span>
                     </div>
                   ))}
                 </div>
@@ -314,11 +314,11 @@ export function DocumentAIAnalysis({
                 {currentAnalysis.actionItems.map((action, index) => (
                   <div
                     key={index}
-                    className="flex items-center justify-between rounded-lg border border-gray-200 p-3 dark:border-gray-700"
+                    className="flex items-center justify-between rounded-lg border border-gray-200 p-3"
                   >
                     <div className="flex items-start space-x-3">
                       <CheckCircle className="mt-0.5 h-5 w-5 text-green-600" />
-                      <span className="text-sm text-gray-900 dark:text-gray-100">{action}</span>
+                      <span className="text-sm text-gray-900">{action}</span>
                     </div>
                     <Button
                       size="sm"
@@ -333,18 +333,18 @@ export function DocumentAIAnalysis({
 
               {/* Compliance Recommendations */}
               {currentAnalysis.compliance.recommendations.length > 0 && (
-                <div className="mt-6 border-t border-gray-200 pt-6 dark:border-gray-700">
-                  <h4 className="mb-3 font-medium text-gray-900 dark:text-gray-100">
+                <div className="mt-6 border-t border-gray-200 pt-6">
+                  <h4 className="mb-3 font-medium text-gray-900">
                     Compliance Recommendations
                   </h4>
                   <div className="space-y-2">
                     {currentAnalysis.compliance.recommendations.map((recommendation, index) => (
                       <div
                         key={index}
-                        className="flex items-center space-x-3 rounded bg-blue-50 p-2 dark:bg-blue-900/20"
+                        className="flex items-center space-x-3 rounded bg-blue-50 p-2"
                       >
                         <Eye className="h-4 w-4 text-blue-600" />
-                        <span className="text-sm text-blue-900 dark:text-blue-100">
+                        <span className="text-sm text-blue-900">
                           {recommendation}
                         </span>
                       </div>
@@ -360,10 +360,10 @@ export function DocumentAIAnalysis({
         <Card>
           <CardContent className="py-12 text-center">
             <Brain className="mx-auto mb-4 h-12 w-12 text-gray-400" />
-            <h3 className="mb-2 text-lg font-medium text-gray-900 dark:text-gray-100">
+            <h3 className="mb-2 text-lg font-medium text-gray-900">
               AI Document Analysis
             </h3>
-            <p className="mx-auto mb-6 max-w-md text-gray-600 dark:text-gray-400">
+            <p className="mx-auto mb-6 max-w-md text-gray-600">
               Get intelligent insights about your document including compliance analysis, risk
               factors, and recommended actions.
             </p>

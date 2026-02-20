@@ -114,8 +114,8 @@ export default function FinancialOverview() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Financial Overview</h1>
-        <p className="text-gray-600 dark:text-gray-400 dark:text-gray-500">
+        <h1 className="text-3xl font-bold text-gray-900">Financial Overview</h1>
+        <p className="text-gray-600">
           Real-time financial calculations and estate planning insights
         </p>
       </div>
@@ -124,16 +124,16 @@ export default function FinancialOverview() {
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-gray-600 dark:text-gray-400 dark:text-gray-500">
+            <CardTitle className="text-sm font-medium text-gray-600">
               Total Net Worth
             </CardTitle>
-            <DollarSign className="h-4 w-4 text-gray-600 dark:text-gray-400 dark:text-gray-500" />
+            <DollarSign className="h-4 w-4 text-gray-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+            <div className="text-2xl font-bold text-gray-900">
               {formatCurrency(calculations.netWorth)}
             </div>
-            <p className="text-xs text-gray-600 dark:text-gray-400 dark:text-gray-500">
+            <p className="text-xs text-gray-600">
               Across {assets.length} assets
             </p>
           </CardContent>
@@ -141,16 +141,16 @@ export default function FinancialOverview() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-gray-600 dark:text-gray-400 dark:text-gray-500">
+            <CardTitle className="text-sm font-medium text-gray-600">
               Monthly Cash Flow
             </CardTitle>
-            <TrendingUp className="h-4 w-4 text-gray-600 dark:text-gray-400 dark:text-gray-500" />
+            <TrendingUp className="h-4 w-4 text-gray-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+            <div className="text-2xl font-bold text-gray-900">
               {formatCurrency(calculations.cashFlow.monthlyIncome)}
             </div>
-            <p className="text-xs text-gray-600 dark:text-gray-400 dark:text-gray-500">
+            <p className="text-xs text-gray-600">
               From {calculations.cashFlow.incomeGeneratingAssets} assets
             </p>
           </CardContent>
@@ -158,16 +158,16 @@ export default function FinancialOverview() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-gray-600 dark:text-gray-400 dark:text-gray-500">
+            <CardTitle className="text-sm font-medium text-gray-600">
               Liquid Assets
             </CardTitle>
-            <Wallet className="h-4 w-4 text-gray-600 dark:text-gray-400 dark:text-gray-500" />
+            <Wallet className="h-4 w-4 text-gray-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+            <div className="text-2xl font-bold text-gray-900">
               {formatCurrency(calculations.liquidity.liquidAssets)}
             </div>
-            <p className="text-xs text-gray-600 dark:text-gray-400 dark:text-gray-500">
+            <p className="text-xs text-gray-600">
               {formatPercentage(calculations.liquidity.liquidityRatio)} of total
             </p>
           </CardContent>
@@ -175,16 +175,16 @@ export default function FinancialOverview() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-gray-600 dark:text-gray-400 dark:text-gray-500">
+            <CardTitle className="text-sm font-medium text-gray-600">
               Estate Tax Exposure
             </CardTitle>
-            <AlertTriangle className="h-4 w-4 text-gray-600 dark:text-gray-400 dark:text-gray-500" />
+            <AlertTriangle className="h-4 w-4 text-gray-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+            <div className="text-2xl font-bold text-gray-900">
               {formatCurrency(calculations.estateTax.estateTax)}
             </div>
-            <p className="text-xs text-gray-600 dark:text-gray-400 dark:text-gray-500">
+            <p className="text-xs text-gray-600">
               {formatPercentage(calculations.estateTax.effectiveRate)} effective rate
             </p>
           </CardContent>
@@ -196,7 +196,7 @@ export default function FinancialOverview() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center">
-              <PieChart className="mr-2 h-5 w-5 text-blue-600 dark:text-blue-400" />
+              <PieChart className="mr-2 h-5 w-5 text-blue-600" />
               Asset Allocation
             </CardTitle>
             <CardDescription>Portfolio distribution by asset category</CardDescription>
@@ -210,7 +210,7 @@ export default function FinancialOverview() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center">
-              <Gauge className="mr-2 h-5 w-5 text-green-600 dark:text-green-400" />
+              <Gauge className="mr-2 h-5 w-5 text-green-600" />
               Liquidity Analysis
             </CardTitle>
             <CardDescription>Percentage of assets in liquid form</CardDescription>
@@ -225,21 +225,21 @@ export default function FinancialOverview() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center">
-            <Shield className="mr-2 h-5 w-5 text-green-600 dark:text-green-400" />
+            <Shield className="mr-2 h-5 w-5 text-green-600" />
             Ownership Structure
           </CardTitle>
           <CardDescription>Asset distribution by ownership type</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
-            <div className="rounded-lg bg-gray-50 p-4 text-center dark:bg-gray-900">
-              <p className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">
+            <div className="rounded-lg bg-gray-50 p-4 text-center">
+              <p className="text-sm text-gray-600">
                 Trust Owned
               </p>
-              <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+              <p className="text-2xl font-bold text-gray-900">
                 {formatCurrency(calculations.ownershipSummary.trust)}
               </p>
-              <p className="text-xs text-gray-500 dark:text-gray-400 dark:text-gray-500">
+              <p className="text-xs text-gray-500">
                 {calculations.ownershipSummary.total > 0
                   ? formatPercentage(
                       (calculations.ownershipSummary.trust / calculations.ownershipSummary.total) *
@@ -248,14 +248,14 @@ export default function FinancialOverview() {
                   : "0%"}
               </p>
             </div>
-            <div className="rounded-lg bg-gray-50 p-4 text-center dark:bg-gray-900">
-              <p className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">
+            <div className="rounded-lg bg-gray-50 p-4 text-center">
+              <p className="text-sm text-gray-600">
                 Joint Ownership
               </p>
-              <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+              <p className="text-2xl font-bold text-gray-900">
                 {formatCurrency(calculations.ownershipSummary.joint)}
               </p>
-              <p className="text-xs text-gray-500 dark:text-gray-400 dark:text-gray-500">
+              <p className="text-xs text-gray-500">
                 {calculations.ownershipSummary.total > 0
                   ? formatPercentage(
                       (calculations.ownershipSummary.joint / calculations.ownershipSummary.total) *
@@ -264,14 +264,14 @@ export default function FinancialOverview() {
                   : "0%"}
               </p>
             </div>
-            <div className="rounded-lg bg-gray-50 p-4 text-center dark:bg-gray-900">
-              <p className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">
+            <div className="rounded-lg bg-gray-50 p-4 text-center">
+              <p className="text-sm text-gray-600">
                 Individual
               </p>
-              <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+              <p className="text-2xl font-bold text-gray-900">
                 {formatCurrency(calculations.ownershipSummary.individual)}
               </p>
-              <p className="text-xs text-gray-500 dark:text-gray-400 dark:text-gray-500">
+              <p className="text-xs text-gray-500">
                 {calculations.ownershipSummary.total > 0
                   ? formatPercentage(
                       (calculations.ownershipSummary.individual /
@@ -281,14 +281,14 @@ export default function FinancialOverview() {
                   : "0%"}
               </p>
             </div>
-            <div className="rounded-lg bg-gray-50 p-4 text-center dark:bg-gray-900">
-              <p className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">
+            <div className="rounded-lg bg-gray-50 p-4 text-center">
+              <p className="text-sm text-gray-600">
                 Business Entity
               </p>
-              <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+              <p className="text-2xl font-bold text-gray-900">
                 {formatCurrency(calculations.ownershipSummary.business)}
               </p>
-              <p className="text-xs text-gray-500 dark:text-gray-400 dark:text-gray-500">
+              <p className="text-xs text-gray-500">
                 {calculations.ownershipSummary.total > 0
                   ? formatPercentage(
                       (calculations.ownershipSummary.business /
@@ -313,19 +313,19 @@ export default function FinancialOverview() {
             {trusts.map((trust) => (
               <div
                 key={trust.id}
-                className="flex items-center justify-between rounded-lg border border-gray-200 p-3 dark:border-gray-700"
+                className="flex items-center justify-between rounded-lg border border-gray-200 p-3"
               >
                 <div>
-                  <h4 className="font-medium text-gray-900 dark:text-gray-100">{trust.name}</h4>
-                  <p className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">
+                  <h4 className="font-medium text-gray-900">{trust.name}</h4>
+                  <p className="text-sm text-gray-600">
                     {trust.type}
                   </p>
                 </div>
                 <div className="text-right">
-                  <p className="font-semibold text-gray-900 dark:text-gray-100">
+                  <p className="font-semibold text-gray-900">
                     {formatCurrency(calculations.trustValues[trust.id] || 0)}
                   </p>
-                  <p className="text-xs text-gray-500 dark:text-gray-400 dark:text-gray-500">
+                  <p className="text-xs text-gray-500">
                     {calculations.netWorth > 0
                       ? formatPercentage(
                           ((calculations.trustValues[trust.id] || 0) / calculations.netWorth) * 100,
@@ -350,49 +350,49 @@ export default function FinancialOverview() {
           <div className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <p className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">
+                <p className="text-sm text-gray-600">
                   Current Net Worth
                 </p>
-                <p className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                <p className="text-lg font-semibold text-gray-900">
                   {formatCurrency(calculations.netWorth)}
                 </p>
               </div>
               <div>
-                <p className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">
+                <p className="text-sm text-gray-600">
                   Federal Exemption (2024)
                 </p>
-                <p className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                <p className="text-lg font-semibold text-gray-900">
                   {formatCurrency(calculations.estateTax.exemption)}
                 </p>
               </div>
               <div>
-                <p className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">
+                <p className="text-sm text-gray-600">
                   Taxable Estate
                 </p>
-                <p className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                <p className="text-lg font-semibold text-gray-900">
                   {formatCurrency(calculations.estateTax.taxableEstate)}
                 </p>
               </div>
               <div>
-                <p className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">
+                <p className="text-sm text-gray-600">
                   Estimated Estate Tax
                 </p>
-                <p className="text-lg font-semibold text-red-600 dark:text-red-400">
+                <p className="text-lg font-semibold text-red-600">
                   {formatCurrency(calculations.estateTax.estateTax)}
                 </p>
               </div>
             </div>
 
             {calculations.estateTax.estateTax === 0 ? (
-              <div className="rounded-lg border border-green-200 bg-green-50 p-4 dark:border-green-700 dark:bg-green-900/20">
-                <p className="text-sm text-green-800 dark:text-green-200">
+              <div className="rounded-lg border border-green-200 bg-green-50 p-4">
+                <p className="text-sm text-green-800">
                   ✓ Your current net worth is below the federal estate tax exemption threshold. No
                   federal estate tax would be due under current law.
                 </p>
               </div>
             ) : (
-              <div className="rounded-lg border border-yellow-200 bg-yellow-50 p-4 dark:border-yellow-700 dark:bg-yellow-900/20">
-                <p className="text-sm text-yellow-800 dark:text-yellow-200">
+              <div className="rounded-lg border border-yellow-200 bg-yellow-50 p-4">
+                <p className="text-sm text-yellow-800">
                   ⚠️ Your estate may be subject to federal estate tax. Consider advanced planning
                   strategies such as gifting, charitable contributions, or additional trust
                   structures.
@@ -423,7 +423,7 @@ export default function FinancialOverview() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center">
-            <Calendar className="mr-2 h-5 w-5 text-red-600 dark:text-red-400" />
+            <Calendar className="mr-2 h-5 w-5 text-red-600" />
             Estate Tax Projections
           </CardTitle>
           <CardDescription>

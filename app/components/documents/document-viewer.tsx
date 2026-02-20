@@ -107,7 +107,7 @@ export function DocumentViewer({
     // For images, show the image directly
     if (fileType.startsWith("image/")) {
       return (
-        <div className="flex h-full items-center justify-center bg-gray-100 dark:bg-gray-900">
+        <div className="flex h-full items-center justify-center bg-gray-100">
           <img
             src={documentUrl || ""}
             alt={documentName}
@@ -147,17 +147,17 @@ export function DocumentViewer({
         aria-label="Close document viewer"
       />
       <div
-        className={`relative bg-white shadow-lg dark:bg-gray-800 ${
+        className={`relative bg-white shadow-lg ${
           isFullscreen ? "h-full w-full" : "mx-4 h-[85vh] w-full max-w-5xl rounded-lg"
         }`}
       >
         {/* Header */}
-        <div className="flex items-center justify-between border-b p-4 dark:border-gray-700">
+        <div className="flex items-center justify-between border-b p-4">
           <div className="flex items-center space-x-3">
-            <FileIcon className="h-5 w-5 text-gray-600 dark:text-gray-400" />
+            <FileIcon className="h-5 w-5 text-gray-600" />
             <div>
               <h2 className="text-lg font-semibold">{documentName}</h2>
-              <p className="text-sm text-gray-500 dark:text-gray-400">
+              <p className="text-sm text-gray-500">
                 {formatFileSize(fileSize)} • Uploaded {formatDate(uploadedAt)}
               </p>
             </div>

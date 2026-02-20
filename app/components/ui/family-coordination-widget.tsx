@@ -48,9 +48,9 @@ interface FamilyCoordinationWidgetProps {
 
 export function FamilyCoordinationWidget({ metrics, className }: FamilyCoordinationWidgetProps) {
   const getScoreColor = (score: number) => {
-    if (score >= 80) return "text-green-600 dark:text-green-400";
-    if (score >= 60) return "text-yellow-600 dark:text-yellow-400";
-    return "text-red-600 dark:text-red-400";
+    if (score >= 80) return "text-green-600";
+    if (score >= 60) return "text-yellow-600";
+    return "text-red-600";
   };
 
   const getScoreIcon = (score: number) => {
@@ -77,7 +77,7 @@ export function FamilyCoordinationWidget({ metrics, className }: FamilyCoordinat
         </CardHeader>
         <CardContent>
           <Progress value={metrics.coordinationScore} className="w-full" />
-          <p className="mt-2 text-xs text-gray-600 dark:text-gray-400">
+          <p className="mt-2 text-xs text-gray-600">
             Based on role assignments, contact coverage, and emergency readiness
           </p>
         </CardContent>
@@ -87,10 +87,10 @@ export function FamilyCoordinationWidget({ metrics, className }: FamilyCoordinat
       <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-xs font-medium text-gray-600 dark:text-gray-400">
+            <CardTitle className="text-xs font-medium text-gray-600">
               Family Members
             </CardTitle>
-            <Users className="h-4 w-4 text-gray-600 dark:text-gray-400" />
+            <Users className="h-4 w-4 text-gray-600" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{metrics.totalFamilyMembers}</div>
@@ -99,10 +99,10 @@ export function FamilyCoordinationWidget({ metrics, className }: FamilyCoordinat
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-xs font-medium text-gray-600 dark:text-gray-400">
+            <CardTitle className="text-xs font-medium text-gray-600">
               Role Coverage
             </CardTitle>
-            <Shield className="h-4 w-4 text-gray-600 dark:text-gray-400" />
+            <Shield className="h-4 w-4 text-gray-600" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{Math.round(roleCompleteness)}%</div>
@@ -111,10 +111,10 @@ export function FamilyCoordinationWidget({ metrics, className }: FamilyCoordinat
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-xs font-medium text-gray-600 dark:text-gray-400">
+            <CardTitle className="text-xs font-medium text-gray-600">
               Email Coverage
             </CardTitle>
-            <Mail className="h-4 w-4 text-gray-600 dark:text-gray-400" />
+            <Mail className="h-4 w-4 text-gray-600" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{metrics.contactCoverage.email}%</div>
@@ -123,10 +123,10 @@ export function FamilyCoordinationWidget({ metrics, className }: FamilyCoordinat
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-xs font-medium text-gray-600 dark:text-gray-400">
+            <CardTitle className="text-xs font-medium text-gray-600">
               Emergency Contacts
             </CardTitle>
-            <Phone className="h-4 w-4 text-gray-600 dark:text-gray-400" />
+            <Phone className="h-4 w-4 text-gray-600" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{metrics.emergencyReadiness.totalContacts}</div>
@@ -155,9 +155,9 @@ export function FamilyCoordinationWidget({ metrics, className }: FamilyCoordinat
                   <div className="flex items-center space-x-2">
                     <span className="text-sm font-medium capitalize">{role.replace("_", " ")}</span>
                     {hasPrimary ? (
-                      <CheckCircle className="h-4 w-4 text-green-600 dark:text-green-400" />
+                      <CheckCircle className="h-4 w-4 text-green-600" />
                     ) : (
-                      <XCircle className="h-4 w-4 text-red-600 dark:text-red-400" />
+                      <XCircle className="h-4 w-4 text-red-600" />
                     )}
                   </div>
                   <div className="flex items-center space-x-2">
@@ -279,8 +279,8 @@ export function FamilyCoordinationWidget({ metrics, className }: FamilyCoordinat
             <div className="space-y-2">
               {metrics.recommendations.map((rec, index) => (
                 <div key={index} className="flex items-start space-x-2">
-                  <AlertTriangle className="mt-0.5 h-4 w-4 flex-shrink-0 text-yellow-600 dark:text-yellow-400" />
-                  <span className="text-sm text-gray-700 dark:text-gray-300">{rec}</span>
+                  <AlertTriangle className="mt-0.5 h-4 w-4 flex-shrink-0 text-yellow-600" />
+                  <span className="text-sm text-gray-700">{rec}</span>
                 </div>
               ))}
             </div>

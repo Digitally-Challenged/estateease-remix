@@ -42,10 +42,10 @@ const SORT_OPTIONS = [
 ];
 
 const STATUS_COLORS = {
-  verified: "bg-green-100 text-green-700 dark:bg-green-900/20 dark:text-green-400",
-  pending: "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/20 dark:text-yellow-400",
-  rejected: "bg-red-100 text-red-700 dark:bg-red-900/20 dark:text-red-400",
-  draft: "bg-gray-100 text-gray-700 dark:bg-gray-900/20 dark:text-gray-400",
+  verified: "bg-green-100 text-green-700",
+  pending: "bg-yellow-100 text-yellow-700",
+  rejected: "bg-red-100 text-red-700",
+  draft: "bg-gray-100 text-gray-700",
 };
 
 export function DocumentList({
@@ -258,7 +258,7 @@ export function DocumentList({
 
         {/* Bulk Actions */}
         {showBulkActions && selectedDocuments.size > 0 && (
-          <div className="flex items-center gap-4 rounded-lg bg-blue-50 p-3 dark:bg-blue-900/20">
+          <div className="flex items-center gap-4 rounded-lg bg-blue-50 p-3">
             <span className="text-sm font-medium">
               {selectedDocuments.size} document{selectedDocuments.size > 1 ? "s" : ""} selected
             </span>
@@ -284,7 +284,7 @@ export function DocumentList({
 
       {/* Results Count */}
       <div className="flex items-center justify-between">
-        <p className="text-sm text-gray-600 dark:text-gray-400">
+        <p className="text-sm text-gray-600">
           {sortedDocuments.length} document{sortedDocuments.length !== 1 ? "s" : ""} found
         </p>
         <div className="flex gap-2">
@@ -341,12 +341,12 @@ export function DocumentList({
               </button>
 
               {doc.description && (
-                <p className="mb-2 line-clamp-2 text-sm text-gray-600 dark:text-gray-400">
+                <p className="mb-2 line-clamp-2 text-sm text-gray-600">
                   {doc.description}
                 </p>
               )}
 
-              <div className="mb-3 space-y-1 text-xs text-gray-500 dark:text-gray-400">
+              <div className="mb-3 space-y-1 text-xs text-gray-500">
                 <div className="flex items-center gap-1">
                   <Calendar className="h-3 w-3" />
                   {formatDate(doc.uploaded_at)}
@@ -415,7 +415,7 @@ export function DocumentList({
           {sortedDocuments.map((doc) => (
             <div
               key={doc.id}
-              className="flex items-center gap-4 rounded-lg border p-4 hover:bg-gray-50 dark:hover:bg-gray-800"
+              className="flex items-center gap-4 rounded-lg border p-4 hover:bg-gray-50"
             >
               {showBulkActions && (
                 <input
@@ -443,7 +443,7 @@ export function DocumentList({
                   </span>
                 </div>
 
-                <div className="flex items-center gap-4 text-sm text-gray-600 dark:text-gray-400">
+                <div className="flex items-center gap-4 text-sm text-gray-600">
                   <span>{formatFileSize(doc.file_size)}</span>
                   <span>•</span>
                   <span>{formatDate(doc.uploaded_at)}</span>
@@ -513,7 +513,7 @@ export function DocumentList({
             tabIndex={0}
             aria-label="Close delete confirmation modal"
           />
-          <div className="relative mx-4 w-full max-w-md rounded-lg bg-white shadow-lg dark:bg-gray-800">
+          <div className="relative mx-4 w-full max-w-md rounded-lg bg-white shadow-lg">
             <div className="p-6">
               <div className="mb-4 flex items-center gap-3">
                 <div className="flex-shrink-0">
@@ -521,7 +521,7 @@ export function DocumentList({
                 </div>
                 <div>
                   <h3 className="text-lg font-semibold">Delete Document</h3>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                  <p className="text-sm text-gray-600">
                     Are you sure you want to delete this document? This action cannot be undone.
                   </p>
                 </div>

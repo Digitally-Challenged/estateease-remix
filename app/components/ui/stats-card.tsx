@@ -60,22 +60,22 @@ export const StatsCard = React.forwardRef<HTMLDivElement, StatsCardProps>(
     return (
       <Card ref={ref} className={className}>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium text-gray-600 dark:text-gray-400">
+          <CardTitle className="text-sm font-medium text-gray-600">
             {title}
           </CardTitle>
-          <Icon className="h-4 w-4 text-gray-600 dark:text-gray-400" />
+          <Icon className="h-4 w-4 text-gray-600" />
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">{value}</div>
+          <div className="text-2xl font-bold text-gray-900">{value}</div>
           {(description || trend) && (
             <p
               className={cn(
-                "text-xs",
+"text-xs",
                 trend
                   ? trend.isPositive
-                    ? "text-green-600 dark:text-green-400"
-                    : "text-red-600 dark:text-red-400"
-                  : "text-gray-600 dark:text-gray-400",
+                    ? "text-green-600"
+                    : "text-red-600"
+                  : "text-gray-600",
               )}
             >
               {trend && <span>{trend.value} </span>}

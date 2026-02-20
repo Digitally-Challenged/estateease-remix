@@ -84,14 +84,14 @@ export default function TaxPlanning() {
     return (
       <div className="space-y-6">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Tax Planning</h1>
-          <p className="mt-2 text-gray-600 dark:text-gray-400 dark:text-gray-500">
+          <h1 className="text-3xl font-bold text-gray-900">Tax Planning</h1>
+          <p className="mt-2 text-gray-600">
             Estate tax analysis and planning strategies
           </p>
         </div>
-        <Card className="border-red-200 bg-red-50 dark:border-red-700 dark:bg-red-900/20">
+        <Card className="border-red-200 bg-red-50">
           <CardContent className="pt-6">
-            <p className="text-red-600 dark:text-red-400">{error}</p>
+            <p className="text-red-600">{error}</p>
           </CardContent>
         </Card>
       </div>
@@ -104,14 +104,14 @@ export default function TaxPlanning() {
       description: `Gift up to ${formatCurrency(GIFT_TAX_ANNUAL_EXCLUSION.AMOUNT)} per person per year tax-free`,
       potentialSavings: giftingPotential * FEDERAL_ESTATE_TAX_RATE,
       impact: "High",
-      icon: <DollarSign className="h-5 w-5 text-green-600 dark:text-green-400" />,
+      icon: <DollarSign className="h-5 w-5 text-green-600" />,
     },
     {
       name: "Charitable Giving",
       description: "Reduce estate size through charitable donations and get income tax deductions",
       potentialSavings: charitableDeductionPotential * FEDERAL_ESTATE_TAX_RATE,
       impact: "Medium",
-      icon: <Shield className="h-5 w-5 text-blue-600 dark:text-blue-400" />,
+      icon: <Shield className="h-5 w-5 text-blue-600" />,
     },
     {
       name: "Irrevocable Life Insurance Trust",
@@ -126,8 +126,8 @@ export default function TaxPlanning() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Tax Planning</h1>
-        <p className="mt-2 text-gray-600 dark:text-gray-400 dark:text-gray-500">
+        <h1 className="text-3xl font-bold text-gray-900">Tax Planning</h1>
+        <p className="mt-2 text-gray-600">
           Minimize estate taxes and maximize wealth transfer
         </p>
       </div>
@@ -137,11 +137,11 @@ export default function TaxPlanning() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Estate Value</CardTitle>
-            <TrendingUp className="h-4 w-4 text-gray-600 dark:text-gray-400 dark:text-gray-500" />
+            <TrendingUp className="h-4 w-4 text-gray-600" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{formatCurrency(totalEstateValue)}</div>
-            <p className="mt-1 text-xs text-gray-600 dark:text-gray-400 dark:text-gray-500">
+            <p className="mt-1 text-xs text-gray-600">
               Current market value
             </p>
           </CardContent>
@@ -150,11 +150,11 @@ export default function TaxPlanning() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Federal Exemption</CardTitle>
-            <Shield className="h-4 w-4 text-gray-600 dark:text-gray-400 dark:text-gray-500" />
+            <Shield className="h-4 w-4 text-gray-600" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{formatCurrency(exemptionAmount)}</div>
-            <p className="mt-1 text-xs text-gray-600 dark:text-gray-400 dark:text-gray-500">
+            <p className="mt-1 text-xs text-gray-600">
               2024 exemption amount
             </p>
           </CardContent>
@@ -163,11 +163,11 @@ export default function TaxPlanning() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Taxable Estate</CardTitle>
-            <Calculator className="h-4 w-4 text-gray-600 dark:text-gray-400 dark:text-gray-500" />
+            <Calculator className="h-4 w-4 text-gray-600" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{formatCurrency(taxableEstate)}</div>
-            <p className="mt-1 text-xs text-gray-600 dark:text-gray-400 dark:text-gray-500">
+            <p className="mt-1 text-xs text-gray-600">
               Subject to estate tax
             </p>
           </CardContent>
@@ -176,23 +176,23 @@ export default function TaxPlanning() {
         <Card
           className={
             estateTax > 0
-              ? "border-orange-200 bg-orange-50 dark:border-orange-700 dark:bg-orange-900/20"
+              ? "border-orange-200 bg-orange-50"
               : ""
           }
         >
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Estimated Tax</CardTitle>
             <AlertTriangle
-              className={`h-4 w-4 ${estateTax > 0 ? "text-orange-600 dark:text-orange-400" : "text-gray-600 dark:text-gray-400 dark:text-gray-500"}`}
+              className={`h-4 w-4 ${estateTax > 0 ? "text-orange-600" : "text-gray-600"}`}
             />
           </CardHeader>
           <CardContent>
             <div
-              className={`text-2xl font-bold ${estateTax > 0 ? "text-orange-700 dark:text-orange-300" : ""}`}
+              className={`text-2xl font-bold ${estateTax > 0 ? "text-orange-700" : ""}`}
             >
               {formatCurrency(estateTax)}
             </div>
-            <p className="mt-1 text-xs text-gray-600 dark:text-gray-400 dark:text-gray-500">
+            <p className="mt-1 text-xs text-gray-600">
               At {(FEDERAL_ESTATE_TAX_RATE * 100).toFixed(0)}% rate
             </p>
           </CardContent>
@@ -201,19 +201,19 @@ export default function TaxPlanning() {
 
       {/* Tax Alert */}
       {estateTax > 0 && (
-        <Card className="border-orange-200 bg-orange-50 dark:border-orange-700 dark:bg-orange-900/20">
+        <Card className="border-orange-200 bg-orange-50">
           <CardHeader>
-            <CardTitle className="flex items-center text-orange-800 dark:text-orange-200">
+            <CardTitle className="flex items-center text-orange-800">
               <AlertTriangle className="mr-2 h-5 w-5" />
               Estate Tax Liability Detected
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="mb-4 text-orange-700 dark:text-orange-300">
+            <p className="mb-4 text-orange-700">
               Your estate exceeds the federal exemption amount by {formatCurrency(taxableEstate)},
               resulting in an estimated tax liability of {formatCurrency(estateTax)}.
             </p>
-            <p className="text-sm text-orange-600 dark:text-orange-400">
+            <p className="text-sm text-orange-600">
               Consider implementing tax reduction strategies to minimize this liability.
             </p>
           </CardContent>
@@ -231,7 +231,7 @@ export default function TaxPlanning() {
             {strategies.map((strategy, index) => (
               <div
                 key={index}
-                className="rounded-lg border p-4 transition-colors hover:bg-gray-50 dark:bg-gray-900 dark:hover:bg-gray-800"
+                className="rounded-lg border p-4 transition-colors hover:bg-gray-50"
               >
                 <div className="flex items-start justify-between">
                   <div className="flex items-start space-x-4">
@@ -246,17 +246,17 @@ export default function TaxPlanning() {
                           {strategy.impact} Impact
                         </Badge>
                       </h3>
-                      <p className="mt-1 text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">
+                      <p className="mt-1 text-sm text-gray-600">
                         {strategy.description}
                       </p>
                       {strategy.potentialSavings > 0 && (
-                        <p className="mt-2 text-sm text-green-600 dark:text-green-400">
+                        <p className="mt-2 text-sm text-green-600">
                           Potential tax savings: {formatCurrency(strategy.potentialSavings)}
                         </p>
                       )}
                     </div>
                   </div>
-                  <ChevronRight className="h-5 w-5 flex-shrink-0 text-gray-400 dark:text-gray-500" />
+                  <ChevronRight className="h-5 w-5 flex-shrink-0 text-gray-400" />
                 </div>
               </div>
             ))}
@@ -282,7 +282,7 @@ export default function TaxPlanning() {
                     >
                       <div>
                         <p className="font-medium">{trust.name}</p>
-                        <p className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">
+                        <p className="text-sm text-gray-600">
                           {trust.type}
                         </p>
                       </div>
@@ -296,12 +296,12 @@ export default function TaxPlanning() {
       )}
 
       {/* State Tax Notice */}
-      <Card className="bg-blue-50 dark:bg-blue-900/20">
+      <Card className="bg-blue-50">
         <CardHeader>
           <CardTitle className="text-blue-900">State Estate Taxes</CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-blue-800 dark:text-blue-200">
+          <p className="text-blue-800">
             Some states impose their own estate or inheritance taxes with lower exemption
             thresholds. Consult with a tax professional about your specific state{`'`}s
             requirements.

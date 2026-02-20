@@ -237,7 +237,7 @@ export default function EditAsset() {
               e.preventDefault();
             }
           }}
-          className="rounded-md border border-red-600 px-4 py-2 text-red-600 hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-red-500 dark:bg-red-900/20 dark:text-red-400"
+          className="rounded-md border border-red-600 px-4 py-2 text-red-600 hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-red-500"
         >
           Delete Asset
         </button>

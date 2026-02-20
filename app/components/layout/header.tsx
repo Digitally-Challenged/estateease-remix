@@ -1,11 +1,8 @@
 import Bell from "lucide-react/dist/esm/icons/bell";
 import Menu from "lucide-react/dist/esm/icons/menu";
-import Sun from "lucide-react/dist/esm/icons/sun";
-import Moon from "lucide-react/dist/esm/icons/moon";
 import { useEffect, useRef } from "react";
 import { useLocation } from "@remix-run/react";
 import { SearchBar } from "~/components/ui/search/search-bar";
-import { useTheme } from "~/utils/theme";
 import { formatCurrency } from "~/utils/format";
 
 interface HeaderProps {
@@ -34,7 +31,6 @@ export function Header({
   user,
 }: HeaderProps) {
   const searchBarRef = useRef<{ focus: () => void }>(null);
-  const { theme, toggleTheme } = useTheme();
   const location = useLocation();
 
   // Register search trigger function with parent
@@ -93,19 +89,19 @@ export function Header({
   const netWorth = dashboardStats?.total_net_worth || 4200000;
 
   return (
-    <header className="border-b border-secondary-200 bg-white px-4 py-4 dark:border-secondary-800 dark:bg-secondary-900 sm:px-6 lg:px-8">
+    <header className="border-b border-secondary-200 bg-white px-4 py-4 sm:px-6 lg:px-8">
       <div className="flex items-center justify-between">
         {/* Left side - Menu button, page title, and search */}
         <div className="flex flex-1 items-center space-x-4">
           <button
             onClick={onMenuClick}
-            className="rounded-md p-2 text-secondary-500 hover:bg-secondary-100 hover:text-secondary-900 dark:text-secondary-400 dark:hover:bg-secondary-800 dark:hover:text-secondary-100 lg:hidden"
+            className="rounded-md p-2 text-secondary-500 hover:bg-secondary-100 hover:text-secondary-900 lg:hidden"
           >
             <Menu className="h-6 w-6" />
           </button>
 
           {/* Page Title - Visible on desktop */}
-          <h1 className="hidden text-xl font-semibold text-secondary-900 dark:text-secondary-100 lg:block">
+          <h1 className="hidden text-xl font-semibold text-secondary-900 lg:block">
             {getPageTitle()}
           </h1>
 
@@ -121,9 +117,9 @@ export function Header({
         {/* Right side - Quick stats, theme toggle, notifications and user menu */}
         <div className="flex items-center space-x-4">
           {/* Quick stats - Hidden on mobile */}
-          <div className="hidden items-center space-x-6 text-sm text-secondary-600 dark:text-secondary-400 md:flex">
+          <div className="hidden items-center space-x-6 text-sm text-secondary-600 md:flex">
             <div className="text-center">
-              <div className="font-semibold text-secondary-900 dark:text-secondary-100">
+              <div className="font-semibold text-secondary-900">
                 {formatCurrency(netWorth)}
               </div>
               <div className="text-xs">Net Worth</div>
@@ -132,8 +128,8 @@ export function Header({
               <div
                 className={`font-semibold ${
                   percentageChange.isPositive
-                    ? "text-success-600 dark:text-success-400"
-                    : "text-error-600 dark:text-error-400"
+                    ? "text-green-600"
+                    : "text-red-600"
                 }`}
               >
                 {percentageChange.value}
@@ -142,19 +138,10 @@ export function Header({
             </div>
           </div>
 
-          <div className="hidden h-6 w-px bg-secondary-200 dark:bg-secondary-700 md:block" />
-
-          {/* Theme toggle */}
-          <button
-            onClick={toggleTheme}
-            className="rounded-lg p-2 text-secondary-500 hover:bg-secondary-100 hover:text-secondary-900 dark:text-secondary-400 dark:hover:bg-secondary-800 dark:hover:text-secondary-100"
-            aria-label="Toggle theme"
-          >
-            {theme === "light" ? <Moon className="h-5 w-5" /> : <Sun className="h-5 w-5" />}
-          </button>
+          <div className="hidden h-6 w-px bg-secondary-200 md:block" />
 
           {/* Notifications */}
-          <button className="relative rounded-lg p-2 text-secondary-500 hover:bg-secondary-100 hover:text-secondary-900 dark:text-secondary-400 dark:hover:bg-secondary-800 dark:hover:text-secondary-100">
+          <button className="relative rounded-lg p-2 text-secondary-500 hover:bg-secondary-100 hover:text-secondary-900">
             <Bell className="h-5 w-5" />
             <span className="absolute right-1 top-1 h-2 w-2 rounded-full bg-error-500"></span>
           </button>
@@ -162,15 +149,15 @@ export function Header({
           {/* User avatar */}
           <div className="flex items-center space-x-3">
             <div className="hidden text-right sm:block">
-              <div className="text-sm font-medium text-secondary-900 dark:text-secondary-100">
+              <div className="text-sm font-medium text-secondary-900">
                 {defaultUser.firstName} {defaultUser.lastName}
               </div>
-              <div className="text-xs text-secondary-500 dark:text-secondary-400">
+              <div className="text-xs text-secondary-500">
                 Last updated: {defaultUser.lastUpdated}
               </div>
             </div>
-            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary-600 dark:bg-primary-500">
-              <span className="text-sm font-medium text-white dark:text-secondary-900">
+            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary-600">
+              <span className="text-sm font-medium text-white">
                 {defaultUser.firstName[0]}
                 {defaultUser.lastName[0]}
               </span>

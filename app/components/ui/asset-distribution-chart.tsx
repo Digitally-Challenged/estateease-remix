@@ -144,29 +144,29 @@ export function AssetDistributionChart({
             )}
           </div>
         </div>
-        <div className="text-sm text-gray-600 dark:text-gray-400">
+        <div className="text-sm text-gray-600">
           Total Estate Value: {formatCurrency(totalEstate)}
         </div>
       </CardHeader>
 
       <CardContent className="space-y-6">
         {/* Estate Summary */}
-        <div className="grid grid-cols-1 gap-4 rounded-lg bg-gray-50 p-4 dark:bg-gray-800 md:grid-cols-3">
+        <div className="grid grid-cols-1 gap-4 rounded-lg bg-gray-50 p-4 md:grid-cols-3">
           <div className="text-center">
-            <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+            <div className="text-2xl font-bold text-gray-900">
               {totalPercentage.toFixed(1)}%
             </div>
-            <div className="text-sm text-gray-600 dark:text-gray-400">Allocated</div>
+            <div className="text-sm text-gray-600">Allocated</div>
           </div>
           <div className="text-center">
-            <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+            <div className="text-2xl font-bold text-gray-900">
               {remainingPercentage.toFixed(1)}%
             </div>
-            <div className="text-sm text-gray-600 dark:text-gray-400">Remaining</div>
+            <div className="text-sm text-gray-600">Remaining</div>
           </div>
           <div className="text-center">
-            <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">{data.length}</div>
-            <div className="text-sm text-gray-600 dark:text-gray-400">Beneficiaries</div>
+            <div className="text-2xl font-bold text-gray-900">{data.length}</div>
+            <div className="text-sm text-gray-600">Beneficiaries</div>
           </div>
         </div>
 
@@ -192,11 +192,11 @@ export function AssetDistributionChart({
 
         {/* Distribution Tree */}
         <div className="space-y-2">
-          <h3 className="mb-4 text-lg font-semibold text-gray-900 dark:text-gray-100">
+          <h3 className="mb-4 text-lg font-semibold text-gray-900">
             Distribution Structure
           </h3>
           {data.length === 0 ? (
-            <div className="py-8 text-center text-gray-500 dark:text-gray-400">
+            <div className="py-8 text-center text-gray-500">
               <TrendingDown className="mx-auto mb-4 h-12 w-12 opacity-50" />
               <p>No distribution plan configured</p>
               <p className="mt-1 text-sm">Add beneficiaries to see the distribution flow</p>
@@ -208,7 +208,7 @@ export function AssetDistributionChart({
 
         {/* Legend */}
         <div className="border-t pt-4">
-          <h4 className="mb-3 text-sm font-medium text-gray-900 dark:text-gray-100">Legend</h4>
+          <h4 className="mb-3 text-sm font-medium text-gray-900">Legend</h4>
           <div className="grid grid-cols-2 gap-3 text-xs md:grid-cols-4">
             <div className="flex items-center space-x-2">
               <div className="flex h-4 w-4 items-center justify-center rounded border border-blue-200 bg-blue-100">

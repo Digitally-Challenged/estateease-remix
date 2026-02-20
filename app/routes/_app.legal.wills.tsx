@@ -91,16 +91,16 @@ export default function LegalWills() {
     return (
       <div className="space-y-6">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+          <h1 className="text-3xl font-bold text-gray-900">
             Wills & Trust Documents
           </h1>
-          <p className="mt-2 text-gray-600 dark:text-gray-400 dark:text-gray-500">
+          <p className="mt-2 text-gray-600">
             Manage your estate planning documents
           </p>
         </div>
-        <Card className="border-red-200 bg-red-50 dark:border-red-700 dark:bg-red-900/20">
+        <Card className="border-red-200 bg-red-50">
           <CardContent className="pt-6">
-            <p className="text-red-600 dark:text-red-400">{error}</p>
+            <p className="text-red-600">{error}</p>
           </CardContent>
         </Card>
       </div>
@@ -110,11 +110,11 @@ export default function LegalWills() {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "current":
-        return <Badge className="bg-green-100 text-green-800 dark:text-green-200">Current</Badge>;
+        return <Badge className="bg-green-100 text-green-800">Current</Badge>;
       case "draft":
         return <Badge variant="secondary">Draft</Badge>;
       case "expired":
-        return <Badge className="bg-red-100 text-red-800 dark:text-red-200">Expired</Badge>;
+        return <Badge className="bg-red-100 text-red-800">Expired</Badge>;
       default:
         return <Badge variant="outline">{status}</Badge>;
     }
@@ -123,11 +123,11 @@ export default function LegalWills() {
   const getDocumentIcon = (type: string) => {
     switch (type) {
       case "will":
-        return <FileText className="h-5 w-5 text-blue-600 dark:text-blue-400" />;
+        return <FileText className="h-5 w-5 text-blue-600" />;
       case "trust":
         return <FileText className="h-5 w-5 text-purple-600" />;
       default:
-        return <FileText className="h-5 w-5 text-gray-600 dark:text-gray-400 dark:text-gray-500" />;
+        return <FileText className="h-5 w-5 text-gray-600" />;
     }
   };
 
@@ -136,10 +136,10 @@ export default function LegalWills() {
       {/* Header */}
       <div className="flex items-start justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+          <h1 className="text-3xl font-bold text-gray-900">
             Wills & Trust Documents
           </h1>
-          <p className="mt-2 text-gray-600 dark:text-gray-400 dark:text-gray-500">
+          <p className="mt-2 text-gray-600">
             Manage your estate planning documents
           </p>
         </div>
@@ -156,11 +156,11 @@ export default function LegalWills() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Documents</CardTitle>
-            <FileText className="h-4 w-4 text-gray-600 dark:text-gray-400 dark:text-gray-500" />
+            <FileText className="h-4 w-4 text-gray-600" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stats.total}</div>
-            <p className="mt-1 text-xs text-gray-600 dark:text-gray-400 dark:text-gray-500">
+            <p className="mt-1 text-xs text-gray-600">
               All legal documents
             </p>
           </CardContent>
@@ -169,11 +169,11 @@ export default function LegalWills() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Current</CardTitle>
-            <CheckCircle className="h-4 w-4 text-green-600 dark:text-green-400" />
+            <CheckCircle className="h-4 w-4 text-green-600" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stats.current}</div>
-            <p className="mt-1 text-xs text-gray-600 dark:text-gray-400 dark:text-gray-500">
+            <p className="mt-1 text-xs text-gray-600">
               Up-to-date documents
             </p>
           </CardContent>
@@ -182,11 +182,11 @@ export default function LegalWills() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Drafts</CardTitle>
-            <Clock className="h-4 w-4 text-gray-600 dark:text-gray-400 dark:text-gray-500" />
+            <Clock className="h-4 w-4 text-gray-600" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stats.draft}</div>
-            <p className="mt-1 text-xs text-gray-600 dark:text-gray-400 dark:text-gray-500">
+            <p className="mt-1 text-xs text-gray-600">
               Pending completion
             </p>
           </CardContent>
@@ -195,23 +195,23 @@ export default function LegalWills() {
         <Card
           className={
             stats.needsUpdate > 0
-              ? "border-orange-200 bg-orange-50 dark:border-orange-700 dark:bg-orange-900/20"
+              ? "border-orange-200 bg-orange-50"
               : ""
           }
         >
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Need Review</CardTitle>
             <AlertCircle
-              className={`h-4 w-4 ${stats.needsUpdate > 0 ? "text-orange-600 dark:text-orange-400" : "text-gray-600 dark:text-gray-400 dark:text-gray-500"}`}
+              className={`h-4 w-4 ${stats.needsUpdate > 0 ? "text-orange-600" : "text-gray-600"}`}
             />
           </CardHeader>
           <CardContent>
             <div
-              className={`text-2xl font-bold ${stats.needsUpdate > 0 ? "text-orange-700 dark:text-orange-300" : ""}`}
+              className={`text-2xl font-bold ${stats.needsUpdate > 0 ? "text-orange-700" : ""}`}
             >
               {stats.needsUpdate}
             </div>
-            <p className="mt-1 text-xs text-gray-600 dark:text-gray-400 dark:text-gray-500">
+            <p className="mt-1 text-xs text-gray-600">
               Over 6 months old
             </p>
           </CardContent>
@@ -220,15 +220,15 @@ export default function LegalWills() {
 
       {/* Review Alert */}
       {stats.needsUpdate > 0 && (
-        <Card className="border-orange-200 bg-orange-50 dark:border-orange-700 dark:bg-orange-900/20">
+        <Card className="border-orange-200 bg-orange-50">
           <CardHeader>
-            <CardTitle className="flex items-center text-orange-800 dark:text-orange-200">
+            <CardTitle className="flex items-center text-orange-800">
               <AlertCircle className="mr-2 h-5 w-5" />
               Document Review Recommended
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-orange-700 dark:text-orange-300">
+            <p className="text-orange-700">
               {stats.needsUpdate} document{stats.needsUpdate > 1 ? "s" : ""} haven&apos;t been
               reviewed in over 6 months. Regular reviews ensure your documents reflect your current
               wishes and circumstances.
@@ -249,7 +249,7 @@ export default function LegalWills() {
               doc ? (
                 <div
                   key={doc.id}
-                  className="rounded-lg border p-4 transition-colors hover:bg-gray-50 dark:bg-gray-900 dark:hover:bg-gray-800"
+                  className="rounded-lg border p-4 transition-colors hover:bg-gray-50"
                 >
                   <div className="flex items-start justify-between">
                     <div className="flex items-start space-x-4">
@@ -265,10 +265,10 @@ export default function LegalWills() {
                             </Badge>
                           )}
                         </div>
-                        <p className="mb-2 text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">
+                        <p className="mb-2 text-sm text-gray-600">
                           {doc.description}
                         </p>
-                        <div className="flex items-center space-x-4 text-xs text-gray-500 dark:text-gray-400 dark:text-gray-500">
+                        <div className="flex items-center space-x-4 text-xs text-gray-500">
                           <span className="flex items-center">
                             <CalendarDays className="mr-1 h-3 w-3" />
                             Created: {formatDate(doc.dateCreated)}
@@ -281,7 +281,7 @@ export default function LegalWills() {
                           <span>{doc.fileSize}</span>
                         </div>
                         {doc.signedBy.length > 0 && (
-                          <div className="mt-2 text-xs text-gray-600 dark:text-gray-400 dark:text-gray-500">
+                          <div className="mt-2 text-xs text-gray-600">
                             Signed by: {doc.signedBy.join(", ")}
                           </div>
                         )}
@@ -301,12 +301,12 @@ export default function LegalWills() {
       </Card>
 
       {/* Document Tips */}
-      <Card className="bg-blue-50 dark:bg-blue-900/20">
+      <Card className="bg-blue-50">
         <CardHeader>
           <CardTitle className="text-blue-900">Document Management Tips</CardTitle>
         </CardHeader>
         <CardContent>
-          <ul className="space-y-2 text-blue-800 dark:text-blue-200">
+          <ul className="space-y-2 text-blue-800">
             <li>• Store original documents in a fireproof safe or safety deposit box</li>
             <li>• Provide copies to your executor and key family members</li>
             <li>• Review and update documents after major life events</li>

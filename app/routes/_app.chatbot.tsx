@@ -156,28 +156,28 @@ export default function Chatbot() {
   return (
     <div className="space-y-6">
       {/* Estate Context Banner */}
-      <div className="rounded-lg border border-indigo-200 bg-gradient-to-r from-indigo-50 to-blue-50 p-6 dark:border-indigo-700 dark:from-indigo-900/20 dark:to-blue-900/20">
+      <div className="rounded-lg border border-indigo-200 bg-gradient-to-r from-indigo-50 to-blue-50 p-6">
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-lg font-semibold text-indigo-900 dark:text-indigo-100">
+            <h2 className="text-lg font-semibold text-indigo-900">
               AI Advisor with Your Estate Context
             </h2>
-            <p className="mt-1 text-sm text-indigo-700 dark:text-indigo-300">
+            <p className="mt-1 text-sm text-indigo-700">
               I have access to your estate information to provide personalized guidance
             </p>
           </div>
           <div className="grid grid-cols-2 gap-4 text-sm">
             <div className="text-center">
-              <div className="font-bold text-indigo-900 dark:text-indigo-100">
+              <div className="font-bold text-indigo-900">
                 ${estateMetrics.totalValue.toLocaleString()}
               </div>
-              <div className="text-indigo-600 dark:text-indigo-400">Total Estate Value</div>
+              <div className="text-indigo-600">Total Estate Value</div>
             </div>
             <div className="text-center">
-              <div className="font-bold text-indigo-900 dark:text-indigo-100">
+              <div className="font-bold text-indigo-900">
                 {estateMetrics.assetCount}
               </div>
-              <div className="text-indigo-600 dark:text-indigo-400">Assets Tracked</div>
+              <div className="text-indigo-600">Assets Tracked</div>
             </div>
           </div>
         </div>

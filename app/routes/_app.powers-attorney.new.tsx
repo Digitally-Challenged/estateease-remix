@@ -128,15 +128,15 @@ export default function NewPowerOfAttorney() {
       <div className="flex items-center gap-4">
         <button
           onClick={() => navigate(-1)}
-          className="rounded-lg p-2 transition-colors hover:bg-gray-100 dark:hover:bg-gray-800"
+          className="rounded-lg p-2 transition-colors hover:bg-gray-100"
         >
           <ArrowLeft className="h-5 w-5" />
         </button>
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+          <h1 className="text-3xl font-bold text-gray-900">
             Create Power of Attorney
           </h1>
-          <p className="mt-1 text-gray-600 dark:text-gray-400">
+          <p className="mt-1 text-gray-600">
             Designate someone to act on your behalf
           </p>
         </div>

@@ -93,16 +93,16 @@ export default function PowersOfAttorney() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Powers of Attorney</h1>
-        <p className="mt-2 text-gray-600 dark:text-gray-400 dark:text-gray-500">
+        <h1 className="text-3xl font-bold text-gray-900">Powers of Attorney</h1>
+        <p className="mt-2 text-gray-600">
           Manage your power of attorney documents and designated agents
         </p>
       </div>
 
       {/* Info Banner */}
-      <Card className="border-blue-200 bg-blue-50 dark:border-blue-700 dark:bg-blue-900/20">
+      <Card className="border-blue-200 bg-blue-50">
         <CardContent className="flex items-start space-x-3 p-4">
-          <Info className="mt-0.5 h-5 w-5 text-blue-600 dark:text-blue-400" />
+          <Info className="mt-0.5 h-5 w-5 text-blue-600" />
           <div className="text-sm text-blue-900">
             <p className="font-medium">What is a Power of Attorney?</p>
             <p className="mt-1">
@@ -118,7 +118,7 @@ export default function PowersOfAttorney() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center">
-            <User className="mr-2 h-5 w-5 text-gray-600 dark:text-gray-400 dark:text-gray-500" />
+            <User className="mr-2 h-5 w-5 text-gray-600" />
             Current Power of Attorney Agents
           </CardTitle>
           <CardDescription>People authorized to act on your behalf</CardDescription>
@@ -133,33 +133,33 @@ export default function PowersOfAttorney() {
                 return (
                   <div
                     key={role.id}
-                    className="flex items-start justify-between rounded-lg border border-gray-200 p-4 dark:border-gray-700"
+                    className="flex items-start justify-between rounded-lg border border-gray-200 p-4"
                   >
                     <div>
                       <div className="flex items-center space-x-2">
-                        <h3 className="font-medium text-gray-900 dark:text-gray-100">
+                        <h3 className="font-medium text-gray-900">
                           {personName}
                         </h3>
                         <Badge variant={isPrimary ? "default" : "secondary"}>
                           {isPrimary ? "Primary" : "Successor"}
                         </Badge>
                       </div>
-                      <p className="mt-1 text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">
+                      <p className="mt-1 text-sm text-gray-600">
                         Power of Attorney
                       </p>
                       {specificPowers && (
-                        <p className="mt-2 text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">
+                        <p className="mt-2 text-sm text-gray-600">
                           Powers: {specificPowers}
                         </p>
                       )}
                     </div>
-                    <Shield className="h-5 w-5 text-gray-400 dark:text-gray-500" />
+                    <Shield className="h-5 w-5 text-gray-400" />
                   </div>
                 );
               })}
             </div>
           ) : (
-            <p className="text-gray-600 dark:text-gray-400 dark:text-gray-500">
+            <p className="text-gray-600">
               No power of attorney agents currently assigned
             </p>
           )}
@@ -170,7 +170,7 @@ export default function PowersOfAttorney() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center">
-            <FileText className="mr-2 h-5 w-5 text-gray-600 dark:text-gray-400 dark:text-gray-500" />
+            <FileText className="mr-2 h-5 w-5 text-gray-600" />
             Power of Attorney Documents
           </CardTitle>
           <CardDescription>Your executed and draft POA documents</CardDescription>
@@ -180,19 +180,19 @@ export default function PowersOfAttorney() {
             {documents.map((doc) => (
               <div
                 key={doc.id}
-                className="rounded-lg border border-gray-200 p-4 dark:border-gray-700"
+                className="rounded-lg border border-gray-200 p-4"
               >
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
                     <div className="flex items-center space-x-2">
-                      <h3 className="font-medium text-gray-900 dark:text-gray-100">{doc.name}</h3>
+                      <h3 className="font-medium text-gray-900">{doc.name}</h3>
                       <Badge variant={getStatusColor(doc.status)}>{doc.status}</Badge>
                       <Badge variant="outline">{getDocumentTypeLabel(doc.type)}</Badge>
                     </div>
-                    <p className="mt-1 text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">
+                    <p className="mt-1 text-sm text-gray-600">
                       {doc.description}
                     </p>
-                    <div className="mt-3 flex items-center space-x-4 text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">
+                    <div className="mt-3 flex items-center space-x-4 text-sm text-gray-600">
                       <span className="flex items-center">
                         <User className="mr-1 h-4 w-4" />
                         Agent: {doc.agent}
@@ -222,19 +222,19 @@ export default function PowersOfAttorney() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center">
-            <AlertTriangle className="mr-2 h-5 w-5 text-yellow-600 dark:text-yellow-400" />
+            <AlertTriangle className="mr-2 h-5 w-5 text-yellow-600" />
             Important Considerations
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
             <div className="flex items-start space-x-3">
-              <CheckCircle className="mt-0.5 h-5 w-5 text-green-600 dark:text-green-400" />
+              <CheckCircle className="mt-0.5 h-5 w-5 text-green-600" />
               <div>
-                <h4 className="font-medium text-gray-900 dark:text-gray-100">
+                <h4 className="font-medium text-gray-900">
                   Durable vs. Non-Durable
                 </h4>
-                <p className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">
+                <p className="text-sm text-gray-600">
                   Durable POAs remain effective if you become incapacitated, while non-durable POAs
                   terminate upon incapacity
                 </p>
@@ -242,10 +242,10 @@ export default function PowersOfAttorney() {
             </div>
 
             <div className="flex items-start space-x-3">
-              <CheckCircle className="mt-0.5 h-5 w-5 text-green-600 dark:text-green-400" />
+              <CheckCircle className="mt-0.5 h-5 w-5 text-green-600" />
               <div>
-                <h4 className="font-medium text-gray-900 dark:text-gray-100">Springing Powers</h4>
-                <p className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">
+                <h4 className="font-medium text-gray-900">Springing Powers</h4>
+                <p className="text-sm text-gray-600">
                   Some POAs only become effective upon certain conditions, such as medical
                   incapacity
                 </p>
@@ -253,10 +253,10 @@ export default function PowersOfAttorney() {
             </div>
 
             <div className="flex items-start space-x-3">
-              <CheckCircle className="mt-0.5 h-5 w-5 text-green-600 dark:text-green-400" />
+              <CheckCircle className="mt-0.5 h-5 w-5 text-green-600" />
               <div>
-                <h4 className="font-medium text-gray-900 dark:text-gray-100">Regular Review</h4>
-                <p className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">
+                <h4 className="font-medium text-gray-900">Regular Review</h4>
+                <p className="text-sm text-gray-600">
                   Review and update your POA documents every 3-5 years or after major life changes
                 </p>
               </div>

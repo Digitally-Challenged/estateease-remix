@@ -186,10 +186,10 @@ function EstateReportContent() {
       <div className="print:hidden">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+            <h1 className="text-3xl font-bold text-gray-900">
               Estate Summary Report
             </h1>
-            <p className="mt-2 text-gray-600 dark:text-gray-400">
+            <p className="mt-2 text-gray-600">
               Comprehensive overview of your estate planning status
             </p>
           </div>
@@ -213,50 +213,50 @@ function EstateReportContent() {
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
-            <div className="rounded-lg bg-blue-50 p-4 dark:bg-blue-900/20">
+            <div className="rounded-lg bg-blue-50 p-4">
               <div className="mb-2 flex items-center gap-2">
                 <DollarSign className="h-5 w-5 text-blue-600" />
-                <span className="text-sm font-medium text-blue-900 dark:text-blue-100">
+                <span className="text-sm font-medium text-blue-900">
                   Total Estate Value
                 </span>
               </div>
-              <div className="text-2xl font-bold text-blue-900 dark:text-blue-100">
+              <div className="text-2xl font-bold text-blue-900">
                 {formatCurrency(summary.totalAssetValue)}
               </div>
             </div>
 
-            <div className="rounded-lg bg-green-50 p-4 dark:bg-green-900/20">
+            <div className="rounded-lg bg-green-50 p-4">
               <div className="mb-2 flex items-center gap-2">
                 <PieChart className="h-5 w-5 text-green-600" />
-                <span className="text-sm font-medium text-green-900 dark:text-green-100">
+                <span className="text-sm font-medium text-green-900">
                   Total Assets
                 </span>
               </div>
-              <div className="text-2xl font-bold text-green-900 dark:text-green-100">
+              <div className="text-2xl font-bold text-green-900">
                 {summary.totalAssets}
               </div>
             </div>
 
-            <div className="rounded-lg bg-purple-50 p-4 dark:bg-purple-900/20">
+            <div className="rounded-lg bg-purple-50 p-4">
               <div className="mb-2 flex items-center gap-2">
                 <Users className="h-5 w-5 text-purple-600" />
-                <span className="text-sm font-medium text-purple-900 dark:text-purple-100">
+                <span className="text-sm font-medium text-purple-900">
                   Beneficiaries
                 </span>
               </div>
-              <div className="text-2xl font-bold text-purple-900 dark:text-purple-100">
+              <div className="text-2xl font-bold text-purple-900">
                 {summary.totalBeneficiaries}
               </div>
             </div>
 
-            <div className="rounded-lg bg-orange-50 p-4 dark:bg-orange-900/20">
+            <div className="rounded-lg bg-orange-50 p-4">
               <div className="mb-2 flex items-center gap-2">
                 <Shield className="h-5 w-5 text-orange-600" />
-                <span className="text-sm font-medium text-orange-900 dark:text-orange-100">
+                <span className="text-sm font-medium text-orange-900">
                   Trusts
                 </span>
               </div>
-              <div className="text-2xl font-bold text-orange-900 dark:text-orange-100">
+              <div className="text-2xl font-bold text-orange-900">
                 {summary.totalTrusts}
               </div>
             </div>
@@ -291,7 +291,7 @@ function EstateReportContent() {
                     </div>
                     <div>
                       <div className="font-medium">{categoryInfo.label}</div>
-                      <div className="text-sm text-gray-600 dark:text-gray-400">{percentage}%</div>
+                      <div className="text-sm text-gray-600">{percentage}%</div>
                     </div>
                   </div>
                   <div className="text-right">
@@ -329,11 +329,11 @@ function EstateReportContent() {
                 {assets.map((asset) => {
                   const categoryInfo = getCategoryInfo(asset.category as import("~/types/enums").AssetCategory);
                   return (
-                    <tr key={asset.id} className="border-b hover:bg-gray-50 dark:hover:bg-gray-800">
+                    <tr key={asset.id} className="border-b hover:bg-gray-50">
                       <td className="p-3">
                         <div className="font-medium">{asset.name}</div>
                         {asset.notes && (
-                          <div className="mt-1 text-xs text-gray-600 dark:text-gray-400">
+                          <div className="mt-1 text-xs text-gray-600">
                             {asset.notes}
                           </div>
                         )}
@@ -345,7 +345,7 @@ function EstateReportContent() {
                       <td className="p-3">
                         <div className="text-sm">{asset.ownership?.type || "Individual"}</div>
                       </td>
-                      <td className="p-3 text-gray-600 dark:text-gray-400 print:hidden">
+                      <td className="p-3 text-gray-600 print:hidden">
                         {asset.lastUpdated ? formatDate(asset.lastUpdated) : "—"}
                       </td>
                     </tr>
@@ -378,11 +378,11 @@ function EstateReportContent() {
                 {familyMembers.slice(0, 5).map((member) => (
                   <div
                     key={member.id}
-                    className="flex items-center justify-between rounded-lg bg-gray-50 p-3 dark:bg-gray-800"
+                    className="flex items-center justify-between rounded-lg bg-gray-50 p-3"
                   >
                     <div>
                       <div className="font-medium">{member.fullName || member.name}</div>
-                      <div className="text-sm capitalize text-gray-600 dark:text-gray-400">
+                      <div className="text-sm capitalize text-gray-600">
                         {member.relationship}
                       </div>
                     </div>
@@ -415,11 +415,11 @@ function EstateReportContent() {
                 {professionals.slice(0, 5).map((professional) => (
                   <div
                     key={professional.id}
-                    className="flex items-center justify-between rounded-lg bg-gray-50 p-3 dark:bg-gray-800"
+                    className="flex items-center justify-between rounded-lg bg-gray-50 p-3"
                   >
                     <div>
                       <div className="font-medium">{professional.fullName || professional.name}</div>
-                      <div className="text-sm text-gray-600 dark:text-gray-400">
+                      <div className="text-sm text-gray-600">
                         {professional.firm}
                       </div>
                     </div>
@@ -461,7 +461,7 @@ function EstateReportContent() {
               .map((contact) => (
                 <div
                   key={contact.id}
-                  className="flex items-center justify-between rounded-lg bg-red-50 p-3 dark:bg-red-900/20"
+                  className="flex items-center justify-between rounded-lg bg-red-50 p-3"
                 >
                   <div className="flex items-center gap-3">
                     <div className="flex h-6 w-6 items-center justify-center rounded-full bg-red-100 text-sm font-medium text-red-800">
@@ -469,7 +469,7 @@ function EstateReportContent() {
                     </div>
                     <div>
                       <div className="font-medium">{contact.name}</div>
-                      <div className="text-sm capitalize text-gray-600 dark:text-gray-400">
+                      <div className="text-sm capitalize text-gray-600">
                         {contact.relationship} • {contact.contactType}
                       </div>
                     </div>

@@ -38,8 +38,8 @@ function AssetsContent() {
       <div className="space-y-6">
         <div className="flex items-start justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Assets Overview</h1>
-            <p className="text-gray-600 dark:text-gray-400">
+            <h1 className="text-3xl font-bold text-gray-900">Assets Overview</h1>
+            <p className="text-gray-600">
               Comprehensive view of all estate assets and their current values
             </p>
           </div>
@@ -60,8 +60,8 @@ function AssetsContent() {
       <div className="space-y-6">
         <div className="flex items-start justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Assets Overview</h1>
-            <p className="text-gray-600 dark:text-gray-400">
+            <h1 className="text-3xl font-bold text-gray-900">Assets Overview</h1>
+            <p className="text-gray-600">
               Comprehensive view of all estate assets and their current values
             </p>
           </div>
@@ -91,15 +91,15 @@ function AssetsContent() {
       {/* Header */}
       <div className="flex items-start justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Assets Overview</h1>
-          <p className="text-gray-600 dark:text-gray-400 dark:text-gray-500">
+          <h1 className="text-3xl font-bold text-gray-900">Assets Overview</h1>
+          <p className="text-gray-600">
             Comprehensive view of all estate assets and their current values
           </p>
         </div>
         <div className="flex gap-2">
           <Link
             to="/assets/performance"
-            className="inline-flex items-center rounded-md border border-blue-200 bg-blue-50 px-4 py-2 text-sm font-medium text-blue-600 hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-blue-800 dark:bg-blue-900/20 dark:text-blue-400 dark:hover:bg-blue-900/30"
+            className="inline-flex items-center rounded-md border border-blue-200 bg-blue-50 px-4 py-2 text-sm font-medium text-blue-600 hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
             <svg className="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
@@ -113,7 +113,7 @@ function AssetsContent() {
           </Link>
           <Link
             to="/assets/new"
-            className="inline-flex items-center rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-blue-500 dark:hover:bg-blue-600"
+            className="inline-flex items-center rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
             <Plus className="mr-2 h-4 w-4" />
             Add Asset

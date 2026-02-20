@@ -256,7 +256,7 @@ export function BulkUpload({
         tabIndex={0}
         aria-label="Close bulk upload modal"
       />
-      <div className="relative mx-4 max-h-[90vh] w-full max-w-4xl overflow-hidden rounded-lg bg-white shadow-lg dark:bg-gray-800">
+      <div className="relative mx-4 max-h-[90vh] w-full max-w-4xl overflow-hidden rounded-lg bg-white shadow-lg">
         <div className="flex items-center justify-between border-b p-6">
           <h2 className="text-xl font-semibold">Bulk Document Upload</h2>
           <button

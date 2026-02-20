@@ -63,7 +63,7 @@ export function OptimizedImage({
   return (
     <div className={cn("relative overflow-hidden", className)}>
       {/* Loading skeleton */}
-      {isLoading && <div className="absolute inset-0 animate-pulse bg-gray-200 dark:bg-gray-700" />}
+      {isLoading && <div className="absolute inset-0 animate-pulse bg-gray-200" />}
 
       <picture>
         {/* Modern format sources */}
@@ -92,8 +92,8 @@ export function OptimizedImage({
 
       {/* Error state */}
       {hasError && (
-        <div className="absolute inset-0 flex items-center justify-center bg-gray-100 dark:bg-gray-800">
-          <span className="text-sm text-gray-500 dark:text-gray-400">Failed to load image</span>
+        <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
+          <span className="text-sm text-gray-500">Failed to load image</span>
         </div>
       )}
     </div>

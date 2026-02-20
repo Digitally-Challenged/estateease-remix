@@ -264,7 +264,7 @@ export function DocumentUploadModal({
         }}
         aria-label="Close modal"
       />
-      <div className="relative mx-4 w-full max-w-2xl rounded-lg bg-white shadow-lg dark:bg-gray-800">
+      <div className="relative mx-4 w-full max-w-2xl rounded-lg bg-white shadow-lg">
         <div className="flex items-center justify-between border-b p-6">
           <h2 className="text-xl font-semibold">Upload Document</h2>
           <button

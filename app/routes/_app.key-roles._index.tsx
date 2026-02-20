@@ -84,8 +84,8 @@ function KeyRolesContent() {
     return (
       <div className="space-y-6">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Key Appointments</h1>
-          <p className="mt-2 text-gray-600 dark:text-gray-400 dark:text-gray-500">
+          <h1 className="text-3xl font-bold text-gray-900">Key Appointments</h1>
+          <p className="mt-2 text-gray-600">
             Manage executors, trustees, and other key roles
           </p>
         </div>
@@ -134,8 +134,8 @@ function KeyRolesContent() {
       {/* Header */}
       <div className="flex items-start justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Key Appointments</h1>
-          <p className="mt-2 text-gray-600 dark:text-gray-400 dark:text-gray-500">
+          <h1 className="text-3xl font-bold text-gray-900">Key Appointments</h1>
+          <p className="mt-2 text-gray-600">
             Manage executors, trustees, and other key roles for your estate
           </p>
         </div>
@@ -147,18 +147,18 @@ function KeyRolesContent() {
 
       {/* Missing Roles Alert */}
       {missingRoles.length > 0 && (
-        <Card className="border-orange-200 bg-orange-50 dark:border-orange-700 dark:bg-orange-900/20">
+        <Card className="border-orange-200 bg-orange-50">
           <CardHeader>
-            <CardTitle className="flex items-center text-orange-800 dark:text-orange-200">
+            <CardTitle className="flex items-center text-orange-800">
               <AlertCircle className="mr-2 h-5 w-5" />
               Missing Key Appointments
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="mb-4 text-orange-700 dark:text-orange-300">
+            <p className="mb-4 text-orange-700">
               The following critical roles have not been assigned:
             </p>
-            <ul className="list-inside list-disc space-y-1 text-orange-700 dark:text-orange-300">
+            <ul className="list-inside list-disc space-y-1 text-orange-700">
               {missingRoles.map(({ roleType, roleName }) => (
                 <li key={roleType}>{roleName}</li>
               ))}
@@ -183,13 +183,13 @@ function KeyRolesContent() {
               className={
                 hasAssignment
                   ? ""
-                  : "border-gray-200 bg-gray-50 dark:border-gray-700 dark:bg-gray-900"
+                  : "border-gray-200 bg-gray-50"
               }
             >
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">{roleName}</CardTitle>
                 <Icon
-                  className={`h-4 w-4 ${hasAssignment ? "text-gray-600 dark:text-gray-400 dark:text-gray-500" : "text-gray-400 dark:text-gray-500"}`}
+                  className={`h-4 w-4 ${hasAssignment ? "text-gray-600" : "text-gray-400"}`}
                 />
               </CardHeader>
               <CardContent>
@@ -207,7 +207,7 @@ function KeyRolesContent() {
                     )}
                   </div>
                 ) : (
-                  <p className="text-sm text-gray-500 dark:text-gray-400 dark:text-gray-500">
+                  <p className="text-sm text-gray-500">
                     Not assigned
                   </p>
                 )}
@@ -235,14 +235,14 @@ function KeyRolesContent() {
                 return (
                   <div key={roleType} className="border-b pb-4 last:border-b-0 last:pb-0">
                     <div className="mb-3 flex items-center space-x-2">
-                      <Icon className="h-5 w-5 text-gray-600 dark:text-gray-400 dark:text-gray-500" />
+                      <Icon className="h-5 w-5 text-gray-600" />
                       <h3 className="font-medium">{roleName}</h3>
                     </div>
 
                     <div className="ml-7 space-y-3">
                       {roles.map((role: LegalRole) =>
                         role ? (
-                          <div key={role.id} className="rounded-lg bg-gray-50 p-4 dark:bg-gray-900">
+                          <div key={role.id} className="rounded-lg bg-gray-50 p-4">
                             <div className="mb-2 flex items-start justify-between">
                               <div>
                                 <p className="font-medium">{role.personName}</p>
@@ -263,10 +263,10 @@ function KeyRolesContent() {
 
                             {role.specificPowers && role.specificPowers.length > 0 && (
                               <div className="mt-3">
-                                <p className="mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">
+                                <p className="mb-1 text-sm font-medium text-gray-700">
                                   Specific Powers:
                                 </p>
-                                <ul className="list-inside list-disc text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">
+                                <ul className="list-inside list-disc text-sm text-gray-600">
                                   {role.specificPowers.map((power: string, idx: number) => (
                                     <li key={idx}>{power}</li>
                                   ))}
@@ -276,7 +276,7 @@ function KeyRolesContent() {
 
                             {role.compensation && role.compensation.type !== "none" && (
                               <div className="mt-3">
-                                <p className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">
+                                <p className="text-sm text-gray-600">
                                   <span className="font-medium">Compensation:</span>{" "}
                                   {role.compensation.type}
                                   {role.compensation.amount && ` - $${role.compensation.amount}`}
@@ -286,7 +286,7 @@ function KeyRolesContent() {
 
                             {role.notes && (
                               <div className="mt-3">
-                                <p className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">
+                                <p className="text-sm text-gray-600">
                                   {role.notes}
                                 </p>
                               </div>
@@ -316,7 +316,7 @@ function KeyRolesContent() {
                 member ? (
                   <div key={member.id} className="rounded-lg border p-3">
                     <p className="font-medium">{member.name}</p>
-                    <p className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">
+                    <p className="text-sm text-gray-600">
                       {member.relationship}
                     </p>
                     {member.legalRoles && member.legalRoles.length > 0 && (

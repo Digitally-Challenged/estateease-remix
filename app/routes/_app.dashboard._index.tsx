@@ -113,10 +113,10 @@ export default function Dashboard() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+        <h1 className="text-3xl font-bold text-gray-900">
           Welcome back, Nicholas
         </h1>
-        <p className="text-gray-600 dark:text-gray-400">
+        <p className="text-gray-600">
           Here&apos;s an overview of your estate planning portfolio.
         </p>
       </div>
@@ -128,22 +128,22 @@ export default function Dashboard() {
           return (
             <Card key={stat.title}>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                <CardTitle className="text-sm font-medium text-gray-600">
                   {stat.title}
                 </CardTitle>
-                <Icon className="h-4 w-4 text-gray-600 dark:text-gray-400" />
+                <Icon className="h-4 w-4 text-gray-600" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+                <div className="text-2xl font-bold text-gray-900">
                   {stat.value}
                 </div>
                 <p
                   className={`text-xs ${
                     stat.changeType === "positive"
-                      ? "text-green-600 dark:text-green-400"
+                      ? "text-green-600"
                       : stat.changeType === "negative"
-                        ? "text-red-600 dark:text-red-400"
-                        : "text-gray-600 dark:text-gray-400 dark:text-gray-500"
+                        ? "text-red-600"
+                        : "text-gray-600"
                   }`}
                 >
                   {stat.change} from last month
@@ -162,21 +162,21 @@ export default function Dashboard() {
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-            <button className="rounded-lg border border-gray-200 p-4 text-left transition-colors hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800">
-              <h3 className="font-medium text-gray-900 dark:text-gray-100">Add New Asset</h3>
-              <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
+            <button className="rounded-lg border border-gray-200 p-4 text-left transition-colors hover:bg-gray-50">
+              <h3 className="font-medium text-gray-900">Add New Asset</h3>
+              <p className="mt-1 text-sm text-gray-600">
                 Record a new property, account, or investment
               </p>
             </button>
-            <button className="rounded-lg border border-gray-200 p-4 text-left transition-colors hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800">
-              <h3 className="font-medium text-gray-900 dark:text-gray-100">Update Beneficiaries</h3>
-              <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
+            <button className="rounded-lg border border-gray-200 p-4 text-left transition-colors hover:bg-gray-50">
+              <h3 className="font-medium text-gray-900">Update Beneficiaries</h3>
+              <p className="mt-1 text-sm text-gray-600">
                 Modify trust and account beneficiaries
               </p>
             </button>
-            <button className="rounded-lg border border-gray-200 p-4 text-left transition-colors hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800">
-              <h3 className="font-medium text-gray-900 dark:text-gray-100">Schedule Review</h3>
-              <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
+            <button className="rounded-lg border border-gray-200 p-4 text-left transition-colors hover:bg-gray-50">
+              <h3 className="font-medium text-gray-900">Schedule Review</h3>
+              <p className="mt-1 text-sm text-gray-600">
                 Book a meeting with your estate planning team
               </p>
             </button>
@@ -195,17 +195,17 @@ export default function Dashboard() {
             {recentAssets.map((asset) => (
               <div
                 key={asset.id}
-                className="flex items-center justify-between rounded-lg border border-gray-200 p-4 dark:border-gray-700"
+                className="flex items-center justify-between rounded-lg border border-gray-200 p-4"
               >
                 <div>
-                  <h3 className="font-medium text-gray-900 dark:text-gray-100">{asset.name}</h3>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">{asset.category}</p>
+                  <h3 className="font-medium text-gray-900">{asset.name}</h3>
+                  <p className="text-sm text-gray-600">{asset.category}</p>
                 </div>
                 <div className="text-right">
-                  <p className="font-medium text-gray-900 dark:text-gray-100">
+                  <p className="font-medium text-gray-900">
                     {formatCurrency(asset.value)}
                   </p>
-                  <p className="text-sm text-green-600 dark:text-green-400">Active</p>
+                  <p className="text-sm text-green-600">Active</p>
                 </div>
               </div>
             ))}
@@ -219,7 +219,7 @@ export default function Dashboard() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center">
-              <Activity className="mr-2 h-5 w-5 text-blue-600 dark:text-blue-400" />
+              <Activity className="mr-2 h-5 w-5 text-blue-600" />
               Net Worth Trend
             </CardTitle>
             <CardDescription>Your net worth over the past 6 months</CardDescription>
@@ -233,7 +233,7 @@ export default function Dashboard() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center">
-              <PieChart className="mr-2 h-5 w-5 text-green-600 dark:text-green-400" />
+              <PieChart className="mr-2 h-5 w-5 text-green-600" />
               Asset Allocation
             </CardTitle>
             <CardDescription>Distribution of your assets by category</CardDescription>
@@ -259,8 +259,8 @@ export default function Dashboard() {
                   <span
                     className={`text-sm ${
                       trust.type === "revocable"
-                        ? "text-green-600 dark:text-green-400"
-                        : "text-blue-600 dark:text-blue-400"
+                        ? "text-green-600"
+                        : "text-blue-600"
                     }`}
                   >
                     {trust.type}

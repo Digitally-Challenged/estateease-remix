@@ -170,27 +170,27 @@ export default function Profile() {
       <div className="flex items-center gap-4">
         <button
           onClick={() => navigate(-1)}
-          className="rounded-lg p-2 transition-colors hover:bg-gray-100 dark:hover:bg-gray-800"
+          className="rounded-lg p-2 transition-colors hover:bg-gray-100"
         >
           <ArrowLeft className="h-5 w-5" />
         </button>
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">User Profile</h1>
-          <p className="mt-1 text-gray-600 dark:text-gray-400">
+          <h1 className="text-3xl font-bold text-gray-900">User Profile</h1>
+          <p className="mt-1 text-gray-600">
             Manage your account settings and preferences
           </p>
         </div>
       </div>
 
       {/* Tab Navigation */}
-      <div className="border-b border-gray-200 dark:border-gray-700">
+      <div className="border-b border-gray-200">
         <nav className="flex space-x-8">
           <button
             onClick={() => setActiveTab("profile")}
             className={`border-b-2 px-1 py-2 text-sm font-medium ${
               activeTab === "profile"
-                ? "border-blue-500 text-blue-600 dark:text-blue-400"
-                : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+                ? "border-blue-500 text-blue-600"
+                : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700"
             }`}
           >
             <User className="mr-2 inline h-4 w-4" />
@@ -200,8 +200,8 @@ export default function Profile() {
             onClick={() => setActiveTab("password")}
             className={`border-b-2 px-1 py-2 text-sm font-medium ${
               activeTab === "password"
-                ? "border-blue-500 text-blue-600 dark:text-blue-400"
-                : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+                ? "border-blue-500 text-blue-600"
+                : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700"
             }`}
           >
             <Lock className="mr-2 inline h-4 w-4" />
@@ -212,8 +212,8 @@ export default function Profile() {
 
       {/* Success/Error Messages */}
       {actionData?.success && (
-        <Alert className="border-green-200 bg-green-50 dark:border-green-700 dark:bg-green-900/20">
-          <AlertDescription className="text-green-800 dark:text-green-400">
+        <Alert className="border-green-200 bg-green-50">
+          <AlertDescription className="text-green-800">
             {actionData.type === "profile"
               ? "Profile updated successfully!"
               : "Password changed successfully!"}
@@ -331,7 +331,7 @@ export default function Profile() {
         <Card className="p-6">
           <div className="mb-6">
             <h2 className="text-xl font-semibold">Change Password</h2>
-            <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
+            <p className="mt-1 text-sm text-gray-600">
               Your password must be at least 8 characters long and contain uppercase, lowercase,
               number, and special character.
             </p>
@@ -409,9 +409,9 @@ export default function Profile() {
               </div>
             </FormField>
 
-            <div className="rounded-lg bg-gray-50 p-4 dark:bg-gray-900/20">
+            <div className="rounded-lg bg-gray-50 p-4">
               <h4 className="mb-2 text-sm font-medium">Password Requirements:</h4>
-              <ul className="space-y-1 text-sm text-gray-600 dark:text-gray-400">
+              <ul className="space-y-1 text-sm text-gray-600">
                 <li>• At least 8 characters long</li>
                 <li>• Contains uppercase letter (A-Z)</li>
                 <li>• Contains lowercase letter (a-z)</li>

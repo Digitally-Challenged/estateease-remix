@@ -105,11 +105,11 @@ export default function AIInsights() {
   if (error) {
     return (
       <div className="mx-auto max-w-4xl p-6">
-        <div className="rounded-lg border border-red-200 bg-red-50 p-4 dark:border-red-700 dark:bg-red-900/20">
-          <h2 className="mb-2 text-lg font-semibold text-red-900 dark:text-red-100">
+        <div className="rounded-lg border border-red-200 bg-red-50 p-4">
+          <h2 className="mb-2 text-lg font-semibold text-red-900">
             Unable to Load AI Insights
           </h2>
-          <p className="text-red-700 dark:text-red-300">
+          <p className="text-red-700">
             We encountered an error while analyzing your estate data. Please try refreshing the page
             or contact support if the issue persists.
           </p>

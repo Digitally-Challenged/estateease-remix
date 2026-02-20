@@ -166,10 +166,10 @@ function AssetPerformanceDashboardComponent({
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+          <h2 className="text-2xl font-bold text-gray-900">
             Asset Performance Dashboard
           </h2>
-          <p className="text-sm text-gray-600 dark:text-gray-400">
+          <p className="text-sm text-gray-600">
             Last updated: {lastUpdated.toLocaleTimeString()}
           </p>
         </div>
@@ -191,10 +191,10 @@ function AssetPerformanceDashboardComponent({
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                <p className="text-sm font-medium text-gray-600">
                   Total Portfolio
                 </p>
-                <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+                <p className="text-2xl font-bold text-gray-900">
                   {formatCurrency(metrics.totalValue)}
                 </p>
               </div>
@@ -213,7 +213,7 @@ function AssetPerformanceDashboardComponent({
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Risk Score</p>
+                <p className="text-sm font-medium text-gray-600">Risk Score</p>
                 <p className={`text-2xl font-bold ${getScoreColor(metrics.riskScore)}`}>
                   {metrics.riskScore}/100
                 </p>
@@ -221,7 +221,7 @@ function AssetPerformanceDashboardComponent({
               <Shield className="h-8 w-8 text-orange-600" />
             </div>
             <div className="mt-2">
-              <span className="text-sm text-gray-600 dark:text-gray-400">
+              <span className="text-sm text-gray-600">
                 {metrics.riskScore >= 80
                   ? "Low Risk"
                   : metrics.riskScore >= 60
@@ -236,7 +236,7 @@ function AssetPerformanceDashboardComponent({
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                <p className="text-sm font-medium text-gray-600">
                   Diversification
                 </p>
                 <p className={`text-2xl font-bold ${getScoreColor(metrics.diversificationScore)}`}>
@@ -246,7 +246,7 @@ function AssetPerformanceDashboardComponent({
               <PieChart className="h-8 w-8 text-green-600" />
             </div>
             <div className="mt-2">
-              <span className="text-sm text-gray-600 dark:text-gray-400">Allocation Score</span>
+              <span className="text-sm text-gray-600">Allocation Score</span>
             </div>
           </CardContent>
         </Card>
@@ -255,7 +255,7 @@ function AssetPerformanceDashboardComponent({
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                <p className="text-sm font-medium text-gray-600">
                   Liquidity Ratio
                 </p>
                 <p className={`text-2xl font-bold ${getScoreColor(metrics.liquidityRatio * 100)}`}>
@@ -265,14 +265,14 @@ function AssetPerformanceDashboardComponent({
               <Zap className="h-8 w-8 text-blue-600" />
             </div>
             <div className="mt-2">
-              <span className="text-sm text-gray-600 dark:text-gray-400">Available Liquidity</span>
+              <span className="text-sm text-gray-600">Available Liquidity</span>
             </div>
           </CardContent>
         </Card>
       </div>
 
       {/* Tab Navigation */}
-      <div className="border-b border-gray-200 dark:border-gray-700">
+      <div className="border-b border-gray-200">
         <nav className="-mb-px flex space-x-8">
           {TABS.map((tab) => {
             const Icon = tab.icon;
@@ -308,7 +308,7 @@ function AssetPerformanceDashboardComponent({
               <CardContent>
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-600 dark:text-gray-400">This Month</span>
+                    <span className="text-sm text-gray-600">This Month</span>
                     <div className="flex items-center">
                       <TrendIcon change={metrics.monthlyChange} />
                       <span
@@ -319,7 +319,7 @@ function AssetPerformanceDashboardComponent({
                     </div>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-600 dark:text-gray-400">Year to Date</span>
+                    <span className="text-sm text-gray-600">Year to Date</span>
                     <div className="flex items-center">
                       <TrendIcon change={metrics.yearlyChange} />
                       <span
@@ -370,7 +370,7 @@ function AssetPerformanceDashboardComponent({
                 {categories.map((category, index) => (
                   <div
                     key={index}
-                    className="flex items-center justify-between rounded-lg bg-gray-50 p-3 dark:bg-gray-800"
+                    className="flex items-center justify-between rounded-lg bg-gray-50 p-3"
                   >
                     <div className="flex items-center space-x-3">
                       <div
@@ -382,7 +382,7 @@ function AssetPerformanceDashboardComponent({
                     <div className="flex items-center space-x-4 text-right">
                       <div>
                         <div className="font-medium">{formatCurrency(category.value)}</div>
-                        <div className="text-sm text-gray-600 dark:text-gray-400">
+                        <div className="text-sm text-gray-600">
                           {category.percentage.toFixed(1)}%
                         </div>
                       </div>
@@ -422,10 +422,10 @@ function AssetPerformanceDashboardComponent({
                         <RiskIcon severity={risk.severity} />
                       </div>
                       <div>
-                        <h4 className="font-semibold text-gray-900 dark:text-gray-100">
+                        <h4 className="font-semibold text-gray-900">
                           {risk.description}
                         </h4>
-                        <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
+                        <p className="mt-1 text-sm text-gray-600">
                           {risk.recommendation}
                         </p>
                       </div>

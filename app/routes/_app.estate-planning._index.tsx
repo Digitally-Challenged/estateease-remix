@@ -108,10 +108,10 @@ function EstatePlanningContent() {
     return (
       <div className="space-y-6">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+          <h1 className="text-3xl font-bold text-gray-900">
             Estate Planning Center
           </h1>
-          <p className="mt-2 text-gray-600 dark:text-gray-400 dark:text-gray-500">
+          <p className="mt-2 text-gray-600">
             Complete estate planning overview and progress tracking
           </p>
         </div>
@@ -136,10 +136,10 @@ function EstatePlanningContent() {
       {/* Header */}
       <div className="flex items-start justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+          <h1 className="text-3xl font-bold text-gray-900">
             Estate Planning Center
           </h1>
-          <p className="mt-2 text-gray-600 dark:text-gray-400 dark:text-gray-500">
+          <p className="mt-2 text-gray-600">
             Complete estate planning overview and progress tracking
           </p>
         </div>
@@ -154,7 +154,7 @@ function EstatePlanningContent() {
         <CardContent className="space-y-4">
           <div className="space-y-2">
             <div className="flex justify-between text-sm">
-              <span className="text-gray-600 dark:text-gray-400 dark:text-gray-500">
+              <span className="text-gray-600">
                 Overall Progress
               </span>
               <span className="font-medium">{Math.round(progressPercentage)}%</span>
@@ -171,15 +171,15 @@ function EstatePlanningContent() {
                 >
                   <div className="flex items-center space-x-3">
                     {item.completed ? (
-                      <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-400" />
+                      <CheckCircle className="h-5 w-5 text-green-600" />
                     ) : (
-                      <AlertCircle className="h-5 w-5 text-gray-400 dark:text-gray-500" />
+                      <AlertCircle className="h-5 w-5 text-gray-400" />
                     )}
                     <span
                       className={
                         item.completed
                           ? "font-medium"
-                          : "text-gray-600 dark:text-gray-400 dark:text-gray-500"
+                          : "text-gray-600"
                       }
                     >
                       {item.name}
@@ -198,11 +198,11 @@ function EstatePlanningContent() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Estate Value</CardTitle>
-            <TrendingUp className="h-4 w-4 text-gray-600 dark:text-gray-400 dark:text-gray-500" />
+            <TrendingUp className="h-4 w-4 text-gray-600" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{formatCurrency(stats?.totalNetWorth || 0)}</div>
-            <p className="mt-1 text-xs text-gray-600 dark:text-gray-400 dark:text-gray-500">
+            <p className="mt-1 text-xs text-gray-600">
               Across all assets
             </p>
           </CardContent>
@@ -211,11 +211,11 @@ function EstatePlanningContent() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Active Trusts</CardTitle>
-            <Building2 className="h-4 w-4 text-gray-600 dark:text-gray-400 dark:text-gray-500" />
+            <Building2 className="h-4 w-4 text-gray-600" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{trusts.length}</div>
-            <p className="mt-1 text-xs text-gray-600 dark:text-gray-400 dark:text-gray-500">
+            <p className="mt-1 text-xs text-gray-600">
               Trust structures
             </p>
           </CardContent>
@@ -224,15 +224,15 @@ function EstatePlanningContent() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Beneficiaries</CardTitle>
-            <Users className="h-4 w-4 text-gray-600 dark:text-gray-400 dark:text-gray-500" />
+            <Users className="h-4 w-4 text-gray-600" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{beneficiaries.length}</div>
-            <p className="mt-1 text-xs text-gray-600 dark:text-gray-400 dark:text-gray-500">
+            <p className="mt-1 text-xs text-gray-600">
               {hasValidBeneficiaries ? (
-                <span className="text-green-600 dark:text-green-400">✓ 100% allocated</span>
+                <span className="text-green-600">✓ 100% allocated</span>
               ) : (
-                <span className="text-orange-600 dark:text-orange-400">
+                <span className="text-orange-600">
                   {totalBeneficiaryPercentage}% allocated
                 </span>
               )}
@@ -243,11 +243,11 @@ function EstatePlanningContent() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Key Roles</CardTitle>
-            <Shield className="h-4 w-4 text-gray-600 dark:text-gray-400 dark:text-gray-500" />
+            <Shield className="h-4 w-4 text-gray-600" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{legalRoles.length}</div>
-            <p className="mt-1 text-xs text-gray-600 dark:text-gray-400 dark:text-gray-500">
+            <p className="mt-1 text-xs text-gray-600">
               Assigned roles
             </p>
           </CardContent>
@@ -271,7 +271,7 @@ function EstatePlanningContent() {
                       <div key={trust.id} className="flex items-center justify-between">
                         <div>
                           <p className="font-medium">{trust.name}</p>
-                          <p className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">
+                          <p className="text-sm text-gray-600">
                             {trust.type}
                           </p>
                         </div>
@@ -291,7 +291,7 @@ function EstatePlanningContent() {
               </>
             ) : (
               <div className="py-4 text-center">
-                <p className="mb-4 text-gray-600 dark:text-gray-400 dark:text-gray-500">
+                <p className="mb-4 text-gray-600">
                   No trusts created yet
                 </p>
                 <Button asChild>
@@ -319,7 +319,7 @@ function EstatePlanningContent() {
                       <div key={beneficiary.id} className="flex items-center justify-between">
                         <div>
                           <p className="font-medium">{beneficiary.name}</p>
-                          <p className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">
+                          <p className="text-sm text-gray-600">
                             {beneficiary.relationship}
                           </p>
                         </div>
@@ -330,8 +330,8 @@ function EstatePlanningContent() {
                     ))}
                 </div>
                 {!hasValidBeneficiaries && (
-                  <div className="rounded-lg border border-orange-200 bg-orange-50 p-3 dark:border-orange-700 dark:bg-orange-900/20">
-                    <p className="text-sm text-orange-800 dark:text-orange-200">
+                  <div className="rounded-lg border border-orange-200 bg-orange-50 p-3">
+                    <p className="text-sm text-orange-800">
                       Warning: Total allocation is {totalBeneficiaryPercentage}% (should be 100%)
                     </p>
                   </div>
@@ -345,7 +345,7 @@ function EstatePlanningContent() {
               </>
             ) : (
               <div className="py-4 text-center">
-                <p className="mb-4 text-gray-600 dark:text-gray-400 dark:text-gray-500">
+                <p className="mb-4 text-gray-600">
                   No beneficiaries assigned yet
                 </p>
                 <Button asChild>
@@ -367,52 +367,52 @@ function EstatePlanningContent() {
           <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
             <Link
               to="/healthcare-directives"
-              className="rounded-lg border p-4 transition-colors hover:bg-gray-50 dark:bg-gray-900 dark:hover:bg-gray-800"
+              className="rounded-lg border p-4 transition-colors hover:bg-gray-50"
             >
               <div className="flex items-center justify-between">
                 <div>
                   <p className="font-medium">Healthcare Directives</p>
-                  <p className="mt-1 text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">
+                  <p className="mt-1 text-sm text-gray-600">
                     {healthcareDirectives.length > 0 ? (
-                      <span className="text-green-600 dark:text-green-400">✓ Configured</span>
+                      <span className="text-green-600">✓ Configured</span>
                     ) : (
-                      <span className="text-gray-500 dark:text-gray-400 dark:text-gray-500">
+                      <span className="text-gray-500">
                         Not configured
                       </span>
                     )}
                   </p>
                 </div>
-                <FileText className="h-5 w-5 text-gray-400 dark:text-gray-500" />
+                <FileText className="h-5 w-5 text-gray-400" />
               </div>
             </Link>
 
             <Link
               to="/key-roles"
-              className="rounded-lg border p-4 transition-colors hover:bg-gray-50 dark:bg-gray-900 dark:hover:bg-gray-800"
+              className="rounded-lg border p-4 transition-colors hover:bg-gray-50"
             >
               <div className="flex items-center justify-between">
                 <div>
                   <p className="font-medium">Key Appointments</p>
-                  <p className="mt-1 text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">
+                  <p className="mt-1 text-sm text-gray-600">
                     {legalRoles.length} roles assigned
                   </p>
                 </div>
-                <Shield className="h-5 w-5 text-gray-400 dark:text-gray-500" />
+                <Shield className="h-5 w-5 text-gray-400" />
               </div>
             </Link>
 
             <Link
               to="/succession-planning"
-              className="rounded-lg border p-4 transition-colors hover:bg-gray-50 dark:bg-gray-900 dark:hover:bg-gray-800"
+              className="rounded-lg border p-4 transition-colors hover:bg-gray-50"
             >
               <div className="flex items-center justify-between">
                 <div>
                   <p className="font-medium">Succession Plan</p>
-                  <p className="mt-1 text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">
+                  <p className="mt-1 text-sm text-gray-600">
                     View timeline
                   </p>
                 </div>
-                <Calendar className="h-5 w-5 text-gray-400 dark:text-gray-500" />
+                <Calendar className="h-5 w-5 text-gray-400" />
               </div>
             </Link>
           </div>

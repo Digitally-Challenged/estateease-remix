@@ -15,60 +15,35 @@ interface ThemeProviderProps {
   defaultTheme?: Theme;
 }
 
-// Helper to get initial theme
-function getInitialTheme(): Theme {
-  if (typeof window === "undefined") {
-    return "light";
-  }
-
-  const savedTheme = localStorage.getItem("theme") as Theme;
-  if (savedTheme === "light" || savedTheme === "dark") {
-    return savedTheme;
-  }
-
-  const systemTheme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
-  return systemTheme;
-}
-
-export function ThemeProvider({ children, defaultTheme = "light" }: ThemeProviderProps) {
-  const [theme, setThemeState] = useState<Theme>(() => {
-    // Use lazy initial state to avoid hydration mismatch
-    if (typeof window !== "undefined") {
-      return getInitialTheme();
-    }
-    return defaultTheme;
-  });
+/**
+ * ThemeProvider — locked to light mode for local-only use.
+ * Dark mode is disabled to avoid dual-system conflicts
+ * (CSS variable inversion + Tailwind dark: classes).
+ */
+export function ThemeProvider({ children }: ThemeProviderProps) {
   const [mounted, setMounted] = useState(false);
+  const theme: Theme = "light";
 
-  // Handle mounting
   useEffect(() => {
     setMounted(true);
-    // Re-read theme after mount to ensure consistency
-    const currentTheme = getInitialTheme();
-    setThemeState(currentTheme);
   }, []);
 
-  // Update DOM and localStorage when theme changes
+  // Ensure DOM is always in light mode
   useEffect(() => {
     if (mounted && typeof window !== "undefined") {
-      document.documentElement.setAttribute("data-theme", theme);
-      localStorage.setItem("theme", theme);
-      // Also update class for Tailwind dark mode
-      if (theme === "dark") {
-        document.documentElement.classList.add("dark");
-      } else {
-        document.documentElement.classList.remove("dark");
-      }
+      document.documentElement.removeAttribute("data-theme");
+      document.documentElement.classList.remove("dark");
+      localStorage.setItem("theme", "light");
     }
-  }, [theme, mounted]);
+  }, [mounted]);
 
-  const setTheme = useCallback((newTheme: Theme) => {
-    setThemeState(newTheme);
+  const setTheme = useCallback((_newTheme: Theme) => {
+    // no-op: locked to light mode
   }, []);
 
   const toggleTheme = useCallback(() => {
-    setTheme(theme === "light" ? "dark" : "light");
-  }, [theme, setTheme]);
+    // no-op: locked to light mode
+  }, []);
 
   return (
     <ThemeContext.Provider value={{ theme, toggleTheme, setTheme }}>
@@ -85,7 +60,7 @@ export function useTheme() {
   return context;
 }
 
-// Theme-aware className helper
-export function themeClass(lightClass: string, darkClass: string): string {
-  return `${lightClass} dark:${darkClass}`;
+// Theme-aware className helper (kept for backwards compat, returns light class only)
+export function themeClass(lightClass: string, _darkClass: string): string {
+  return lightClass;
 }

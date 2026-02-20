@@ -93,10 +93,10 @@ export function AIInsightsDashboard({
             <Brain className="h-6 w-6 text-indigo-600" />
           </div>
           <div>
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+            <h2 className="text-2xl font-bold text-gray-900">
               AI Insights Dashboard
             </h2>
-            <p className="text-gray-600 dark:text-gray-400">
+            <p className="text-gray-600">
               Intelligent estate planning recommendations and predictions
             </p>
           </div>
@@ -120,7 +120,7 @@ export function AIInsightsDashboard({
             <div className="text-2xl font-bold text-green-600">
               {predictiveModel.estateGrowthRate.toFixed(1)}%
             </div>
-            <p className="text-sm text-gray-600 dark:text-gray-400">Projected annual growth</p>
+            <p className="text-sm text-gray-600">Projected annual growth</p>
           </CardContent>
         </Card>
 
@@ -135,7 +135,7 @@ export function AIInsightsDashboard({
             <div className="text-2xl font-bold text-blue-600">
               {predictiveModel.taxOptimizationPotential.toFixed(0)}%
             </div>
-            <p className="text-sm text-gray-600 dark:text-gray-400">Potential tax savings</p>
+            <p className="text-sm text-gray-600">Potential tax savings</p>
           </CardContent>
         </Card>
 
@@ -150,7 +150,7 @@ export function AIInsightsDashboard({
             <div className={`text-2xl font-bold ${getScoreColor(100 - predictiveModel.riskScore)}`}>
               {predictiveModel.riskScore.toFixed(0)}
             </div>
-            <p className="text-sm text-gray-600 dark:text-gray-400">Lower is better</p>
+            <p className="text-sm text-gray-600">Lower is better</p>
           </CardContent>
         </Card>
       </div>
@@ -205,7 +205,7 @@ export function AIInsightsDashboard({
             </div>
 
             <div className="space-y-4">
-              <h4 className="font-semibold text-gray-900 dark:text-gray-100">Risk Breakdown</h4>
+              <h4 className="font-semibold text-gray-900">Risk Breakdown</h4>
               {Object.entries(riskAssessment).map(([risk, score]) => (
                 <div key={risk} className="flex items-center justify-between">
                   <span className="text-sm capitalize">
@@ -242,12 +242,12 @@ export function AIInsightsDashboard({
             {recommendations.slice(0, 3).map((recommendation) => (
               <div
                 key={recommendation.id}
-                className="rounded-lg border border-gray-200 p-4 dark:border-gray-700"
+                className="rounded-lg border border-gray-200 p-4"
               >
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
                     <div className="mb-2 flex items-center space-x-2">
-                      <h4 className="font-semibold text-gray-900 dark:text-gray-100">
+                      <h4 className="font-semibold text-gray-900">
                         {recommendation.title}
                       </h4>
                       <Badge className={getImpactColor(recommendation.impact)}>
@@ -255,7 +255,7 @@ export function AIInsightsDashboard({
                       </Badge>
                       <Badge variant="outline">{recommendation.confidence}% confidence</Badge>
                     </div>
-                    <p className="mb-3 text-sm text-gray-600 dark:text-gray-400">
+                    <p className="mb-3 text-sm text-gray-600">
                       {recommendation.description}
                     </p>
                     <div className="flex items-center space-x-4 text-xs text-gray-500">
@@ -315,7 +315,7 @@ export function AIInsightsDashboard({
             {filteredInsights.map((insight) => (
               <button
                 key={insight.id}
-                className="w-full cursor-pointer rounded-lg border border-gray-200 p-4 text-left transition-colors hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800"
+                className="w-full cursor-pointer rounded-lg border border-gray-200 p-4 text-left transition-colors hover:bg-gray-50"
                 onClick={() => onInsightClick?.(insight)}
                 type="button"
               >
@@ -335,21 +335,21 @@ export function AIInsightsDashboard({
                   </div>
                   <div className="flex-1">
                     <div className="mb-2 flex items-center space-x-2">
-                      <h4 className="font-semibold text-gray-900 dark:text-gray-100">
+                      <h4 className="font-semibold text-gray-900">
                         {insight.title}
                       </h4>
                       <Badge className={getImpactColor(insight.impact)}>{insight.impact}</Badge>
                       <Badge variant="outline">{insight.confidence}% confidence</Badge>
                       <Badge variant="secondary">Priority {insight.priority}</Badge>
                     </div>
-                    <p className="mb-3 text-gray-600 dark:text-gray-400">{insight.description}</p>
+                    <p className="mb-3 text-gray-600">{insight.description}</p>
 
                     {insight.actionItems.length > 0 && (
                       <div>
-                        <h5 className="mb-2 text-sm font-medium text-gray-900 dark:text-gray-100">
+                        <h5 className="mb-2 text-sm font-medium text-gray-900">
                           Action Items:
                         </h5>
-                        <ul className="space-y-1 text-sm text-gray-600 dark:text-gray-400">
+                        <ul className="space-y-1 text-sm text-gray-600">
                           {insight.actionItems.slice(0, 3).map((item, index) => (
                             <li key={index} className="flex items-center">
                               <CheckCircle className="mr-2 h-3 w-3 text-green-500" />
@@ -360,7 +360,7 @@ export function AIInsightsDashboard({
                       </div>
                     )}
 
-                    <div className="mt-3 flex items-center justify-between border-t border-gray-100 pt-3 dark:border-gray-700">
+                    <div className="mt-3 flex items-center justify-between border-t border-gray-100 pt-3">
                       <div className="flex items-center space-x-4 text-xs text-gray-500">
                         <span>Category: {insight.category}</span>
                         {insight.timeframe && <span>Timeframe: {insight.timeframe}</span>}

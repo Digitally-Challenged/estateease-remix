@@ -21,7 +21,7 @@ export default function SettingsIndex() {
       description: "Manage your personal information and account details",
       icon: User,
       href: "/settings/profile",
-      color: "text-blue-600 dark:text-blue-400",
+      color: "text-blue-600",
     },
     {
       title: "Preferences",
@@ -35,14 +35,14 @@ export default function SettingsIndex() {
       description: "Manage your account security and access controls",
       icon: Shield,
       href: "/settings/security",
-      color: "text-green-600 dark:text-green-400",
+      color: "text-green-600",
     },
     {
       title: "Data Management",
       description: "Import, export, and manage your estate planning data",
       icon: Database,
       href: "/settings/data",
-      color: "text-orange-600 dark:text-orange-400",
+      color: "text-orange-600",
     },
   ];
 
@@ -77,8 +77,8 @@ export default function SettingsIndex() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Settings</h1>
-        <p className="text-gray-600 dark:text-gray-400 dark:text-gray-500">
+        <h1 className="text-3xl font-bold text-gray-900">Settings</h1>
+        <p className="text-gray-600">
           Manage your account settings and preferences
         </p>
       </div>
@@ -97,20 +97,20 @@ export default function SettingsIndex() {
                 <Link
                   key={setting.title}
                   to={setting.href}
-                  className="flex items-center justify-between rounded-lg border border-gray-200 p-4 transition-colors hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-900 dark:hover:bg-gray-800"
+                  className="flex items-center justify-between rounded-lg border border-gray-200 p-4 transition-colors hover:bg-gray-50"
                 >
                   <div className="flex items-center space-x-3">
-                    <Icon className="h-5 w-5 text-gray-600 dark:text-gray-400 dark:text-gray-500" />
+                    <Icon className="h-5 w-5 text-gray-600" />
                     <div>
-                      <p className="font-medium text-gray-900 dark:text-gray-100">
+                      <p className="font-medium text-gray-900">
                         {setting.title}
                       </p>
-                      <p className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">
+                      <p className="text-sm text-gray-600">
                         {setting.status}
                       </p>
                     </div>
                   </div>
-                  <ChevronRight className="h-5 w-5 text-gray-400 dark:text-gray-500" />
+                  <ChevronRight className="h-5 w-5 text-gray-400" />
                 </Link>
               );
             })}
@@ -132,7 +132,7 @@ export default function SettingsIndex() {
                 <CardHeader>
                   <div className="flex items-start justify-between">
                     <Icon className={`h-8 w-8 ${section.color}`} />
-                    <ChevronRight className="h-5 w-5 text-gray-400 dark:text-gray-500" />
+                    <ChevronRight className="h-5 w-5 text-gray-400" />
                   </div>
                   <CardTitle className="mt-4">{section.title}</CardTitle>
                   <CardDescription>{section.description}</CardDescription>
@@ -153,18 +153,18 @@ export default function SettingsIndex() {
           <div className="space-y-3">
             <Link
               to="/settings/data"
-              className="flex items-center justify-between rounded-lg border border-gray-200 p-4 transition-colors hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-900 dark:hover:bg-gray-800"
+              className="flex items-center justify-between rounded-lg border border-gray-200 p-4 transition-colors hover:bg-gray-50"
             >
               <div className="flex items-center space-x-3">
-                <Download className="h-5 w-5 text-gray-600 dark:text-gray-400 dark:text-gray-500" />
+                <Download className="h-5 w-5 text-gray-600" />
                 <div>
-                  <p className="font-medium text-gray-900 dark:text-gray-100">Export All Data</p>
-                  <p className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">
+                  <p className="font-medium text-gray-900">Export All Data</p>
+                  <p className="text-sm text-gray-600">
                     Download a complete backup of your information
                   </p>
                 </div>
               </div>
-              <ChevronRight className="h-5 w-5 text-gray-400 dark:text-gray-500" />
+              <ChevronRight className="h-5 w-5 text-gray-400" />
             </Link>
           </div>
         </CardContent>

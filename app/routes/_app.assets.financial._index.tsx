@@ -102,10 +102,10 @@ function FinancialAccountsContent() {
     return (
       <div className="space-y-6">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+          <h1 className="text-3xl font-bold text-gray-900">
             Financial Accounts
           </h1>
-          <p className="mt-2 text-gray-600 dark:text-gray-400 dark:text-gray-500">
+          <p className="mt-2 text-gray-600">
             Manage bank accounts, investments, and retirement accounts
           </p>
         </div>
@@ -139,11 +139,11 @@ function FinancialAccountsContent() {
         <div className="flex items-center space-x-3">
           {(() => {
             const Icon = getAccountIcon(account);
-            return <Icon className="h-5 w-5 text-gray-600 dark:text-gray-400 dark:text-gray-500" />;
+            return <Icon className="h-5 w-5 text-gray-600" />;
           })()}
           <div>
             <p className="font-medium">{account?.name}</p>
-            <p className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">
+            <p className="text-sm text-gray-600">
               {(account as FinancialAccount)?.accountNumber || "No account number"}
             </p>
           </div>
@@ -185,21 +185,21 @@ function FinancialAccountsContent() {
       <div className="space-y-6">
         <div className="flex items-start justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+            <h1 className="text-3xl font-bold text-gray-900">
               Financial Accounts
             </h1>
-            <p className="mt-2 text-gray-600 dark:text-gray-400 dark:text-gray-500">
+            <p className="mt-2 text-gray-600">
               Manage bank accounts, investments, and retirement accounts
             </p>
           </div>
         </div>
         <Card className="py-8 text-center">
           <CardContent>
-            <DollarSign className="mx-auto mb-4 h-12 w-12 text-gray-400 dark:text-gray-500" />
-            <h3 className="mb-2 text-lg font-medium text-gray-900 dark:text-gray-100">
+            <DollarSign className="mx-auto mb-4 h-12 w-12 text-gray-400" />
+            <h3 className="mb-2 text-lg font-medium text-gray-900">
               No financial accounts
             </h3>
-            <p className="mb-4 text-gray-600 dark:text-gray-400 dark:text-gray-500">
+            <p className="mb-4 text-gray-600">
               Add your bank accounts, investments, and retirement accounts to track your financial
               assets
             </p>
@@ -217,10 +217,10 @@ function FinancialAccountsContent() {
       {/* Header */}
       <div className="flex items-start justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+          <h1 className="text-3xl font-bold text-gray-900">
             Financial Accounts
           </h1>
-          <p className="mt-2 text-gray-600 dark:text-gray-400 dark:text-gray-500">
+          <p className="mt-2 text-gray-600">
             Manage bank accounts, investments, and retirement accounts
           </p>
         </div>
@@ -237,11 +237,11 @@ function FinancialAccountsContent() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Value</CardTitle>
-            <DollarSign className="h-4 w-4 text-gray-600 dark:text-gray-400 dark:text-gray-500" />
+            <DollarSign className="h-4 w-4 text-gray-600" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{formatCurrency(totalValue)}</div>
-            <p className="mt-1 text-xs text-gray-600 dark:text-gray-400 dark:text-gray-500">
+            <p className="mt-1 text-xs text-gray-600">
               All accounts
             </p>
           </CardContent>
@@ -250,11 +250,11 @@ function FinancialAccountsContent() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Checking</CardTitle>
-            <Wallet className="h-4 w-4 text-gray-600 dark:text-gray-400 dark:text-gray-500" />
+            <Wallet className="h-4 w-4 text-gray-600" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{formatCurrency(checkingTotal)}</div>
-            <p className="mt-1 text-xs text-gray-600 dark:text-gray-400 dark:text-gray-500">
+            <p className="mt-1 text-xs text-gray-600">
               Liquid funds
             </p>
           </CardContent>
@@ -263,11 +263,11 @@ function FinancialAccountsContent() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Savings</CardTitle>
-            <PiggyBank className="h-4 w-4 text-gray-600 dark:text-gray-400 dark:text-gray-500" />
+            <PiggyBank className="h-4 w-4 text-gray-600" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{formatCurrency(savingsTotal)}</div>
-            <p className="mt-1 text-xs text-gray-600 dark:text-gray-400 dark:text-gray-500">
+            <p className="mt-1 text-xs text-gray-600">
               Emergency fund
             </p>
           </CardContent>
@@ -276,11 +276,11 @@ function FinancialAccountsContent() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Investments</CardTitle>
-            <TrendingUp className="h-4 w-4 text-gray-600 dark:text-gray-400 dark:text-gray-500" />
+            <TrendingUp className="h-4 w-4 text-gray-600" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{formatCurrency(investmentTotal)}</div>
-            <p className="mt-1 text-xs text-gray-600 dark:text-gray-400 dark:text-gray-500">
+            <p className="mt-1 text-xs text-gray-600">
               Brokerage accounts
             </p>
           </CardContent>
@@ -289,11 +289,11 @@ function FinancialAccountsContent() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Retirement</CardTitle>
-            <Landmark className="h-4 w-4 text-gray-600 dark:text-gray-400 dark:text-gray-500" />
+            <Landmark className="h-4 w-4 text-gray-600" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{formatCurrency(retirementTotal)}</div>
-            <p className="mt-1 text-xs text-gray-600 dark:text-gray-400 dark:text-gray-500">
+            <p className="mt-1 text-xs text-gray-600">
               401k, IRA, etc.
             </p>
           </CardContent>
@@ -354,12 +354,12 @@ function FinancialAccountsContent() {
                         {(() => {
                           const Icon = getAccountIcon(account);
                           return (
-                            <Icon className="h-4 w-4 text-gray-600 dark:text-gray-400 dark:text-gray-500" />
+                            <Icon className="h-4 w-4 text-gray-600" />
                           );
                         })()}
                         <div>
                           <p className="font-medium">{account.name}</p>
-                          <p className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">
+                          <p className="text-sm text-gray-600">
                             {(account as FinancialAccount).institution}
                           </p>
                         </div>
@@ -399,12 +399,12 @@ function FinancialAccountsContent() {
                         {(() => {
                           const Icon = getAccountIcon(account);
                           return (
-                            <Icon className="h-4 w-4 text-gray-600 dark:text-gray-400 dark:text-gray-500" />
+                            <Icon className="h-4 w-4 text-gray-600" />
                           );
                         })()}
                         <div>
                           <p className="font-medium">{account.name}</p>
-                          <p className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">
+                          <p className="text-sm text-gray-600">
                             {(account as FinancialAccount).institution}
                           </p>
                         </div>

@@ -98,12 +98,12 @@ export async function loader({ request }: LoaderFunctionArgs) {
         const name = a?.name?.toLowerCase() || "";
         return (
           ![
-            "sole_proprietorship",
-            "partnership",
-            "llc",
-            "corporation",
-            "s_corp",
-            "c_corp",
+"sole_proprietorship",
+"partnership",
+"llc",
+"corporation",
+"s_corp",
+"c_corp",
           ].includes(details.businessType) &&
           !name.includes("sole") &&
           !name.includes("partnership") &&
@@ -173,10 +173,10 @@ function BusinessAssetsContent() {
     return (
       <div className="space-y-6">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+          <h1 className="text-3xl font-bold text-gray-900">
             Business Interests
           </h1>
-          <p className="mt-2 text-gray-600 dark:text-gray-400 dark:text-gray-500">
+          <p className="mt-2 text-gray-600">
             Manage your business ownership and corporate assets
           </p>
         </div>
@@ -195,21 +195,21 @@ function BusinessAssetsContent() {
       <div className="space-y-6">
         <div className="flex items-start justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+            <h1 className="text-3xl font-bold text-gray-900">
               Business Interests
             </h1>
-            <p className="mt-2 text-gray-600 dark:text-gray-400 dark:text-gray-500">
+            <p className="mt-2 text-gray-600">
               Manage your business ownership and corporate assets
             </p>
           </div>
         </div>
         <Card className="py-8 text-center">
           <CardContent>
-            <Building2 className="mx-auto mb-4 h-12 w-12 text-gray-400 dark:text-gray-500" />
-            <h3 className="mb-2 text-lg font-medium text-gray-900 dark:text-gray-100">
+            <Building2 className="mx-auto mb-4 h-12 w-12 text-gray-400" />
+            <h3 className="mb-2 text-lg font-medium text-gray-900">
               No business interests found
             </h3>
-            <p className="mb-4 text-gray-600 dark:text-gray-400 dark:text-gray-500">
+            <p className="mb-4 text-gray-600">
               Add your business ownership interests to track value and plan succession
             </p>
             <Button asChild>
@@ -248,10 +248,10 @@ function BusinessAssetsContent() {
         const details = getBusinessDetails(asset);
         return (
           <div className="flex items-start space-x-3">
-            <Building2 className="mt-0.5 h-5 w-5 text-gray-400 dark:text-gray-500" />
+            <Building2 className="mt-0.5 h-5 w-5 text-gray-400" />
             <div>
               <p className="font-medium">{asset?.name}</p>
-              <p className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">
+              <p className="text-sm text-gray-600">
                 {details.industry && `${details.industry} Industry`}
               </p>
             </div>
@@ -285,7 +285,7 @@ function BusinessAssetsContent() {
         return (
           <div>
             <p className="font-medium">{details.ownershipPercentage || 100}%</p>
-            <p className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">
+            <p className="text-sm text-gray-600">
               {details.ownershipType || "Direct"}
             </p>
           </div>
@@ -301,7 +301,7 @@ function BusinessAssetsContent() {
           <div>
             <p className="font-medium">{formatCurrency(asset?.value || 0)}</p>
             {details.valuationDate && (
-              <p className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">
+              <p className="text-sm text-gray-600">
                 as of {new Date(details.valuationDate).toLocaleDateString()}
               </p>
             )}
@@ -337,10 +337,10 @@ function BusinessAssetsContent() {
       {/* Header */}
       <div className="flex items-start justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+          <h1 className="text-3xl font-bold text-gray-900">
             Business Interests
           </h1>
-          <p className="mt-2 text-gray-600 dark:text-gray-400 dark:text-gray-500">
+          <p className="mt-2 text-gray-600">
             Manage your business ownership and corporate assets
           </p>
         </div>
@@ -357,11 +357,11 @@ function BusinessAssetsContent() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Value</CardTitle>
-            <TrendingUp className="h-4 w-4 text-gray-600 dark:text-gray-400 dark:text-gray-500" />
+            <TrendingUp className="h-4 w-4 text-gray-600" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{formatCurrency(totalValue)}</div>
-            <p className="mt-1 text-xs text-gray-600 dark:text-gray-400 dark:text-gray-500">
+            <p className="mt-1 text-xs text-gray-600">
               Across all businesses
             </p>
           </CardContent>
@@ -370,11 +370,11 @@ function BusinessAssetsContent() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Annual Revenue</CardTitle>
-            <DollarSign className="h-4 w-4 text-gray-600 dark:text-gray-400 dark:text-gray-500" />
+            <DollarSign className="h-4 w-4 text-gray-600" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{formatCurrency(totalRevenue)}</div>
-            <p className="mt-1 text-xs text-gray-600 dark:text-gray-400 dark:text-gray-500">
+            <p className="mt-1 text-xs text-gray-600">
               Combined revenue
             </p>
           </CardContent>
@@ -383,11 +383,11 @@ function BusinessAssetsContent() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Businesses</CardTitle>
-            <Briefcase className="h-4 w-4 text-gray-600 dark:text-gray-400 dark:text-gray-500" />
+            <Briefcase className="h-4 w-4 text-gray-600" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{businessAssets.length}</div>
-            <p className="mt-1 text-xs text-gray-600 dark:text-gray-400 dark:text-gray-500">
+            <p className="mt-1 text-xs text-gray-600">
               Avg {Math.round(totalOwnership)}% ownership
             </p>
           </CardContent>
@@ -396,13 +396,13 @@ function BusinessAssetsContent() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Entity Types</CardTitle>
-            <FileText className="h-4 w-4 text-gray-600 dark:text-gray-400 dark:text-gray-500" />
+            <FileText className="h-4 w-4 text-gray-600" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
               {Object.values(businessTypes).filter((businesses) => businesses.length > 0).length}
             </div>
-            <p className="mt-1 text-xs text-gray-600 dark:text-gray-400 dark:text-gray-500">
+            <p className="mt-1 text-xs text-gray-600">
               Different structures
             </p>
           </CardContent>
@@ -411,15 +411,15 @@ function BusinessAssetsContent() {
 
       {/* Succession Planning Alert */}
       {needsSuccessionPlan.length > 0 && (
-        <Card className="border-orange-200 bg-orange-50 dark:border-orange-700 dark:bg-orange-900/20">
+        <Card className="border-orange-200 bg-orange-50">
           <CardHeader>
-            <CardTitle className="flex items-center text-orange-800 dark:text-orange-200">
+            <CardTitle className="flex items-center text-orange-800">
               <AlertCircle className="mr-2 h-5 w-5" />
               Business Succession Planning Needed
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="mb-3 text-orange-700 dark:text-orange-300">
+            <p className="mb-3 text-orange-700">
               {needsSuccessionPlan.length}{" "}
               {needsSuccessionPlan.length === 1 ? "business needs" : "businesses need"} succession
               planning
@@ -428,8 +428,8 @@ function BusinessAssetsContent() {
               {needsSuccessionPlan.slice(0, 3).map((business) =>
                 business ? (
                   <div key={business.id} className="flex items-center justify-between">
-                    <span className="text-orange-700 dark:text-orange-300">{business.name}</span>
-                    <span className="text-sm text-orange-600 dark:text-orange-400">
+                    <span className="text-orange-700">{business.name}</span>
+                    <span className="text-sm text-orange-600">
                       {formatCurrency(business.value || 0)} at risk
                     </span>
                   </div>
@@ -437,7 +437,7 @@ function BusinessAssetsContent() {
               )}
             </div>
             {needsSuccessionPlan.length > 3 && (
-              <p className="mt-2 text-sm text-orange-600 dark:text-orange-400">
+              <p className="mt-2 text-sm text-orange-600">
                 and {needsSuccessionPlan.length - 3} more...
               </p>
             )}
@@ -471,11 +471,11 @@ function BusinessAssetsContent() {
               return (
                 <div key={type} className="text-center">
                   <p className="text-2xl font-bold">{businesses.length}</p>
-                  <p className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">
+                  <p className="text-sm text-gray-600">
                     {typeLabels[type]}
                   </p>
                   {businesses.length > 0 && (
-                    <p className="mt-1 text-xs text-gray-500 dark:text-gray-400 dark:text-gray-500">
+                    <p className="mt-1 text-xs text-gray-500">
                       {formatCurrency(typeValue)}
                     </p>
                   )}

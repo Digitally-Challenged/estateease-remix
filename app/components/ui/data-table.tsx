@@ -147,9 +147,9 @@ function DataTableComponent<T extends Record<string, unknown>>({
       return <ChevronsUpDown className="h-4 w-4 text-gray-400" />;
     }
     return sortDirection === "asc" ? (
-      <ChevronUp className="h-4 w-4 text-primary-600 dark:text-primary-400" />
+      <ChevronUp className="h-4 w-4 text-primary-600" />
     ) : (
-      <ChevronDown className="h-4 w-4 text-primary-600 dark:text-primary-400" />
+      <ChevronDown className="h-4 w-4 text-primary-600" />
     );
   });
   SortIcon.displayName = "SortIcon";
@@ -169,7 +169,7 @@ function DataTableComponent<T extends Record<string, unknown>>({
               className="pl-10"
             />
           </div>
-          <div className="text-sm text-gray-600 dark:text-gray-400">
+          <div className="text-sm text-gray-600">
             {processedData.length} {processedData.length === 1 ? "result" : "results"}
           </div>
         </div>
@@ -178,16 +178,16 @@ function DataTableComponent<T extends Record<string, unknown>>({
       {/* Table */}
       <div className="overflow-hidden rounded-lg border">
         <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-            <thead className="bg-gray-50 dark:bg-gray-800">
+          <table className="min-w-full divide-y divide-gray-200">
+            <thead className="bg-gray-50">
               <tr>
                 {columns.map((column) => (
                   <th
                     key={String(column.key)}
                     className={cn(
-                      "px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400",
+"px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500",
                       column.sortable &&
-                        "cursor-pointer select-none hover:bg-gray-100 dark:hover:bg-gray-700",
+"cursor-pointer select-none hover:bg-gray-100",
                       column.className,
                     )}
                     onClick={() => column.sortable && handleSort(String(column.key))}
@@ -200,19 +200,19 @@ function DataTableComponent<T extends Record<string, unknown>>({
                 ))}
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-gray-900">
+            <tbody className="divide-y divide-gray-200 bg-white">
               {paginatedData.length === 0 ? (
                 <tr>
                   <td
                     colSpan={columns.length}
-                    className="px-6 py-12 text-center text-gray-500 dark:text-gray-400"
+                    className="px-6 py-12 text-center text-gray-500"
                   >
                     {emptyMessage}
                   </td>
                 </tr>
               ) : (
                 paginatedData.map((row, rowIndex) => (
-                  <tr key={rowIndex} className="hover:bg-gray-50 dark:hover:bg-gray-800">
+                  <tr key={rowIndex} className="hover:bg-gray-50">
                     {columns.map((column) => {
                       const keyStr = String(column.key);
                       const value = keyStr.includes(".")
@@ -229,7 +229,7 @@ function DataTableComponent<T extends Record<string, unknown>>({
                         <td
                           key={String(column.key)}
                           className={cn(
-                            "whitespace-nowrap px-6 py-4 text-sm text-gray-900 dark:text-gray-100",
+"whitespace-nowrap px-6 py-4 text-sm text-gray-900",
                             column.className,
                           )}
                         >
@@ -249,7 +249,7 @@ function DataTableComponent<T extends Record<string, unknown>>({
       {totalPages > 1 && (
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <span className="text-sm text-gray-700 dark:text-gray-300">Show</span>
+            <span className="text-sm text-gray-700">Show</span>
             <Select
               value={String(itemsPerPage)}
               onChange={(e) => handleItemsPerPageChange(e.target.value)}
@@ -259,7 +259,7 @@ function DataTableComponent<T extends Record<string, unknown>>({
               }))}
               className="w-20"
             />
-            <span className="text-sm text-gray-700 dark:text-gray-300">entries</span>
+            <span className="text-sm text-gray-700">entries</span>
           </div>
 
           <div className="flex items-center gap-2">
@@ -267,16 +267,16 @@ function DataTableComponent<T extends Record<string, unknown>>({
               onClick={() => handlePageChange(currentPage - 1)}
               disabled={currentPage === 1}
               className={cn(
-                "rounded-md p-2",
+"rounded-md p-2",
                 currentPage === 1
                   ? "cursor-not-allowed text-gray-400"
-                  : "text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800",
+                  : "text-gray-700 hover:bg-gray-100",
               )}
             >
               <ChevronLeft className="h-4 w-4" />
             </button>
 
-            <span className="text-sm text-gray-700 dark:text-gray-300">
+            <span className="text-sm text-gray-700">
               Page {currentPage} of {totalPages}
             </span>
 
@@ -284,10 +284,10 @@ function DataTableComponent<T extends Record<string, unknown>>({
               onClick={() => handlePageChange(currentPage + 1)}
               disabled={currentPage === totalPages}
               className={cn(
-                "rounded-md p-2",
+"rounded-md p-2",
                 currentPage === totalPages
                   ? "cursor-not-allowed text-gray-400"
-                  : "text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800",
+                  : "text-gray-700 hover:bg-gray-100",
               )}
             >
               <ChevronRight className="h-4 w-4" />

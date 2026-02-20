@@ -9,7 +9,7 @@ export function AppLayout() {
 
   return (
     <NavigationProvider>
-      <div className="flex h-screen bg-secondary-50 text-secondary-900 dark:bg-secondary-950 dark:text-secondary-100">
+      <div className="flex h-screen bg-secondary-50 text-secondary-900">
         {/* Sidebar - Always visible on desktop, toggleable on mobile */}
         <div
           className={`fixed inset-y-0 left-0 z-50 w-64 transform ${
@@ -22,7 +22,7 @@ export function AppLayout() {
         {/* Mobile sidebar overlay */}
         {sidebarOpen && (
           <button
-            className="fixed inset-0 z-40 bg-secondary-600 bg-opacity-75 dark:bg-secondary-800 lg:hidden"
+            className="fixed inset-0 z-40 bg-secondary-600 bg-opacity-75 lg:hidden"
             onClick={() => setSidebarOpen(false)}
             onKeyDown={(e) => {
               if (e.key === "Escape") {
@@ -37,7 +37,7 @@ export function AppLayout() {
         <div className="flex flex-1 flex-col overflow-hidden">
           <Header onMenuClick={() => setSidebarOpen(!sidebarOpen)} />
 
-          <main className="flex-1 overflow-y-auto bg-secondary-50 dark:bg-secondary-950">
+          <main className="flex-1 overflow-y-auto bg-secondary-50">
             <div className="container mx-auto px-4 py-6 sm:px-6 lg:px-8">
               <Outlet />
             </div>

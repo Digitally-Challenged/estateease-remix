@@ -85,7 +85,7 @@ export default function Reports() {
     {
       title: "Estate Summary Report",
       description:
-        "Comprehensive overview of your entire estate including assets, trusts, and beneficiaries",
+"Comprehensive overview of your entire estate including assets, trusts, and beneficiaries",
       icon: FileText,
       lastGenerated: "2024-01-15",
       status: "ready",
@@ -123,11 +123,11 @@ export default function Reports() {
   const getStatusColor = (status: string) => {
     switch (status) {
       case "ready":
-        return "text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-900/20";
+        return "text-green-600 bg-green-50";
       case "outdated":
-        return "text-yellow-600 dark:text-yellow-400 bg-yellow-50 dark:bg-yellow-900/20";
+        return "text-yellow-600 bg-yellow-50";
       default:
-        return "text-gray-600 dark:text-gray-400 dark:text-gray-500 bg-gray-50 dark:bg-gray-900";
+        return "text-gray-600 bg-gray-50";
     }
   };
 
@@ -146,8 +146,8 @@ export default function Reports() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Reports & Analytics</h1>
-        <p className="mt-2 text-gray-600 dark:text-gray-400 dark:text-gray-500">
+        <h1 className="text-3xl font-bold text-gray-900">Reports & Analytics</h1>
+        <p className="mt-2 text-gray-600">
           Generate comprehensive reports for your estate planning needs
         </p>
       </div>
@@ -202,7 +202,7 @@ export default function Reports() {
               <CardHeader>
                 <div className="flex items-start justify-between">
                   <div className="flex items-start space-x-3">
-                    <Icon className="mt-0.5 h-5 w-5 text-gray-600 dark:text-gray-400 dark:text-gray-500" />
+                    <Icon className="mt-0.5 h-5 w-5 text-gray-600" />
                     <div>
                       <CardTitle className="text-lg">{report.title}</CardTitle>
                       <CardDescription className="mt-1">{report.description}</CardDescription>
@@ -213,7 +213,7 @@ export default function Reports() {
               <CardContent>
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                   <div>
-                    <p className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">
+                    <p className="text-sm text-gray-600">
                       Last generated
                     </p>
                     <p className="font-medium">
@@ -248,7 +248,7 @@ export default function Reports() {
                   </div>
                 </div>
                 {report.status === "outdated" && (
-                  <div className="mt-3 flex items-center text-sm text-yellow-600 dark:text-yellow-400">
+                  <div className="mt-3 flex items-center text-sm text-yellow-600">
                     <AlertCircle className="mr-1 h-4 w-4" />
                     This report may contain outdated information
                   </div>
@@ -267,7 +267,7 @@ export default function Reports() {
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            <p className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">
+            <p className="text-sm text-gray-600">
               Generate custom reports by selecting specific data points, date ranges, and formatting
               options.
             </p>

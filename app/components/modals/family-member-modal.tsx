@@ -150,8 +150,8 @@ export function FamilyMemberModal({ isOpen, onClose, member, onSuccess }: Family
         tabIndex={0}
         aria-label="Close modal"
       />
-      <div className="relative mx-4 max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-lg bg-white shadow-lg dark:bg-gray-800">
-        <div className="sticky top-0 flex items-center justify-between border-b bg-white p-6 dark:border-gray-700 dark:bg-gray-800">
+      <div className="relative mx-4 max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-lg bg-white shadow-lg">
+        <div className="sticky top-0 flex items-center justify-between border-b bg-white p-6">
           <h2 className="text-xl font-semibold">
             {isEditing ? "Edit Family Member" : "Add Family Member"}
           </h2>
@@ -343,7 +343,7 @@ export function FamilyMemberModal({ isOpen, onClose, member, onSuccess }: Family
           </div>
 
           {/* Actions */}
-          <div className="mt-6 flex justify-end gap-3 border-t pt-6 dark:border-gray-700">
+          <div className="mt-6 flex justify-end gap-3 border-t pt-6">
             <Button type="button" variant="secondary" onClick={onClose} disabled={isSubmitting}>
               Cancel
             </Button>
