@@ -1,5 +1,5 @@
 import { redirect, createCookieSessionStorage } from "@remix-run/node";
-import { getUserProfile, updateUserProfile, type UpdateUserProfileInput } from "./dal";
+import { updateUserProfile, type UpdateUserProfileInput } from "./dal";
 import bcrypt from "bcryptjs";
 import { getDatabase } from "./database";
 import { type ValidatedRegister, type ValidatedLogin } from "./validation";
@@ -36,12 +36,23 @@ interface PasswordUserRow {
 }
 
 /**
+ * Default local-only user (no login required)
+ */
+const DEFAULT_USER: User = {
+  id: "user-nick-001",
+  external_id: "user-nick-001",
+  first_name: "Nick",
+  last_name: "Coleman",
+  email: "nick@colemanlaw.com",
+  is_active: true,
+  created_at: new Date().toISOString(),
+  updated_at: new Date().toISOString(),
+};
+
+/**
  * Session configuration
  */
-const sessionSecret = process.env.SESSION_SECRET;
-if (!sessionSecret) {
-  throw new Error("SESSION_SECRET environment variable is required");
-}
+const sessionSecret = process.env.SESSION_SECRET || "local-dev-secret";
 
 const { getSession, commitSession, destroySession } = createCookieSessionStorage({
   cookie: {
@@ -90,51 +101,17 @@ export async function getUserIdFromSession(request: Request): Promise<string | n
 }
 
 /**
- * Get user from session
+ * Get user — always returns default user (local-only mode, no login required)
  */
-export async function getUser(request: Request): Promise<User | null> {
-  const userId = await getUserIdFromSession(request);
-
-  if (!userId) {
-    return null;
-  }
-
-  const userProfile = getUserProfile(userId);
-
-  if (!userProfile) {
-    return null;
-  }
-
-  return {
-    id: userId,
-    external_id: userId,
-    first_name: userProfile.firstName,
-    middle_name: undefined,
-    last_name: userProfile.lastName,
-    email: userProfile.email || '',
-    phone_number: userProfile.phone || undefined,
-    date_of_birth: userProfile.dateOfBirth || undefined,
-    is_active: true,
-    created_at: userProfile.createdAt,
-    updated_at: userProfile.updatedAt,
-  };
+export async function getUser(_request: Request): Promise<User | null> {
+  return DEFAULT_USER;
 }
 
 /**
- * Requires a user to be authenticated for the current request
- *
- * @param request - The incoming request object
- * @returns Promise<User> - The authenticated user
- * @throws redirect('/login') - If user is not authenticated
+ * Requires a user — always returns default user (local-only mode)
  */
-export async function requireUser(request: Request): Promise<User> {
-  const user = await getUser(request);
-
-  if (!user) {
-    throw redirect("/login");
-  }
-
-  return user;
+export async function requireUser(_request: Request): Promise<User> {
+  return DEFAULT_USER;
 }
 
 /**
@@ -260,25 +237,17 @@ export async function login(
 }
 
 /**
- * Get current user ID from request
- *
- * @param request - The incoming request object
- * @returns Promise<string> - The user ID
+ * Get current user ID — always returns default user ID (local-only mode)
  */
-export async function getUserId(request: Request): Promise<string> {
-  const user = await requireUser(request);
-  return user.id;
+export async function getUserId(_request: Request): Promise<string> {
+  return DEFAULT_USER.id;
 }
 
 /**
- * Check if user is authenticated without throwing
- *
- * @param request - The incoming request object
- * @returns Promise<boolean> - True if authenticated
+ * Check if user is authenticated — always true (local-only mode)
  */
-export async function isAuthenticated(request: Request): Promise<boolean> {
-  const user = await getUser(request);
-  return user !== null;
+export async function isAuthenticated(_request: Request): Promise<boolean> {
+  return true;
 }
 
 /**

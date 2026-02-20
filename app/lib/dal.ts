@@ -789,14 +789,36 @@ export function getLegalRoles(userId?: number | string): LegalRole[] {
 
   let query = `
     SELECT
-      lr.*,
-      p.*,
+      lr.legal_role_id as role_id,
+      lr.person_id,
+      lr.person_name,
+      lr.is_primary,
+      lr.order_of_precedence,
+      lr.specific_powers,
+      lr.notes,
+      lr.is_active,
       lrt.name as role_type_name,
-      lrt.code as role_type_code
+      lrt.code as role_type_code,
+      p.first_name,
+      p.last_name,
+      p.full_name,
+      p.date_of_birth,
+      p.is_minor,
+      p.is_dependent,
+      p.primary_phone,
+      p.secondary_phone,
+      p.email,
+      p.preferred_contact,
+      p.street1,
+      p.street2,
+      p.city,
+      p.state,
+      p.zip_code,
+      p.country
     FROM legal_roles lr
-    JOIN persons p ON lr.assignee_id = p.id
     JOIN legal_role_types lrt ON lr.role_type_id = lrt.id
-    WHERE lr.is_active = 1 AND p.is_active = 1
+    LEFT JOIN persons p ON lr.person_id = p.person_id
+    WHERE lr.is_active = 1
   `;
 
   const params: (number | string)[] = [];
@@ -805,43 +827,69 @@ export function getLegalRoles(userId?: number | string): LegalRole[] {
     params.push(numUserId);
   }
 
-  query += ` ORDER BY lr.document_type, lr.priority_order, p.last_name`;
+  query += ` ORDER BY lr.order_of_precedence, lr.person_name`;
+
+  interface LegalRoleRow {
+    role_id: string;
+    person_id: string | null;
+    person_name: string;
+    is_primary: number;
+    order_of_precedence: number | null;
+    specific_powers: string | null;
+    notes: string | null;
+    is_active: number;
+    role_type_name: string;
+    role_type_code: string;
+    first_name: string | null;
+    last_name: string | null;
+    full_name: string | null;
+    date_of_birth: string | null;
+    is_minor: number | null;
+    is_dependent: number | null;
+    primary_phone: string | null;
+    secondary_phone: string | null;
+    email: string | null;
+    preferred_contact: string | null;
+    street1: string | null;
+    street2: string | null;
+    city: string | null;
+    state: string | null;
+    zip_code: string | null;
+    country: string | null;
+  }
 
   const stmt = db.prepare(query);
-  const roles = stmt.all(...params) as (DatabasePerson & { role_id: string; role_type_name: string; role_type_code: string; document_type?: string; document_id?: number; priority_order?: number; conditions?: string })[];
+  const roles = stmt.all(...params) as LegalRoleRow[];
 
   return roles.map((role) => ({
     id: role.role_id,
     assignee: {
-      id: role.person_id,
-      firstName: role.first_name,
-      lastName: role.last_name,
-      fullName: role.full_name,
-      dateOfBirth: role.date_of_birth,
-      isMinor: role.is_minor === 1,
-      isDependent: role.is_dependent === 1,
+      id: role.person_id || role.role_id,
+      firstName: role.first_name || role.person_name.split(' ')[0] || '',
+      lastName: role.last_name || role.person_name.split(' ').slice(1).join(' ') || '',
+      fullName: role.full_name || role.person_name,
+      dateOfBirth: role.date_of_birth || undefined,
+      isMinor: (role.is_minor ?? 0) === 1,
+      isDependent: (role.is_dependent ?? 0) === 1,
       contactInfo: {
-        primaryPhone: role.primary_phone,
-        secondaryPhone: role.secondary_phone,
-        email: role.email,
-        preferredContact: role.preferred_contact,
+        primaryPhone: role.primary_phone || undefined,
+        secondaryPhone: role.secondary_phone || undefined,
+        email: role.email || undefined,
+        preferredContact: role.preferred_contact || undefined,
       },
       address: {
-        street1: role.street1,
-        street2: role.street2,
-        city: role.city,
-        state: role.state,
-        zipCode: role.zip_code,
-        country: role.country,
+        street1: role.street1 || undefined,
+        street2: role.street2 || undefined,
+        city: role.city || undefined,
+        state: role.state || undefined,
+        zipCode: role.zip_code || undefined,
+        country: role.country || undefined,
       },
-      notes: role.notes,
+      notes: role.notes || undefined,
       isActive: role.is_active === 1,
     },
     roleType: role.role_type_name,
-    documentType: role.document_type,
-    documentId: role.document_id,
-    priorityOrder: role.priority_order,
-    conditions: role.conditions,
+    priorityOrder: role.order_of_precedence || undefined,
     isActive: role.is_active === 1,
   }));
 }
@@ -868,86 +916,89 @@ export function getHealthcareDirectives(userId?: number | string): HealthcareDir
 
   let query = `
     SELECT
-      hd.*,
-      hdt.name as directive_type_name,
-      p_principal.person_id as principal_person_id,
-      p_principal.first_name as principal_first_name,
-      p_principal.last_name as principal_last_name,
-      p_principal.full_name as principal_full_name,
-      p_proxy1.person_id as proxy1_person_id,
-      p_proxy1.first_name as proxy1_first_name,
-      p_proxy1.last_name as proxy1_last_name,
-      p_proxy1.full_name as proxy1_full_name,
-      p_proxy2.person_id as proxy2_person_id,
-      p_proxy2.first_name as proxy2_first_name,
-      p_proxy2.last_name as proxy2_last_name,
-      p_proxy2.full_name as proxy2_full_name
+      hd.directive_id,
+      hd.user_id,
+      hd.person_id,
+      hd.person_name,
+      hd.is_primary,
+      hd.life_sustaining_decision,
+      hd.artificial_nutrition_decision,
+      hd.pain_management_instructions,
+      hd.organ_donation,
+      hd.body_disposition,
+      hd.religious_preferences,
+      hd.additional_instructions,
+      hd.date_created,
+      hd.last_updated,
+      hd.is_active,
+      hdt.name as directive_type_name
     FROM healthcare_directives hd
     JOIN healthcare_directive_types hdt ON hd.directive_type_id = hdt.id
-    JOIN persons p_principal ON hd.principal_id = p_principal.id
-    LEFT JOIN persons p_proxy1 ON hd.proxy_primary_id = p_proxy1.id
-    LEFT JOIN persons p_proxy2 ON hd.proxy_secondary_id = p_proxy2.id
     WHERE hd.is_active = 1
   `;
 
   const params: (number | string)[] = [];
   if (numUserId) {
-    query += ` AND hd.created_by = ?`;
+    query += ` AND hd.user_id = ?`;
     params.push(numUserId);
   }
 
   query += ` ORDER BY hd.date_created DESC`;
 
-  const stmt = db.prepare(query);
-  const directives = stmt.all(...params) as { directive_id: string; directive_type_name: string; date_created: string; date_executed?: string; preferences?: string; is_active: number; principal_person_id: string; principal_first_name: string; principal_last_name: string; principal_full_name: string; proxy1_person_id?: string; proxy1_first_name?: string; proxy1_last_name?: string; proxy1_full_name?: string; proxy2_person_id?: string; proxy2_first_name?: string; proxy2_last_name?: string; proxy2_full_name?: string }[];
+  interface HdRow {
+    directive_id: string;
+    user_id: number;
+    person_id: string | null;
+    person_name: string | null;
+    is_primary: number;
+    life_sustaining_decision: string | null;
+    artificial_nutrition_decision: string | null;
+    pain_management_instructions: string | null;
+    organ_donation: number | null;
+    body_disposition: string | null;
+    religious_preferences: string | null;
+    additional_instructions: string | null;
+    date_created: string;
+    last_updated: string;
+    is_active: number;
+    directive_type_name: string;
+  }
 
-  return directives.map((directive): HealthcareDirective => ({
-    id: directive.directive_id,
-    principal: {
-      id: directive.principal_person_id,
-      firstName: directive.principal_first_name,
-      lastName: directive.principal_last_name,
-      fullName: directive.principal_full_name,
+  const stmt = db.prepare(query);
+  const directives = stmt.all(...params) as HdRow[];
+
+  // Build a Person from the person_name field (no separate persons join needed)
+  const makePerson = (name: string | null, personId: string | null): Person => {
+    const parts = (name || '').split(' ');
+    return {
+      id: personId || 'unknown',
+      firstName: parts[0] || '',
+      lastName: parts.slice(1).join(' ') || '',
+      fullName: name || '',
       dateOfBirth: undefined,
       isMinor: false,
       isDependent: false,
       contactInfo: {},
       address: {},
       isActive: true,
+    };
+  };
+
+  return directives.map((d): HealthcareDirective => ({
+    id: d.directive_id,
+    principal: makePerson(d.person_name, d.person_id),
+    directiveType: d.directive_type_name,
+    dateCreated: d.date_created,
+    preferences: {
+      lifeSustainingDecision: d.life_sustaining_decision,
+      artificialNutritionDecision: d.artificial_nutrition_decision,
+      painManagementInstructions: d.pain_management_instructions,
+      organDonation: d.organ_donation === 1,
+      bodyDisposition: d.body_disposition,
+      religiousPreferences: d.religious_preferences,
+      additionalInstructions: d.additional_instructions,
     },
-    primaryProxy: directive.proxy1_person_id
-      ? {
-          id: directive.proxy1_person_id,
-          firstName: directive.proxy1_first_name || "",
-          lastName: directive.proxy1_last_name || "",
-          fullName: directive.proxy1_full_name || "",
-          dateOfBirth: undefined,
-          isMinor: false,
-          isDependent: false,
-          contactInfo: {},
-          address: {},
-          isActive: true,
-        }
-      : undefined,
-    secondaryProxy: directive.proxy2_person_id
-      ? {
-          id: directive.proxy2_person_id,
-          firstName: directive.proxy2_first_name || "",
-          lastName: directive.proxy2_last_name || "",
-          fullName: directive.proxy2_full_name || "",
-          dateOfBirth: undefined,
-          isMinor: false,
-          isDependent: false,
-          contactInfo: {},
-          address: {},
-          isActive: true,
-        }
-      : undefined,
-    directiveType: directive.directive_type_name,
-    dateCreated: directive.date_created,
-    dateExecuted: directive.date_executed,
-    preferences: directive.preferences ? JSON.parse(directive.preferences) as Record<string, unknown> : undefined,
-    isActive: directive.is_active === 1,
+    isActive: d.is_active === 1,
   }));
 }
 
@@ -1160,26 +1211,18 @@ export function getRecentAssets(userId?: number | string, limit: number = 4): An
 export function getAssetsByTrust(trustId: string): AnyEnhancedAsset[] {
   const db = getDatabase();
 
-  // Get trust's internal ID
-  const trustStmt = db.prepare("SELECT id FROM trusts WHERE trust_id = ? AND is_active = 1");
-  const trust = trustStmt.get(trustId) as { id: number } | undefined;
-
-  if (!trust) {
-    return [];
-  }
-
-  // Get assets linked to this trust
+  // Assets link to trusts via ownership_details JSON: {"trustId": "trust-xxx-001", ...}
   const query = `
-    SELECT
-      a.*
+    SELECT a.*
     FROM assets a
-    JOIN trust_assets ta ON a.id = ta.asset_id
-    WHERE ta.trust_id = ? AND a.is_active = 1 AND ta.is_active = 1
+    WHERE a.is_active = 1
+      AND a.ownership_type = 'TRUST'
+      AND json_extract(a.ownership_details, '$.trustId') = ?
     ORDER BY a.name
   `;
 
   const stmt = db.prepare(query);
-  const assets = stmt.all(trust.id) as DatabaseAsset[];
+  const assets = stmt.all(trustId) as DatabaseAsset[];
 
   return assets.map(transformDatabaseAsset);
 }

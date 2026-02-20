@@ -84,9 +84,11 @@ CREATE TABLE IF NOT EXISTS users (
     middle_name TEXT,
     last_name TEXT NOT NULL,
     email TEXT NOT NULL UNIQUE,
+    password_hash TEXT,
     phone_number TEXT,
     date_of_birth TEXT,
     is_active INTEGER NOT NULL DEFAULT 1,
+    last_login_at TEXT,
     created_at TEXT NOT NULL DEFAULT (datetime('now')),
     updated_at TEXT NOT NULL DEFAULT (datetime('now'))
 );

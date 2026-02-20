@@ -55,13 +55,14 @@ INSERT OR IGNORE INTO relationship_types (code, name, description) VALUES
 -- USERS DATA
 -- =============================================
 
--- Insert Nicholas Coleman
+-- Insert Nicholas Coleman (password: password123)
 INSERT OR IGNORE INTO users (
     external_id,
     first_name,
     middle_name,
     last_name,
     email,
+    password_hash,
     phone_number,
     date_of_birth,
     is_active
@@ -71,18 +72,20 @@ INSERT OR IGNORE INTO users (
     'Lynn',
     'Coleman',
     'nick@colemanlaw.com',
+    '$2b$12$./zu2sLG4TcyosmFZDitqO.Nj2BReJp26kHExcEEstmklGpw9MVj2',
     '(479) 555-0001',
     '1982-08-15',
     1
 );
 
--- Insert Kelsey Brown
+-- Insert Kelsey Brown (password: password123)
 INSERT OR IGNORE INTO users (
     external_id,
     first_name,
     middle_name,
     last_name,
     email,
+    password_hash,
     phone_number,
     date_of_birth,
     is_active
@@ -92,6 +95,7 @@ INSERT OR IGNORE INTO users (
     'Fey',
     'Brown',
     'kelsey@example.com',
+    '$2b$12$./zu2sLG4TcyosmFZDitqO.Nj2BReJp26kHExcEEstmklGpw9MVj2',
     '(479) 555-0001',
     '1985-06-15',
     1
