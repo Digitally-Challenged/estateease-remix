@@ -24,6 +24,104 @@ import FileText from "lucide-react/dist/esm/icons/file-text";
 import AlertTriangle from "lucide-react/dist/esm/icons/alert-triangle";
 import { requireUser } from "~/lib/auth.server";
 
+/**
+ * Local view types matching what the DAL actually returns.
+ * json() + useLoaderData widens literal unions to string and
+ * the DAL types differ from people.ts canonical types.
+ */
+interface DalContactInfo {
+  primaryPhone?: string;
+  secondaryPhone?: string;
+  phone?: string;
+  email?: string;
+  preferredContact?: string;
+  address?: {
+    street1?: string;
+    street2?: string;
+    city?: string;
+    state?: string;
+    zipCode?: string;
+    country?: string;
+  };
+}
+
+interface DalFamilyMember {
+  id: string;
+  firstName: string;
+  lastName: string;
+  fullName: string;
+  name?: string;
+  relationship: string;
+  relationshipType: string;
+  dateOfBirth?: string;
+  isMinor: boolean;
+  isDependent: boolean;
+  contactInfo: DalContactInfo;
+  address: Record<string, string | undefined>;
+  notes?: string;
+  isActive: boolean;
+  email?: string;
+  phone?: string;
+}
+
+interface DalProfessional {
+  id: string;
+  firstName: string;
+  lastName: string;
+  fullName: string;
+  name?: string;
+  type: string;
+  firm?: string;
+  contactInfo: DalContactInfo;
+  email?: string;
+  phone?: string;
+}
+
+interface DalLegalRole {
+  id: string;
+  personId?: string;
+  assignee?: { id: string; fullName: string };
+  roleType: string;
+}
+
+interface DalHealthcareDirective {
+  id: string;
+  personId?: string;
+  principal?: { id: string; fullName: string };
+  type?: string;
+  directiveType?: string;
+}
+
+interface DalEmergencyContact {
+  id: string;
+  name: string;
+  relationship: string;
+  contactType: string;
+  priority: number;
+  contactInfo: {
+    primaryPhone?: string;
+    phone?: string;
+    email?: string;
+  };
+  email?: string;
+  phone?: string;
+}
+
+interface CoordinationMetrics {
+  totalFamilyMembers: number;
+  relationshipBreakdown: { relationship: string; count: number }[];
+  contactCoverage: { email: number; phone: number };
+  roleCoverage: { role: string; filled: boolean }[];
+  emergencyReadiness: {
+    totalContacts: number;
+    medicalAuthority: number;
+    decisionAuthority: number;
+    avgPriority: number;
+  };
+  coordinationScore: number;
+  recommendations: string[];
+}
+
 export async function loader({ request }: LoaderFunctionArgs) {
   const user = await requireUser(request);
   const userId = user.id;
@@ -80,21 +178,25 @@ export async function loader({ request }: LoaderFunctionArgs) {
 }
 
 export default function FamilyCoordinationDashboard() {
-  const {
-    familyMembers,
-    professionals,
-    emergencyContacts,
-    legalRoles,
-    healthcareDirectives,
-    coordinationMetrics,
-  } = useLoaderData<typeof loader>();
+  const data = useLoaderData<typeof loader>();
+  const familyMembers = (data.familyMembers || []) as unknown as DalFamilyMember[];
+  const professionals = (data.professionals || []) as unknown as DalProfessional[];
+  const emergencyContacts = (data.emergencyContacts || []) as unknown as DalEmergencyContact[];
+  const legalRoles = (data.legalRoles || []) as unknown as DalLegalRole[];
+  const healthcareDirectives = (data.healthcareDirectives || []) as unknown as DalHealthcareDirective[];
+  const coordinationMetrics = data.coordinationMetrics as unknown as CoordinationMetrics;
 
   // Calculate communication reach
   const totalContacts = familyMembers.length + professionals.length + emergencyContacts.length;
-  const emailReach = [...familyMembers, ...professionals, ...emergencyContacts].filter(
+  const allContacts = [
+    ...familyMembers.map((m: DalFamilyMember) => ({ contactInfo: m.contactInfo, email: m.email, phone: m.phone })),
+    ...professionals.map((p: DalProfessional) => ({ contactInfo: p.contactInfo, email: p.email, phone: p.phone })),
+    ...emergencyContacts.map((e: DalEmergencyContact) => ({ contactInfo: e.contactInfo, email: e.email, phone: e.phone })),
+  ];
+  const emailReach = allContacts.filter(
     (contact) => contact.contactInfo?.email || contact.email,
   ).length;
-  const phoneReach = [...familyMembers, ...professionals, ...emergencyContacts].filter(
+  const phoneReach = allContacts.filter(
     (contact) => contact.contactInfo?.primaryPhone || contact.contactInfo?.phone || contact.phone,
   ).length;
 
@@ -102,12 +204,12 @@ export default function FamilyCoordinationDashboard() {
   const criticalRoles = ["executor", "trustee", "power_of_attorney", "healthcare_proxy"];
   const assignedRoles = criticalRoles.filter(
     (role) =>
-      legalRoles.some((lr) => lr.roleType === role) ||
-      healthcareDirectives.some((hd) => hd.type.includes(role.replace("_", ""))),
+      legalRoles.some((lr: DalLegalRole) => lr.roleType === role) ||
+      healthcareDirectives.some((hd: DalHealthcareDirective) => (hd.type ?? hd.directiveType ?? "").includes(role.replace("_", ""))),
   );
 
   // Communication efficiency metrics
-  const relationshipPriority = {
+  const relationshipPriority: Record<string, number> = {
     spouse: 1,
     child: 2,
     parent: 3,
@@ -115,9 +217,9 @@ export default function FamilyCoordinationDashboard() {
     other: 5,
   };
 
-  const prioritizedFamily = familyMembers
+  const prioritizedFamily = [...familyMembers]
     .sort(
-      (a, b) =>
+      (a: DalFamilyMember, b: DalFamilyMember) =>
         (relationshipPriority[a.relationship] || 5) - (relationshipPriority[b.relationship] || 5),
     )
     .slice(0, 5);
@@ -147,7 +249,8 @@ export default function FamilyCoordinationDashboard() {
       </div>
 
       {/* Family Coordination Metrics Widget */}
-      <FamilyCoordinationWidget metrics={coordinationMetrics} />
+      {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+      <FamilyCoordinationWidget metrics={coordinationMetrics as any} />
 
       {/* Action Grid */}
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -224,8 +327,8 @@ export default function FamilyCoordinationDashboard() {
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            {prioritizedFamily.map((member) => {
-              const memberRoles = legalRoles.filter((role) => role.personId === member.id);
+            {prioritizedFamily.map((member: DalFamilyMember) => {
+              const memberRoles = legalRoles.filter((role: DalLegalRole) => (role.personId ?? role.assignee?.id) === member.id);
               const hasContact = member.contactInfo?.email || member.contactInfo?.primaryPhone;
 
               return (
@@ -238,7 +341,7 @@ export default function FamilyCoordinationDashboard() {
                       className={`h-3 w-3 rounded-full ${hasContact ? "bg-green-500" : "bg-red-500"}`}
                     />
                     <div>
-                      <h4 className="font-medium">{member.name}</h4>
+                      <h4 className="font-medium">{member.name ?? member.fullName}</h4>
                       <p className="text-sm capitalize text-gray-600 dark:text-gray-400">
                         {member.relationship.replace("_", " ")}
                       </p>

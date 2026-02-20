@@ -15,9 +15,17 @@ import Calendar from "lucide-react/dist/esm/icons/calendar";
 import TrendingUp from "lucide-react/dist/esm/icons/trending-up";
 import FileText from "lucide-react/dist/esm/icons/file-text";
 import { getAssets } from "~/lib/dal";
+import { AssetCategory } from "~/types/enums";
+import type { InsurancePolicy, AnyEnhancedAsset } from "~/types/assets";
 import type { Column } from "~/components/ui/data-table";
 import { formatCurrency } from "~/utils/format";
 import { requireUser } from "~/lib/auth.server";
+
+/** Safely cast an asset to InsurancePolicy for property access */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function asInsurance(asset: any): InsurancePolicy {
+  return asset as InsurancePolicy;
+}
 
 export async function loader({ request }: LoaderFunctionArgs) {
   try {
@@ -28,26 +36,28 @@ export async function loader({ request }: LoaderFunctionArgs) {
     // Filter for insurance assets
     const insuranceAssets = allAssets.filter(
       (asset) =>
-        asset?.category === "INSURANCE" ||
-        asset?.category === "insurance" ||
+        asset?.category === AssetCategory.INSURANCE_POLICY ||
         asset?.name?.toLowerCase().includes("insurance") ||
         asset?.name?.toLowerCase().includes("policy"),
     );
 
-    // Group by insurance type
+    // Group by insurance type using InsurancePolicy.policyType
+    const getPolicyType = (a: AnyEnhancedAsset): string =>
+      asInsurance(a).policyType || "";
+
     const policyTypes = {
       life: insuranceAssets.filter(
-        (a) => a?.name?.toLowerCase().includes("life") || a?.assetDetails?.type === "life",
+        (a) => a?.name?.toLowerCase().includes("life") || getPolicyType(a) === "LIFE",
       ),
       disability: insuranceAssets.filter(
         (a) =>
-          a?.name?.toLowerCase().includes("disability") || a?.assetDetails?.type === "disability",
+          a?.name?.toLowerCase().includes("disability") || getPolicyType(a) === "DISABILITY",
       ),
       longTermCare: insuranceAssets.filter(
         (a) =>
           a?.name?.toLowerCase().includes("long term") ||
           a?.name?.toLowerCase().includes("ltc") ||
-          a?.assetDetails?.type === "long_term_care",
+          getPolicyType(a) === "LONG_TERM_CARE",
       ),
       property: insuranceAssets.filter(
         (a) =>
@@ -55,11 +65,12 @@ export async function loader({ request }: LoaderFunctionArgs) {
           a?.name?.toLowerCase().includes("property") ||
           a?.name?.toLowerCase().includes("auto") ||
           a?.name?.toLowerCase().includes("car") ||
-          a?.assetDetails?.type === "property",
+          getPolicyType(a) === "HOMEOWNERS" ||
+          getPolicyType(a) === "AUTO",
       ),
       other: insuranceAssets.filter((a) => {
         const name = a?.name?.toLowerCase() || "";
-        const type = a?.assetDetails?.type || "";
+        const type = getPolicyType(a);
         return (
           !name.includes("life") &&
           !name.includes("disability") &&
@@ -69,28 +80,29 @@ export async function loader({ request }: LoaderFunctionArgs) {
           !name.includes("property") &&
           !name.includes("auto") &&
           !name.includes("car") &&
-          type !== "life" &&
-          type !== "disability" &&
-          type !== "long_term_care" &&
-          type !== "property"
+          type !== "LIFE" &&
+          type !== "DISABILITY" &&
+          type !== "LONG_TERM_CARE" &&
+          type !== "HOMEOWNERS" &&
+          type !== "AUTO"
         );
       }),
     };
 
     // Calculate totals
     const totalCoverage = insuranceAssets.reduce(
-      (sum, asset) => sum + (asset?.value || asset?.assetDetails?.coverageAmount || 0),
+      (sum, asset) => sum + (asset?.value || asInsurance(asset).coverageAmount || 0),
       0,
     );
 
     const totalPremiums = insuranceAssets.reduce(
-      (sum, asset) => sum + (asset?.assetDetails?.annualPremium || 0),
+      (sum, asset) => sum + (asInsurance(asset).premium?.amount || 0),
       0,
     );
 
-    // Find policies expiring soon (mock data - would need expiration dates)
+    // Find policies expiring soon
     const expiringPolicies = insuranceAssets.filter((asset) => {
-      const expirationDate = asset?.assetDetails?.expirationDate;
+      const expirationDate = asInsurance(asset).expirationDate;
       if (!expirationDate) return false;
       const daysUntilExpiry = Math.floor(
         (new Date(expirationDate).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24),
@@ -178,33 +190,42 @@ function InsuranceAssetsContent() {
     );
   }
 
-  const columns: Column<(typeof insuranceAssets)[0]>[] = [
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const columns: Column<Record<string, any>>[] = [
     {
       key: "name",
       header: "Policy",
-      render: (asset) => (
-        <div className="flex items-start space-x-3">
-          <Shield className="mt-0.5 h-5 w-5 text-gray-400 dark:text-gray-500" />
-          <div>
-            <p className="font-medium">{asset?.name}</p>
-            <p className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">
-              {asset?.assetDetails?.policyNumber && `Policy #${asset.assetDetails.policyNumber}`}
-            </p>
+      render: (_value: unknown, asset: Record<string, any>) => {
+        const ins = asInsurance(asset);
+        return (
+          <div className="flex items-start space-x-3">
+            <Shield className="mt-0.5 h-5 w-5 text-gray-400 dark:text-gray-500" />
+            <div>
+              <p className="font-medium">{asset?.name}</p>
+              <p className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">
+                {ins.policyNumber && `Policy #${ins.policyNumber}`}
+              </p>
+            </div>
           </div>
-        </div>
-      ),
+        );
+      },
     },
     {
       key: "type",
       header: "Type",
-      render: (asset) => {
-        const type = asset?.assetDetails?.type || "other";
+      render: (_value: unknown, asset: Record<string, any>) => {
+        const type = asInsurance(asset).policyType || "OTHER";
         const typeLabels: Record<string, string> = {
-          life: "Life",
-          disability: "Disability",
-          long_term_care: "Long-Term Care",
-          property: "Property & Casualty",
-          other: "Other",
+          LIFE: "Life",
+          DISABILITY: "Disability",
+          LONG_TERM_CARE: "Long-Term Care",
+          HOMEOWNERS: "Homeowners",
+          AUTO: "Auto",
+          HEALTH: "Health",
+          UMBRELLA: "Umbrella",
+          MALPRACTICE: "Malpractice",
+          BUSINESS: "Business",
+          OTHER: "Other",
         };
         return <Badge variant="outline">{typeLabels[type] || type}</Badge>;
       },
@@ -212,35 +233,42 @@ function InsuranceAssetsContent() {
     {
       key: "coverage",
       header: "Coverage",
-      render: (asset) => (
+      render: (_value: unknown, asset: Record<string, any>) => (
         <span className="font-medium">
-          {formatCurrency(asset?.value || asset?.assetDetails?.coverageAmount || 0)}
+          {formatCurrency(asset?.value || asInsurance(asset).coverageAmount || 0)}
         </span>
       ),
     },
     {
       key: "premium",
       header: "Annual Premium",
-      render: (asset) => (
-        <span>
-          {asset?.assetDetails?.annualPremium
-            ? formatCurrency(asset.assetDetails.annualPremium)
-            : "-"}
-        </span>
-      ),
+      render: (_value: unknown, asset: Record<string, any>) => {
+        const premium = asInsurance(asset).premium;
+        return (
+          <span>
+            {premium?.amount
+              ? formatCurrency(premium.amount)
+              : "-"}
+          </span>
+        );
+      },
     },
     {
       key: "beneficiary",
       header: "Beneficiary",
-      render: (asset) => (
-        <span className="text-sm">{asset?.assetDetails?.beneficiary || "Not specified"}</span>
-      ),
+      render: (_value: unknown, asset: Record<string, any>) => {
+        const beneficiaries = asInsurance(asset).beneficiaries;
+        const primaryName = beneficiaries?.primary?.[0]?.name;
+        return (
+          <span className="text-sm">{primaryName || "Not specified"}</span>
+        );
+      },
     },
     {
       key: "status",
       header: "Status",
-      render: (asset) => {
-        const expirationDate = asset?.assetDetails?.expirationDate;
+      render: (_value: unknown, asset: Record<string, any>) => {
+        const expirationDate = asInsurance(asset).expirationDate;
         if (!expirationDate) {
           return <Badge variant="default">Active</Badge>;
         }
@@ -380,10 +408,7 @@ function InsuranceAssetsContent() {
           </CardHeader>
           <CardContent>
             <DataTable
-              data={policyTypes.life.filter(
-                (policy): policy is NonNullable<typeof policy> =>
-                  policy !== null && policy !== undefined,
-              )}
+              data={policyTypes.life.filter(Boolean) as Record<string, any>[]}
               columns={columns}
               sortable={true}
             />
@@ -401,7 +426,7 @@ function InsuranceAssetsContent() {
             <CardDescription>Income protection in case of disability</CardDescription>
           </CardHeader>
           <CardContent>
-            <DataTable data={policyTypes.disability} columns={columns} sortable={true} />
+            <DataTable data={policyTypes.disability.filter(Boolean) as Record<string, any>[]} columns={columns} sortable={true} />
           </CardContent>
         </Card>
       )}
@@ -416,7 +441,7 @@ function InsuranceAssetsContent() {
             <CardDescription>Coverage for extended care needs</CardDescription>
           </CardHeader>
           <CardContent>
-            <DataTable data={policyTypes.longTermCare} columns={columns} sortable={true} />
+            <DataTable data={policyTypes.longTermCare.filter(Boolean) as Record<string, any>[]} columns={columns} sortable={true} />
           </CardContent>
         </Card>
       )}
@@ -431,7 +456,7 @@ function InsuranceAssetsContent() {
             <CardDescription>Home, auto, and other property coverage</CardDescription>
           </CardHeader>
           <CardContent>
-            <DataTable data={policyTypes.property} columns={columns} sortable={true} />
+            <DataTable data={policyTypes.property.filter(Boolean) as Record<string, any>[]} columns={columns} sortable={true} />
           </CardContent>
         </Card>
       )}
@@ -443,7 +468,7 @@ function InsuranceAssetsContent() {
             <CardDescription>Additional coverage and specialty policies</CardDescription>
           </CardHeader>
           <CardContent>
-            <DataTable data={policyTypes.other} columns={columns} sortable={true} />
+            <DataTable data={policyTypes.other.filter(Boolean) as Record<string, any>[]} columns={columns} sortable={true} />
           </CardContent>
         </Card>
       )}
@@ -455,7 +480,7 @@ function InsuranceAssetsContent() {
             <CardTitle>All Insurance Policies</CardTitle>
           </CardHeader>
           <CardContent>
-            <DataTable data={insuranceAssets} columns={columns} sortable={true} pagination={true} />
+            <DataTable data={insuranceAssets.filter(Boolean) as Record<string, any>[]} columns={columns} sortable={true} />
           </CardContent>
         </Card>
       )}

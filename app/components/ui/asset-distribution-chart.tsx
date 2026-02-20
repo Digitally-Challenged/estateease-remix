@@ -114,7 +114,7 @@ export function AssetDistributionChart({
       return result;
     };
 
-    return flattenNodes(nodes).map((node, index) => renderNode(node, index));
+    return flattenNodes(nodes).map((node: DistributionNode) => renderNode(node));
   };
 
   // Calculate totals

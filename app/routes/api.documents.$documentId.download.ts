@@ -25,7 +25,8 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
     // Get document metadata using DAL
     const document = getDocument(documentId);
 
-    if (!document || document.user_id !== userId || document.is_archived === 1) {
+    const numericUserId = parseInt(String(userId), 10) || 0;
+    if (!document || document.user_id !== numericUserId || document.is_archived === 1) {
       return json({ error: "Document not found" }, { status: 404 });
     }
 
@@ -58,7 +59,7 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
     const userAgent = headers.get("user-agent") || undefined;
 
     // Log the access
-    logDocumentAccess(document.id, userId, "download", ipAddress, userAgent);
+    logDocumentAccess(document.id, numericUserId, "download", ipAddress, userAgent);
 
     // Create file stream and return
     const fileStream = createReadStream(filePath);

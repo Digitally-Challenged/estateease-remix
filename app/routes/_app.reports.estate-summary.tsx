@@ -130,7 +130,15 @@ function EstateReportContent() {
     return <EstateReportLoadingState />;
   }
 
-  const { assets, familyMembers, professionals, emergencyContacts, summary } = estateData;
+  type AssetItem = { id: string; name: string; category: string; value: number; notes?: string; ownership?: { type: string }; lastUpdated?: string };
+  type FamilyItem = { id: string; fullName?: string; name?: string; relationship?: string; contactInfo?: { primaryPhone?: string; email?: string } };
+  type ProfessionalItem = { id: string; fullName?: string; name?: string; firm?: string; type?: string; contactInfo: { primaryPhone?: string; email?: string } };
+
+  const assets = estateData.assets as unknown as AssetItem[];
+  const familyMembers = estateData.familyMembers as unknown as FamilyItem[];
+  const professionals = estateData.professionals as unknown as ProfessionalItem[];
+  const emergencyContacts = estateData.emergencyContacts;
+  const { summary } = estateData;
 
   // Show report generated notification on load
   useEffect(() => {
@@ -151,13 +159,13 @@ function EstateReportContent() {
     switch (category) {
       case AssetCategory.REAL_ESTATE:
         return { icon: Home, label: "Real Estate", color: "bg-green-100 text-green-800" };
-      case AssetCategory.FINANCIAL:
+      case AssetCategory.FINANCIAL_ACCOUNT:
         return { icon: DollarSign, label: "Financial", color: "bg-blue-100 text-blue-800" };
-      case AssetCategory.BUSINESS:
+      case AssetCategory.BUSINESS_INTEREST:
         return { icon: Building, label: "Business", color: "bg-purple-100 text-purple-800" };
-      case AssetCategory.PERSONAL:
+      case AssetCategory.PERSONAL_PROPERTY:
         return { icon: Heart, label: "Personal", color: "bg-pink-100 text-pink-800" };
-      case AssetCategory.INSURANCE:
+      case AssetCategory.INSURANCE_POLICY:
         return { icon: Shield, label: "Insurance", color: "bg-yellow-100 text-yellow-800" };
       default:
         return { icon: CreditCard, label: "Other", color: "bg-gray-100 text-gray-800" };
@@ -319,7 +327,7 @@ function EstateReportContent() {
               </thead>
               <tbody>
                 {assets.map((asset) => {
-                  const categoryInfo = getCategoryInfo(asset.category);
+                  const categoryInfo = getCategoryInfo(asset.category as import("~/types/enums").AssetCategory);
                   return (
                     <tr key={asset.id} className="border-b hover:bg-gray-50 dark:hover:bg-gray-800">
                       <td className="p-3">
@@ -338,7 +346,7 @@ function EstateReportContent() {
                         <div className="text-sm">{asset.ownership?.type || "Individual"}</div>
                       </td>
                       <td className="p-3 text-gray-600 dark:text-gray-400 print:hidden">
-                        {formatDate(asset.lastUpdated)}
+                        {asset.lastUpdated ? formatDate(asset.lastUpdated) : "—"}
                       </td>
                     </tr>
                   );
@@ -373,7 +381,7 @@ function EstateReportContent() {
                     className="flex items-center justify-between rounded-lg bg-gray-50 p-3 dark:bg-gray-800"
                   >
                     <div>
-                      <div className="font-medium">{member.name}</div>
+                      <div className="font-medium">{member.fullName || member.name}</div>
                       <div className="text-sm capitalize text-gray-600 dark:text-gray-400">
                         {member.relationship}
                       </div>
@@ -410,16 +418,16 @@ function EstateReportContent() {
                     className="flex items-center justify-between rounded-lg bg-gray-50 p-3 dark:bg-gray-800"
                   >
                     <div>
-                      <div className="font-medium">{professional.name}</div>
+                      <div className="font-medium">{professional.fullName || professional.name}</div>
                       <div className="text-sm text-gray-600 dark:text-gray-400">
                         {professional.firm}
                       </div>
                     </div>
                     <div className="text-right text-sm">
                       <Badge className="mb-1">
-                        {professional.type
+                        {(professional.type || "")
                           .replace("_", " ")
-                          .replace(/\b\w/g, (l) => l.toUpperCase())}
+                          .replace(/\b\w/g, (l: string) => l.toUpperCase())}
                       </Badge>
                       {professional.contactInfo.primaryPhone && (
                         <div className="flex items-center gap-1">

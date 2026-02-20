@@ -16,7 +16,7 @@ export interface SelectProps extends Omit<React.SelectHTMLAttributes<HTMLSelectE
   /**
    * Options to display in the select
    */
-  options: SelectOption[];
+  options?: SelectOption[];
   /**
    * Placeholder text when no value is selected
    */
@@ -72,7 +72,7 @@ const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
               {placeholder}
             </option>
           )}
-          {options.map((option) => (
+          {(options || []).map((option) => (
             <option key={option.value} value={option.value} disabled={option.disabled}>
               {option.label}
             </option>

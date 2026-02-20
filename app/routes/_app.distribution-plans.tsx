@@ -9,7 +9,7 @@ import DollarSign from "lucide-react/dist/esm/icons/dollar-sign";
 import AlertTriangle from "lucide-react/dist/esm/icons/alert-triangle";
 import CheckCircle from "lucide-react/dist/esm/icons/check-circle";
 import Clock from "lucide-react/dist/esm/icons/clock";
-import { getTrusts, getTrustBeneficiaries, getAssets } from "~/lib/dal";
+import { getTrusts, getBeneficiaries, getAssets } from "~/lib/dal";
 import { formatCurrency } from "~/utils/format";
 import { requireUser } from "~/lib/auth.server";
 
@@ -19,16 +19,17 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
   const [trusts, assets] = await Promise.all([getTrusts(userId), getAssets(userId)]);
 
-  // Get all beneficiaries from all trusts
-  const beneficiaries = trusts.flatMap((trust) => getTrustBeneficiaries(trust.id));
+  // Get all beneficiaries
+  const allBeneficiaries = await getBeneficiaries(userId);
+  const beneficiaries = allBeneficiaries;
 
   // Calculate total estate value
-  const totalEstateValue = assets.reduce((sum: number, asset: any) => sum + (asset.value || 0), 0);
+  const totalEstateValue = assets.reduce((sum: number, asset: { value?: number }) => sum + (asset.value || 0), 0);
 
-  // Group beneficiaries by trust
-  const beneficiariesByTrust = trusts.map((trust: any) => ({
+  // Group beneficiaries by trust (use trust's own beneficiaries)
+  const beneficiariesByTrust = trusts.map((trust) => ({
     trust,
-    beneficiaries: getTrustBeneficiaries(trust.id),
+    beneficiaries: trust.beneficiaries || [],
   }));
 
   return json({
@@ -120,22 +121,22 @@ export default function DistributionPlans() {
         <CardContent>
           <div className="space-y-6">
             {beneficiariesByTrust.map(
-              ({ trust, beneficiaries }: { trust: any; beneficiaries: any[] }) => (
+              ({ trust, beneficiaries }: { trust: Record<string, unknown>; beneficiaries: Record<string, unknown>[] }) => (
                 <div
-                  key={trust.id}
+                  key={String(trust.id)}
                   className="rounded-lg border border-gray-200 p-4 dark:border-gray-700"
                 >
                   <div className="mb-4 flex items-start justify-between">
                     <div>
                       <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">
-                        {trust.name}
+                        {String(trust.name || "")}
                       </h3>
                       <p className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">
-                        {trust.purpose}
+                        {String(trust.purpose || "")}
                       </p>
                     </div>
                     <span className="text-sm text-gray-500 dark:text-gray-400 dark:text-gray-500">
-                      Created {new Date(trust.dateCreated).toLocaleDateString()}
+                      Created {new Date(String(trust.dateCreated)).toLocaleDateString()}
                     </span>
                   </div>
 

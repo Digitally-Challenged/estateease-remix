@@ -23,6 +23,97 @@ import { requireUser } from "~/lib/auth.server";
 
 export { RouteErrorBoundary as ErrorBoundary } from "~/components/ui/error/route-error-boundary";
 
+/**
+ * Local view types matching what the DAL actually returns.
+ * The DAL types differ from the canonical people.ts types and
+ * json() + useLoaderData widens string literal unions to string,
+ * so we define view-friendly types here.
+ */
+interface DalContactInfo {
+  primaryPhone?: string;
+  secondaryPhone?: string;
+  email?: string;
+  preferredContact?: string;
+  address?: {
+    street1?: string;
+    street2?: string;
+    city?: string;
+    state?: string;
+    zipCode?: string;
+    country?: string;
+  };
+}
+
+interface DalFamilyMember {
+  id: string;
+  firstName: string;
+  lastName: string;
+  fullName: string;
+  name?: string;
+  relationship: string;
+  relationshipType: string;
+  dateOfBirth?: string;
+  isMinor: boolean;
+  isDependent: boolean;
+  contactInfo: DalContactInfo;
+  address: Record<string, string | undefined>;
+  notes?: string;
+  isActive: boolean;
+}
+
+interface DalProfessional {
+  id: string;
+  firstName: string;
+  lastName: string;
+  fullName: string;
+  name?: string;
+  type: string;
+  firm?: string;
+  title?: string;
+  specializations: string[];
+  credentials: string[];
+  yearsExperience?: number;
+  isPreferredProvider: boolean;
+  contactInfo: DalContactInfo;
+  notes?: string;
+}
+
+interface DalLegalRole {
+  id: string;
+  personId?: string;
+  assignee?: { id: string; fullName: string };
+  roleType: string;
+  isPrimary?: boolean;
+  orderOfPrecedence?: number;
+}
+
+interface DalHealthcareDirective {
+  id: string;
+  personId?: string;
+  principal?: { id: string; fullName: string };
+  type?: string;
+  directiveType?: string;
+  isPrimary?: boolean;
+}
+
+interface DalEmergencyContact {
+  id: string;
+  name: string;
+  relationship: string;
+  contactType: string;
+  priority: number;
+  contactInfo: {
+    primaryPhone?: string;
+    email?: string;
+    preferredContact?: string;
+  };
+  availability?: string;
+  medicalAuthority: boolean;
+  canMakeDecisions: boolean;
+  languages: string[];
+  notes?: string;
+}
+
 export async function loader({ request }: LoaderFunctionArgs) {
   const user = await requireUser(request);
   const userId = user.id;
@@ -43,19 +134,23 @@ export async function loader({ request }: LoaderFunctionArgs) {
 }
 
 export default function FamilyOverview() {
-  const { familyMembers, professionals, emergencyContacts, legalRoles, healthcareDirectives } =
-    useLoaderData<typeof loader>();
+  const data = useLoaderData<typeof loader>();
+  const familyMembers = data.familyMembers as unknown as DalFamilyMember[];
+  const professionals = data.professionals as unknown as DalProfessional[];
+  const emergencyContacts = data.emergencyContacts as unknown as DalEmergencyContact[];
+  const legalRoles = data.legalRoles as unknown as DalLegalRole[];
+  const healthcareDirectives = data.healthcareDirectives as unknown as DalHealthcareDirective[];
   const formatPhone = (phone?: string) => {
     if (!phone) return "Not provided";
     return phone;
   };
 
   const getRolesByPerson = (personId: string) => {
-    return legalRoles.filter((role) => role.personId === personId);
+    return legalRoles.filter((role: DalLegalRole) => (role.personId ?? role.assignee?.id) === personId);
   };
 
   const getHealthcareRolesByPerson = (personId: string) => {
-    return healthcareDirectives.filter((directive) => directive.personId === personId);
+    return healthcareDirectives.filter((directive: DalHealthcareDirective) => (directive.personId ?? directive.principal?.id) === personId);
   };
 
   const getRelationshipColor = (relationship: string) => {
@@ -204,7 +299,7 @@ export default function FamilyOverview() {
                   <div className="mb-3 flex items-start justify-between">
                     <div>
                       <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">
-                        {member.name}
+                        {member.name ?? member.fullName}
                       </h3>
                       <Badge className={getRelationshipColor(member.relationship)}>
                         {member.relationship.charAt(0).toUpperCase() + member.relationship.slice(1)}
@@ -240,7 +335,7 @@ export default function FamilyOverview() {
                           {member.contactInfo.email}
                         </div>
                       )}
-                      {member.contactInfo.address && (
+                      {member.contactInfo?.address && (
                         <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
                           <MapPin className="mr-2 h-4 w-4" />
                           {member.contactInfo.address.city}, {member.contactInfo.address.state}
@@ -256,7 +351,7 @@ export default function FamilyOverview() {
                         Estate Planning Roles
                       </h4>
                       <div className="space-y-1">
-                        {memberLegalRoles.map((role) => (
+                        {memberLegalRoles.map((role: DalLegalRole) => (
                           <div key={role.id} className="flex items-center justify-between text-sm">
                             <span className="capitalize text-gray-900 dark:text-gray-100">
                               {role.roleType.replace("_", " ")}
@@ -268,13 +363,13 @@ export default function FamilyOverview() {
                             </Badge>
                           </div>
                         ))}
-                        {memberHealthcareRoles.map((directive) => (
+                        {memberHealthcareRoles.map((directive: DalHealthcareDirective) => (
                           <div
                             key={directive.id}
                             className="flex items-center justify-between text-sm"
                           >
                             <span className="capitalize text-gray-900 dark:text-gray-100">
-                              {directive.type.replace("_", " ")}
+                              {(directive.type ?? directive.directiveType ?? "").replace("_", " ")}
                             </span>
                             <Badge variant="outline" className="text-xs">
                               {directive.isPrimary ? "Primary" : "Secondary"}
@@ -318,7 +413,7 @@ export default function FamilyOverview() {
                 <div className="mb-3 flex items-start justify-between">
                   <div>
                     <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">
-                      {professional.name}
+                      {professional.name ?? professional.fullName}
                     </h3>
                     <p className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">
                       {professional.firm}
@@ -369,7 +464,7 @@ export default function FamilyOverview() {
                       {professional.contactInfo.email}
                     </div>
                   )}
-                  {professional.contactInfo.address && (
+                  {professional.contactInfo?.address && (
                     <div className="flex items-center text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">
                       <MapPin className="mr-2 h-4 w-4" />
                       {professional.contactInfo.address.city},{" "}

@@ -170,8 +170,8 @@ export default function SearchResults() {
   const { results, query, totalCount, typeBreakdown, appliedFilters, performance, error } = data;
 
   // Group results by type for display
-  const groupedResults = results.reduce<Record<string, SearchResult[]>>(
-    (groups, result) => {
+  const groupedResults = (results as SearchResult[]).reduce(
+    (groups: Record<string, SearchResult[]>, result: SearchResult) => {
       const type = result.type;
       if (!groups[type]) {
         groups[type] = [];

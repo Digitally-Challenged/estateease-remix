@@ -107,16 +107,16 @@ export async function getUser(request: Request): Promise<User | null> {
 
   return {
     id: userId,
-    external_id: userProfile.external_id || userId,
-    first_name: userProfile.first_name,
-    middle_name: userProfile.middle_name || undefined,
-    last_name: userProfile.last_name,
-    email: userProfile.email,
-    phone_number: userProfile.phone_number || undefined,
-    date_of_birth: userProfile.date_of_birth || undefined,
-    is_active: Boolean(userProfile.is_active),
-    created_at: userProfile.created_at,
-    updated_at: userProfile.updated_at,
+    external_id: userId,
+    first_name: userProfile.firstName,
+    middle_name: undefined,
+    last_name: userProfile.lastName,
+    email: userProfile.email || '',
+    phone_number: userProfile.phone || undefined,
+    date_of_birth: userProfile.dateOfBirth || undefined,
+    is_active: true,
+    created_at: userProfile.createdAt,
+    updated_at: userProfile.updatedAt,
   };
 }
 

@@ -154,7 +154,7 @@ export default function NewProfessional() {
             </div>
 
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-              <FormField label="Firm/Company" icon={<Briefcase className="h-4 w-4" />}>
+              <FormField label="Firm/Company">
                 <Input
                   name="firm"
                   value={formData.firm}
@@ -174,7 +174,7 @@ export default function NewProfessional() {
             </div>
 
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-              <FormField label="Email" icon={<Mail className="h-4 w-4" />}>
+              <FormField label="Email">
                 <Input
                   name="email"
                   type="email"
@@ -184,7 +184,7 @@ export default function NewProfessional() {
                 />
               </FormField>
 
-              <FormField label="Primary Phone" icon={<Phone className="h-4 w-4" />}>
+              <FormField label="Primary Phone">
                 <Input
                   name="primaryPhone"
                   type="tel"
@@ -195,7 +195,7 @@ export default function NewProfessional() {
               </FormField>
             </div>
 
-            <FormField label="Secondary Phone" icon={<Phone className="h-4 w-4" />}>
+            <FormField label="Secondary Phone">
               <Input
                 name="secondaryPhone"
                 type="tel"
@@ -256,7 +256,7 @@ export default function NewProfessional() {
               </div>
             </div>
 
-            <FormField label="Specializations" description="Comma-separated list of specialties">
+            <FormField label="Specializations" helperText="Comma-separated list of specialties">
               <Input
                 name="specializations"
                 value={formData.specializations}
@@ -265,7 +265,7 @@ export default function NewProfessional() {
               />
             </FormField>
 
-            <FormField label="Notes" description="Additional information">
+            <FormField label="Notes" helperText="Additional information">
               <Textarea
                 name="notes"
                 value={formData.notes}

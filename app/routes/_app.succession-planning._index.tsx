@@ -14,7 +14,31 @@ import TrendingUp from "lucide-react/dist/esm/icons/trending-up";
 import { getTrusts, getBeneficiaries, getLegalRoles, getAssets } from "~/lib/dal";
 import { formatCurrency } from "~/utils/format";
 import type { AnyEnhancedAsset } from "~/types/assets";
+import type { Beneficiary, LegalRole } from "~/types/people";
 import { requireUser } from "~/lib/auth.server";
+
+interface PhaseItem {
+  type: string;
+  count: number;
+  label: string;
+}
+
+interface Phase {
+  name: string;
+  status: string;
+  description: string;
+  items: PhaseItem[];
+}
+
+interface DistributionDataItem {
+  id: string;
+  name: string;
+  type: "person";
+  percentage: number;
+  amount: number;
+  level: number;
+  children: undefined;
+}
 
 export async function loader({ request }: LoaderFunctionArgs) {
   try {
@@ -27,6 +51,12 @@ export async function loader({ request }: LoaderFunctionArgs) {
       getLegalRoles(userId),
       getAssets(userId),
     ]);
+
+    // Helper: check if DAL beneficiary is primary or contingent by type name
+    const isPrimaryBeneficiary = (b: (typeof beneficiaries)[number]) =>
+      b?.type?.toLowerCase().includes("primary");
+    const isContingentBeneficiary = (b: (typeof beneficiaries)[number]) =>
+      b?.type?.toLowerCase().includes("contingent");
 
     // Calculate succession timeline phases
     const phases = [
@@ -41,18 +71,18 @@ export async function loader({ request }: LoaderFunctionArgs) {
       },
       {
         name: "First Transfer",
-        status: beneficiaries.filter((b) => b?.isPrimary).length > 0 ? "ready" : "incomplete",
+        status: beneficiaries.filter(isPrimaryBeneficiary).length > 0 ? "ready" : "incomplete",
         description: "Primary beneficiary distributions",
         items: [
           {
             type: "beneficiaries",
-            count: beneficiaries.filter((b) => b?.isPrimary).length,
+            count: beneficiaries.filter(isPrimaryBeneficiary).length,
             label: "Primary Beneficiaries",
           },
           {
             type: "percentage",
             count: beneficiaries
-              .filter((b) => b?.isPrimary)
+              .filter(isPrimaryBeneficiary)
               .reduce((sum, b) => sum + (b?.percentage || 0), 0),
             label: "% Allocated",
           },
@@ -60,12 +90,12 @@ export async function loader({ request }: LoaderFunctionArgs) {
       },
       {
         name: "Contingent Transfer",
-        status: beneficiaries.filter((b) => b?.isContingent).length > 0 ? "ready" : "incomplete",
+        status: beneficiaries.filter(isContingentBeneficiary).length > 0 ? "ready" : "incomplete",
         description: "Backup beneficiary distributions",
         items: [
           {
             type: "beneficiaries",
-            count: beneficiaries.filter((b) => b?.isContingent).length,
+            count: beneficiaries.filter(isContingentBeneficiary).length,
             label: "Contingent Beneficiaries",
           },
         ],
@@ -113,11 +143,11 @@ export async function loader({ request }: LoaderFunctionArgs) {
     const distributionData = beneficiaries
       .map((beneficiary, index) => ({
         id: `beneficiary-${beneficiary?.id || index}`,
-        name: beneficiary?.name || `Beneficiary ${index + 1}`,
+        name: beneficiary?.fullName || `Beneficiary ${index + 1}`,
         type: "person" as const,
         percentage: beneficiary?.percentage || 0,
         amount: totalEstateValue * ((beneficiary?.percentage || 0) / 100),
-        level: beneficiary?.isPrimary ? 0 : 1,
+        level: isPrimaryBeneficiary(beneficiary) ? 0 : 1,
         children: undefined,
       }))
       .filter((b) => b.percentage > 0);
@@ -155,18 +185,18 @@ export async function loader({ request }: LoaderFunctionArgs) {
 }
 
 function SuccessionPlanningContent() {
-  const {
-    trusts,
-    beneficiaries,
-    legalRoles,
-    assets,
-    phases,
-    readinessScore,
-    assetsByOwnership,
-    distributionData,
-    totalEstateValue,
-    error,
-  } = useLoaderData<typeof loader>();
+  const loaderData = useLoaderData<typeof loader>();
+
+  const trusts = loaderData.trusts;
+  const beneficiaries = loaderData.beneficiaries as unknown as Beneficiary[];
+  const legalRoles = loaderData.legalRoles as unknown as LegalRole[];
+  const assets = loaderData.assets;
+  const phases = loaderData.phases as unknown as Phase[];
+  const readinessScore = loaderData.readinessScore;
+  const assetsByOwnership = loaderData.assetsByOwnership as unknown as Record<string, AnyEnhancedAsset[]>;
+  const distributionData = loaderData.distributionData as unknown as DistributionDataItem[];
+  const totalEstateValue = loaderData.totalEstateValue;
+  const error = loaderData.error;
 
   if (error) {
     return (

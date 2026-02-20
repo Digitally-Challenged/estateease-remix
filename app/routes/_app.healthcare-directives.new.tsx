@@ -150,7 +150,7 @@ export default function NewHealthcareDirective() {
                 </Select>
               </FormField>
 
-              <FormField label="Healthcare Agent/Proxy" icon={<User className="h-4 w-4" />}>
+              <FormField label="Healthcare Agent/Proxy">
                 <Input
                   name="personName"
                   value={formData.personName}

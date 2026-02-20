@@ -37,8 +37,23 @@ export async function loader({ request }: LoaderFunctionArgs) {
   return json({ trusts: trustsWithDetails });
 }
 
+interface TrustView {
+  id: string;
+  name: string;
+  type: string;
+  grantor: { fullName: string } | string;
+  taxId?: string;
+  dateCreated: string;
+  purpose?: string;
+  trustees: Array<{ name?: string; fullName?: string; type: string; powers?: string[]; startDate?: string; orderOfSuccession?: number }>;
+  beneficiaries: Array<{ name?: string; fullName?: string; type: string; relationship?: string; percentage?: number; conditions?: string }>;
+  isActive: boolean;
+  assets: Array<{ id: string; name: string; category: string; value: number }>;
+  totalValue: number;
+}
+
 export default function TrustsOverview() {
-  const { trusts } = useLoaderData<typeof loader>();
+  const { trusts } = useLoaderData<typeof loader>() as { trusts: TrustView[] };
 
   const getTrustStatusColor = (trustType: string) => {
     if (trustType === "REVOCABLE")
@@ -185,7 +200,7 @@ export default function TrustsOverview() {
                       Trust Information
                     </h4>
                     <div className="space-y-1 text-sm text-gray-600 dark:text-gray-400">
-                      <div>Grantor: {trust.grantor}</div>
+                      <div>Grantor: {typeof trust.grantor === "string" ? trust.grantor : trust.grantor.fullName}</div>
                       <div>Created: {formatDate(trust.dateCreated)}</div>
                       <div>Tax ID: {trust.taxId}</div>
                       <div className="font-medium text-gray-900 dark:text-gray-100">
@@ -201,10 +216,10 @@ export default function TrustsOverview() {
                     <div className="space-y-2">
                       {trust.trustees.map((trustee) => (
                         <div
-                          key={`${trust.id}-trustee-${trustee.name}`}
+                          key={`${trust.id}-trustee-${String(trustee.fullName || trustee.name)}`}
                           className="flex items-center justify-between text-sm"
                         >
-                          <span className="text-gray-900 dark:text-gray-100">{trustee.name}</span>
+                          <span className="text-gray-900 dark:text-gray-100">{trustee.fullName || trustee.name}</span>
                           <Badge variant="outline" className="text-xs">
                             {trustee.type}
                             {trustee.orderOfSuccession && ` (${trustee.orderOfSuccession})`}
@@ -221,12 +236,12 @@ export default function TrustsOverview() {
                     <div className="space-y-2">
                       {trust.beneficiaries.map((beneficiary) => (
                         <div
-                          key={`${trust.id}-beneficiary-${beneficiary.name}`}
+                          key={`${trust.id}-beneficiary-${String(beneficiary.fullName || beneficiary.name)}`}
                           className="text-sm"
                         >
                           <div className="flex items-center justify-between">
                             <span className="text-gray-900 dark:text-gray-100">
-                              {beneficiary.name}
+                              {beneficiary.fullName || beneficiary.name}
                             </span>
                             {beneficiary.percentage && (
                               <span className="text-gray-600 dark:text-gray-400">
@@ -285,11 +300,11 @@ export default function TrustsOverview() {
                   <div className="space-y-2">
                     {trust.trustees.map((trustee) => (
                       <div
-                        key={`${trust.id}-trustee-powers-${trustee.name}`}
+                        key={`${trust.id}-trustee-powers-${String(trustee.fullName || trustee.name)}`}
                         className="rounded-lg bg-gray-50 p-3 dark:bg-gray-800"
                       >
                         <div className="mb-1 text-sm font-medium text-gray-900 dark:text-gray-100">
-                          {trustee.name} ({trustee.type})
+                          {trustee.fullName || trustee.name} ({trustee.type})
                         </div>
                         <div className="text-xs text-gray-600 dark:text-gray-400">
                           {trustee.powers?.join(" • ") || "Standard trustee powers"}

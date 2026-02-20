@@ -15,6 +15,7 @@ import Trash2 from "lucide-react/dist/esm/icons/trash-2";
 import { getBeneficiaries, getTrusts } from "~/lib/dal";
 import type { Column } from "~/components/ui/data-table";
 import { requireUser } from "~/lib/auth.server";
+import type { Beneficiary } from "~/lib/dal";
 
 export async function loader({ request }: LoaderFunctionArgs) {
   try {
@@ -26,12 +27,12 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
     // Calculate total percentages
     const primaryTotal = beneficiaries
-      .filter((b) => b?.isPrimary)
-      .reduce<number>((sum, b) => sum + (b?.percentage || 0), 0);
+      .filter((b: Beneficiary) => b?.type?.toLowerCase() === "primary")
+      .reduce<number>((sum: number, b: Beneficiary) => sum + (b?.percentage || 0), 0);
 
     const contingentTotal = beneficiaries
-      .filter((b) => b?.isContingent)
-      .reduce<number>((sum, b) => sum + (b?.percentage || 0), 0);
+      .filter((b: Beneficiary) => b?.type?.toLowerCase() === "contingent")
+      .reduce<number>((sum: number, b: Beneficiary) => sum + (b?.percentage || 0), 0);
 
     return json({
       beneficiaries,
@@ -56,8 +57,12 @@ export async function loader({ request }: LoaderFunctionArgs) {
 }
 
 function BeneficiariesContent() {
-  const { beneficiaries, trusts, primaryTotal, contingentTotal, error } =
-    useLoaderData<typeof loader>();
+  const data = useLoaderData<typeof loader>();
+  const beneficiaries = (data.beneficiaries || []) as unknown as Beneficiary[];
+  const trusts = (data.trusts || []) as unknown as import("~/lib/dal").Trust[];
+  const primaryTotal = data.primaryTotal ?? 0;
+  const contingentTotal = data.contingentTotal ?? 0;
+  const error = data.error;
   const navigate = useNavigate();
 
   if (error) {
@@ -110,13 +115,13 @@ function BeneficiariesContent() {
     );
   }
 
-  const columns: Column<(typeof beneficiaries)[0]>[] = [
+  const columns: Column<Beneficiary>[] = [
     {
-      key: "name",
+      key: "fullName",
       header: "Name",
-      render: (beneficiary) => (
+      render: (_value: unknown, beneficiary: Beneficiary) => (
         <div>
-          <p className="font-medium">{beneficiary?.name}</p>
+          <p className="font-medium">{beneficiary?.fullName}</p>
           <p className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">
             {beneficiary?.relationship}
           </p>
@@ -126,21 +131,21 @@ function BeneficiariesContent() {
     {
       key: "type",
       header: "Type",
-      render: (beneficiary) => (
-        <Badge variant={beneficiary?.isPrimary ? "default" : "secondary"}>
-          {beneficiary?.isPrimary ? "Primary" : "Contingent"}
+      render: (_value: unknown, beneficiary: Beneficiary) => (
+        <Badge variant={beneficiary?.type?.toLowerCase() === "primary" ? "default" : "secondary"}>
+          {beneficiary?.type?.toLowerCase() === "primary" ? "Primary" : "Contingent"}
         </Badge>
       ),
     },
     {
       key: "percentage",
       header: "Percentage",
-      render: (beneficiary) => <span className="font-medium">{beneficiary?.percentage || 0}%</span>,
+      render: (_value: unknown, beneficiary: Beneficiary) => <span className="font-medium">{beneficiary?.percentage || 0}%</span>,
     },
     {
       key: "contact",
       header: "Contact",
-      render: (beneficiary) => (
+      render: (_value: unknown, beneficiary: Beneficiary) => (
         <div className="text-sm">
           {beneficiary?.contactInfo?.email && <p>{beneficiary.contactInfo.email}</p>}
           {beneficiary?.contactInfo?.primaryPhone && <p>{beneficiary.contactInfo.primaryPhone}</p>}
@@ -150,7 +155,7 @@ function BeneficiariesContent() {
     {
       key: "actions",
       header: "Actions",
-      render: (beneficiary) => (
+      render: (_value: unknown, beneficiary: Beneficiary) => (
         <div className="flex space-x-2">
           <Button
             size="sm"
@@ -171,8 +176,8 @@ function BeneficiariesContent() {
     },
   ];
 
-  const primaryBeneficiaries = beneficiaries.filter((b) => b?.isPrimary);
-  const contingentBeneficiaries = beneficiaries.filter((b) => b?.isContingent);
+  const primaryBeneficiaries = beneficiaries.filter((b: Beneficiary) => b?.type?.toLowerCase() === "primary");
+  const contingentBeneficiaries = beneficiaries.filter((b: Beneficiary) => b?.type?.toLowerCase() === "contingent");
 
   return (
     <div className="space-y-6">
@@ -275,12 +280,7 @@ function BeneficiariesContent() {
           </CardHeader>
           <CardContent>
             <DataTable
-              data={
-                primaryBeneficiaries.filter(Boolean).map((b) => ({ ...b })) as Record<
-                  string,
-                  unknown
-                >[]
-              }
+              data={primaryBeneficiaries as unknown as Record<string, unknown>[]}
               columns={columns as unknown as Column<Record<string, unknown>>[]}
               sortable={true}
             />
@@ -299,12 +299,7 @@ function BeneficiariesContent() {
           </CardHeader>
           <CardContent>
             <DataTable
-              data={
-                contingentBeneficiaries.filter(Boolean).map((b) => ({ ...b })) as Record<
-                  string,
-                  unknown
-                >[]
-              }
+              data={contingentBeneficiaries as unknown as Record<string, unknown>[]}
               columns={columns as unknown as Column<Record<string, unknown>>[]}
               sortable={true}
             />
@@ -330,13 +325,13 @@ function BeneficiariesContent() {
                     </div>
                     {trust.beneficiaries && trust.beneficiaries.length > 0 ? (
                       <div className="space-y-2">
-                        {trust.beneficiaries.map((beneficiary, index) =>
+                        {trust.beneficiaries.map((beneficiary: Beneficiary, index: number) =>
                           beneficiary ? (
                             <div
                               key={`beneficiary-${index}`}
                               className="flex items-center justify-between text-sm"
                             >
-                              <span>{beneficiary.name}</span>
+                              <span>{beneficiary.fullName}</span>
                               <span className="text-gray-600 dark:text-gray-400 dark:text-gray-500">
                                 {beneficiary.percentage || 0}%
                               </span>

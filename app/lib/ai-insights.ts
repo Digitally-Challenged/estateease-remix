@@ -276,7 +276,7 @@ export class AIInsightsEngine {
   ): EstateInsight[] {
     const insights: EstateInsight[] = [];
 
-    const businessAssets = assets.filter((asset) => asset.category === AssetCategory.BUSINESS);
+    const businessAssets = assets.filter((asset) => asset.category === AssetCategory.BUSINESS_INTEREST);
     const hasBusinessInterests = businessAssets.length > 0;
     const hasSuccessors = familyMembers.some(
       (member) => member.relationship === "child" || member.relationship === "spouse",
@@ -493,7 +493,7 @@ export class AIInsightsEngine {
 
         // Has business interests with succession plan
         const hasBusinessAssets = data.assets.some(
-          (a: Asset) => a.category === AssetCategory.BUSINESS,
+          (a: Asset) => a.category === AssetCategory.BUSINESS_INTEREST,
         );
         if (hasBusinessAssets && data.trusts.length > 0) score += 40;
 

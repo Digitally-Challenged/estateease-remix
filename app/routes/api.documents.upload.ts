@@ -111,7 +111,7 @@ export async function action({ request }: ActionFunctionArgs) {
     }
 
     // Create document record using DAL
-    const documentId = createDocument({
+    const documentId = await createDocument({
       name,
       original_filename: file.name,
       file_path: relativePath,
@@ -123,7 +123,7 @@ export async function action({ request }: ActionFunctionArgs) {
       related_entity_type: relatedEntityType || undefined,
       related_entity_id: relatedEntityId || undefined,
       tags: tags ? tags.split(",").map((t) => t.trim()) : undefined,
-    });
+    }, request);
 
     // Get the created document to return full details
     const createdDocument = getDocument(documentId);
@@ -132,7 +132,8 @@ export async function action({ request }: ActionFunctionArgs) {
     }
 
     // Log the upload action
-    logDocumentAccess(createdDocument.id, userId, "upload");
+    const numericUserId = parseInt(String(userId), 10) || 0;
+    logDocumentAccess(createdDocument.id, numericUserId, "upload");
 
     return json({
       success: true,

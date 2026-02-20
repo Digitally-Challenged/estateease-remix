@@ -161,7 +161,7 @@ export async function action({ request }: ActionFunctionArgs) {
       },
       details: assetDetails,
       userId: user.id,
-    } as Parameters<typeof createAsset>[0]);
+    } as Parameters<typeof createAsset>[0], request);
 
     return redirect(`/assets`);
   } catch (error) {
@@ -181,7 +181,7 @@ export default function NewAsset() {
 
   return (
     <div className="mx-auto max-w-4xl">
-      <AssetForm trusts={trusts} mode="create" />
+      <AssetForm trusts={trusts as unknown as import("~/types/trusts").Trust[]} mode="create" />
     </div>
   );
 }

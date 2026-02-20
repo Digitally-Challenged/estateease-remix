@@ -41,7 +41,7 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
 
   // AUTHORIZATION: Verify ownership (already filtered by userId in getAssets)
   // Additional check for safety
-  if (property.user_id !== userId) {
+  if ((property as unknown as { user_id?: number }).user_id !== userId) {
     throw json({ message: "Forbidden" }, { status: 403 });
   }
 

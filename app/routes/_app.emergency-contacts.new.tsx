@@ -144,7 +144,7 @@ export default function NewEmergencyContact() {
             </div>
 
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-              <FormField label="Primary Phone" required icon={<Phone className="h-4 w-4" />}>
+              <FormField label="Primary Phone" required>
                 <Input
                   name="primaryPhone"
                   type="tel"
@@ -155,7 +155,7 @@ export default function NewEmergencyContact() {
                 />
               </FormField>
 
-              <FormField label="Secondary Phone" icon={<Phone className="h-4 w-4" />}>
+              <FormField label="Secondary Phone">
                 <Input
                   name="secondaryPhone"
                   type="tel"
@@ -167,7 +167,7 @@ export default function NewEmergencyContact() {
             </div>
 
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-              <FormField label="Email" icon={<Mail className="h-4 w-4" />}>
+              <FormField label="Email">
                 <Input
                   name="email"
                   type="email"
@@ -193,7 +193,7 @@ export default function NewEmergencyContact() {
             </div>
 
             <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-              <FormField label="Priority" description="1 = highest priority">
+              <FormField label="Priority" helperText="1 = highest priority">
                 <Input
                   name="priority"
                   type="number"
@@ -247,7 +247,7 @@ export default function NewEmergencyContact() {
               </FormField>
             </div>
 
-            <FormField label="Notes" description="Additional information">
+            <FormField label="Notes" helperText="Additional information">
               <Textarea
                 name="notes"
                 value={formData.notes}

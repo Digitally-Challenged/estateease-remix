@@ -17,6 +17,7 @@ import UserCheck from "lucide-react/dist/esm/icons/user-check";
 import { getEmergencyContacts } from "~/lib/dal";
 import type { Column } from "~/components/ui/data-table";
 import { requireUser } from "~/lib/auth.server";
+import type { EmergencyContact } from "~/types/people";
 
 export async function loader({ request }: LoaderFunctionArgs) {
   try {
@@ -66,7 +67,16 @@ export async function loader({ request }: LoaderFunctionArgs) {
 }
 
 function EmergencyContactsContent() {
-  const { contacts, contactsByType, decisionMakers, error } = useLoaderData<typeof loader>();
+  const data = useLoaderData<typeof loader>();
+  const contacts = (data.contacts || []) as unknown as EmergencyContact[];
+  const contactsByType = (data.contactsByType || { primary: [], secondary: [], medical: [], other: [] }) as unknown as {
+    primary: EmergencyContact[];
+    secondary: EmergencyContact[];
+    medical: EmergencyContact[];
+    other: EmergencyContact[];
+  };
+  const decisionMakers = (data.decisionMakers || []) as unknown as EmergencyContact[];
+  const error = data.error;
   const navigate = useNavigate();
 
   if (error) {
@@ -121,11 +131,11 @@ function EmergencyContactsContent() {
     );
   }
 
-  const columns: Column<(typeof contacts)[0]>[] = [
+  const columns: Column<EmergencyContact>[] = [
     {
       key: "priority",
       header: "#",
-      render: (contact) => (
+      render: (_value: unknown, contact: EmergencyContact) => (
         <span className="font-medium text-gray-600 dark:text-gray-400 dark:text-gray-500">
           {contact?.priority || "-"}
         </span>
@@ -134,7 +144,7 @@ function EmergencyContactsContent() {
     {
       key: "name",
       header: "Contact",
-      render: (contact) => (
+      render: (_value: unknown, contact: EmergencyContact) => (
         <div>
           <p className="font-medium">{contact?.name}</p>
           <p className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">
@@ -146,7 +156,7 @@ function EmergencyContactsContent() {
     {
       key: "contact",
       header: "Contact Info",
-      render: (contact) => (
+      render: (_value: unknown, contact: EmergencyContact) => (
         <div className="text-sm">
           <div className="mb-1 flex items-center space-x-1">
             <Phone className="h-3 w-3 text-gray-400 dark:text-gray-500" />
@@ -168,7 +178,7 @@ function EmergencyContactsContent() {
     {
       key: "type",
       header: "Type",
-      render: (contact) => (
+      render: (_value: unknown, contact: EmergencyContact) => (
         <div className="space-y-1">
           <Badge variant={contact?.contactType === "primary" ? "default" : "secondary"}>
             {contact?.contactType === "primary"
@@ -189,7 +199,7 @@ function EmergencyContactsContent() {
     {
       key: "authority",
       header: "Authority",
-      render: (contact) => (
+      render: (_value: unknown, contact: EmergencyContact) => (
         <div className="text-sm">
           {contact?.canMakeDecisions ? (
             <span className="flex items-center text-green-600 dark:text-green-400">
@@ -205,7 +215,7 @@ function EmergencyContactsContent() {
     {
       key: "availability",
       header: "Availability",
-      render: (contact) => (
+      render: (_value: unknown, contact: EmergencyContact) => (
         <span className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">
           {contact?.availability || "Always"}
         </span>
@@ -214,7 +224,7 @@ function EmergencyContactsContent() {
     {
       key: "actions",
       header: "Actions",
-      render: (contact) => (
+      render: (_value: unknown, contact: EmergencyContact) => (
         <div className="flex space-x-2">
           <Button
             size="sm"
@@ -356,8 +366,8 @@ function EmergencyContactsContent() {
         </CardHeader>
         <CardContent>
           <DataTable
-            data={contacts as Record<string, unknown>[]}
-            columns={columns as Column<Record<string, unknown>>[]}
+            data={contacts as unknown as Record<string, unknown>[]}
+            columns={columns as unknown as Column<Record<string, unknown>>[]}
             sortable={false} // Already sorted by priority
           />
         </CardContent>

@@ -42,6 +42,7 @@ interface AnalyticsResults {
     liquidity?: {
       liquidityRatio: number;
       liquidAssets: number;
+      riskLevel?: string;
     };
   };
   detailed: {
@@ -52,6 +53,8 @@ interface AnalyticsResults {
     estateTax?: {
       exposure: number;
       strategies: string[];
+      estimatedTax?: number;
+      effectiveRate?: number;
     };
     trusts?: {
       coverage: number;
@@ -305,14 +308,14 @@ function IntelligentDashboardComponent({
                   </div>
                   <p
                     className={`text-xs ${
-                      analyticsResults.summary.liquidity.riskLevel === "high"
+                      analyticsResults.summary.liquidity?.riskLevel === "high"
                         ? "text-red-600 dark:text-red-400"
-                        : analyticsResults.summary.liquidity.riskLevel === "medium"
+                        : analyticsResults.summary.liquidity?.riskLevel === "medium"
                           ? "text-yellow-600 dark:text-yellow-400"
                           : "text-green-600 dark:text-green-400"
                     }`}
                   >
-                    {analyticsResults.summary.liquidity.riskLevel} risk
+                    {analyticsResults.summary.liquidity?.riskLevel || "unknown"} risk
                   </p>
                 </CardContent>
               </Card>
@@ -326,10 +329,10 @@ function IntelligentDashboardComponent({
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">
-                    {formatCurrency(analyticsResults.detailed.estateTax.estimatedTax)}
+                    {formatCurrency(analyticsResults.detailed.estateTax?.estimatedTax || 0)}
                   </div>
                   <p className="text-xs text-orange-600 dark:text-orange-400">
-                    {analyticsResults.detailed.estateTax.effectiveRate.toFixed(1)}% effective rate
+                    {(analyticsResults.detailed.estateTax?.effectiveRate || 0).toFixed(1)}% effective rate
                   </p>
                 </CardContent>
               </Card>

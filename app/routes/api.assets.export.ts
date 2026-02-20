@@ -14,7 +14,8 @@ export const action: ActionFunction = async ({ request }) => {
       return json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const portfolioData = await exportPortfolioData(userId);
+    const numericUserId = parseInt(String(userId), 10) || 0;
+    const portfolioData = await exportPortfolioData(numericUserId);
 
     // Create a comprehensive export with formatted data
     const exportData = {

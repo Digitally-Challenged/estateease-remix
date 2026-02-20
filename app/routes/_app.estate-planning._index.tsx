@@ -85,17 +85,24 @@ export async function loader({ request }: LoaderFunctionArgs) {
   }
 }
 
+interface BeneficiaryItem {
+  id: string;
+  name: string;
+  type: string;
+  relationship: string;
+  percentage: number;
+}
+
 function EstatePlanningContent() {
-  const {
-    trusts,
-    beneficiaries,
-    legalRoles,
-    healthcareDirectives,
-    stats,
-    planningItems,
-    progressPercentage,
-    error,
-  } = useLoaderData<typeof loader>();
+  const data = useLoaderData<typeof loader>();
+  const trusts = data.trusts;
+  const beneficiaries = (data.beneficiaries || []) as unknown as BeneficiaryItem[];
+  const legalRoles = data.legalRoles;
+  const healthcareDirectives = data.healthcareDirectives;
+  const stats = data.stats;
+  const planningItems = data.planningItems;
+  const progressPercentage = data.progressPercentage;
+  const error = data.error;
 
   if (error) {
     return (
@@ -119,7 +126,7 @@ function EstatePlanningContent() {
   }
 
   const totalBeneficiaryPercentage = beneficiaries
-    .filter((b) => b && b.isPrimary)
+    .filter((b) => b && b.type === "primary")
     .reduce((sum, b) => sum + (b?.percentage || 0), 0);
 
   const hasValidBeneficiaries = totalBeneficiaryPercentage === 100;
@@ -194,7 +201,7 @@ function EstatePlanningContent() {
             <TrendingUp className="h-4 w-4 text-gray-600 dark:text-gray-400 dark:text-gray-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{formatCurrency(stats?.totalAssets || 0)}</div>
+            <div className="text-2xl font-bold">{formatCurrency(stats?.totalNetWorth || 0)}</div>
             <p className="mt-1 text-xs text-gray-600 dark:text-gray-400 dark:text-gray-500">
               Across all assets
             </p>
@@ -306,7 +313,7 @@ function EstatePlanningContent() {
               <>
                 <div className="space-y-3">
                   {beneficiaries
-                    .filter((b) => b.is_primary)
+                    .filter((b) => b.type === "primary")
                     .slice(0, 3)
                     .map((beneficiary) => (
                       <div key={beneficiary.id} className="flex items-center justify-between">
@@ -316,7 +323,7 @@ function EstatePlanningContent() {
                             {beneficiary.relationship}
                           </p>
                         </div>
-                        <Badge variant={beneficiary.is_primary ? "default" : "secondary"}>
+                        <Badge variant={beneficiary.type === "primary" ? "default" : "secondary"}>
                           {beneficiary.percentage || 0}%
                         </Badge>
                       </div>

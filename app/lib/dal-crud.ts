@@ -641,37 +641,32 @@ export function getFamilyMember(userId: string, memberId: string): FamilyMember 
     return null;
   }
 
+  const relationship = member.relationship_type_code
+    ? member.relationship_type_code.toLowerCase().replace("_", "-")
+    : "other";
+  const validRelationships = ["spouse", "child", "parent", "sibling", "other"] as const;
+  const typedRelationship = validRelationships.includes(relationship as typeof validRelationships[number])
+    ? (relationship as typeof validRelationships[number])
+    : "other" as const;
+
   return {
     id: member.family_member_id,
     firstName: member.first_name,
     lastName: member.last_name,
     name: `${member.first_name} ${member.last_name}`,
-    relationship: member.relationship_type_code
-      ? member.relationship_type_code.toLowerCase().replace("_", "-")
-      : "other",
-    dateOfBirth: member.date_of_birth || null,
-    email: member.email || null,
-    phone: member.phone || null,
-    address: member.address || null,
-    city: member.city || null,
-    state: member.state || null,
-    zipCode: member.zip || null,
-    notes: member.notes || null,
-    isEmergencyContact: member.is_emergency_contact === 1,
-    isBeneficiary: member.is_beneficiary === 1,
-    isTrustee: member.is_trustee === 1,
-    isExecutor: member.is_executor === 1,
-    isPowerOfAttorney: member.is_power_of_attorney === 1,
-    isHealthcareProxy: member.is_healthcare_proxy === 1,
-    user_id: member.user_id,
+    relationship: typedRelationship,
+    dateOfBirth: member.date_of_birth || undefined,
+    notes: member.notes || undefined,
+    isMinor: false,
+    isDependent: false,
     contactInfo: {
-      email: member.email || null,
-      primaryPhone: member.phone || null,
+      email: member.email || undefined,
+      primaryPhone: member.phone || undefined,
       address: {
-        street1: member.address || null,
-        city: member.city || null,
-        state: member.state || null,
-        zipCode: member.zip || null,
+        street1: member.address || "",
+        city: member.city || "",
+        state: member.state || "",
+        zipCode: member.zip || "",
       },
     },
   };

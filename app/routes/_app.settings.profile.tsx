@@ -49,7 +49,7 @@ export default function ProfileSettings() {
                   <Input
                     type="text"
                     name="firstName"
-                    defaultValue={userProfile?.first_name || "Nicholas"}
+                    defaultValue={userProfile?.firstName || "Nicholas"}
                     className="pl-10"
                   />
                 </div>
@@ -59,7 +59,7 @@ export default function ProfileSettings() {
                 <Input
                   type="text"
                   name="lastName"
-                  defaultValue={userProfile?.last_name || "Coleman"}
+                  defaultValue={userProfile?.lastName || "Coleman"}
                 />
               </FormField>
 
@@ -81,7 +81,7 @@ export default function ProfileSettings() {
                   <Input
                     type="tel"
                     name="phone"
-                    defaultValue={userProfile?.phone_number || "(503) 555-0123"}
+                    defaultValue={userProfile?.phone || "(503) 555-0123"}
                     className="pl-10"
                   />
                 </div>
@@ -93,7 +93,7 @@ export default function ProfileSettings() {
                   <Input
                     type="date"
                     name="dateOfBirth"
-                    defaultValue={userProfile?.date_of_birth || "1981-03-15"}
+                    defaultValue={userProfile?.dateOfBirth || "1981-03-15"}
                     className="pl-10"
                   />
                 </div>

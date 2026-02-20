@@ -22,6 +22,7 @@ import Trash2 from "lucide-react/dist/esm/icons/trash-2";
 import { getProfessionals } from "~/lib/dal";
 import type { Column } from "~/components/ui/data-table";
 import { requireUser } from "~/lib/auth.server";
+import type { Professional } from "~/types/people";
 
 export async function loader({ request }: LoaderFunctionArgs) {
   try {
@@ -78,8 +79,12 @@ export async function loader({ request }: LoaderFunctionArgs) {
 }
 
 function ProfessionalsContent() {
-  const { professionals, professionalsByType, preferredProviders, missingTypes, error } =
-    useLoaderData<typeof loader>();
+  const loaderData = useLoaderData<typeof loader>();
+  const professionals = (loaderData.professionals || []) as unknown as Professional[];
+  const professionalsByType = (loaderData.professionalsByType || {}) as unknown as Record<string, Professional[]>;
+  const preferredProviders = (loaderData.preferredProviders || []) as unknown as Professional[];
+  const missingTypes = (loaderData.missingTypes || []) as string[];
+  const error = loaderData.error;
   const navigate = useNavigate();
 
   if (error) {
@@ -146,38 +151,42 @@ function ProfessionalsContent() {
     }
   };
 
-  const columns: Column<(typeof professionals)[0]>[] = [
+  const columns: Column<Record<string, unknown>>[] = [
     {
       key: "name",
       header: "Professional",
-      render: (professional) => (
-        <div className="flex items-start space-x-3">
-          {getProfessionalIcon(professional?.type || "")}
-          <div>
-            <p className="flex items-center font-medium">
-              {professional?.name}
-              {professional?.isPreferredProvider && (
-                <Star className="ml-2 h-4 w-4 text-yellow-500" fill="currentColor" />
+      render: (_value, row) => {
+        const professional = row as unknown as Professional;
+        return (
+          <div className="flex items-start space-x-3">
+            {getProfessionalIcon(professional?.type || "")}
+            <div>
+              <p className="flex items-center font-medium">
+                {professional?.name}
+                {professional?.isPreferredProvider && (
+                  <Star className="ml-2 h-4 w-4 text-yellow-500" fill="currentColor" />
+                )}
+              </p>
+              {professional?.firm && (
+                <p className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">
+                  {professional.firm}
+                </p>
               )}
-            </p>
-            {professional?.firm && (
-              <p className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">
-                {professional.firm}
-              </p>
-            )}
-            {professional?.title && (
-              <p className="text-sm text-gray-500 dark:text-gray-400 dark:text-gray-500">
-                {professional.title}
-              </p>
-            )}
+              {professional?.title && (
+                <p className="text-sm text-gray-500 dark:text-gray-400 dark:text-gray-500">
+                  {professional.title}
+                </p>
+              )}
+            </div>
           </div>
-        </div>
-      ),
+        );
+      },
     },
     {
       key: "type",
       header: "Type",
-      render: (professional) => {
+      render: (_value, row) => {
+        const professional = row as unknown as Professional;
         const typeLabels: Record<string, string> = {
           estate_attorney: "Estate Attorney",
           tax_attorney: "Tax Attorney",
@@ -196,77 +205,89 @@ function ProfessionalsContent() {
     {
       key: "specializations",
       header: "Specializations",
-      render: (professional) => (
-        <div className="text-sm">
-          {professional?.specializations && professional.specializations.length > 0 ? (
-            <div className="flex flex-wrap gap-1">
-              {professional.specializations.slice(0, 2).map((spec) => (
-                <Badge key={spec} variant="secondary" className="text-xs">
-                  {spec}
-                </Badge>
-              ))}
-              {professional.specializations.length > 2 && (
-                <span className="text-xs text-gray-500 dark:text-gray-400 dark:text-gray-500">
-                  +{professional.specializations.length - 2} more
-                </span>
-              )}
-            </div>
-          ) : (
-            <span className="text-gray-400 dark:text-gray-500">None specified</span>
-          )}
-        </div>
-      ),
+      render: (_value, row) => {
+        const professional = row as unknown as Professional;
+        return (
+          <div className="text-sm">
+            {professional?.specializations && professional.specializations.length > 0 ? (
+              <div className="flex flex-wrap gap-1">
+                {professional.specializations.slice(0, 2).map((spec: string) => (
+                  <Badge key={spec} variant="secondary" className="text-xs">
+                    {spec}
+                  </Badge>
+                ))}
+                {professional.specializations.length > 2 && (
+                  <span className="text-xs text-gray-500 dark:text-gray-400 dark:text-gray-500">
+                    +{professional.specializations.length - 2} more
+                  </span>
+                )}
+              </div>
+            ) : (
+              <span className="text-gray-400 dark:text-gray-500">None specified</span>
+            )}
+          </div>
+        );
+      },
     },
     {
       key: "contact",
       header: "Contact",
-      render: (professional) => (
-        <div className="space-y-1 text-sm">
-          {professional?.contactInfo?.primaryPhone && (
-            <div className="flex items-center space-x-1">
-              <Phone className="h-3 w-3 text-gray-400 dark:text-gray-500" />
-              <span>{professional.contactInfo.primaryPhone}</span>
-            </div>
-          )}
-          {professional?.contactInfo?.email && (
-            <div className="flex items-center space-x-1">
-              <Mail className="h-3 w-3 text-gray-400 dark:text-gray-500" />
-              <span>{professional.contactInfo.email}</span>
-            </div>
-          )}
-        </div>
-      ),
+      render: (_value, row) => {
+        const professional = row as unknown as Professional;
+        return (
+          <div className="space-y-1 text-sm">
+            {professional?.contactInfo?.primaryPhone && (
+              <div className="flex items-center space-x-1">
+                <Phone className="h-3 w-3 text-gray-400 dark:text-gray-500" />
+                <span>{professional.contactInfo.primaryPhone}</span>
+              </div>
+            )}
+            {professional?.contactInfo?.email && (
+              <div className="flex items-center space-x-1">
+                <Mail className="h-3 w-3 text-gray-400 dark:text-gray-500" />
+                <span>{professional.contactInfo.email}</span>
+              </div>
+            )}
+          </div>
+        );
+      },
     },
     {
       key: "experience",
       header: "Experience",
-      render: (professional) => (
-        <span className="text-sm">
-          {professional?.yearsExperience ? `${professional.yearsExperience} years` : "-"}
-        </span>
-      ),
+      render: (_value, row) => {
+        const professional = row as unknown as Professional;
+        return (
+          <span className="text-sm">
+            {professional?.yearsExperience ? `${professional.yearsExperience} years` : "-"}
+          </span>
+        );
+      },
     },
     {
       key: "actions",
       header: "Actions",
-      render: (professional) => (
-        <div className="flex space-x-2">
-          <Button
-            size="sm"
-            variant="ghost"
-            onClick={() => navigate(`/professionals/${professional?.id}/edit`)}
-          >
-            <Edit className="h-4 w-4" />
-          </Button>
-          <Button
-            size="sm"
-            variant="ghost"
-            className="text-red-600 hover:text-red-700 dark:text-red-300 dark:text-red-400"
-          >
-            <Trash2 className="h-4 w-4" />
-          </Button>
-        </div>
-      ),
+      render: (_value, row) => {
+        const professional = row as unknown as Professional;
+        return (
+          <div className="flex space-x-2">
+            <Button
+              size="sm"
+              variant="ghost"
+              onClick={() => navigate(`/professionals/${professional?.id}/edit`)}
+            >
+              <Edit className="h-4 w-4" />
+            </Button>
+            <Button
+              size="sm"
+              variant="ghost"
+              className="text-red-600 hover:text-red-700 dark:text-red-300 dark:text-red-400"
+            >
+              <Trash2 className="h-4 w-4" />
+            </Button>
+          </div>
+        );
+      },
     },
   ];
 
@@ -359,7 +380,7 @@ function ProfessionalsContent() {
               Consider adding these essential professionals to your estate planning team:
             </p>
             <ul className="list-inside list-disc space-y-1 text-orange-700 dark:text-orange-300">
-              {missingTypes.map((type) => (
+              {missingTypes.map((type: string) => (
                 <li key={type}>{type}</li>
               ))}
             </ul>
@@ -388,8 +409,8 @@ function ProfessionalsContent() {
           </CardHeader>
           <CardContent>
             <DataTable
-              data={professionalsByType.estate_attorney as Record<string, unknown>[]}
-              columns={columns as Column<Record<string, unknown>>[]}
+              data={professionalsByType.estate_attorney as unknown as Record<string, unknown>[]}
+              columns={columns}
               sortable={true}
             />
           </CardContent>
@@ -407,8 +428,8 @@ function ProfessionalsContent() {
           </CardHeader>
           <CardContent>
             <DataTable
-              data={professionalsByType.tax_attorney as Record<string, unknown>[]}
-              columns={columns as Column<Record<string, unknown>>[]}
+              data={professionalsByType.tax_attorney as unknown as Record<string, unknown>[]}
+              columns={columns}
               sortable={true}
             />
           </CardContent>
@@ -428,8 +449,8 @@ function ProfessionalsContent() {
           </CardHeader>
           <CardContent>
             <DataTable
-              data={professionalsByType.financial_advisor as Record<string, unknown>[]}
-              columns={columns as Column<Record<string, unknown>>[]}
+              data={professionalsByType.financial_advisor as unknown as Record<string, unknown>[]}
+              columns={columns}
               sortable={true}
             />
           </CardContent>
@@ -447,8 +468,8 @@ function ProfessionalsContent() {
           </CardHeader>
           <CardContent>
             <DataTable
-              data={professionalsByType.accountant as Record<string, unknown>[]}
-              columns={columns as Column<Record<string, unknown>>[]}
+              data={professionalsByType.accountant as unknown as Record<string, unknown>[]}
+              columns={columns}
               sortable={true}
             />
           </CardContent>
@@ -466,8 +487,8 @@ function ProfessionalsContent() {
           </CardHeader>
           <CardContent>
             <DataTable
-              data={professionalsByType.insurance_agent as Record<string, unknown>[]}
-              columns={columns as Column<Record<string, unknown>>[]}
+              data={professionalsByType.insurance_agent as unknown as Record<string, unknown>[]}
+              columns={columns}
               sortable={true}
             />
           </CardContent>
@@ -482,8 +503,8 @@ function ProfessionalsContent() {
           </CardHeader>
           <CardContent>
             <DataTable
-              data={professionalsByType.other as Record<string, unknown>[]}
-              columns={columns as Column<Record<string, unknown>>[]}
+              data={professionalsByType.other as unknown as Record<string, unknown>[]}
+              columns={columns}
               sortable={true}
             />
           </CardContent>
@@ -492,17 +513,16 @@ function ProfessionalsContent() {
 
       {/* All Professionals (if not categorized) */}
       {professionals.length > 0 &&
-        Object.values(professionalsByType).every((p) => p.length === 0) && (
+        Object.values(professionalsByType).every((p: Professional[]) => p.length === 0) && (
           <Card>
             <CardHeader>
               <CardTitle>All Professionals</CardTitle>
             </CardHeader>
             <CardContent>
               <DataTable
-                data={professionals as Record<string, unknown>[]}
-                columns={columns as Column<Record<string, unknown>>[]}
+                data={professionals as unknown as unknown as Record<string, unknown>[]}
+                columns={columns}
                 sortable={true}
-                pagination={true}
               />
             </CardContent>
           </Card>
@@ -520,7 +540,7 @@ function ProfessionalsContent() {
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-              {preferredProviders.map((professional) =>
+              {preferredProviders.map((professional: Professional) =>
                 professional ? (
                   <div key={professional.id} className="rounded-lg border p-4">
                     <div className="flex items-start justify-between">

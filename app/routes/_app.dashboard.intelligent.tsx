@@ -41,11 +41,11 @@ export default function IntelligentDashboardPage() {
 
   return (
     <IntelligentDashboard
-      assets={assets}
-      trusts={trusts}
-      familyMembers={familyMembers}
-      professionals={professionals}
-      userId={userId}
+      assets={assets as unknown as import("~/types/assets").AnyEnhancedAsset[]}
+      trusts={trusts as unknown as import("~/types/trusts").Trust[]}
+      familyMembers={familyMembers as unknown as import("~/types/people").FamilyMember[]}
+      professionals={professionals as unknown as import("~/types/people").Professional[]}
+      userId={String(userId)}
     />
   );
 }

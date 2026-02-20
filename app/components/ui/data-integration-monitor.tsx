@@ -369,10 +369,10 @@ export function DataIntegrationMonitor() {
             <BarChart3 className="text-muted-foreground h-4 w-4" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{integrationStatus?.quality.score}%</div>
-            <Progress value={integrationStatus?.quality.score} className="mt-2" />
+            <div className="text-2xl font-bold">{integrationStatus?.quality.score || 0}%</div>
+            <Progress value={integrationStatus?.quality.score || 0} className="mt-2" />
             <p className="text-muted-foreground mt-1 text-xs">
-              {integrationStatus?.quality.alerts} active alerts
+              {integrationStatus?.quality.alerts || 0} active alerts
             </p>
           </CardContent>
         </Card>
@@ -383,10 +383,10 @@ export function DataIntegrationMonitor() {
             <Zap className="text-muted-foreground h-4 w-4" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{integrationStatus?.cache.hitRate}%</div>
-            <Progress value={integrationStatus?.cache.hitRate} className="mt-2" />
+            <div className="text-2xl font-bold">{integrationStatus?.cache.hitRate || 0}%</div>
+            <Progress value={integrationStatus?.cache.hitRate || 0} className="mt-2" />
             <p className="text-muted-foreground mt-1 text-xs">
-              {integrationStatus?.cache.size} items cached
+              {integrationStatus?.cache.size || 0} items cached
             </p>
           </CardContent>
         </Card>

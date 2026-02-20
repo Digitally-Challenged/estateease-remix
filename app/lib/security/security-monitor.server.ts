@@ -192,13 +192,13 @@ export function getRecentSecurityEvents(limit: number = 50): SecurityEvent[] {
       id: event.id,
       timestamp: new Date(event.timestamp),
       event_type: event.event_type,
-      user_id: event.user_id,
+      user_id: event.user_id || undefined,
       ip_address: event.ip_address,
       user_agent: event.user_agent,
       success: Boolean(event.success),
       risk_level: event.risk_level,
       details: event.details,
-      session_id: event.session_id,
+      session_id: event.session_id || undefined,
     }));
   } catch (error) {
     console.error("Failed to get recent security events:", error);

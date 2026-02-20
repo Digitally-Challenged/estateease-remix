@@ -83,7 +83,10 @@ export async function action({ request, params }: ActionFunctionArgs) {
       isHealthcareProxy: formData.get("isHealthcareProxy") === "true",
     };
 
-    await updateFamilyMember(user.id, memberId, updates);
+    // The DAL's updateFamilyMember accepts additional fields beyond the
+    // canonical FamilyMember type (email, phone, address, etc.)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    await updateFamilyMember(memberId, updates as any);
     return redirect("/family");
   } catch (error) {
     console.error("Error updating family member:", error);
@@ -97,8 +100,31 @@ export async function action({ request, params }: ActionFunctionArgs) {
   }
 }
 
+/** Shape returned by getFamilyMember in dal-crud (superset of canonical FamilyMember) */
+interface EditableFamilyMember {
+  id: string;
+  name: string;
+  relationship: string;
+  dateOfBirth?: string;
+  email?: string;
+  phone?: string;
+  address?: string;
+  city?: string;
+  state?: string;
+  zipCode?: string;
+  notes?: string;
+  isEmergencyContact?: boolean;
+  isBeneficiary?: boolean;
+  isTrustee?: boolean;
+  isExecutor?: boolean;
+  isPowerOfAttorney?: boolean;
+  isHealthcareProxy?: boolean;
+  user_id?: number;
+}
+
 export default function EditFamilyMember() {
-  const { familyMember } = useLoaderData<typeof loader>();
+  const data = useLoaderData<typeof loader>();
+  const familyMember = data.familyMember as unknown as EditableFamilyMember;
   const actionData = useActionData<ActionData>();
   const navigate = useNavigate();
 

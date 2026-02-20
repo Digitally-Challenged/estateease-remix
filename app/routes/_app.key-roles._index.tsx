@@ -14,6 +14,7 @@ import FileText from "lucide-react/dist/esm/icons/file-text";
 import AlertCircle from "lucide-react/dist/esm/icons/alert-circle";
 import { getLegalRoles, getFamilyMembers } from "~/lib/dal";
 import { requireUser } from "~/lib/auth.server";
+import type { LegalRole, FamilyMember } from "~/types/people";
 
 export async function loader({ request }: LoaderFunctionArgs) {
   try {
@@ -72,8 +73,12 @@ export async function loader({ request }: LoaderFunctionArgs) {
 }
 
 function KeyRolesContent() {
-  const { legalRoles, familyMembers, rolesByType, criticalRoles, error } =
-    useLoaderData<typeof loader>();
+  const loaderData = useLoaderData<typeof loader>();
+  const legalRoles = (loaderData.legalRoles || []) as unknown as LegalRole[];
+  const familyMembers = (loaderData.familyMembers || []) as unknown as FamilyMember[];
+  const rolesByType = (loaderData.rolesByType || {}) as unknown as Record<string, LegalRole[]>;
+  const criticalRoles = (loaderData.criticalRoles || {}) as Record<string, string>;
+  const error = loaderData.error;
 
   if (error) {
     return (
@@ -119,11 +124,10 @@ function KeyRolesContent() {
 
   // Check for missing critical roles
   const missingRoles = Object.entries(criticalRoles)
-    .filter(([roleType]) => {
-      const roles = rolesByType as Record<string, typeof legalRoles>;
-      return !roles[roleType] || roles[roleType].length === 0;
+    .filter(([roleType]: [string, string]) => {
+      return !rolesByType[roleType] || rolesByType[roleType].length === 0;
     })
-    .map(([roleType, roleName]) => ({ roleType, roleName }));
+    .map(([roleType, roleName]: [string, string]) => ({ roleType, roleName }));
 
   return (
     <div className="space-y-6">
@@ -168,10 +172,9 @@ function KeyRolesContent() {
 
       {/* Role Summary Cards */}
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {Object.entries(criticalRoles).map(([roleType, roleName]) => {
+        {Object.entries(criticalRoles).map(([roleType, roleName]: [string, string]) => {
           const Icon = getRoleIcon(roleType);
-          const roles = rolesByType as Record<string, typeof legalRoles>;
-          const assignments = roles[roleType] || [];
+          const assignments = rolesByType[roleType] || [];
           const hasAssignment = assignments.length > 0;
 
           return (
@@ -192,7 +195,7 @@ function KeyRolesContent() {
               <CardContent>
                 {hasAssignment ? (
                   <div className="space-y-2">
-                    {assignments.map((role: (typeof legalRoles)[0]) =>
+                    {assignments.map((role: LegalRole) =>
                       role ? (
                         <div key={role.id} className="flex items-center justify-between">
                           <span className="text-sm font-medium">{role.personName}</span>
@@ -225,7 +228,7 @@ function KeyRolesContent() {
           </CardHeader>
           <CardContent>
             <div className="space-y-6">
-              {Object.entries(rolesByType).map(([roleType, roles]) => {
+              {Object.entries(rolesByType).map(([roleType, roles]: [string, LegalRole[]]) => {
                 const Icon = getRoleIcon(roleType);
                 const roleName = criticalRoles[roleType as keyof typeof criticalRoles] || roleType;
 
@@ -237,7 +240,7 @@ function KeyRolesContent() {
                     </div>
 
                     <div className="ml-7 space-y-3">
-                      {roles.map((role) =>
+                      {roles.map((role: LegalRole) =>
                         role ? (
                           <div key={role.id} className="rounded-lg bg-gray-50 p-4 dark:bg-gray-900">
                             <div className="mb-2 flex items-start justify-between">
@@ -264,7 +267,7 @@ function KeyRolesContent() {
                                   Specific Powers:
                                 </p>
                                 <ul className="list-inside list-disc text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">
-                                  {role.specificPowers.map((power, idx) => (
+                                  {role.specificPowers.map((power: string, idx: number) => (
                                     <li key={idx}>{power}</li>
                                   ))}
                                 </ul>
@@ -309,7 +312,7 @@ function KeyRolesContent() {
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-              {familyMembers.map((member) =>
+              {familyMembers.map((member: FamilyMember) =>
                 member ? (
                   <div key={member.id} className="rounded-lg border p-3">
                     <p className="font-medium">{member.name}</p>
@@ -318,7 +321,7 @@ function KeyRolesContent() {
                     </p>
                     {member.legalRoles && member.legalRoles.length > 0 && (
                       <div className="mt-2">
-                        {member.legalRoles.map((role) => (
+                        {member.legalRoles.map((role: LegalRole) => (
                           <Badge key={role.id} variant="outline" className="mb-1 mr-1">
                             {role.roleType}
                           </Badge>

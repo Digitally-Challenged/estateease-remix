@@ -28,7 +28,8 @@ export async function action({ params, request }: ActionFunctionArgs) {
     // Get document metadata
     const document = getDocument(documentId);
 
-    if (!document || document.user_id !== userId) {
+    const numericUserId = parseInt(String(userId), 10) || 0;
+    if (!document || document.user_id !== numericUserId) {
       return json({ error: "Document not found" }, { status: 404 });
     }
 
@@ -41,7 +42,7 @@ export async function action({ params, request }: ActionFunctionArgs) {
     const filePath = path.join(UPLOAD_DIR, document.file_path);
 
     // Log the deletion attempt
-    logDocumentAccess(document.id, userId, "delete_attempt");
+    logDocumentAccess(document.id, numericUserId, "delete_attempt");
 
     // Mark document as archived in database (soft delete)
     archiveDocument(documentId);
@@ -58,7 +59,7 @@ export async function action({ params, request }: ActionFunctionArgs) {
     }
 
     // Log successful deletion
-    logDocumentAccess(document.id, userId, "delete_success");
+    logDocumentAccess(document.id, numericUserId, "delete_success");
 
     return json({ success: true, message: "Document deleted successfully" });
   } catch (error) {

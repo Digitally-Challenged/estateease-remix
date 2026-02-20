@@ -13,6 +13,8 @@ import AlertCircle from "lucide-react/dist/esm/icons/alert-circle";
 import CheckCircle from "lucide-react/dist/esm/icons/check-circle";
 import { getHealthcareDirectives, getFamilyMembers } from "~/lib/dal";
 import { requireUser } from "~/lib/auth.server";
+import type { HealthcareDirective as DalHealthcareDirective } from "~/lib/dal";
+import type { HealthcareDirective, FamilyMember } from "~/types/people";
 
 export async function loader({ request }: LoaderFunctionArgs) {
   try {
@@ -28,11 +30,11 @@ export async function loader({ request }: LoaderFunctionArgs) {
     const directivesByType = healthcareDirectives.reduce<Record<string, typeof healthcareDirectives>>(
       (acc, directive) => {
         if (!directive) return acc;
-        const type = directive.type;
-        if (!acc[type]) {
-          acc[type] = [];
+        const dtype = directive.directiveType;
+        if (!acc[dtype]) {
+          acc[dtype] = [];
         }
-        acc[type].push(directive);
+        acc[dtype].push(directive);
         return acc;
       },
       {} as Record<string, typeof healthcareDirectives>,
@@ -78,8 +80,12 @@ export async function loader({ request }: LoaderFunctionArgs) {
 }
 
 function HealthcareDirectivesContent() {
-  const { familyMembers, directivesByType, completionItems, completedCount, error } =
-    useLoaderData<typeof loader>();
+  const data = useLoaderData<typeof loader>();
+  const familyMembers = (data.familyMembers || []) as unknown as FamilyMember[];
+  const directivesByType = (data.directivesByType || {}) as unknown as Record<string, HealthcareDirective[]>;
+  const completionItems = (data.completionItems || []) as unknown as { name: string; completed: boolean }[];
+  const completedCount = data.completedCount ?? 0;
+  const error = data.error;
 
   if (error) {
     return (
@@ -193,7 +199,7 @@ function HealthcareDirectivesContent() {
             <CardDescription>Your wishes for end-of-life medical care</CardDescription>
           </CardHeader>
           <CardContent>
-            {directivesByType["living_will"].map((directive) =>
+            {directivesByType["living_will"].map((directive: HealthcareDirective) =>
               directive ? (
                 <div key={directive.id} className="space-y-4">
                   <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -271,7 +277,7 @@ function HealthcareDirectivesContent() {
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
-              {directivesByType["healthcare_proxy"].map((directive) =>
+              {directivesByType["healthcare_proxy"].map((directive: HealthcareDirective) =>
                 directive ? (
                   <div
                     key={directive.id}
@@ -390,7 +396,7 @@ function HealthcareDirectivesContent() {
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3">
-              {familyMembers.map((member) =>
+              {familyMembers.map((member: FamilyMember) =>
                 member ? (
                   <div key={member.id} className="rounded-lg border p-3">
                     <p className="font-medium">{member.name}</p>
@@ -398,7 +404,7 @@ function HealthcareDirectivesContent() {
                       {member.relationship}
                     </p>
                     {member.healthcareRoles &&
-                      member.healthcareRoles.some((role) => role.type === "healthcare_proxy") && (
+                      member.healthcareRoles.some((role: HealthcareDirective) => role.type === "healthcare_proxy") && (
                         <Badge variant="default" className="mt-2">
                           Current Proxy
                         </Badge>

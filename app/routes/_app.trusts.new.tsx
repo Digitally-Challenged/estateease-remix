@@ -128,7 +128,7 @@ export async function action({ request }: ActionFunctionArgs) {
     };
 
     // Create the trust
-    createTrust(dbTrustData);
+    await createTrust(dbTrustData, request);
 
     // Redirect to the trust overview page
     return redirect("/trusts");

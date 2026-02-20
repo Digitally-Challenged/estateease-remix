@@ -58,8 +58,14 @@ export async function action({ request }: ActionFunctionArgs) {
   }
 }
 
+interface ForgotPasswordActionData {
+  success?: boolean;
+  error?: string | null;
+  fieldErrors?: Record<string, string[]> | null;
+}
+
 export default function ForgotPassword() {
-  const actionData = useActionData<typeof action>();
+  const actionData = useActionData<typeof action>() as ForgotPasswordActionData | undefined;
   const navigation = useNavigation();
   const isSubmitting = navigation.state === "submitting";
 

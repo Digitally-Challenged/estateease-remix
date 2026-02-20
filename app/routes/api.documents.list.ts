@@ -22,8 +22,9 @@ export async function loader({ request }: LoaderFunctionArgs) {
     const offset = (page - 1) * limit;
 
     // Get documents using DAL
+    const numericUserId = parseInt(String(userId), 10) || 0;
     const { documents, total } = getDocuments({
-      userId,
+      userId: numericUserId,
       category: category || undefined,
       relatedEntityType: entityType || undefined,
       relatedEntityId: entityId || undefined,

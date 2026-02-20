@@ -56,6 +56,26 @@ export function BulkUpload({
     }
   }, []);
 
+  const addFiles = useCallback(
+    (newFiles: File[]) => {
+      const validation = validateFiles(newFiles, uploadConfig);
+
+      if (!validation.isValid) {
+        setValidationError(validation.errors.join("\\n"));
+        return;
+      }
+
+      const fileStatuses: FileUploadStatus[] = newFiles.map((file) => ({
+        file,
+        status: "pending",
+        progress: 0,
+      }));
+
+      setFiles((prev) => [...prev, ...fileStatuses]);
+    },
+    [uploadConfig],
+  );
+
   const handleDrop = useCallback(
     (e: React.DragEvent) => {
       e.preventDefault();
@@ -78,26 +98,6 @@ export function BulkUpload({
       addFiles(fileList);
     }
   };
-
-  const addFiles = useCallback(
-    (newFiles: File[]) => {
-      const validation = validateFiles(newFiles, uploadConfig);
-
-      if (!validation.isValid) {
-        setValidationError(validation.errors.join("\\n"));
-        return;
-      }
-
-      const fileStatuses: FileUploadStatus[] = newFiles.map((file) => ({
-        file,
-        status: "pending",
-        progress: 0,
-      }));
-
-      setFiles((prev) => [...prev, ...fileStatuses]);
-    },
-    [uploadConfig],
-  );
 
   const removeFile = (index: number) => {
     setFiles(files.filter((_, i) => i !== index));

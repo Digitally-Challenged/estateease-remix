@@ -6,6 +6,10 @@
  */
 
 import { getDatabase } from "./database";
+import { transformDatabaseAsset } from "./transformers";
+import type { AnyEnhancedAsset } from "../types/assets";
+import type { Trust as CanonicalTrust } from "../types/trusts";
+import { AssetCategory } from "../types/enums";
 
 // =================================
 // DATABASE TYPES (Raw database row types)
@@ -382,11 +386,12 @@ export interface FamilyMember extends Person {
   relationshipType: string;
 }
 
-export function getFamilyMembers(userId?: number): FamilyMember[] {
+export function getFamilyMembers(userId?: number | string): FamilyMember[] {
   const db = getDatabase();
+  const numUserId = typeof userId === 'string' ? parseInt(userId.split('-').pop() || '1') : userId;
 
   let query = `
-    SELECT 
+    SELECT
       p.*,
       rt.name as relationship_type_name,
       rt.code as relationship_type_code
@@ -397,9 +402,9 @@ export function getFamilyMembers(userId?: number): FamilyMember[] {
   `;
 
   const params: (number | string)[] = [];
-  if (userId) {
+  if (numUserId) {
     query += ` AND fr.user_id = ?`;
-    params.push(userId);
+    params.push(numUserId);
   }
 
   query += ` ORDER BY p.last_name, p.first_name`;
@@ -450,12 +455,13 @@ export interface Professional extends Person {
   isPreferredProvider: boolean;
 }
 
-export function getProfessionals(userId?: number): Professional[] {
+export function getProfessionals(userId?: number | string): Professional[] {
   const db = getDatabase();
+  const numUserId = typeof userId === 'string' ? parseInt(userId.split('-').pop() || '1') : userId;
 
   // Use existing professionals table for now (simplified)
   let query = `
-    SELECT 
+    SELECT
       p.*,
       pt.name as professional_type_name,
       pt.code as professional_type_code
@@ -465,9 +471,9 @@ export function getProfessionals(userId?: number): Professional[] {
   `;
 
   const params: (number | string)[] = [];
-  if (userId) {
+  if (numUserId) {
     query += ` AND p.user_id = ?`;
-    params.push(userId);
+    params.push(numUserId);
   }
 
   query += ` ORDER BY p.name`;
@@ -559,12 +565,13 @@ export interface Trust {
   isActive: boolean;
 }
 
-export function getTrusts(userId?: number): Trust[] {
+export function getTrusts(userId?: number | string): Trust[] {
   const db = getDatabase();
+  const numUserId = typeof userId === 'string' ? parseInt(userId.split('-').pop() || '1') : userId;
 
   // Get trusts with basic information (simplified for current schema)
   let trustQuery = `
-    SELECT 
+    SELECT
       t.*,
       tt.name as trust_type_name,
       tt.code as trust_type_code
@@ -574,9 +581,9 @@ export function getTrusts(userId?: number): Trust[] {
   `;
 
   const params: (number | string)[] = [];
-  if (userId) {
+  if (numUserId) {
     trustQuery += ` AND t.created_by = ?`;
-    params.push(userId);
+    params.push(numUserId);
   }
 
   trustQuery += ` ORDER BY t.name`;
@@ -729,7 +736,7 @@ export function getTrusts(userId?: number): Trust[] {
   }));
 }
 
-export function getTrust(trustId: string): Trust | null {
+export function getTrust(trustId: string): CanonicalTrust | null {
   const db = getDatabase();
   const stmt = db.prepare(`
     SELECT
@@ -748,16 +755,15 @@ export function getTrust(trustId: string): Trust | null {
   return {
     id: trust.trust_id,
     name: trust.name,
-    type: trust.trust_type_code?.toLowerCase() as "revocable" | "irrevocable" | undefined,
-    status: "ACTIVE",
-    taxId: trust.tax_id || undefined,
+    type: (trust.trust_type_code?.toLowerCase() || "revocable") as CanonicalTrust["type"],
+    taxId: trust.tax_id || "",
     dateCreated: trust.date_created,
     grantor: trust.grantor,
-    purpose: trust.purpose || undefined,
+    purpose: trust.purpose || "",
     trustees: [],
     beneficiaries: [],
     notes: trust.purpose || undefined,
-    legalInfo: {},
+    isActive: trust.is_active === 1,
     created_by: trust.created_by,
   };
 }
@@ -777,11 +783,12 @@ export interface LegalRole {
   isActive: boolean;
 }
 
-export function getLegalRoles(userId?: number): LegalRole[] {
+export function getLegalRoles(userId?: number | string): LegalRole[] {
   const db = getDatabase();
+  const numUserId = typeof userId === 'string' ? parseInt(userId.split('-').pop() || '1') : userId;
 
   let query = `
-    SELECT 
+    SELECT
       lr.*,
       p.*,
       lrt.name as role_type_name,
@@ -793,9 +800,9 @@ export function getLegalRoles(userId?: number): LegalRole[] {
   `;
 
   const params: (number | string)[] = [];
-  if (userId) {
+  if (numUserId) {
     query += ` AND lr.user_id = ?`;
-    params.push(userId);
+    params.push(numUserId);
   }
 
   query += ` ORDER BY lr.document_type, lr.priority_order, p.last_name`;
@@ -855,11 +862,12 @@ export interface HealthcareDirective {
   isActive: boolean;
 }
 
-export function getHealthcareDirectives(userId?: number): HealthcareDirective[] {
+export function getHealthcareDirectives(userId?: number | string): HealthcareDirective[] {
   const db = getDatabase();
+  const numUserId = typeof userId === 'string' ? parseInt(userId.split('-').pop() || '1') : userId;
 
   let query = `
-    SELECT 
+    SELECT
       hd.*,
       hdt.name as directive_type_name,
       p_principal.person_id as principal_person_id,
@@ -883,9 +891,9 @@ export function getHealthcareDirectives(userId?: number): HealthcareDirective[] 
   `;
 
   const params: (number | string)[] = [];
-  if (userId) {
+  if (numUserId) {
     query += ` AND hd.created_by = ?`;
-    params.push(userId);
+    params.push(numUserId);
   }
 
   query += ` ORDER BY hd.date_created DESC`;
@@ -947,8 +955,9 @@ export function getHealthcareDirectives(userId?: number): HealthcareDirective[] 
 // BENEFICIARIES (STANDALONE)
 // =================================
 
-export function getBeneficiaries(userId?: number): Beneficiary[] {
+export function getBeneficiaries(userId?: number | string): Beneficiary[] {
   const db = getDatabase();
+  const numUserId = typeof userId === 'string' ? parseInt(userId.split('-').pop() || '1') : userId;
 
   let query = `
     SELECT DISTINCT
@@ -967,9 +976,9 @@ export function getBeneficiaries(userId?: number): Beneficiary[] {
   `;
 
   const params: (number | string)[] = [];
-  if (userId) {
+  if (numUserId) {
     query += ` AND t.created_by = ?`;
-    params.push(userId);
+    params.push(numUserId);
   }
 
   query += ` ORDER BY p.last_name, p.first_name`;
@@ -1012,10 +1021,11 @@ export function getBeneficiaries(userId?: number): Beneficiary[] {
 // EMERGENCY CONTACTS
 // =================================
 
-export function getEmergencyContacts(userId?: number): EmergencyContact[] {
+export function getEmergencyContacts(userId?: number | string): EmergencyContact[] {
   const db = getDatabase();
+  const numUserId = typeof userId === 'string' ? parseInt(userId.split('-').pop() || '1') : userId;
   let query = `
-    SELECT 
+    SELECT
       ec.*,
       fm.name as family_name,
       fm.email as family_email,
@@ -1026,9 +1036,9 @@ export function getEmergencyContacts(userId?: number): EmergencyContact[] {
   `;
 
   const params: (number | string)[] = [];
-  if (userId) {
+  if (numUserId) {
     query += " AND ec.user_id = ?";
-    params.push(userId);
+    params.push(numUserId);
   }
 
   query += " ORDER BY ec.priority ASC, ec.contact_name";
@@ -1065,19 +1075,20 @@ export function getEmergencyContacts(userId?: number): EmergencyContact[] {
 // ASSET MANAGEMENT (Essential for Compatibility)
 // =================================
 
-export function getAssets(userId?: number): AssetData[] {
+export function getAssets(userId?: number | string): AnyEnhancedAsset[] {
   const db = getDatabase();
+  const numUserId = typeof userId === 'string' ? parseInt(userId.split('-').pop() || '1') : userId;
   let query = `
-    SELECT 
+    SELECT
       a.*
     FROM assets a
     WHERE a.is_active = 1
   `;
 
   const params: (number | string)[] = [];
-  if (userId) {
+  if (numUserId) {
     query += " AND a.user_id = ?";
-    params.push(userId);
+    params.push(numUserId);
   }
 
   query += " ORDER BY a.name";
@@ -1085,95 +1096,17 @@ export function getAssets(userId?: number): AssetData[] {
   const stmt = db.prepare(query);
   const assets = stmt.all(...params) as DatabaseAsset[];
 
-  return assets.map((asset) => {
-    let ownership_details = null;
-    try {
-      if (typeof asset.ownership_details === "string") {
-        ownership_details = JSON.parse(asset.ownership_details);
-      } else {
-        ownership_details = asset.ownership_details;
-      }
-    } catch (e) {
-      console.error("Failed to parse ownership_details:", e);
-      ownership_details = null;
-    }
-
-    let asset_details = null;
-    try {
-      if (typeof asset.asset_details === "string") {
-        asset_details = JSON.parse(asset.asset_details);
-      } else {
-        asset_details = asset.asset_details;
-      }
-    } catch (e) {
-      console.error("Failed to parse asset_details:", e);
-      asset_details = null;
-    }
-
-    return {
-      id: asset.asset_id,
-      name: asset.name,
-      category: asset.category,
-      type: asset.type,
-      value: asset.value,
-      description: asset.description,
-      ownership_type: asset.ownership_type,
-      ownership_details,
-      asset_details,
-      isActive: asset.is_active === 1,
-      createdAt: asset.created_at,
-      updatedAt: asset.updated_at,
-    };
-  });
+  return assets.map(transformDatabaseAsset);
 }
 
-export function getAsset(assetId: string): AssetData | null {
+export function getAsset(assetId: string): AnyEnhancedAsset | null {
   const db = getDatabase();
   const stmt = db.prepare("SELECT * FROM assets WHERE asset_id = ? AND is_active = 1");
   const asset = stmt.get(assetId) as DatabaseAsset | undefined;
 
   if (!asset) return null;
 
-  // Transform the asset similar to getAssets
-  let ownership_details = null;
-  try {
-    if (typeof asset.ownership_details === "string") {
-      ownership_details = JSON.parse(asset.ownership_details);
-    } else {
-      ownership_details = asset.ownership_details;
-    }
-  } catch (e) {
-    console.error("Failed to parse ownership_details:", e);
-    ownership_details = null;
-  }
-
-  let asset_details = null;
-  try {
-    if (typeof asset.asset_details === "string") {
-      asset_details = JSON.parse(asset.asset_details);
-    } else {
-      asset_details = asset.asset_details;
-    }
-  } catch (e) {
-    console.error("Failed to parse asset_details:", e);
-    asset_details = null;
-  }
-
-  return {
-    id: asset.asset_id,
-    name: asset.name,
-    category: asset.category,
-    type: asset.type,
-    value: asset.value,
-    description: asset.description,
-    ownership_type: asset.ownership_type,
-    ownership_details,
-    asset_details,
-    isActive: asset.is_active === 1,
-    createdAt: asset.created_at,
-    updatedAt: asset.updated_at,
-    user_id: asset.user_id,
-  };
+  return transformDatabaseAsset(asset);
 }
 
 // Dashboard Stats Function
@@ -1190,15 +1123,15 @@ export function getDashboardStats(userId?: number | string): {
   const assets = getAssets(userIdNum);
   const trusts = getTrusts(userIdNum);
 
-  const totalNetWorth = assets.reduce((sum, asset) => sum + (asset.value || 0), 0);
+  const totalNetWorth = assets.reduce((sum: number, asset) => sum + (asset.value || 0), 0);
 
   const realEstateValue = assets
-    .filter((asset) => asset.category === "REAL_ESTATE")
-    .reduce((sum, asset) => sum + (asset.value || 0), 0);
+    .filter((asset) => asset.category === AssetCategory.REAL_ESTATE)
+    .reduce((sum: number, asset) => sum + (asset.value || 0), 0);
 
   const investmentValue = assets
-    .filter((asset) => asset.category === "FINANCIAL_ACCOUNT")
-    .reduce((sum, asset) => sum + (asset.value || 0), 0);
+    .filter((asset) => asset.category === AssetCategory.FINANCIAL_ACCOUNT)
+    .reduce((sum: number, asset) => sum + (asset.value || 0), 0);
 
   return {
     totalNetWorth,
@@ -1210,27 +1143,21 @@ export function getDashboardStats(userId?: number | string): {
 }
 
 // Recent Assets Function
-export function getRecentAssets(userId?: number | string, limit: number = 4): AssetData[] {
+export function getRecentAssets(userId?: number | string, limit: number = 4): AnyEnhancedAsset[] {
   const userIdNum =
     typeof userId === "string" ? parseInt(userId.split("-").pop() || "1") : userId || 1;
 
   const assets = getAssets(userIdNum);
 
-  // Sort by updatedAt or createdAt, then take the most recent
-  return assets
-    .sort((a, b) => {
-      const aDate = new Date(a.updatedAt || a.createdAt || 0);
-      const bDate = new Date(b.updatedAt || b.createdAt || 0);
-      return bDate.getTime() - aDate.getTime();
-    })
-    .slice(0, limit);
+  // Return most recent assets (already ordered by name from getAssets, take first N)
+  return assets.slice(0, limit);
 }
 
 // =================================
 // TRUST ASSETS
 // =================================
 
-export function getAssetsByTrust(trustId: string): AssetData[] {
+export function getAssetsByTrust(trustId: string): AnyEnhancedAsset[] {
   const db = getDatabase();
 
   // Get trust's internal ID
@@ -1254,46 +1181,7 @@ export function getAssetsByTrust(trustId: string): AssetData[] {
   const stmt = db.prepare(query);
   const assets = stmt.all(trust.id) as DatabaseAsset[];
 
-  return assets.map((asset) => {
-    let ownership_details = null;
-    try {
-      if (typeof asset.ownership_details === "string") {
-        ownership_details = JSON.parse(asset.ownership_details);
-      } else {
-        ownership_details = asset.ownership_details;
-      }
-    } catch (e) {
-      console.error("Failed to parse ownership_details:", e);
-      ownership_details = null;
-    }
-
-    let asset_details = null;
-    try {
-      if (typeof asset.asset_details === "string") {
-        asset_details = JSON.parse(asset.asset_details);
-      } else {
-        asset_details = asset.asset_details;
-      }
-    } catch (e) {
-      console.error("Failed to parse asset_details:", e);
-      asset_details = null;
-    }
-
-    return {
-      id: asset.asset_id,
-      name: asset.name,
-      category: asset.category,
-      type: asset.type,
-      value: asset.value,
-      description: asset.description,
-      ownership_type: asset.ownership_type,
-      ownership_details,
-      asset_details,
-      isActive: asset.is_active === 1,
-      createdAt: asset.created_at,
-      updatedAt: asset.updated_at,
-    };
-  });
+  return assets.map(transformDatabaseAsset);
 }
 
 // =================================
@@ -1567,6 +1455,138 @@ export function searchAll(options: SearchOptions): SearchResult[] {
 }
 
 // =================================
+// WILLS & POWERS OF ATTORNEY
+// =================================
+
+import type { Will, PowerOfAttorney } from "../types/documents";
+
+/**
+ * Get all wills for a user
+ * Note: No wills table exists yet - returns empty array as stub
+ */
+export function getWills(userId: number | string): Will[] {
+  void userId; // No wills table yet
+  return [];
+}
+
+/**
+ * Create a new will
+ * Note: No wills table exists yet - no-op stub
+ */
+export function createWill(_data: Record<string, unknown>): void {
+  // No wills table yet - stub
+}
+
+/**
+ * Get all powers of attorney for a user
+ * Note: No powers_of_attorney table exists yet - returns empty array as stub
+ */
+export function getPowersOfAttorney(userId: number | string): PowerOfAttorney[] {
+  void userId; // No powers_of_attorney table yet
+  return [];
+}
+
+/**
+ * Create a new power of attorney
+ * Note: No powers_of_attorney table exists yet - no-op stub
+ */
+export function createPowerOfAttorney(_data: Record<string, unknown>): void {
+  // No powers_of_attorney table yet - stub
+}
+
+/**
+ * Get family coordination metrics
+ * Computes metrics from existing family, professional, and emergency contact data
+ */
+export function getFamilyCoordinationMetrics(userId: number | string): {
+  totalFamilyMembers: number;
+  relationshipBreakdown: { relationship: string; count: number }[];
+  contactCoverage: { email: number; phone: number };
+  roleCoverage: { role: string; filled: boolean }[];
+  emergencyReadiness: {
+    totalContacts: number;
+    medicalAuthority: number;
+    decisionAuthority: number;
+    avgPriority: number;
+  };
+  coordinationScore: number;
+  recommendations: string[];
+} {
+  const members = getFamilyMembers(userId);
+  const contacts = getEmergencyContacts(userId);
+  const roles = getLegalRoles(userId);
+
+  const totalFamilyMembers = members.length;
+
+  // Relationship breakdown
+  const relationshipMap: Record<string, number> = {};
+  for (const m of members) {
+    const rel = m.relationship || "other";
+    relationshipMap[rel] = (relationshipMap[rel] || 0) + 1;
+  }
+  const relationshipBreakdown = Object.entries(relationshipMap).map(([relationship, count]) => ({
+    relationship,
+    count,
+  }));
+
+  // Contact coverage
+  let emailCount = 0;
+  let phoneCount = 0;
+  for (const m of members) {
+    if (m.contactInfo?.email) emailCount++;
+    if (m.contactInfo?.primaryPhone) phoneCount++;
+  }
+  const contactCoverage = {
+    email: totalFamilyMembers > 0 ? Math.round((emailCount / totalFamilyMembers) * 100) : 0,
+    phone: totalFamilyMembers > 0 ? Math.round((phoneCount / totalFamilyMembers) * 100) : 0,
+  };
+
+  // Role coverage
+  const roleTypes = ["executor", "trustee", "guardian", "healthcare_proxy", "power_of_attorney"];
+  const filledRoles = new Set(roles.map((r) => r.roleType.toLowerCase()));
+  const roleCoverage = roleTypes.map((role) => ({
+    role,
+    filled: filledRoles.has(role),
+  }));
+
+  // Emergency readiness
+  const totalContacts = contacts.length;
+  const emergencyReadiness = {
+    totalContacts,
+    medicalAuthority: 0,
+    decisionAuthority: 0,
+    avgPriority: 0,
+  };
+
+  // Coordination score (0-100)
+  let score = 0;
+  if (totalFamilyMembers > 0) score += 20;
+  if (contactCoverage.email > 50) score += 15;
+  if (contactCoverage.phone > 50) score += 15;
+  if (totalContacts > 0) score += 20;
+  if (roleCoverage.some((r) => r.filled)) score += 15;
+  if (roles.length >= 2) score += 15;
+
+  // Recommendations
+  const recommendations: string[] = [];
+  if (totalFamilyMembers === 0) recommendations.push("Add family members to begin coordination");
+  if (contactCoverage.email < 50) recommendations.push("Add email addresses for more family members");
+  if (contactCoverage.phone < 50) recommendations.push("Add phone numbers for more family members");
+  if (totalContacts === 0) recommendations.push("Add emergency contacts");
+  if (!roleCoverage.some((r) => r.filled)) recommendations.push("Assign key legal roles (executor, trustee, etc.)");
+
+  return {
+    totalFamilyMembers,
+    relationshipBreakdown,
+    contactCoverage,
+    roleCoverage,
+    emergencyReadiness,
+    coordinationScore: score,
+    recommendations,
+  };
+}
+
+// =================================
 // USER PROFILE MANAGEMENT
 // =================================
 
@@ -1597,8 +1617,10 @@ export interface UserProfile {
 /**
  * Get user profile by user ID
  */
-export function getUserProfile(userId: number): UserProfile | null {
+export function getUserProfile(userId: number | string): UserProfile | null {
   const db = getDatabase();
+
+  const numUserId = typeof userId === 'string' ? parseInt(userId.split('-').pop() || '1') : userId;
 
   try {
     const stmt = db.prepare(`
@@ -1626,7 +1648,7 @@ export function getUserProfile(userId: number): UserProfile | null {
       WHERE user_id = ? AND is_active = 1
     `);
 
-    const profile = stmt.get(userId) as DatabaseUserProfileRow | undefined;
+    const profile = stmt.get(numUserId) as DatabaseUserProfileRow | undefined;
 
     if (!profile) {
       return null;
@@ -1667,8 +1689,9 @@ export function getUserProfile(userId: number): UserProfile | null {
 /**
  * Update user profile
  */
-export function updateUserProfile(userId: number, data: UpdateUserProfileInput): void {
+export function updateUserProfile(userId: number | string, data: UpdateUserProfileInput): void {
   const db = getDatabase();
+  const numUserId = typeof userId === 'string' ? parseInt(userId.split('-').pop() || '1') : userId;
 
   try {
     // Build update query dynamically based on provided fields
@@ -1748,7 +1771,7 @@ export function updateUserProfile(userId: number, data: UpdateUserProfileInput):
       return;
     }
 
-    values.push(userId);
+    values.push(numUserId);
 
     const query = `
       UPDATE user_profiles

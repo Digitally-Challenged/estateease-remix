@@ -93,16 +93,10 @@ export async function loader({ request }: LoaderFunctionArgs) {
 }
 
 function FinancialAccountsContent() {
-  const {
-    financialAccounts,
-    accountsByType,
-    totalValue,
-    checkingTotal,
-    savingsTotal,
-    investmentTotal,
-    retirementTotal,
-    error,
-  } = useLoaderData<typeof loader>();
+  const data = useLoaderData<typeof loader>();
+  const financialAccounts = data.financialAccounts as unknown as AnyEnhancedAsset[];
+  const accountsByType = data.accountsByType as unknown as Record<string, AnyEnhancedAsset[]>;
+  const { totalValue, checkingTotal, savingsTotal, investmentTotal, retirementTotal, error } = data;
 
   if (error) {
     return (
@@ -141,7 +135,7 @@ function FinancialAccountsContent() {
     {
       key: "name",
       header: "Account Name",
-      render: (account) => (
+      render: (_value: unknown, account: AnyEnhancedAsset) => (
         <div className="flex items-center space-x-3">
           {(() => {
             const Icon = getAccountIcon(account);
@@ -159,26 +153,26 @@ function FinancialAccountsContent() {
     {
       key: "type",
       header: "Type",
-      render: (account) => (
+      render: (_value: unknown, account: AnyEnhancedAsset) => (
         <Badge variant="secondary">{(account as FinancialAccount)?.accountType || "Unknown"}</Badge>
       ),
     },
     {
       key: "institution",
       header: "Institution",
-      render: (account) => <span>{(account as FinancialAccount)?.institution || "—"}</span>,
+      render: (_value: unknown, account: AnyEnhancedAsset) => <span>{(account as FinancialAccount)?.institution || "—"}</span>,
     },
     {
       key: "value",
       header: "Balance",
-      render: (account) => (
+      render: (_value: unknown, account: AnyEnhancedAsset) => (
         <span className="font-medium">{formatCurrency(account?.value || 0)}</span>
       ),
     },
     {
       key: "actions",
       header: "Actions",
-      render: (account) => (
+      render: (_value: unknown, account: AnyEnhancedAsset) => (
         <Button size="sm" variant="ghost" asChild>
           <Link to={`/assets/${account?.id}/edit`}>Edit</Link>
         </Button>
@@ -324,10 +318,6 @@ function FinancialAccountsContent() {
             }
             columns={columns as unknown as Column<Record<string, unknown>>[]}
             sortable={true}
-            pagination={{
-              pageSize: 10,
-              showPagination: true,
-            }}
           />
         </CardContent>
       </Card>

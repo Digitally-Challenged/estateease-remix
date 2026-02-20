@@ -49,7 +49,10 @@ export async function action({ request }: ActionFunctionArgs) {
       isHealthcareProxy: formData.get("isHealthcareProxy") === "true",
     };
 
-    await createFamilyMember(familyData);
+    // The DAL's createFamilyMember accepts additional fields beyond the
+    // canonical FamilyMember type (email, phone, address, etc.)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    await createFamilyMember(familyData as any, request);
     return redirect("/family");
   } catch (error) {
     console.error("Error creating family member:", error);

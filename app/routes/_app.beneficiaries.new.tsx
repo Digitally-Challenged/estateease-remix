@@ -131,7 +131,7 @@ export default function NewBeneficiary() {
             </div>
 
             <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-              <FormField label="Percentage" description="Percentage of estate (0-100)">
+              <FormField label="Percentage" helperText="Percentage of estate (0-100)">
                 <Input
                   name="percentage"
                   type="number"
@@ -180,7 +180,7 @@ export default function NewBeneficiary() {
               </FormField>
             </div>
 
-            <FormField label="Notes" description="Additional notes or conditions">
+            <FormField label="Notes" helperText="Additional notes or conditions">
               <Textarea
                 name="notes"
                 value={formData.notes}

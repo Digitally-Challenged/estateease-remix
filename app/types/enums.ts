@@ -420,6 +420,10 @@ export enum FamilyRelationship {
   NIECE_NEPHEW = "NIECE_NEPHEW",
   /** Cousin */
   COUSIN = "COUSIN",
+  /** In-law relationship */
+  IN_LAW = "IN_LAW",
+  /** Step-relative relationship */
+  STEP_RELATIVE = "STEP_RELATIVE",
   /** Other family relationship */
   OTHER = "OTHER",
 }

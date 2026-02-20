@@ -101,15 +101,17 @@ function DataTableComponent<T extends Record<string, unknown>>({
     if (sortColumn && sortDirection) {
       filtered.sort((a, b) => {
         const aValue = sortColumn.includes(".")
-          ? sortColumn.split(".").reduce((obj, key) => obj?.[key], a as Record<string, unknown>)
+          ? sortColumn.split(".").reduce((obj: Record<string, unknown> | undefined, key: string) => obj?.[key] as Record<string, unknown> | undefined, a as Record<string, unknown>)
           : a[sortColumn];
         const bValue = sortColumn.includes(".")
-          ? sortColumn.split(".").reduce((obj, key) => obj?.[key], b as Record<string, unknown>)
+          ? sortColumn.split(".").reduce((obj: Record<string, unknown> | undefined, key: string) => obj?.[key] as Record<string, unknown> | undefined, b as Record<string, unknown>)
           : b[sortColumn];
 
         if (aValue === bValue) return 0;
+        if (aValue == null) return 1;
+        if (bValue == null) return -1;
 
-        const comparison = aValue < bValue ? -1 : 1;
+        const comparison = (aValue as string | number) < (bValue as string | number) ? -1 : 1;
         return sortDirection === "asc" ? comparison : -comparison;
       });
     }

@@ -2,7 +2,41 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { AssetForm } from "../../app/components/forms/asset-form";
-import { AssetCategory, OwnershipType } from "../../app/types/enums";
+import { AssetCategory, OwnershipType, PropertyType, FinancialAccountType } from "../../app/types/enums";
+import type { RealEstateAsset, FinancialAccount } from "../../app/types/assets";
+
+const defaultRealEstateAsset: RealEstateAsset = {
+  id: "test-id",
+  category: AssetCategory.REAL_ESTATE,
+  name: "",
+  value: 0,
+  description: "",
+  address: "",
+  propertyType: PropertyType.SINGLE_FAMILY,
+  mortgageBalance: 0,
+  monthlyRent: 0,
+  annualPropertyTax: 0,
+  annualInsurance: 0,
+  ownership: {
+    type: OwnershipType.INDIVIDUAL,
+    percentage: 100,
+  },
+};
+
+const defaultFinancialAsset: FinancialAccount = {
+  id: "test-id",
+  category: AssetCategory.FINANCIAL_ACCOUNT,
+  name: "",
+  value: 0,
+  description: "",
+  accountType: FinancialAccountType.CHECKING,
+  institution: "",
+  accountNumber: "",
+  ownership: {
+    type: OwnershipType.INDIVIDUAL,
+    percentage: 100,
+  },
+};
 
 describe("AssetForm", () => {
   const mockOnSubmit = vi.fn();
@@ -17,18 +51,7 @@ describe("AssetForm", () => {
       <AssetForm
         mode="create"
         trusts={[]}
-        asset={{
-          id: "test-id",
-          category: AssetCategory.REAL_ESTATE,
-          name: "",
-          value: 0,
-          description: "",
-          location: "",
-          ownership: {
-            type: OwnershipType.INDIVIDUAL,
-            percentage: 100,
-          },
-        }}
+        asset={defaultRealEstateAsset}
       />,
     );
 
@@ -44,18 +67,7 @@ describe("AssetForm", () => {
       <AssetForm
         mode="create"
         trusts={[]}
-        asset={{
-          id: "test-id",
-          category: AssetCategory.REAL_ESTATE,
-          name: "",
-          value: 0,
-          description: "",
-          location: "",
-          ownership: {
-            type: OwnershipType.INDIVIDUAL,
-            percentage: 100,
-          },
-        }}
+        asset={defaultRealEstateAsset}
       />,
     );
 
@@ -75,16 +87,11 @@ describe("AssetForm", () => {
         mode="create"
         trusts={[]}
         asset={{
-          id: "test-id",
-          category: AssetCategory.REAL_ESTATE,
+          ...defaultRealEstateAsset,
           name: "Test Property",
           value: 500000,
           description: "Primary residence",
-          location: "New York",
-          ownership: {
-            type: OwnershipType.INDIVIDUAL,
-            percentage: 100,
-          },
+          address: "New York",
         }}
       />,
     );
@@ -116,18 +123,7 @@ describe("AssetForm", () => {
       <AssetForm
         mode="create"
         trusts={[]}
-        asset={{
-          id: "test-id",
-          category: AssetCategory.REAL_ESTATE,
-          name: "",
-          value: 0,
-          description: "",
-          location: "",
-          ownership: {
-            type: OwnershipType.INDIVIDUAL,
-            percentage: 100,
-          },
-        }}
+        asset={defaultRealEstateAsset}
       />,
     );
 
@@ -142,18 +138,7 @@ describe("AssetForm", () => {
       <AssetForm
         mode="create"
         trusts={[]}
-        asset={{
-          id: "test-id",
-          category: AssetCategory.FINANCIAL_ACCOUNT,
-          name: "",
-          value: 0,
-          description: "",
-          location: "",
-          ownership: {
-            type: OwnershipType.INDIVIDUAL,
-            percentage: 100,
-          },
-        }}
+        asset={defaultFinancialAsset}
       />,
     );
 

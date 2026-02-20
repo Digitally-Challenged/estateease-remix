@@ -23,10 +23,10 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
     // Generate AI insights and analysis
     const analysisResult = await aiInsights.analyzeEstate({
-      assets,
-      trusts,
-      familyMembers,
-      professionals,
+      assets: assets as unknown as import("~/types").Asset[],
+      trusts: trusts as unknown as import("~/types/trusts").Trust[],
+      familyMembers: familyMembers as unknown as import("~/types/people").FamilyMember[],
+      professionals: professionals as unknown as import("~/types/people").Professional[],
     });
 
     return json({
@@ -65,8 +65,14 @@ export async function loader({ request }: LoaderFunctionArgs) {
 }
 
 export default function AIInsights() {
-  const { user, insights, predictiveModel, recommendations, riskAssessment, estateData, error } =
-    useLoaderData<typeof loader>();
+  const data = useLoaderData<typeof loader>();
+  const user = "user" in data ? data.user : undefined;
+  const insights = data.insights as import("~/lib/ai-insights").EstateInsight[];
+  const predictiveModel = data.predictiveModel as import("~/lib/ai-insights").PredictiveModel;
+  const recommendations = data.recommendations as import("~/lib/ai-insights").AIRecommendation[];
+  const riskAssessment = data.riskAssessment;
+  const estateData = "estateData" in data ? data.estateData : undefined;
+  const error = "error" in data ? data.error : undefined;
 
   const [isRefreshing, setIsRefreshing] = useState(false);
 

@@ -495,8 +495,8 @@ function BusinessAssetsContent() {
           </CardHeader>
           <CardContent>
             <DataTable
-              data={businessTypes.corporation.filter(Boolean) as AnyEnhancedAsset[]}
-              columns={columns}
+              data={businessTypes.corporation.filter(Boolean) as unknown as Record<string, unknown>[]}
+              columns={columns as unknown as Column<Record<string, unknown>>[]}
               sortable={true}
             />
           </CardContent>
@@ -513,8 +513,8 @@ function BusinessAssetsContent() {
           </CardHeader>
           <CardContent>
             <DataTable
-              data={businessTypes.llc.filter(Boolean) as AnyEnhancedAsset[]}
-              columns={columns}
+              data={businessTypes.llc.filter(Boolean) as unknown as Record<string, unknown>[]}
+              columns={columns as unknown as Column<Record<string, unknown>>[]}
               sortable={true}
             />
           </CardContent>
@@ -529,8 +529,8 @@ function BusinessAssetsContent() {
           </CardHeader>
           <CardContent>
             <DataTable
-              data={businessTypes.partnership.filter(Boolean) as AnyEnhancedAsset[]}
-              columns={columns}
+              data={businessTypes.partnership.filter(Boolean) as unknown as Record<string, unknown>[]}
+              columns={columns as unknown as Column<Record<string, unknown>>[]}
               sortable={true}
             />
           </CardContent>
@@ -577,8 +577,8 @@ function BusinessAssetsContent() {
           </CardHeader>
           <CardContent>
             <DataTable
-              data={businessAssets.filter(Boolean) as AnyEnhancedAsset[]}
-              columns={columns}
+              data={businessAssets.filter(Boolean) as unknown as Record<string, unknown>[]}
+              columns={columns as unknown as Column<Record<string, unknown>>[]}
               sortable={true}
             />
           </CardContent>

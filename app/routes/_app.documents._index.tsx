@@ -82,7 +82,7 @@ export default function DocumentsPage() {
           description="Upload your first document to get started"
         />
       ) : (
-        <DocumentList documents={documents} onDownload={handleDownload} showBulkActions={true} />
+        <DocumentList documents={documents as unknown as Parameters<typeof DocumentList>[0]["documents"]} onDownload={handleDownload} showBulkActions={true} />
       )}
 
       {/* Upload Modal */}

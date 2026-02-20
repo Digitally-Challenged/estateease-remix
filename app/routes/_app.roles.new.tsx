@@ -150,7 +150,7 @@ export default function NewRole() {
                 </Select>
               </FormField>
 
-              <FormField label="Person Name" required icon={<User className="h-4 w-4" />}>
+              <FormField label="Person Name" required>
                 <Input
                   name="personName"
                   value={formData.personName}
@@ -178,7 +178,7 @@ export default function NewRole() {
                 </div>
               </FormField>
 
-              <FormField label="Order of Precedence" description="1 = highest priority">
+              <FormField label="Order of Precedence" helperText="1 = highest priority">
                 <Input
                   name="orderOfPrecedence"
                   type="number"
@@ -203,7 +203,7 @@ export default function NewRole() {
 
             <FormField
               label="Specific Powers"
-              description="Comma-separated list of specific powers or responsibilities"
+              helperText="Comma-separated list of specific powers or responsibilities"
             >
               <Input
                 name="specificPowers"
@@ -274,7 +274,7 @@ export default function NewRole() {
                 />
               </FormField>
 
-              <FormField label="End Conditions" description="Conditions that terminate this role">
+              <FormField label="End Conditions" helperText="Conditions that terminate this role">
                 <Input
                   name="endConditions"
                   value={formData.endConditions}
@@ -286,7 +286,7 @@ export default function NewRole() {
 
             <FormField
               label="Notes"
-              description="Additional information about this role assignment"
+              helperText="Additional information about this role assignment"
             >
               <Textarea
                 name="notes"

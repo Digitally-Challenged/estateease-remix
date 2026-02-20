@@ -126,32 +126,37 @@ export default function PowersOfAttorney() {
         <CardContent>
           {poaRoles.length > 0 ? (
             <div className="space-y-4">
-              {poaRoles.map((role) => (
-                <div
-                  key={role.id}
-                  className="flex items-start justify-between rounded-lg border border-gray-200 p-4 dark:border-gray-700"
-                >
-                  <div>
-                    <div className="flex items-center space-x-2">
-                      <h3 className="font-medium text-gray-900 dark:text-gray-100">
-                        {role.personName}
-                      </h3>
-                      <Badge variant={role.isPrimary ? "default" : "secondary"}>
-                        {role.isPrimary ? "Primary" : "Successor"}
-                      </Badge>
-                    </div>
-                    <p className="mt-1 text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">
-                      Power of Attorney
-                    </p>
-                    {role.specificPowers && (
-                      <p className="mt-2 text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">
-                        Powers: {role.specificPowers}
+              {poaRoles.map((role) => {
+                const personName = role.assignee?.fullName || "Unknown";
+                const isPrimary = role.priorityOrder === 1;
+                const specificPowers = role.conditions;
+                return (
+                  <div
+                    key={role.id}
+                    className="flex items-start justify-between rounded-lg border border-gray-200 p-4 dark:border-gray-700"
+                  >
+                    <div>
+                      <div className="flex items-center space-x-2">
+                        <h3 className="font-medium text-gray-900 dark:text-gray-100">
+                          {personName}
+                        </h3>
+                        <Badge variant={isPrimary ? "default" : "secondary"}>
+                          {isPrimary ? "Primary" : "Successor"}
+                        </Badge>
+                      </div>
+                      <p className="mt-1 text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">
+                        Power of Attorney
                       </p>
-                    )}
+                      {specificPowers && (
+                        <p className="mt-2 text-sm text-gray-600 dark:text-gray-400 dark:text-gray-500">
+                          Powers: {specificPowers}
+                        </p>
+                      )}
+                    </div>
+                    <Shield className="h-5 w-5 text-gray-400 dark:text-gray-500" />
                   </div>
-                  <Shield className="h-5 w-5 text-gray-400 dark:text-gray-500" />
-                </div>
-              ))}
+                );
+              })}
             </div>
           ) : (
             <p className="text-gray-600 dark:text-gray-400 dark:text-gray-500">

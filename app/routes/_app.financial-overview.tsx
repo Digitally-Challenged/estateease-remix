@@ -39,7 +39,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const netWorth = calculateNetWorth(assets, []); // No liabilities in current schema
   const assetAllocation = calculateAssetAllocation(assets);
   const ownershipSummary = calculateOwnershipSummary(assets);
-  const trustValues = calculateTrustValues(trusts, assets);
+  const trustValues = calculateTrustValues(trusts as unknown as import("~/types/trusts").Trust[], assets as unknown as import("~/types").Asset[]);
   const estateTax = calculateEstateTax(netWorth);
   const cashFlow = calculateCashFlow(assets);
   const liquidity = calculateLiquidity(assets);

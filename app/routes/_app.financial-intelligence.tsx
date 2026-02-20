@@ -32,7 +32,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
         (asset) =>
           asset?.category === "FINANCIAL_ACCOUNT" &&
           ["CHECKING", "SAVINGS", "MONEY_MARKET", "INVESTMENT_BROKERAGE"].includes(
-            asset?.details?.accountType || "",
+            String(asset?.details?.accountType || ""),
           ),
       )
       .reduce((sum, asset) => sum + (asset?.value || 0), 0);
@@ -51,9 +51,9 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
     // Generate comprehensive financial analysis
     const dashboardData = FinancialDashboardGenerator.generateDashboardData(
-      assets,
-      trusts,
-      familyMembers,
+      assets as unknown as import("~/types").Asset[],
+      trusts as unknown as import("~/types/trusts").Trust[],
+      familyMembers as unknown as import("~/types/people").FamilyMember[],
       financialProfile,
     );
 
@@ -370,10 +370,10 @@ export default function FinancialIntelligence() {
 
   return (
     <FinancialDashboard
-      assets={data.assets}
-      trusts={data.trusts}
-      familyMembers={data.familyMembers}
-      dashboardData={data.dashboardData}
+      assets={data.assets as unknown as import("~/types").Asset[]}
+      trusts={data.trusts as unknown as import("~/types/trusts").Trust[]}
+      familyMembers={data.familyMembers as unknown as import("~/types/people").FamilyMember[]}
+      dashboardData={data.dashboardData as unknown as Parameters<typeof FinancialDashboard>[0]["dashboardData"]}
     />
   );
 }

@@ -34,7 +34,7 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
   }
 
   // AUTHORIZATION: Verify ownership
-  if (asset.user_id !== userId) {
+  if ((asset as unknown as { user_id?: number }).user_id !== userId) {
     throw json({ message: "Forbidden" }, { status: 403 });
   }
 
@@ -225,7 +225,7 @@ export default function EditAsset() {
 
   return (
     <div className="mx-auto max-w-4xl">
-      <AssetForm asset={asset} trusts={trusts} mode="edit" />
+      <AssetForm asset={asset} trusts={trusts as unknown as import("~/types/trusts").Trust[]} mode="edit" />
 
       {/* Delete button */}
       <form method="post" className="mt-6">
