@@ -95,20 +95,21 @@ export function Header({
         <div className="flex flex-1 items-center space-x-4">
           <button
             onClick={onMenuClick}
+            aria-label="Open navigation menu"
             className="rounded-md p-2 text-secondary-500 hover:bg-secondary-100 hover:text-secondary-900 lg:hidden"
           >
             <Menu className="h-6 w-6" />
           </button>
 
           {/* Page Title - Visible on desktop */}
-          <h1 className="hidden text-xl font-semibold text-secondary-900 lg:block">
+          <h1 className="hidden shrink-0 whitespace-nowrap text-xl font-semibold text-secondary-900 lg:block">
             {getPageTitle()}
           </h1>
 
           {/* Search Bar */}
           <SearchBar
             ref={searchBarRef}
-            className="max-w-lg flex-1"
+            className="min-w-[200px] max-w-lg flex-1"
             placeholder="Search assets, trusts, beneficiaries..."
             showQuickStats={false}
           />
@@ -141,7 +142,7 @@ export function Header({
           <div className="hidden h-6 w-px bg-secondary-200 md:block" />
 
           {/* Notifications */}
-          <button className="relative rounded-lg p-2 text-secondary-500 hover:bg-secondary-100 hover:text-secondary-900">
+          <button aria-label="Notifications" className="relative rounded-lg p-2 text-secondary-500 hover:bg-secondary-100 hover:text-secondary-900">
             <Bell className="h-5 w-5" />
             <span className="absolute right-1 top-1 h-2 w-2 rounded-full bg-error-500"></span>
           </button>

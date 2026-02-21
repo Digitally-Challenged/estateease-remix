@@ -1,4 +1,5 @@
 import { NavLink } from "@remix-run/react";
+import { useEffect, useRef } from "react";
 import BarChart3 from "lucide-react/dist/esm/icons/bar-chart-3";
 import Building2 from "lucide-react/dist/esm/icons/building-2";
 import Users from "lucide-react/dist/esm/icons/users";
@@ -145,6 +146,19 @@ export function Sidebar({ className, user }: SidebarProps) {
     role: user?.role || "Estate Owner",
   };
 
+  const navRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    if (navRef.current) {
+      const activeLink = navRef.current.querySelector('[aria-current="page"]');
+      if (activeLink) {
+        activeLink.scrollIntoView({ block: "nearest" });
+      } else {
+        navRef.current.scrollTop = 0;
+      }
+    }
+  }, []);
+
   return (
     <div
       className={cn("flex h-full w-64 flex-col bg-secondary-950", className)}
@@ -160,7 +174,7 @@ export function Sidebar({ className, user }: SidebarProps) {
       </div>
 
       {/* Navigation */}
-      <nav className="flex flex-1 flex-col overflow-y-auto px-2 py-2 lg:px-4 lg:py-4">
+      <nav ref={navRef} className="flex flex-1 flex-col overflow-y-auto px-2 py-2 lg:px-4 lg:py-4">
         <ul className="space-y-1">
           {navigation.map((item) => (
             <NavigationItem key={item.name} item={item} />
@@ -207,6 +221,7 @@ function NavigationItem({ item }: { item: NavItem }) {
               <li key={child.name}>
                 <NavLink
                   to={child.href}
+                  end={child.href === item.href}
                   className={({ isActive }) =>
                     cn(
                       "flex items-center gap-2 rounded-lg px-2 py-2 text-sm lg:px-3",

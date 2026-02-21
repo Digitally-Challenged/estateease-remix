@@ -6,6 +6,7 @@ import {
   formatPhoneNumber,
   formatCompactNumber,
   formatFileSize,
+  pluralize,
 } from "~/utils/format";
 
 describe("formatCurrency", () => {
@@ -135,5 +136,19 @@ describe("formatFileSize", () => {
 
   it("formats gigabytes", () => {
     expect(formatFileSize(1073741824)).toBe("1 GB");
+  });
+});
+
+describe("pluralize", () => {
+  it("returns singular for count of 1", () => {
+    expect(pluralize(1, "property", "properties")).toBe("1 property");
+  });
+
+  it("returns plural for count of 0", () => {
+    expect(pluralize(0, "property", "properties")).toBe("0 properties");
+  });
+
+  it("returns plural for count > 1", () => {
+    expect(pluralize(5, "property", "properties")).toBe("5 properties");
   });
 });

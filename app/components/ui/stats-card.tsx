@@ -66,7 +66,7 @@ export const StatsCard = React.forwardRef<HTMLDivElement, StatsCardProps>(
           <Icon className="h-4 w-4 text-gray-600" />
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold text-gray-900">{value}</div>
+          <div className="text-lg font-bold text-gray-900 lg:text-xl">{value}</div>
           {(description || trend) && (
             <p
               className={cn(
