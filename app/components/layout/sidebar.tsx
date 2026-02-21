@@ -1,4 +1,4 @@
-import { NavLink } from "@remix-run/react";
+import { NavLink, useLocation } from "@remix-run/react";
 import { useEffect, useRef } from "react";
 import BarChart3 from "lucide-react/dist/esm/icons/bar-chart-3";
 import Building2 from "lucide-react/dist/esm/icons/building-2";
@@ -147,6 +147,7 @@ export function Sidebar({ className, user }: SidebarProps) {
   };
 
   const navRef = useRef<HTMLElement>(null);
+  const location = useLocation();
 
   useEffect(() => {
     if (navRef.current) {
@@ -157,7 +158,7 @@ export function Sidebar({ className, user }: SidebarProps) {
         navRef.current.scrollTop = 0;
       }
     }
-  }, []);
+  }, [location.pathname]);
 
   return (
     <div

@@ -377,8 +377,8 @@ export default function RealEstateAssets() {
               <div className="space-y-3">
                 <div className="flex items-start space-x-3">
                   <div className="mt-2 h-2 w-2 rounded-full bg-blue-500" aria-hidden="true"></div>
-                  <span className="sr-only">Status: Protected</span>
                   <div>
+                    <span className="sr-only">Status: Protected — </span>
                     <p className="text-sm font-medium text-gray-900">
                       Trust Protection
                     </p>
@@ -390,8 +390,8 @@ export default function RealEstateAssets() {
                 </div>
                 <div className="flex items-start space-x-3">
                   <div className="mt-2 h-2 w-2 rounded-full bg-yellow-500" aria-hidden="true"></div>
-                  <span className="sr-only">Status: Needs attention</span>
                   <div>
+                    <span className="sr-only">Status: Needs attention — </span>
                     <p className="text-sm font-medium text-gray-900">
                       Joint Ownership Risk
                     </p>
@@ -402,8 +402,8 @@ export default function RealEstateAssets() {
                 </div>
                 <div className="flex items-start space-x-3">
                   <div className="mt-2 h-2 w-2 rounded-full bg-green-500" aria-hidden="true"></div>
-                  <span className="sr-only">Status: Good</span>
                   <div>
+                    <span className="sr-only">Status: Good — </span>
                     <p className="text-sm font-medium text-gray-900">
                       Income Diversification
                     </p>
