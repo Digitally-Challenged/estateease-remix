@@ -6,6 +6,10 @@ import path from "path";
 import { getDocument, logDocumentAccess } from "~/lib/dal-crud";
 import { getUserIdFromSession } from "~/lib/auth.server";
 
+function sanitizeFilename(filename: string): string {
+  return filename.replace(/["\r\n\\]/g, "_").replace(/[^\x20-\x7E]/g, "_");
+}
+
 const UPLOAD_DIR = path.join(process.cwd(), "data", "documents", "uploads");
 
 export async function loader({ params, request }: LoaderFunctionArgs) {
@@ -67,7 +71,7 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
     return new Response(fileStream as unknown as BodyInit, {
       headers: {
         "Content-Type": document.mime_type,
-        "Content-Disposition": `attachment; filename="${document.original_filename}"`,
+        "Content-Disposition": `attachment; filename="${sanitizeFilename(document.original_filename)}"`,
         "Cache-Control": "private, max-age=3600",
       },
     });

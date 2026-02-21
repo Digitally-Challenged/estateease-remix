@@ -1,5 +1,6 @@
 import { json, redirect, type ActionFunctionArgs } from "@remix-run/node";
 import { useActionData, useNavigate } from "@remix-run/react";
+import { z } from "zod";
 import { useState } from "react";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/forms/input";
@@ -13,25 +14,44 @@ import Phone from "lucide-react/dist/esm/icons/phone";
 import Mail from "lucide-react/dist/esm/icons/mail";
 import { FamilyRelationship } from "~/types/enums";
 
+const emergencyContactSchema = z.object({
+  name: z.string().min(1, "Name is required").max(200),
+  relationship: z.string().min(1, "Relationship is required"),
+  primaryPhone: z.string().min(1, "Phone is required").max(20),
+  secondaryPhone: z.string().max(20).optional().default(""),
+  email: z.string().email("Invalid email").optional().or(z.literal("")),
+  contactType: z.string().optional().default("emergency"),
+  priority: z.coerce.number().min(1).optional().default(1),
+  medicalAuthority: z.string().optional(),
+  canMakeDecisions: z.string().optional(),
+  notes: z.string().optional().default(""),
+});
+
 export async function action({ request }: ActionFunctionArgs) {
   const formData = await request.formData();
-  const data = {
-    name: formData.get("name") as string,
-    relationship: formData.get("relationship") as string,
-    primaryPhone: formData.get("primaryPhone") as string,
-    secondaryPhone: (formData.get("secondaryPhone") as string) || undefined,
-    email: (formData.get("email") as string) || undefined,
-    contactType: formData.get("contactType") as string,
-    priority: Number(formData.get("priority")),
-    medicalAuthority: formData.get("medicalAuthority") === "true",
-    canMakeDecisions: formData.get("canMakeDecisions") === "true",
-    notes: (formData.get("notes") as string) || undefined,
-  };
 
-  // Basic validation
-  if (!data.name || !data.relationship || !data.primaryPhone) {
-    return json({ error: "Name, relationship, and primary phone are required" }, { status: 400 });
+  const rawData = Object.fromEntries(formData);
+  const result = emergencyContactSchema.safeParse(rawData);
+  if (!result.success) {
+    return json(
+      { error: "Validation failed", fieldErrors: result.error.flatten().fieldErrors },
+      { status: 400 },
+    );
   }
+  const validated = result.data;
+
+  const data = {
+    name: validated.name,
+    relationship: validated.relationship,
+    primaryPhone: validated.primaryPhone,
+    secondaryPhone: validated.secondaryPhone || undefined,
+    email: validated.email || undefined,
+    contactType: validated.contactType,
+    priority: validated.priority,
+    medicalAuthority: validated.medicalAuthority === "true",
+    canMakeDecisions: validated.canMakeDecisions === "true",
+    notes: validated.notes || undefined,
+  };
 
   try {
     // TODO: Implement emergency contact creation in DAL

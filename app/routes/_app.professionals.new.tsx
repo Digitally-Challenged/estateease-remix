@@ -1,5 +1,6 @@
 import { json, redirect, type ActionFunctionArgs } from "@remix-run/node";
 import { useActionData, useNavigate } from "@remix-run/react";
+import { z } from "zod";
 import { useState } from "react";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/forms/input";
@@ -15,33 +16,55 @@ import MapPin from "lucide-react/dist/esm/icons/map-pin";
 import Briefcase from "lucide-react/dist/esm/icons/briefcase";
 import { US_STATES } from "~/types/enums";
 
+const professionalSchema = z.object({
+  name: z.string().min(1, "Name is required").max(200),
+  type: z.string().min(1, "Type is required"),
+  firm: z.string().optional().default(""),
+  title: z.string().optional().default(""),
+  email: z.string().email("Invalid email").optional().or(z.literal("")),
+  primaryPhone: z.string().max(20).optional().default(""),
+  secondaryPhone: z.string().max(20).optional().default(""),
+  street1: z.string().optional().default(""),
+  city: z.string().optional().default(""),
+  state: z.string().optional().default(""),
+  zipCode: z.string().optional().default(""),
+  specializations: z.string().optional().default(""),
+  notes: z.string().optional().default(""),
+});
+
 export async function action({ request }: ActionFunctionArgs) {
   const formData = await request.formData();
+
+  const rawData = Object.fromEntries(formData);
+  const result = professionalSchema.safeParse(rawData);
+  if (!result.success) {
+    return json(
+      { error: "Validation failed", fieldErrors: result.error.flatten().fieldErrors },
+      { status: 400 },
+    );
+  }
+  const validated = result.data;
+
   const data = {
-    name: formData.get("name") as string,
-    type: formData.get("type") as string,
-    firm: (formData.get("firm") as string) || undefined,
-    title: (formData.get("title") as string) || undefined,
-    email: (formData.get("email") as string) || undefined,
-    primaryPhone: (formData.get("primaryPhone") as string) || undefined,
-    secondaryPhone: (formData.get("secondaryPhone") as string) || undefined,
+    name: validated.name,
+    type: validated.type,
+    firm: validated.firm || undefined,
+    title: validated.title || undefined,
+    email: validated.email || undefined,
+    primaryPhone: validated.primaryPhone || undefined,
+    secondaryPhone: validated.secondaryPhone || undefined,
     address: {
-      street1: (formData.get("street1") as string) || undefined,
-      city: (formData.get("city") as string) || undefined,
-      state: (formData.get("state") as string) || undefined,
-      zipCode: (formData.get("zipCode") as string) || undefined,
+      street1: validated.street1 || undefined,
+      city: validated.city || undefined,
+      state: validated.state || undefined,
+      zipCode: validated.zipCode || undefined,
     },
-    specializations: ((formData.get("specializations") as string) || "")
+    specializations: (validated.specializations || "")
       .split(",")
       .map((s) => s.trim())
       .filter(Boolean),
-    notes: (formData.get("notes") as string) || undefined,
+    notes: validated.notes || undefined,
   };
-
-  // Basic validation
-  if (!data.name || !data.type) {
-    return json({ error: "Name and professional type are required" }, { status: 400 });
-  }
 
   try {
     // TODO: Implement professional creation in DAL

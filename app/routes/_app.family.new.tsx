@@ -1,6 +1,7 @@
 import type { ActionFunctionArgs } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import { Form, useActionData, useNavigate } from "@remix-run/react";
+import { z } from "zod";
 import { Button } from "~/components/ui/button";
 import { Card } from "~/components/ui/card";
 import { Input } from "~/components/ui/forms/input";
@@ -19,34 +20,63 @@ import Heart from "lucide-react/dist/esm/icons/heart";
 import Shield from "lucide-react/dist/esm/icons/shield";
 import { useState } from "react";
 
+const familyMemberSchema = z.object({
+  name: z.string().min(1, "Name is required").max(200),
+  relationship: z.string().min(1, "Relationship is required"),
+  dateOfBirth: z.string().optional().default(""),
+  email: z.string().email("Invalid email").optional().or(z.literal("")),
+  phone: z.string().max(20).optional().default(""),
+  address: z.string().optional().default(""),
+  city: z.string().optional().default(""),
+  state: z.string().optional().default(""),
+  zipCode: z.string().optional().default(""),
+  notes: z.string().optional().default(""),
+  isEmergencyContact: z.string().optional(),
+  isBeneficiary: z.string().optional(),
+  isTrustee: z.string().optional(),
+  isExecutor: z.string().optional(),
+  isPowerOfAttorney: z.string().optional(),
+  isHealthcareProxy: z.string().optional(),
+});
+
 interface ActionData {
   error?: string;
-  fieldErrors?: Record<string, string>;
+  fieldErrors?: Record<string, string[]>;
 }
 
 export async function action({ request }: ActionFunctionArgs) {
   const user = await requireUser(request);
   const formData = await request.formData();
 
+  const rawData = Object.fromEntries(formData);
+  const result = familyMemberSchema.safeParse(rawData);
+  if (!result.success) {
+    return json(
+      { error: "Validation failed", fieldErrors: result.error.flatten().fieldErrors },
+      { status: 400 },
+    );
+  }
+  const data = result.data;
+
   try {
     const familyData = {
       userId: user.id,
-      name: formData.get("name") as string,
-      relationship: formData.get("relationship") as FamilyRelationship,
-      dateOfBirth: (formData.get("dateOfBirth") as string) || null,
-      email: (formData.get("email") as string) || null,
-      phone: (formData.get("phone") as string) || null,
-      address: (formData.get("address") as string) || null,
-      city: (formData.get("city") as string) || null,
-      state: (formData.get("state") as string) || null,
-      zipCode: (formData.get("zipCode") as string) || null,
-      notes: (formData.get("notes") as string) || null,
-      isEmergencyContact: formData.get("isEmergencyContact") === "true",
-      isBeneficiary: formData.get("isBeneficiary") === "true",
-      isTrustee: formData.get("isTrustee") === "true",
-      isExecutor: formData.get("isExecutor") === "true",
-      isPowerOfAttorney: formData.get("isPowerOfAttorney") === "true",
-      isHealthcareProxy: formData.get("isHealthcareProxy") === "true",
+      name: data.name,
+      relationship: data.relationship as FamilyRelationship,
+      dateOfBirth: data.dateOfBirth || null,
+      email: data.email || null,
+      phone: data.phone || null,
+      address: data.address || null,
+      city: data.city || null,
+      state: data.state || null,
+      zipCode: data.zipCode || null,
+      notes: data.notes || null,
+      isEmergencyContact: data.isEmergencyContact === "true",
+      isBeneficiary: data.isBeneficiary === "true",
+      isTrustee: data.isTrustee === "true",
+      isExecutor: data.isExecutor === "true",
+      isPowerOfAttorney: data.isPowerOfAttorney === "true",
+      isHealthcareProxy: data.isHealthcareProxy === "true",
     };
 
     // The DAL's createFamilyMember accepts additional fields beyond the

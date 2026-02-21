@@ -1,5 +1,6 @@
 import { json, redirect, type ActionFunctionArgs } from "@remix-run/node";
 import { useActionData, useNavigate } from "@remix-run/react";
+import { z } from "zod";
 import { useState } from "react";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/forms/input";
@@ -11,25 +12,36 @@ import X from "lucide-react/dist/esm/icons/x";
 import Save from "lucide-react/dist/esm/icons/save";
 import { FamilyRelationship } from "~/types/enums";
 
+const beneficiarySchema = z.object({
+  name: z.string().min(1, "Name is required").max(200),
+  relationship: z.string().min(1, "Relationship is required"),
+  percentage: z.coerce.number().min(0).max(100).optional().default(0),
+  isPrimary: z.string().optional(),
+  isContingent: z.string().optional(),
+  notes: z.string().optional().default(""),
+});
+
 export async function action({ request }: ActionFunctionArgs) {
   const formData = await request.formData();
+
+  const rawData = Object.fromEntries(formData);
+  const result = beneficiarySchema.safeParse(rawData);
+  if (!result.success) {
+    return json(
+      { error: "Validation failed", fieldErrors: result.error.flatten().fieldErrors },
+      { status: 400 },
+    );
+  }
+  const validated = result.data;
+
   const data = {
-    name: formData.get("name") as string,
-    relationship: formData.get("relationship") as string,
-    percentage: Number(formData.get("percentage")),
-    isPrimary: formData.get("isPrimary") === "true",
-    isContingent: formData.get("isContingent") === "true",
-    notes: (formData.get("notes") as string) || undefined,
+    name: validated.name,
+    relationship: validated.relationship,
+    percentage: validated.percentage,
+    isPrimary: validated.isPrimary === "true",
+    isContingent: validated.isContingent === "true",
+    notes: validated.notes || undefined,
   };
-
-  // Basic validation
-  if (!data.name || !data.relationship) {
-    return json({ error: "Name and relationship are required" }, { status: 400 });
-  }
-
-  if (data.percentage < 0 || data.percentage > 100) {
-    return json({ error: "Percentage must be between 0 and 100" }, { status: 400 });
-  }
 
   try {
     // TODO: Implement beneficiary creation in DAL
