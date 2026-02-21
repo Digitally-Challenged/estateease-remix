@@ -60,22 +60,11 @@ export function initializeTables() {
 
   try {
     // Read and execute the SQLite schema
-    const schemaPath = path.join(__dirname, "../db/schema/sqlite-schema.sql");
+    const schemaPath = path.join(projectRoot, "app/data/sqlite-schema.sql");
     const schema = fs.readFileSync(schemaPath, "utf-8");
 
-    // Split the schema by statements and execute each one
-    const statements = schema
-      .split(";")
-      .map((stmt) => stmt.trim())
-      .filter((stmt) => stmt.length > 0 && !stmt.startsWith("--"));
-
-    db.transaction(() => {
-      for (const statement of statements) {
-        if (statement.trim()) {
-          db.exec(statement + ";");
-        }
-      }
-    })();
+    // Execute the entire schema at once
+    db.exec(schema);
   } catch (error) {
     console.error("Failed to initialize tables:", error);
     throw error;
@@ -88,22 +77,11 @@ export function seedDatabase() {
 
   try {
     // Read and execute the seed data
-    const seedPath = path.join(__dirname, "../db/data-migrations/sqlite-seed-data.sql");
+    const seedPath = path.join(projectRoot, "app/data/sqlite-seed-data.sql");
     const seedData = fs.readFileSync(seedPath, "utf-8");
 
-    // Split and execute seed statements
-    const statements = seedData
-      .split(";")
-      .map((stmt) => stmt.trim())
-      .filter((stmt) => stmt.length > 0 && !stmt.startsWith("--"));
-
-    db.transaction(() => {
-      for (const statement of statements) {
-        if (statement.trim()) {
-          db.exec(statement + ";");
-        }
-      }
-    })();
+    // Execute the entire seed script at once
+    db.exec(seedData);
   } catch (error) {
     console.error("Failed to seed database:", error);
     throw error;
