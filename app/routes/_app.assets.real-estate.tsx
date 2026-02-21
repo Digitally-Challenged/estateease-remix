@@ -1,5 +1,5 @@
 import { json, type LoaderFunctionArgs } from "@remix-run/node";
-import { useLoaderData } from "@remix-run/react";
+import { Link, useLoaderData } from "@remix-run/react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "~/components/ui/card";
 import { Badge } from "~/components/ui/badge";
 import Building2 from "lucide-react/dist/esm/icons/building-2";
@@ -7,6 +7,8 @@ import DollarSign from "lucide-react/dist/esm/icons/dollar-sign";
 import MapPin from "lucide-react/dist/esm/icons/map-pin";
 import TrendingUp from "lucide-react/dist/esm/icons/trending-up";
 import AlertCircle from "lucide-react/dist/esm/icons/alert-circle";
+import Plus from "lucide-react/dist/esm/icons/plus";
+import Pencil from "lucide-react/dist/esm/icons/pencil";
 import { AssetCategory } from "~/types/enums";
 import { getAssets } from "~/lib/dal";
 import { formatCurrency, formatDate, pluralize } from "~/utils/format";
@@ -80,13 +82,22 @@ export default function RealEstateAssets() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div>
-        <h1 className="text-3xl font-bold text-gray-900">
-          Real Estate Portfolio
-        </h1>
-        <p className="text-gray-600">
-          Comprehensive overview of all real estate holdings and their ownership structures
-        </p>
+      <div className="flex items-start justify-between">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900">
+            Real Estate Portfolio
+          </h1>
+          <p className="text-gray-600">
+            Comprehensive overview of all real estate holdings and their ownership structures
+          </p>
+        </div>
+        <Link
+          to="/assets/new"
+          className="inline-flex shrink-0 items-center gap-2 rounded-lg bg-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-primary-700"
+        >
+          <Plus className="h-4 w-4" />
+          Add Property
+        </Link>
       </div>
 
       {/* Portfolio Summary */}
@@ -183,15 +194,24 @@ export default function RealEstateAssets() {
                     )}
                   </div>
                   <div className="flex flex-col items-end space-y-2">
-                    <div className="text-right">
-                      <div className="text-2xl font-bold text-gray-900">
-                        {formatCurrency(asset.value)}
-                      </div>
+                    <div className="flex items-start gap-2">
+                      <div className="text-right">
+                        <div className="text-2xl font-bold text-gray-900">
+                          {formatCurrency(asset.value)}
+                        </div>
                       {asset.propertyType && (
                         <div className="text-sm capitalize text-gray-600">
                           {asset.propertyType.replace(/_/g, " ").toLowerCase()}
                         </div>
                       )}
+                      </div>
+                      <Link
+                        to={`/assets/${asset.id}/edit`}
+                        className="rounded-md p-1.5 text-gray-400 hover:bg-gray-100 hover:text-gray-600"
+                        aria-label={`Edit ${asset.name}`}
+                      >
+                        <Pencil className="h-4 w-4" />
+                      </Link>
                     </div>
                     <Badge className={ownership.color}>{ownership.type}</Badge>
                   </div>

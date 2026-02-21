@@ -142,9 +142,8 @@ export function Header({
           <div className="hidden h-6 w-px bg-secondary-200 md:block" />
 
           {/* Notifications */}
-          <button aria-label="Notifications (1 unread)" className="relative rounded-lg p-2 text-secondary-500 hover:bg-secondary-100 hover:text-secondary-900">
+          <button aria-label="Notifications" className="relative rounded-lg p-2 text-secondary-500 hover:bg-secondary-100 hover:text-secondary-900">
             <Bell className="h-5 w-5" />
-            <span className="absolute right-1 top-1 h-2 w-2 rounded-full bg-error-500"></span>
           </button>
 
           {/* User avatar */}
