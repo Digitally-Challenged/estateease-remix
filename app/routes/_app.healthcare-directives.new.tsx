@@ -10,7 +10,8 @@ import { Card, CardHeader, CardTitle, CardContent } from "~/components/ui/card";
 import X from "lucide-react/dist/esm/icons/x";
 import Save from "lucide-react/dist/esm/icons/save";
 import Heart from "lucide-react/dist/esm/icons/heart";
-import User from "lucide-react/dist/esm/icons/user";
+import { createHealthcareDirective } from "~/lib/dal";
+import { getUserId } from "~/lib/auth.server";
 
 export async function action({ request }: ActionFunctionArgs) {
   const formData = await request.formData();
@@ -34,10 +35,10 @@ export async function action({ request }: ActionFunctionArgs) {
   }
 
   try {
-    // TODO: Implement healthcare directive creation in DAL
-    // const directiveId = await createHealthcareDirective(data);
+    const userId = await getUserId(request);
+    createHealthcareDirective(data, userId);
 
-    return redirect("/family");
+    return redirect("/healthcare-directives");
   } catch (error) {
     console.error("Error creating healthcare directive:", error);
     return json({ error: "Failed to create healthcare directive" }, { status: 500 });
@@ -98,7 +99,7 @@ export default function NewHealthcareDirective() {
   };
 
   const handleCancel = () => {
-    navigate("/family");
+    navigate("/healthcare-directives");
   };
 
   return (

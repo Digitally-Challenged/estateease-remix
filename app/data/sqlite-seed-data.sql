@@ -34,7 +34,10 @@ INSERT OR IGNORE INTO legal_role_types (code, name, description) VALUES
 
 INSERT OR IGNORE INTO healthcare_directive_types (code, name, description) VALUES
 ('healthcare_proxy', 'Healthcare Proxy', 'Makes medical decisions when patient cannot'),
-('living_will', 'Living Will', 'Documents end-of-life care preferences');
+('living_will', 'Living Will', 'Documents end-of-life care preferences'),
+('advance_directive', 'Advance Directive', 'Comprehensive advance healthcare directive'),
+('dnr', 'Do Not Resuscitate', 'Do not resuscitate order'),
+('polst', 'POLST', 'Physician Orders for Life-Sustaining Treatment');
 
 INSERT OR IGNORE INTO professional_types (code, name, description) VALUES
 ('estate_attorney', 'Estate Planning Attorney', 'Legal counsel for estate planning'),
@@ -1418,6 +1421,102 @@ INSERT OR IGNORE INTO assets (
     '{"owner": "Nicholas Lynn Coleman"}',
     '{"policyType": "DISABILITY", "insurer": "Northwestern Mutual", "policyNumber": "****4309", "monthlyBenefit": 5201}',
     'Disability insurance - monthly benefit amount'
+);
+
+-- =============================================
+-- WILLS
+-- =============================================
+
+INSERT OR IGNORE INTO wills (
+    will_id, user_id, document_name, testator_name,
+    date_created, date_signed, status,
+    executor_primary, executor_secondary,
+    witness1_name, witness2_name, notary_name, notary_state,
+    residuary_clause, revokes_prior, attorney_name, law_firm, notes
+) VALUES
+(
+    'will-nick-001',
+    (SELECT id FROM users WHERE external_id = 'user-nick-001'),
+    'Last Will and Testament of Nicholas Lynn Coleman',
+    'Nicholas Lynn Coleman',
+    '2024-01-15', '2024-01-15', 'EXECUTED',
+    'Kelsey Fey Coleman', 'Kit Coleman',
+    'Witness One', 'Witness Two', 'Notary Public', 'AR',
+    'All remaining assets to be distributed per trust provisions',
+    1, 'Estate Planning Attorney', 'Estate Law Firm',
+    'Executed alongside trust documents. Pour-over will directing assets to trusts.'
+),
+(
+    'will-kelsey-001',
+    (SELECT id FROM users WHERE external_id = 'user-kelsey-001'),
+    'Last Will and Testament of Kelsey Fey Coleman',
+    'Kelsey Fey Coleman',
+    '2024-01-15', '2024-01-15', 'EXECUTED',
+    'Nicholas Lynn Coleman', 'Yvonne Louise Westfall',
+    'Witness One', 'Witness Two', 'Notary Public', 'AR',
+    'All remaining assets to be distributed per trust provisions',
+    1, 'Estate Planning Attorney', 'Estate Law Firm',
+    'Executed alongside trust documents. Pour-over will directing assets to trusts.'
+);
+
+-- =============================================
+-- POWERS OF ATTORNEY
+-- =============================================
+
+INSERT OR IGNORE INTO powers_of_attorney (
+    poa_id, user_id, document_name, type,
+    principal_name, agent_primary, agent_secondary,
+    effective_date, durable, status,
+    financial_powers, real_estate_powers, tax_powers,
+    date_signed, attorney_name, law_firm, notes
+) VALUES
+(
+    'poa-nick-fin-001',
+    (SELECT id FROM users WHERE external_id = 'user-nick-001'),
+    'Durable Financial Power of Attorney - Nick Coleman',
+    'FINANCIAL',
+    'Nicholas Lynn Coleman', 'Kelsey Fey Coleman', 'Kit Coleman',
+    '2024-01-15', 1, 'ACTIVE',
+    'Full authority over financial accounts and investments',
+    'Full authority over real estate transactions',
+    'Full authority to file tax returns and handle tax matters',
+    '2024-01-15', 'Estate Planning Attorney', 'Estate Law Firm',
+    'Durable financial POA effective immediately'
+),
+(
+    'poa-nick-hc-001',
+    (SELECT id FROM users WHERE external_id = 'user-nick-001'),
+    'Healthcare Power of Attorney - Nick Coleman',
+    'HEALTHCARE',
+    'Nicholas Lynn Coleman', 'Kelsey Fey Coleman', 'Kit Coleman',
+    '2024-01-15', 1, 'ACTIVE',
+    null, null, null,
+    '2024-01-15', 'Estate Planning Attorney', 'Estate Law Firm',
+    'Healthcare POA - supplements healthcare directives'
+),
+(
+    'poa-kelsey-fin-001',
+    (SELECT id FROM users WHERE external_id = 'user-kelsey-001'),
+    'Durable Financial Power of Attorney - Kelsey Coleman',
+    'FINANCIAL',
+    'Kelsey Fey Coleman', 'Nicholas Lynn Coleman', 'Yvonne Louise Westfall',
+    '2024-01-15', 1, 'ACTIVE',
+    'Full authority over financial accounts and investments',
+    'Full authority over real estate transactions',
+    'Full authority to file tax returns and handle tax matters',
+    '2024-01-15', 'Estate Planning Attorney', 'Estate Law Firm',
+    'Durable financial POA effective immediately'
+),
+(
+    'poa-kelsey-hc-001',
+    (SELECT id FROM users WHERE external_id = 'user-kelsey-001'),
+    'Healthcare Power of Attorney - Kelsey Coleman',
+    'HEALTHCARE',
+    'Kelsey Fey Coleman', 'Nicholas Lynn Coleman', 'Yvonne Louise Westfall',
+    '2024-01-15', 1, 'ACTIVE',
+    null, null, null,
+    '2024-01-15', 'Estate Planning Attorney', 'Estate Law Firm',
+    'Healthcare POA - supplements healthcare directives'
 );
 
 -- =============================================

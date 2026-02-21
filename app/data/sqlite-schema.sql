@@ -326,6 +326,81 @@ CREATE TABLE IF NOT EXISTS assets (
 );
 
 -- =============================================
+-- WILLS & POWERS OF ATTORNEY
+-- =============================================
+
+-- Wills
+CREATE TABLE IF NOT EXISTS wills (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    will_id TEXT NOT NULL UNIQUE,
+    user_id INTEGER NOT NULL,
+    document_name TEXT NOT NULL,
+    testator_name TEXT NOT NULL,
+    date_created TEXT NOT NULL DEFAULT (datetime('now')),
+    date_signed TEXT,
+    status TEXT NOT NULL DEFAULT 'DRAFT', -- DRAFT, SIGNED, EXECUTED, REVOKED
+    executor_primary TEXT,
+    executor_secondary TEXT,
+    witness1_name TEXT,
+    witness2_name TEXT,
+    notary_name TEXT,
+    notary_state TEXT,
+    specific_bequests TEXT, -- JSON array
+    residuary_clause TEXT,
+    guardian_nominations TEXT, -- JSON
+    funeral_wishes TEXT,
+    other_provisions TEXT,
+    revokes_prior INTEGER NOT NULL DEFAULT 1,
+    codicil_count INTEGER NOT NULL DEFAULT 0,
+    attorney_name TEXT,
+    law_firm TEXT,
+    notes TEXT,
+    is_active INTEGER NOT NULL DEFAULT 1,
+    created_at TEXT NOT NULL DEFAULT (datetime('now')),
+    updated_at TEXT NOT NULL DEFAULT (datetime('now')),
+    FOREIGN KEY (user_id) REFERENCES users(id)
+);
+
+-- Powers of Attorney
+CREATE TABLE IF NOT EXISTS powers_of_attorney (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    poa_id TEXT NOT NULL UNIQUE,
+    user_id INTEGER NOT NULL,
+    document_name TEXT NOT NULL,
+    type TEXT NOT NULL, -- FINANCIAL, HEALTHCARE, GENERAL, LIMITED
+    principal_name TEXT NOT NULL,
+    agent_primary TEXT NOT NULL,
+    agent_secondary TEXT,
+    effective_date TEXT,
+    termination_date TEXT,
+    durable INTEGER NOT NULL DEFAULT 1,
+    spring_condition TEXT,
+    powers_granted TEXT,
+    limitations TEXT,
+    healthcare_powers TEXT,
+    financial_powers TEXT,
+    real_estate_powers TEXT,
+    business_powers TEXT,
+    tax_powers TEXT,
+    gift_powers TEXT,
+    trust_powers TEXT,
+    special_instructions TEXT,
+    witness1_name TEXT,
+    witness2_name TEXT,
+    notary_name TEXT,
+    notary_state TEXT,
+    date_signed TEXT,
+    status TEXT NOT NULL DEFAULT 'DRAFT', -- DRAFT, ACTIVE, REVOKED, EXPIRED
+    attorney_name TEXT,
+    law_firm TEXT,
+    notes TEXT,
+    is_active INTEGER NOT NULL DEFAULT 1,
+    created_at TEXT NOT NULL DEFAULT (datetime('now')),
+    updated_at TEXT NOT NULL DEFAULT (datetime('now')),
+    FOREIGN KEY (user_id) REFERENCES users(id)
+);
+
+-- =============================================
 -- AUDIT AND TRACKING
 -- =============================================
 
@@ -428,6 +503,16 @@ CREATE INDEX IF NOT EXISTS idx_documents_user_id ON documents(user_id);
 CREATE INDEX IF NOT EXISTS idx_documents_category ON documents(category);
 CREATE INDEX IF NOT EXISTS idx_documents_status ON documents(status);
 CREATE INDEX IF NOT EXISTS idx_documents_related ON documents(related_entity_type, related_entity_id);
+
+-- Wills indexes
+CREATE INDEX IF NOT EXISTS idx_wills_user_id ON wills(user_id);
+CREATE INDEX IF NOT EXISTS idx_wills_will_id ON wills(will_id);
+CREATE INDEX IF NOT EXISTS idx_wills_status ON wills(status);
+
+-- Powers of attorney indexes
+CREATE INDEX IF NOT EXISTS idx_poa_user_id ON powers_of_attorney(user_id);
+CREATE INDEX IF NOT EXISTS idx_poa_poa_id ON powers_of_attorney(poa_id);
+CREATE INDEX IF NOT EXISTS idx_poa_status ON powers_of_attorney(status);
 
 -- Audit log indexes
 CREATE INDEX IF NOT EXISTS idx_audit_log_table_record ON audit_log(table_name, record_id);

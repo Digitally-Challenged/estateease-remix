@@ -1501,40 +1501,316 @@ export function searchAll(options: SearchOptions): SearchResult[] {
 // WILLS & POWERS OF ATTORNEY
 // =================================
 
-import type { Will, PowerOfAttorney } from "../types/documents";
+import type { Will, PowerOfAttorney, WillStatus, PowerOfAttorneyType, PowerOfAttorneyStatus } from "../types/documents";
 
 /**
  * Get all wills for a user
- * Note: No wills table exists yet - returns empty array as stub
  */
 export function getWills(userId: number | string): Will[] {
-  void userId; // No wills table yet
-  return [];
+  const db = getDatabase();
+  const numUserId = typeof userId === 'string' ? parseInt(userId.split('-').pop() || '1') : userId;
+
+  const stmt = db.prepare(`
+    SELECT * FROM wills
+    WHERE user_id = ? AND is_active = 1
+    ORDER BY date_created DESC
+  `);
+
+  interface WillRow {
+    will_id: string;
+    user_id: number;
+    document_name: string;
+    testator_name: string;
+    date_created: string;
+    date_signed: string | null;
+    status: string;
+    executor_primary: string | null;
+    executor_secondary: string | null;
+    witness1_name: string | null;
+    witness2_name: string | null;
+    notary_name: string | null;
+    notary_state: string | null;
+    specific_bequests: string | null;
+    residuary_clause: string | null;
+    guardian_nominations: string | null;
+    funeral_wishes: string | null;
+    other_provisions: string | null;
+    revokes_prior: number;
+    codicil_count: number;
+    attorney_name: string | null;
+    law_firm: string | null;
+    notes: string | null;
+    is_active: number;
+    created_at: string;
+    updated_at: string;
+  }
+
+  const rows = stmt.all(numUserId) as WillRow[];
+
+  return rows.map((r): Will => ({
+    id: r.will_id,
+    userId: String(r.user_id),
+    documentName: r.document_name,
+    testatorName: r.testator_name,
+    dateCreated: r.date_created,
+    dateSigned: r.date_signed,
+    status: r.status as WillStatus,
+    executorPrimary: r.executor_primary,
+    executorSecondary: r.executor_secondary,
+    witness1Name: r.witness1_name,
+    witness2Name: r.witness2_name,
+    notaryName: r.notary_name,
+    notaryState: r.notary_state,
+    specificBequests: r.specific_bequests,
+    residuaryClause: r.residuary_clause,
+    guardianNominations: r.guardian_nominations,
+    funeralWishes: r.funeral_wishes,
+    otherProvisions: r.other_provisions,
+    revokesPrior: r.revokes_prior === 1,
+    codicilCount: r.codicil_count,
+    attorneyName: r.attorney_name,
+    lawFirm: r.law_firm,
+    notes: r.notes,
+    isActive: r.is_active === 1,
+    createdAt: r.created_at,
+    updatedAt: r.updated_at,
+  }));
 }
 
 /**
  * Create a new will
- * Note: No wills table exists yet - no-op stub
  */
-export function createWill(_data: Record<string, unknown>): void {
-  // No wills table yet - stub
+export function createWill(data: Record<string, unknown>): string {
+  const db = getDatabase();
+  const willId = `will-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+  const userId = typeof data.userId === 'string' ? parseInt(String(data.userId).split('-').pop() || '1') : (data.userId as number) || 1;
+
+  const stmt = db.prepare(`
+    INSERT INTO wills (
+      will_id, user_id, document_name, testator_name,
+      date_created, date_signed, status,
+      executor_primary, executor_secondary,
+      witness1_name, witness2_name, notary_name, notary_state,
+      specific_bequests, residuary_clause, guardian_nominations,
+      funeral_wishes, other_provisions,
+      revokes_prior, attorney_name, law_firm, notes
+    ) VALUES (?, ?, ?, ?, datetime('now'), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+  `);
+
+  stmt.run(
+    willId,
+    userId,
+    data.documentName || 'Untitled Will',
+    data.testatorName || '',
+    (data.dateSigned as string) || null,
+    (data.status as string) || 'DRAFT',
+    (data.executorPrimary as string) || null,
+    (data.executorSecondary as string) || null,
+    (data.witness1Name as string) || null,
+    (data.witness2Name as string) || null,
+    (data.notaryName as string) || null,
+    (data.notaryState as string) || null,
+    (data.specificBequests as string) || null,
+    (data.residuaryClause as string) || null,
+    (data.guardianNominations as string) || null,
+    (data.funeralWishes as string) || null,
+    (data.otherProvisions as string) || null,
+    data.revokesPrior !== false ? 1 : 0,
+    (data.attorneyName as string) || null,
+    (data.lawFirm as string) || null,
+    (data.notes as string) || null,
+  );
+
+  return willId;
 }
 
 /**
  * Get all powers of attorney for a user
- * Note: No powers_of_attorney table exists yet - returns empty array as stub
  */
 export function getPowersOfAttorney(userId: number | string): PowerOfAttorney[] {
-  void userId; // No powers_of_attorney table yet
-  return [];
+  const db = getDatabase();
+  const numUserId = typeof userId === 'string' ? parseInt(userId.split('-').pop() || '1') : userId;
+
+  const stmt = db.prepare(`
+    SELECT * FROM powers_of_attorney
+    WHERE user_id = ? AND is_active = 1
+    ORDER BY date_signed DESC, created_at DESC
+  `);
+
+  interface PoaRow {
+    poa_id: string;
+    user_id: number;
+    document_name: string;
+    type: string;
+    principal_name: string;
+    agent_primary: string;
+    agent_secondary: string | null;
+    effective_date: string | null;
+    termination_date: string | null;
+    durable: number;
+    spring_condition: string | null;
+    powers_granted: string | null;
+    limitations: string | null;
+    healthcare_powers: string | null;
+    financial_powers: string | null;
+    real_estate_powers: string | null;
+    business_powers: string | null;
+    tax_powers: string | null;
+    gift_powers: string | null;
+    trust_powers: string | null;
+    special_instructions: string | null;
+    witness1_name: string | null;
+    witness2_name: string | null;
+    notary_name: string | null;
+    notary_state: string | null;
+    date_signed: string | null;
+    status: string;
+    attorney_name: string | null;
+    law_firm: string | null;
+    notes: string | null;
+    is_active: number;
+    created_at: string;
+    updated_at: string;
+  }
+
+  const rows = stmt.all(numUserId) as PoaRow[];
+
+  return rows.map((r): PowerOfAttorney => ({
+    id: r.poa_id,
+    userId: String(r.user_id),
+    documentName: r.document_name,
+    type: r.type as PowerOfAttorneyType,
+    principalName: r.principal_name,
+    agentPrimary: r.agent_primary,
+    agentSecondary: r.agent_secondary,
+    effectiveDate: r.effective_date,
+    terminationDate: r.termination_date,
+    durable: r.durable === 1,
+    springCondition: r.spring_condition,
+    powersGranted: r.powers_granted,
+    limitations: r.limitations,
+    healthcarePowers: r.healthcare_powers,
+    financialPowers: r.financial_powers,
+    realEstatePowers: r.real_estate_powers,
+    businessPowers: r.business_powers,
+    taxPowers: r.tax_powers,
+    giftPowers: r.gift_powers,
+    trustPowers: r.trust_powers,
+    specialInstructions: r.special_instructions,
+    witness1Name: r.witness1_name,
+    witness2Name: r.witness2_name,
+    notaryName: r.notary_name,
+    notaryState: r.notary_state,
+    dateSigned: r.date_signed,
+    status: r.status as PowerOfAttorneyStatus,
+    attorneyName: r.attorney_name,
+    lawFirm: r.law_firm,
+    notes: r.notes,
+    isActive: r.is_active === 1,
+    createdAt: r.created_at,
+    updatedAt: r.updated_at,
+  }));
 }
 
 /**
  * Create a new power of attorney
- * Note: No powers_of_attorney table exists yet - no-op stub
  */
-export function createPowerOfAttorney(_data: Record<string, unknown>): void {
-  // No powers_of_attorney table yet - stub
+export function createPowerOfAttorney(data: Record<string, unknown>): string {
+  const db = getDatabase();
+  const poaId = `poa-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+  const userId = typeof data.userId === 'string' ? parseInt(String(data.userId).split('-').pop() || '1') : (data.userId as number) || 1;
+
+  const stmt = db.prepare(`
+    INSERT INTO powers_of_attorney (
+      poa_id, user_id, document_name, type,
+      principal_name, agent_primary, agent_secondary,
+      effective_date, termination_date, durable, spring_condition,
+      powers_granted, limitations,
+      healthcare_powers, financial_powers, real_estate_powers,
+      business_powers, tax_powers, gift_powers, trust_powers,
+      special_instructions,
+      witness1_name, witness2_name, notary_name, notary_state,
+      date_signed, status, attorney_name, law_firm, notes
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+  `);
+
+  stmt.run(
+    poaId,
+    userId,
+    data.documentName || 'Untitled POA',
+    data.type || 'GENERAL',
+    data.principalName || '',
+    data.agentPrimary || '',
+    (data.agentSecondary as string) || null,
+    (data.effectiveDate as string) || null,
+    (data.terminationDate as string) || null,
+    data.durable !== false ? 1 : 0,
+    (data.springCondition as string) || null,
+    (data.powersGranted as string) || null,
+    (data.limitations as string) || null,
+    (data.healthcarePowers as string) || null,
+    (data.financialPowers as string) || null,
+    (data.realEstatePowers as string) || null,
+    (data.businessPowers as string) || null,
+    (data.taxPowers as string) || null,
+    (data.giftPowers as string) || null,
+    (data.trustPowers as string) || null,
+    (data.specialInstructions as string) || null,
+    (data.witness1Name as string) || null,
+    (data.witness2Name as string) || null,
+    (data.notaryName as string) || null,
+    (data.notaryState as string) || null,
+    (data.dateSigned as string) || null,
+    (data.status as string) || 'DRAFT',
+    (data.attorneyName as string) || null,
+    (data.lawFirm as string) || null,
+    (data.notes as string) || null,
+  );
+
+  return poaId;
+}
+
+/**
+ * Create a new healthcare directive
+ */
+export function createHealthcareDirective(data: Record<string, unknown>, userIdParam: number | string): string {
+  const db = getDatabase();
+  const directiveId = `hd-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+  const userId = typeof userIdParam === 'string' ? parseInt(userIdParam.split('-').pop() || '1') : userIdParam;
+
+  // Map directive type string to type ID
+  const directiveTypeCode = (data.directiveType as string || 'advance_directive').toLowerCase().replace(/ /g, '_');
+  const typeStmt = db.prepare("SELECT id FROM healthcare_directive_types WHERE code = ?");
+  const typeRow = typeStmt.get(directiveTypeCode) as { id: number } | undefined;
+  const typeId = typeRow?.id || 1;
+
+  const stmt = db.prepare(`
+    INSERT INTO healthcare_directives (
+      directive_id, user_id, directive_type_id,
+      person_name, is_primary,
+      life_sustaining_decision, artificial_nutrition_decision,
+      pain_management_instructions, organ_donation, body_disposition,
+      religious_preferences, additional_instructions,
+      date_created, last_updated
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'), datetime('now'))
+  `);
+
+  stmt.run(
+    directiveId,
+    userId,
+    typeId,
+    (data.personName as string) || null,
+    data.isPrimary ? 1 : 0,
+    (data.lifeSustainingDecision as string) || null,
+    (data.artificialNutritionDecision as string) || null,
+    (data.painManagementInstructions as string) || null,
+    data.organDonation ? 1 : 0,
+    (data.bodyDisposition as string) || null,
+    (data.religiousPreferences as string) || null,
+    (data.additionalInstructions as string) || null,
+  );
+
+  return directiveId;
 }
 
 /**
