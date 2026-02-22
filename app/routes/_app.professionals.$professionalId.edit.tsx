@@ -126,7 +126,7 @@ export default function EditProfessional() {
                 <Input name="name" defaultValue={professional.name} required />
               </FormField>
               <FormField label="Professional Type">
-                <Select name="type" defaultValue={professional.professional_type_code || ""} placeholder="" options={PROFESSIONAL_TYPE_OPTIONS.map(o => ({ value: o.value, label: o.label }))} />
+                <Select name="type" defaultValue={professional.professional_type_code || ""} placeholder="" options={[...PROFESSIONAL_TYPE_OPTIONS]} />
               </FormField>
             </div>
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -162,7 +162,7 @@ export default function EditProfessional() {
                 <Input name="city" defaultValue={professional.city || ""} />
               </FormField>
               <FormField label="State">
-                <Select name="state" defaultValue={professional.state || ""} placeholder="Select state" options={US_STATES.map(s => ({ value: s.value, label: s.label }))} />
+                <Select name="state" defaultValue={professional.state || ""} placeholder="Select state" options={[...US_STATES]} />
               </FormField>
               <FormField label="ZIP Code">
                 <Input name="zipCode" defaultValue={professional.zip_code || ""} />

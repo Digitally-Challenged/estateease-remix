@@ -197,7 +197,7 @@ export default function EditPowerOfAttorney() {
                 <Input name="notaryName" defaultValue={poa.notaryName || ""} />
               </FormField>
               <FormField label="Notary State">
-                <Select name="notaryState" defaultValue={poa.notaryState || ""} placeholder="Select state" options={US_STATES.map(s => ({ value: s.value, label: s.label }))} />
+                <Select name="notaryState" defaultValue={poa.notaryState || ""} placeholder="Select state" options={[...US_STATES]} />
               </FormField>
             </div>
           </CardContent>

@@ -330,3 +330,5 @@ export default function NewRole() {
     </div>
   );
 }
+
+export { RouteErrorBoundary as ErrorBoundary } from "~/components/ui/error/route-error-boundary";

@@ -367,3 +367,5 @@ export default function NewWill() {
     </div>
   );
 }
+
+export { RouteErrorBoundary as ErrorBoundary } from "~/components/ui/error/route-error-boundary";

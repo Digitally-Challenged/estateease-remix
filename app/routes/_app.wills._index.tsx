@@ -10,7 +10,7 @@ import { Card } from "~/components/ui/card";
 import { getWills } from "~/lib/dal";
 // TODO: Import requireUser when auth is implemented
 // import { requireUser } from "~/lib/auth.server";
-import { formatDate } from "~/lib/utils";
+import { formatDate, getStatusColor } from "~/lib/utils";
 import type { Will } from "~/types/documents";
 
 export async function loader({ request }: LoaderFunctionArgs) {
@@ -24,21 +24,6 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
 export default function WillsIndex() {
   const { wills } = useLoaderData<typeof loader>();
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "EXECUTED":
-        return "text-green-600 bg-green-50";
-      case "SIGNED":
-        return "text-blue-600 bg-blue-50";
-      case "DRAFT":
-        return "text-yellow-600 bg-yellow-50";
-      case "REVOKED":
-        return "text-red-600 bg-red-50";
-      default:
-        return "text-gray-600 bg-gray-50";
-    }
-  };
 
   return (
     <div className="space-y-6">

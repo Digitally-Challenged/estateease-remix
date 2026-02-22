@@ -421,3 +421,5 @@ export default function NewPowerOfAttorney() {
     </div>
   );
 }
+
+export { RouteErrorBoundary as ErrorBoundary } from "~/components/ui/error/route-error-boundary";

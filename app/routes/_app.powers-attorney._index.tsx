@@ -13,7 +13,7 @@ import { Card } from "~/components/ui/card";
 import { getPowersOfAttorney } from "~/lib/dal";
 // TODO: Import requireUser when auth is implemented
 // import { requireUser } from "~/lib/auth.server";
-import { formatDate } from "~/lib/utils";
+import { formatDate, getStatusColor } from "~/lib/utils";
 import type { PowerOfAttorney } from "~/types/documents";
 
 export async function loader({ request }: LoaderFunctionArgs) {
@@ -27,21 +27,6 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
 export default function PowersOfAttorneyIndex() {
   const { powersOfAttorney } = useLoaderData<typeof loader>();
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "ACTIVE":
-        return "text-green-600 bg-green-50";
-      case "DRAFT":
-        return "text-yellow-600 bg-yellow-50";
-      case "REVOKED":
-        return "text-red-600 bg-red-50";
-      case "EXPIRED":
-        return "text-gray-600 bg-gray-50";
-      default:
-        return "text-gray-600 bg-gray-50";
-    }
-  };
 
   const getTypeIcon = (type: string) => {
     switch (type) {

@@ -146,7 +146,7 @@ export default function EditWill() {
                 <Input name="notaryName" defaultValue={will.notaryName || ""} />
               </FormField>
               <FormField label="Notary State">
-                <Select name="notaryState" defaultValue={will.notaryState || ""} placeholder="Select state" options={US_STATES.map(s => ({ value: s.value, label: s.label }))} />
+                <Select name="notaryState" defaultValue={will.notaryState || ""} placeholder="Select state" options={[...US_STATES]} />
               </FormField>
             </div>
           </CardContent>

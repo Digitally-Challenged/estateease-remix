@@ -313,3 +313,5 @@ export default function NewProfessional() {
     </div>
   );
 }
+
+export { RouteErrorBoundary as ErrorBoundary } from "~/components/ui/error/route-error-boundary";
