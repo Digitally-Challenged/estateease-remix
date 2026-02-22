@@ -39,10 +39,13 @@ export async function action({ request }: ActionFunctionArgs) {
   }
 
   try {
-    // TODO: Implement legal role creation in DAL
-    // const roleId = await createLegalRole(data);
+    const { createLegalRole } = await import("~/lib/dal-crud");
+    const { getUserId } = await import("~/lib/auth.server");
+    const userId = await getUserId(request);
 
-    return redirect("/family");
+    createLegalRole(data, userId);
+
+    return redirect("/key-roles");
   } catch (error) {
     console.error("Error creating legal role:", error);
     return json({ error: "Failed to create legal role" }, { status: 500 });
@@ -98,7 +101,7 @@ export default function NewRole() {
   };
 
   const handleCancel = () => {
-    navigate("/family");
+    navigate("/key-roles");
   };
 
   return (

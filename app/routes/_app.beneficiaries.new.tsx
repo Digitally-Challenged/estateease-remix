@@ -44,8 +44,11 @@ export async function action({ request }: ActionFunctionArgs) {
   };
 
   try {
-    // TODO: Implement beneficiary creation in DAL
-    // const beneficiaryId = await createBeneficiary(data);
+    const { createBeneficiary } = await import("~/lib/dal-crud");
+    const { getUserId } = await import("~/lib/auth.server");
+    const userId = await getUserId(request);
+
+    createBeneficiary(data, userId);
 
     return redirect("/beneficiaries");
   } catch (error) {

@@ -704,32 +704,33 @@ export function createProfessional(
       // Generate professional ID
       const professionalId = `PROF-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 
-      // Insert professional
+      // Insert professional — schema uses: name, firm, primary_phone, street1, zip_code
       const insertStmt = db.prepare(`
     INSERT INTO professionals (
-      professional_id, user_id, first_name, last_name,
-      professional_type_id, firm_name, email, phone,
-      address, city, state, zip, specializations,
-      notes, is_active
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1)
+      professional_id, user_id, name,
+      professional_type_id, firm, title, email, primary_phone,
+      secondary_phone, preferred_contact,
+      street1, street2, city, state, zip_code, country,
+      specializations, notes, is_active
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'USA', ?, ?, 1)
   `);
-
-      const [firstName, ...lastNameParts] = professional.name.split(" ");
-      const lastName = lastNameParts.join(" ");
 
       insertStmt.run(
         professionalId,
         userId,
-        firstName,
-        lastName,
+        professional.name,
         profType.id,
         professional.firm || null,
-        professional.contactInfo.email || null,
-        professional.contactInfo.primaryPhone || null,
-        professional.contactInfo.address?.street1 || null,
-        professional.contactInfo.address?.city || null,
-        professional.contactInfo.address?.state || null,
-        professional.contactInfo.address?.zipCode || null,
+        professional.title || null,
+        professional.contactInfo?.email || null,
+        professional.contactInfo?.primaryPhone || null,
+        professional.contactInfo?.secondaryPhone || null,
+        professional.contactInfo?.preferredContact || null,
+        professional.contactInfo?.address?.street1 || null,
+        professional.contactInfo?.address?.street2 || null,
+        professional.contactInfo?.address?.city || null,
+        professional.contactInfo?.address?.state || null,
+        professional.contactInfo?.address?.zipCode || null,
         professional.specializations ? JSON.stringify(professional.specializations) : null,
         professional.notes || null,
       );
@@ -741,21 +742,24 @@ export function createProfessional(
   });
 }
 
-export function updateProfessional(professionalId: string, updates: Partial<Professional>): void {
+export function updateProfessional(professionalId: string, updates: Partial<Professional> & Record<string, unknown>): void {
   const db = getDatabase();
   const params: (string | number | null)[] = [];
   const setClauses: string[] = [];
 
   if (updates.name !== undefined) {
-    const [firstName, ...lastNameParts] = updates.name.split(" ");
-    const lastName = lastNameParts.join(" ");
-    setClauses.push("first_name = ?", "last_name = ?");
-    params.push(firstName, lastName);
+    setClauses.push("name = ?");
+    params.push(updates.name as string);
   }
 
   if (updates.firm !== undefined) {
-    setClauses.push("firm_name = ?");
-    params.push(updates.firm);
+    setClauses.push("firm = ?");
+    params.push(updates.firm as string);
+  }
+
+  if (updates.title !== undefined) {
+    setClauses.push("title = ?");
+    params.push(updates.title as string);
   }
 
   const contactInfo = updates.contactInfo;
@@ -764,15 +768,17 @@ export function updateProfessional(professionalId: string, updates: Partial<Prof
       setClauses.push("email = ?");
       params.push(contactInfo.email);
     }
-
     if (contactInfo.primaryPhone !== undefined) {
-      setClauses.push("phone = ?");
+      setClauses.push("primary_phone = ?");
       params.push(contactInfo.primaryPhone);
     }
-
+    if (contactInfo.secondaryPhone !== undefined) {
+      setClauses.push("secondary_phone = ?");
+      params.push(contactInfo.secondaryPhone);
+    }
     if (contactInfo.address) {
       if (contactInfo.address.street1 !== undefined) {
-        setClauses.push("address = ?");
+        setClauses.push("street1 = ?");
         params.push(contactInfo.address.street1);
       }
       if (contactInfo.address.city !== undefined) {
@@ -784,7 +790,7 @@ export function updateProfessional(professionalId: string, updates: Partial<Prof
         params.push(contactInfo.address.state);
       }
       if (contactInfo.address.zipCode !== undefined) {
-        setClauses.push("zip = ?");
+        setClauses.push("zip_code = ?");
         params.push(contactInfo.address.zipCode);
       }
     }
@@ -797,7 +803,7 @@ export function updateProfessional(professionalId: string, updates: Partial<Prof
 
   if (updates.notes !== undefined) {
     setClauses.push("notes = ?");
-    params.push(updates.notes);
+    params.push(updates.notes as string);
   }
 
   if (setClauses.length === 0) return;
@@ -1065,4 +1071,356 @@ export function logDocumentAccess(
   `);
 
   stmt.run(documentId, userId, action, ipAddress || null, userAgent || null);
+}
+
+// =================================
+// EMERGENCY CONTACT CRUD
+// =================================
+
+export function createEmergencyContact(
+  data: Record<string, unknown>,
+  userId: number | string,
+): string {
+  const db = getDatabase();
+  const contactId = `EC-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+  const numUserId = typeof userId === 'string' ? parseInt(String(userId).split('-').pop() || '1') : userId;
+
+  // Lookup relationship_type_id
+  const relCode = (data.relationship as string || 'OTHER').toUpperCase();
+  const relStmt = db.prepare("SELECT id FROM relationship_types WHERE code = ?");
+  const relRow = relStmt.get(relCode) as { id: number } | undefined;
+  const relTypeId = relRow?.id || 1;
+
+  const stmt = db.prepare(`
+    INSERT INTO emergency_contacts (
+      contact_id, user_id, name, relationship_type_id, contact_type,
+      primary_phone, secondary_phone, email, preferred_contact,
+      priority, medical_authority, can_make_decisions, notes
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+  `);
+
+  stmt.run(
+    contactId,
+    numUserId,
+    data.name || '',
+    relTypeId,
+    data.contactType || 'emergency',
+    data.primaryPhone || '',
+    (data.secondaryPhone as string) || null,
+    (data.email as string) || null,
+    (data.preferredContact as string) || 'phone',
+    (data.priority as number) || 1,
+    data.medicalAuthority ? 1 : 0,
+    data.canMakeDecisions ? 1 : 0,
+    (data.notes as string) || null,
+  );
+
+  return contactId;
+}
+
+export function updateEmergencyContact(
+  contactId: string,
+  updates: Record<string, unknown>,
+): void {
+  const db = getDatabase();
+  const params: (string | number | null)[] = [];
+  const setClauses: string[] = [];
+
+  if (updates.name !== undefined) {
+    setClauses.push("name = ?");
+    params.push(updates.name as string);
+  }
+  if (updates.contactType !== undefined) {
+    setClauses.push("contact_type = ?");
+    params.push(updates.contactType as string);
+  }
+  if (updates.primaryPhone !== undefined) {
+    setClauses.push("primary_phone = ?");
+    params.push(updates.primaryPhone as string);
+  }
+  if (updates.secondaryPhone !== undefined) {
+    setClauses.push("secondary_phone = ?");
+    params.push((updates.secondaryPhone as string) || null);
+  }
+  if (updates.email !== undefined) {
+    setClauses.push("email = ?");
+    params.push((updates.email as string) || null);
+  }
+  if (updates.preferredContact !== undefined) {
+    setClauses.push("preferred_contact = ?");
+    params.push((updates.preferredContact as string) || null);
+  }
+  if (updates.priority !== undefined) {
+    setClauses.push("priority = ?");
+    params.push(updates.priority as number);
+  }
+  if (updates.medicalAuthority !== undefined) {
+    setClauses.push("medical_authority = ?");
+    params.push(updates.medicalAuthority ? 1 : 0);
+  }
+  if (updates.canMakeDecisions !== undefined) {
+    setClauses.push("can_make_decisions = ?");
+    params.push(updates.canMakeDecisions ? 1 : 0);
+  }
+  if (updates.notes !== undefined) {
+    setClauses.push("notes = ?");
+    params.push((updates.notes as string) || null);
+  }
+
+  if (setClauses.length === 0) return;
+
+  setClauses.push("updated_at = ?");
+  params.push(new Date().toISOString());
+  params.push(contactId);
+
+  const query = `UPDATE emergency_contacts SET ${setClauses.join(", ")} WHERE contact_id = ?`;
+  db.prepare(query).run(...params);
+}
+
+// =================================
+// STANDALONE BENEFICIARY CRUD
+// =================================
+
+export function createBeneficiary(
+  data: Record<string, unknown>,
+  userId: number | string,
+): string {
+  const db = getDatabase();
+  const beneficiaryId = `BEN-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+  const numUserId = typeof userId === 'string' ? parseInt(String(userId).split('-').pop() || '1') : userId;
+
+  // Lookup relationship_type_id
+  const relCode = (data.relationship as string || 'OTHER').toUpperCase();
+  const relStmt = db.prepare("SELECT id FROM relationship_types WHERE code = ?");
+  const relRow = relStmt.get(relCode) as { id: number } | undefined;
+  const relTypeId = relRow?.id || 1;
+
+  const stmt = db.prepare(`
+    INSERT INTO beneficiaries (
+      beneficiary_id, user_id, name, relationship_type_id,
+      percentage, is_primary, is_contingent, notes
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+  `);
+
+  stmt.run(
+    beneficiaryId,
+    numUserId,
+    data.name || '',
+    relTypeId,
+    (data.percentage as number) || 0,
+    data.isPrimary ? 1 : 0,
+    data.isContingent ? 1 : 0,
+    (data.notes as string) || null,
+  );
+
+  return beneficiaryId;
+}
+
+// =================================
+// LEGAL ROLE CRUD
+// =================================
+
+export function createLegalRole(
+  data: Record<string, unknown>,
+  userId: number | string,
+): string {
+  const db = getDatabase();
+  const roleId = `ROLE-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+  const numUserId = typeof userId === 'string' ? parseInt(String(userId).split('-').pop() || '1') : userId;
+
+  // Lookup role_type_id
+  const roleCode = (data.roleType as string || 'OTHER').toUpperCase();
+  const typeStmt = db.prepare("SELECT id FROM legal_role_types WHERE code = ?");
+  const typeRow = typeStmt.get(roleCode) as { id: number } | undefined;
+  const roleTypeId = typeRow?.id || 1;
+
+  const stmt = db.prepare(`
+    INSERT INTO legal_roles (
+      legal_role_id, user_id, role_type_id, person_name,
+      is_primary, order_of_precedence, specific_powers,
+      compensation_type, compensation_amount, compensation_details,
+      start_date, end_date, end_conditions, notes
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+  `);
+
+  const specificPowers = data.specificPowers;
+  const powersJson = Array.isArray(specificPowers)
+    ? JSON.stringify(specificPowers)
+    : typeof specificPowers === 'string' && specificPowers
+      ? JSON.stringify(specificPowers.split(',').map((s: string) => s.trim()).filter(Boolean))
+      : null;
+
+  stmt.run(
+    roleId,
+    numUserId,
+    roleTypeId,
+    data.personName || '',
+    data.isPrimary ? 1 : 0,
+    (data.orderOfPrecedence as number) || 1,
+    powersJson,
+    (data.compensationType as string) || null,
+    (data.compensationAmount as number) || null,
+    (data.compensationDetails as string) || null,
+    (data.startDate as string) || null,
+    (data.endDate as string) || null,
+    (data.endConditions as string) || null,
+    (data.notes as string) || null,
+  );
+
+  return roleId;
+}
+
+export function updateLegalRole(
+  roleId: string,
+  updates: Record<string, unknown>,
+): void {
+  const db = getDatabase();
+  const params: (string | number | null)[] = [];
+  const setClauses: string[] = [];
+
+  if (updates.personName !== undefined) {
+    setClauses.push("person_name = ?");
+    params.push(updates.personName as string);
+  }
+  if (updates.isPrimary !== undefined) {
+    setClauses.push("is_primary = ?");
+    params.push(updates.isPrimary ? 1 : 0);
+  }
+  if (updates.orderOfPrecedence !== undefined) {
+    setClauses.push("order_of_precedence = ?");
+    params.push(updates.orderOfPrecedence as number);
+  }
+  if (updates.specificPowers !== undefined) {
+    const sp = updates.specificPowers;
+    const json = Array.isArray(sp)
+      ? JSON.stringify(sp)
+      : typeof sp === 'string' && sp
+        ? JSON.stringify(sp.split(',').map((s: string) => s.trim()).filter(Boolean))
+        : null;
+    setClauses.push("specific_powers = ?");
+    params.push(json);
+  }
+  if (updates.compensationType !== undefined) {
+    setClauses.push("compensation_type = ?");
+    params.push((updates.compensationType as string) || null);
+  }
+  if (updates.compensationAmount !== undefined) {
+    setClauses.push("compensation_amount = ?");
+    params.push((updates.compensationAmount as number) || null);
+  }
+  if (updates.compensationDetails !== undefined) {
+    setClauses.push("compensation_details = ?");
+    params.push((updates.compensationDetails as string) || null);
+  }
+  if (updates.startDate !== undefined) {
+    setClauses.push("start_date = ?");
+    params.push((updates.startDate as string) || null);
+  }
+  if (updates.endDate !== undefined) {
+    setClauses.push("end_date = ?");
+    params.push((updates.endDate as string) || null);
+  }
+  if (updates.endConditions !== undefined) {
+    setClauses.push("end_conditions = ?");
+    params.push((updates.endConditions as string) || null);
+  }
+  if (updates.notes !== undefined) {
+    setClauses.push("notes = ?");
+    params.push((updates.notes as string) || null);
+  }
+
+  if (setClauses.length === 0) return;
+
+  setClauses.push("updated_at = ?");
+  params.push(new Date().toISOString());
+  params.push(roleId);
+
+  const query = `UPDATE legal_roles SET ${setClauses.join(", ")} WHERE legal_role_id = ?`;
+  db.prepare(query).run(...params);
+}
+
+// =================================
+// WILL & POA UPDATE FUNCTIONS
+// =================================
+
+export function updateWill(willId: string, updates: Record<string, unknown>): void {
+  const db = getDatabase();
+  const params: (string | number | null)[] = [];
+  const setClauses: string[] = [];
+
+  const fieldMap: Record<string, string> = {
+    documentName: "document_name", testatorName: "testator_name",
+    dateSigned: "date_signed", status: "status",
+    executorPrimary: "executor_primary", executorSecondary: "executor_secondary",
+    witness1Name: "witness1_name", witness2Name: "witness2_name",
+    notaryName: "notary_name", notaryState: "notary_state",
+    specificBequests: "specific_bequests", residuaryClause: "residuary_clause",
+    guardianNominations: "guardian_nominations", funeralWishes: "funeral_wishes",
+    otherProvisions: "other_provisions", attorneyName: "attorney_name",
+    lawFirm: "law_firm", notes: "notes",
+  };
+
+  for (const [key, col] of Object.entries(fieldMap)) {
+    if (updates[key] !== undefined) {
+      setClauses.push(`${col} = ?`);
+      params.push((updates[key] as string | null) || null);
+    }
+  }
+
+  if (updates.revokesPrior !== undefined) {
+    setClauses.push("revokes_prior = ?");
+    params.push(updates.revokesPrior ? 1 : 0);
+  }
+
+  if (setClauses.length === 0) return;
+
+  setClauses.push("updated_at = ?");
+  params.push(new Date().toISOString());
+  params.push(willId);
+
+  const query = `UPDATE wills SET ${setClauses.join(", ")} WHERE will_id = ?`;
+  db.prepare(query).run(...params);
+}
+
+export function updatePowerOfAttorney(poaId: string, updates: Record<string, unknown>): void {
+  const db = getDatabase();
+  const params: (string | number | null)[] = [];
+  const setClauses: string[] = [];
+
+  const fieldMap: Record<string, string> = {
+    documentName: "document_name", type: "type",
+    principalName: "principal_name", agentPrimary: "agent_primary",
+    agentSecondary: "agent_secondary", effectiveDate: "effective_date",
+    terminationDate: "termination_date", springCondition: "spring_condition",
+    powersGranted: "powers_granted", limitations: "limitations",
+    healthcarePowers: "healthcare_powers", financialPowers: "financial_powers",
+    realEstatePowers: "real_estate_powers", businessPowers: "business_powers",
+    taxPowers: "tax_powers", giftPowers: "gift_powers",
+    trustPowers: "trust_powers", specialInstructions: "special_instructions",
+    witness1Name: "witness1_name", witness2Name: "witness2_name",
+    notaryName: "notary_name", notaryState: "notary_state",
+    dateSigned: "date_signed", status: "status",
+    attorneyName: "attorney_name", lawFirm: "law_firm", notes: "notes",
+  };
+
+  for (const [key, col] of Object.entries(fieldMap)) {
+    if (updates[key] !== undefined) {
+      setClauses.push(`${col} = ?`);
+      params.push((updates[key] as string | null) || null);
+    }
+  }
+
+  if (updates.durable !== undefined) {
+    setClauses.push("durable = ?");
+    params.push(updates.durable ? 1 : 0);
+  }
+
+  if (setClauses.length === 0) return;
+
+  setClauses.push("updated_at = ?");
+  params.push(new Date().toISOString());
+  params.push(poaId);
+
+  const query = `UPDATE powers_of_attorney SET ${setClauses.join(", ")} WHERE poa_id = ?`;
+  db.prepare(query).run(...params);
 }

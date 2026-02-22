@@ -264,6 +264,7 @@ INSERT OR IGNORE INTO family_members (
 INSERT OR IGNORE INTO family_members (
     family_member_id, user_id, name, relationship_type_id,
     is_minor, is_dependent,
+    street1, city, state, zip_code,
     notes, is_active
 ) VALUES (
     'fm-009',
@@ -271,6 +272,7 @@ INSERT OR IGNORE INTO family_members (
     'Julia Shepherd',
     (SELECT id FROM relationship_types WHERE code = 'cousin'),
     0, 0,
+    '98 CR 378', 'Wynne', 'AR', '72396',
     'Kelsey''s cousin',
     1
 );
@@ -279,6 +281,7 @@ INSERT OR IGNORE INTO family_members (
 INSERT OR IGNORE INTO family_members (
     family_member_id, user_id, name, relationship_type_id,
     is_minor, is_dependent,
+    street1, city, state, zip_code,
     notes, is_active
 ) VALUES (
     'fm-010',
@@ -286,6 +289,7 @@ INSERT OR IGNORE INTO family_members (
     'John Shepherd IV',
     (SELECT id FROM relationship_types WHERE code = 'cousin'),
     0, 0,
+    '98 CR 378', 'Wynne', 'AR', '72396',
     'Kelsey''s cousin',
     1
 );
@@ -866,46 +870,46 @@ INSERT OR IGNORE INTO professionals (
 (
     'prof-001',
     (SELECT id FROM users WHERE external_id = 'user-nick-001'),
-    'Estate Planning Attorney',
+    'Adam Flock',
     (SELECT id FROM professional_types WHERE code = 'estate_attorney'),
-    'Estate Law Firm', 'Partner',
-    '["Estate Planning", "Trust Administration", "Tax Planning"]',
-    '(479) 555-1000', 'attorney@estatelaw.com', 'email',
-    '123 Legal Plaza', 'Bentonville', 'AR', '72712', 'USA',
-    20, 1, 'Primary estate planning counsel'
+    'RMP LLP', 'Lead Attorney',
+    '["Estate Planning", "Trust Planning", "Probate", "Real Estate", "Tax Planning"]',
+    '(479) 553-9800', NULL, 'phone',
+    '809 SW A Street, Suite 105', 'Bentonville', 'AR', '72712', 'USA',
+    3, 1, 'Lead estate planning attorney at RMP LLP. Associate: Sierra N. Glover (sglover@rmp.law)'
 ),
 (
     'prof-002',
     (SELECT id FROM users WHERE external_id = 'user-nick-001'),
-    'Arvest Trust Company',
+    'Arvest Wealth Management',
     (SELECT id FROM professional_types WHERE code = 'other'),
-    'Arvest Bank', 'Trust Officer',
+    'Arvest Bank', 'Trust Department',
     '["Trust Administration", "Wealth Management", "Fiduciary Services"]',
-    '(479) 555-2000', 'trust@arvest.com', 'phone',
-    '608 SW 8th Street', 'Bentonville', 'AR', '72712', 'USA',
-    null, 1, 'Corporate trustee and executor'
+    '(479) 273-3331', 'trust@arvest.com', 'phone',
+    '201 NE A St', 'Bentonville', 'AR', '72712', 'USA',
+    null, 1, 'Corporate trustee for Geeslin Family Trust'
 ),
 (
     'prof-003',
     (SELECT id FROM users WHERE external_id = 'user-nick-001'),
-    'Financial Advisor',
+    'Marc Henline',
     (SELECT id FROM professional_types WHERE code = 'financial_advisor'),
-    'Wells Fargo Advisors', 'Senior Advisor',
+    'Wells Fargo Advisors', 'Financial Advisor',
     '["Investment Management", "Retirement Planning", "Trust Investments"]',
-    '(479) 555-3000', 'advisor@wellsfargo.com', 'phone',
-    null, null, null, null, 'USA',
-    15, 1, 'Manages trust investment accounts'
+    '(479) 756-0600', 'marc.henline@wellsfargoadvisors.com', 'phone',
+    '438 Millsap Rd Suite 100', 'Fayetteville', 'AR', '72703', 'USA',
+    null, 1, 'Manages trust investment accounts'
 ),
 (
     'prof-004',
     (SELECT id FROM users WHERE external_id = 'user-nick-001'),
-    'CPA/Tax Preparer',
+    'Nick Steimle, CPA',
     (SELECT id FROM professional_types WHERE code = 'accountant'),
-    'Tax & Accounting Services', 'CPA',
-    '["Estate Tax", "Trust Taxation", "Business Tax"]',
-    '(479) 555-4000', 'cpa@taxservices.com', 'email',
-    null, null, null, null, 'USA',
-    18, 1, 'Handles all tax matters for estate and trusts'
+    'Begley, Young & Company', 'CPA',
+    '["Estate Tax", "Trust Taxation", "Business Tax", "Personal Tax"]',
+    '(573) 334-4338', 'nick@begleycpa.com', 'email',
+    '2103 Themis St.', 'Cape Girardeau', 'MO', '63701', 'USA',
+    null, 1, 'Handles personal and trust tax returns'
 );
 
 -- =============================================

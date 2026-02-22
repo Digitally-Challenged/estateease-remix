@@ -1069,12 +1069,24 @@ export function getEmergencyContacts(userId?: number | string): EmergencyContact
   const numUserId = typeof userId === 'string' ? parseInt(userId.split('-').pop() || '1') : userId;
   let query = `
     SELECT
-      ec.*,
-      fm.name as family_name,
-      fm.email as family_email,
-      fm.primary_phone as family_phone
+      ec.contact_id,
+      ec.name,
+      ec.contact_type,
+      ec.primary_phone,
+      ec.secondary_phone,
+      ec.email,
+      ec.preferred_contact,
+      ec.priority,
+      ec.availability,
+      ec.medical_authority,
+      ec.can_make_decisions,
+      ec.languages,
+      ec.notes,
+      ec.is_active,
+      rt.name as relationship_name,
+      rt.code as relationship_code
     FROM emergency_contacts ec
-    LEFT JOIN family_members fm ON ec.contact_id = fm.id AND ec.contact_type = 'family_member'
+    JOIN relationship_types rt ON ec.relationship_type_id = rt.id
     WHERE ec.is_active = 1
   `;
 
@@ -1084,32 +1096,48 @@ export function getEmergencyContacts(userId?: number | string): EmergencyContact
     params.push(numUserId);
   }
 
-  query += " ORDER BY ec.priority ASC, ec.contact_name";
+  query += " ORDER BY ec.priority ASC, ec.name";
 
   try {
     const stmt = db.prepare(query);
-    const contacts = stmt.all(...params) as { id: string; contact_name?: string; family_name?: string; relationship?: string; contact_category?: string; priority?: number; phone?: string; family_phone?: string; email?: string; family_email?: string; preferred_contact_method?: string; availability?: string; medical_authority: number; decision_authority: number; languages?: string; notes?: string }[];
+    const contacts = stmt.all(...params) as {
+      contact_id: string;
+      name: string;
+      contact_type: string;
+      primary_phone: string;
+      secondary_phone?: string;
+      email?: string;
+      preferred_contact?: string;
+      priority: number;
+      availability?: string;
+      medical_authority: number;
+      can_make_decisions: number;
+      languages?: string;
+      notes?: string;
+      is_active: number;
+      relationship_name: string;
+      relationship_code: string;
+    }[];
 
     return contacts.map((contact) => ({
-      id: contact.id,
-      name: contact.contact_name || contact.family_name || "Unknown Contact",
-      relationship: contact.relationship || "emergency_contact",
-      contactType: contact.contact_category || "primary",
+      id: contact.contact_id,
+      name: contact.name,
+      relationship: contact.relationship_name || "emergency_contact",
+      contactType: contact.contact_type || "primary",
       priority: contact.priority || 999,
       contactInfo: {
-        primaryPhone: contact.phone || contact.family_phone,
-        email: contact.email || contact.family_email,
-        preferredContact: contact.preferred_contact_method || "phone",
+        primaryPhone: contact.primary_phone,
+        email: contact.email,
+        preferredContact: contact.preferred_contact || "phone",
       },
       availability: contact.availability,
       medicalAuthority: contact.medical_authority === 1,
-      canMakeDecisions: contact.decision_authority === 1,
-      languages: contact.languages ? contact.languages.split(",") : [],
+      canMakeDecisions: contact.can_make_decisions === 1,
+      languages: contact.languages ? JSON.parse(contact.languages) : [],
       notes: contact.notes,
     }));
   } catch (error) {
     console.error("Error fetching emergency contacts:", error);
-    // Return empty array if emergency_contacts table doesn't exist
     return [];
   }
 }
@@ -2093,4 +2121,139 @@ export function updateUserProfile(userId: number | string, data: UpdateUserProfi
     console.error("Error updating user profile:", error);
     throw error;
   }
+}
+
+// =================================
+// GET BY ID FUNCTIONS
+// =================================
+
+/**
+ * Get a single will by its will_id
+ */
+export function getWillById(willId: string): Will | null {
+  const db = getDatabase();
+  const stmt = db.prepare(`
+    SELECT * FROM wills WHERE will_id = ? AND is_active = 1
+  `);
+  const r = stmt.get(willId) as {
+    will_id: string; user_id: number; document_name: string; testator_name: string;
+    date_created: string; date_signed: string | null; status: string;
+    executor_primary: string | null; executor_secondary: string | null;
+    witness1_name: string | null; witness2_name: string | null;
+    notary_name: string | null; notary_state: string | null;
+    specific_bequests: string | null; residuary_clause: string | null;
+    guardian_nominations: string | null; funeral_wishes: string | null;
+    other_provisions: string | null; revokes_prior: number; codicil_count: number;
+    attorney_name: string | null; law_firm: string | null; notes: string | null;
+    is_active: number; created_at: string; updated_at: string;
+  } | undefined;
+
+  if (!r) return null;
+
+  return {
+    id: r.will_id, userId: String(r.user_id), documentName: r.document_name,
+    testatorName: r.testator_name, dateCreated: r.date_created,
+    dateSigned: r.date_signed, status: r.status as WillStatus,
+    executorPrimary: r.executor_primary, executorSecondary: r.executor_secondary,
+    witness1Name: r.witness1_name, witness2Name: r.witness2_name,
+    notaryName: r.notary_name, notaryState: r.notary_state,
+    specificBequests: r.specific_bequests, residuaryClause: r.residuary_clause,
+    guardianNominations: r.guardian_nominations, funeralWishes: r.funeral_wishes,
+    otherProvisions: r.other_provisions, revokesPrior: r.revokes_prior === 1,
+    codicilCount: r.codicil_count, attorneyName: r.attorney_name,
+    lawFirm: r.law_firm, notes: r.notes, isActive: r.is_active === 1,
+    createdAt: r.created_at, updatedAt: r.updated_at,
+  };
+}
+
+/**
+ * Get a single power of attorney by its poa_id
+ */
+export function getPowerOfAttorneyById(poaId: string): PowerOfAttorney | null {
+  const db = getDatabase();
+  const stmt = db.prepare(`
+    SELECT * FROM powers_of_attorney WHERE poa_id = ? AND is_active = 1
+  `);
+  const r = stmt.get(poaId) as {
+    poa_id: string; user_id: number; document_name: string; type: string;
+    principal_name: string; agent_primary: string; agent_secondary: string | null;
+    effective_date: string | null; termination_date: string | null;
+    durable: number; spring_condition: string | null;
+    powers_granted: string | null; limitations: string | null;
+    healthcare_powers: string | null; financial_powers: string | null;
+    real_estate_powers: string | null; business_powers: string | null;
+    tax_powers: string | null; gift_powers: string | null;
+    trust_powers: string | null; special_instructions: string | null;
+    witness1_name: string | null; witness2_name: string | null;
+    notary_name: string | null; notary_state: string | null;
+    date_signed: string | null; status: string;
+    attorney_name: string | null; law_firm: string | null; notes: string | null;
+    is_active: number; created_at: string; updated_at: string;
+  } | undefined;
+
+  if (!r) return null;
+
+  return {
+    id: r.poa_id, userId: String(r.user_id), documentName: r.document_name,
+    type: r.type as PowerOfAttorneyType, principalName: r.principal_name,
+    agentPrimary: r.agent_primary, agentSecondary: r.agent_secondary,
+    effectiveDate: r.effective_date, terminationDate: r.termination_date,
+    durable: r.durable === 1, springCondition: r.spring_condition,
+    powersGranted: r.powers_granted, limitations: r.limitations,
+    healthcarePowers: r.healthcare_powers, financialPowers: r.financial_powers,
+    realEstatePowers: r.real_estate_powers, businessPowers: r.business_powers,
+    taxPowers: r.tax_powers, giftPowers: r.gift_powers,
+    trustPowers: r.trust_powers, specialInstructions: r.special_instructions,
+    witness1Name: r.witness1_name, witness2Name: r.witness2_name,
+    notaryName: r.notary_name, notaryState: r.notary_state,
+    dateSigned: r.date_signed, status: r.status as PowerOfAttorneyStatus,
+    attorneyName: r.attorney_name, lawFirm: r.law_firm, notes: r.notes,
+    isActive: r.is_active === 1, createdAt: r.created_at, updatedAt: r.updated_at,
+  };
+}
+
+/**
+ * Get a single emergency contact by its contact_id
+ */
+export function getEmergencyContactById(contactId: string): DatabaseEmergencyContact | null {
+  const db = getDatabase();
+  const stmt = db.prepare(`
+    SELECT ec.*, rt.name as relationship_name, rt.code as relationship_code
+    FROM emergency_contacts ec
+    JOIN relationship_types rt ON ec.relationship_type_id = rt.id
+    WHERE ec.contact_id = ? AND ec.is_active = 1
+  `);
+  const row = stmt.get(contactId) as (DatabaseEmergencyContact & { relationship_name: string; relationship_code: string }) | undefined;
+  if (!row) return null;
+  return { ...row, relationship_code: row.relationship_code };
+}
+
+/**
+ * Get a single professional by its professional_id
+ */
+export function getProfessionalById(professionalId: string): DatabaseProfessional | null {
+  const db = getDatabase();
+  const stmt = db.prepare(`
+    SELECT p.*, pt.code as professional_type_code, pt.name as professional_type_name
+    FROM professionals p
+    LEFT JOIN professional_types pt ON p.professional_type_id = pt.id
+    WHERE p.professional_id = ? AND p.is_active = 1
+  `);
+  const row = stmt.get(professionalId) as (DatabaseProfessional & { professional_type_name?: string }) | undefined;
+  return row || null;
+}
+
+/**
+ * Get a single legal role by its legal_role_id
+ */
+export function getLegalRoleById(roleId: string): (DatabaseLegalRole & { role_type_name: string }) | null {
+  const db = getDatabase();
+  const stmt = db.prepare(`
+    SELECT lr.*, lrt.name as role_type_name, lrt.code as role_type_code
+    FROM legal_roles lr
+    JOIN legal_role_types lrt ON lr.role_type_id = lrt.id
+    WHERE lr.legal_role_id = ? AND lr.is_active = 1
+  `);
+  const row = stmt.get(roleId) as (DatabaseLegalRole & { role_type_name: string; role_type_code: string }) | undefined;
+  return row || null;
 }

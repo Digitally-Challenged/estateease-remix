@@ -54,10 +54,13 @@ export async function action({ request }: ActionFunctionArgs) {
   };
 
   try {
-    // TODO: Implement emergency contact creation in DAL
-    // const contactId = await createEmergencyContact(data);
+    const { createEmergencyContact } = await import("~/lib/dal-crud");
+    const { getUserId } = await import("~/lib/auth.server");
+    const userId = await getUserId(request);
 
-    return redirect("/family");
+    createEmergencyContact(data, userId);
+
+    return redirect("/emergency-contacts");
   } catch (error) {
     console.error("Error creating emergency contact:", error);
     return json({ error: "Failed to create emergency contact" }, { status: 500 });
@@ -105,7 +108,7 @@ export default function NewEmergencyContact() {
   };
 
   const handleCancel = () => {
-    navigate("/family");
+    navigate("/emergency-contacts");
   };
 
   return (

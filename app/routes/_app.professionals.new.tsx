@@ -67,10 +67,32 @@ export async function action({ request }: ActionFunctionArgs) {
   };
 
   try {
-    // TODO: Implement professional creation in DAL
-    // const professionalId = await createProfessional(data);
+    const { createProfessional } = await import("~/lib/dal-crud");
 
-    return redirect("/family");
+    await createProfessional(
+      {
+        name: validated.name,
+        type: validated.type,
+        firm: validated.firm || undefined,
+        title: validated.title || undefined,
+        specializations: data.specializations,
+        contactInfo: {
+          email: validated.email || undefined,
+          primaryPhone: validated.primaryPhone || undefined,
+          secondaryPhone: validated.secondaryPhone || undefined,
+          address: {
+            street1: validated.street1 || undefined,
+            city: validated.city || undefined,
+            state: validated.state || undefined,
+            zipCode: validated.zipCode || undefined,
+          },
+        },
+        notes: validated.notes || undefined,
+      } as Parameters<typeof createProfessional>[0],
+      request,
+    );
+
+    return redirect("/professionals");
   } catch (error) {
     console.error("Error creating professional:", error);
     return json({ error: "Failed to create professional" }, { status: 500 });
@@ -118,7 +140,7 @@ export default function NewProfessional() {
   };
 
   const handleCancel = () => {
-    navigate("/family");
+    navigate("/professionals");
   };
 
   return (

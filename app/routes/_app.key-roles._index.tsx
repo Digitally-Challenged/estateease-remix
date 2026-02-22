@@ -139,9 +139,11 @@ function KeyRolesContent() {
             Manage executors, trustees, and other key roles for your estate
           </p>
         </div>
-        <Button disabled>
-          <Plus className="mr-2 h-4 w-4" />
-          Add Role Assignment (Coming Soon)
+        <Button asChild>
+          <Link to="/roles/new">
+            <Plus className="mr-2 h-4 w-4" />
+            Add Role Assignment
+          </Link>
         </Button>
       </div>
 
@@ -163,8 +165,8 @@ function KeyRolesContent() {
                 <li key={roleType}>{roleName}</li>
               ))}
             </ul>
-            <Button variant="outline" className="mt-4" disabled>
-              Assign Missing Roles (Coming Soon)
+            <Button variant="outline" className="mt-4" asChild>
+              <Link to="/roles/new">Assign Missing Roles</Link>
             </Button>
           </CardContent>
         </Card>
