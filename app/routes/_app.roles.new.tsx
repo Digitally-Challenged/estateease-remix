@@ -12,31 +12,38 @@ import Save from "lucide-react/dist/esm/icons/save";
 import Shield from "lucide-react/dist/esm/icons/shield";
 import User from "lucide-react/dist/esm/icons/user";
 import DollarSign from "lucide-react/dist/esm/icons/dollar-sign";
+import { z } from "zod";
 
 export async function action({ request }: ActionFunctionArgs) {
   const formData = await request.formData();
+  const schema = z.object({
+    roleType: z.string().min(1, "Role type is required"),
+    personName: z.string().min(1, "Person name is required"),
+    isPrimary: z.string().optional().transform(v => v === "true"),
+    orderOfPrecedence: z.string().optional().transform(v => Number(v) || 1),
+    specificPowers: z.string().optional().default(""),
+    compensationType: z.string().optional().transform(v => v || undefined),
+    compensationAmount: z.string().optional().transform(v => Number(v) || undefined),
+    compensationDetails: z.string().optional().transform(v => v || undefined),
+    startDate: z.string().optional().transform(v => v || undefined),
+    endDate: z.string().optional().transform(v => v || undefined),
+    endConditions: z.string().optional().transform(v => v || undefined),
+    notes: z.string().optional().transform(v => v || undefined),
+  });
+
+  const raw = Object.fromEntries(formData);
+  const result = schema.safeParse(raw);
+  if (!result.success) {
+    return json({ error: result.error.issues[0].message }, { status: 400 });
+  }
+
   const data = {
-    roleType: formData.get("roleType") as string,
-    personName: formData.get("personName") as string,
-    isPrimary: formData.get("isPrimary") === "true",
-    orderOfPrecedence: Number(formData.get("orderOfPrecedence")) || 1,
-    specificPowers: ((formData.get("specificPowers") as string) || "")
+    ...result.data,
+    specificPowers: result.data.specificPowers
       .split(",")
       .map((s) => s.trim())
       .filter(Boolean),
-    compensationType: (formData.get("compensationType") as string) || undefined,
-    compensationAmount: Number(formData.get("compensationAmount")) || undefined,
-    compensationDetails: (formData.get("compensationDetails") as string) || undefined,
-    startDate: (formData.get("startDate") as string) || undefined,
-    endDate: (formData.get("endDate") as string) || undefined,
-    endConditions: (formData.get("endConditions") as string) || undefined,
-    notes: (formData.get("notes") as string) || undefined,
   };
-
-  // Basic validation
-  if (!data.roleType || !data.personName) {
-    return json({ error: "Role type and person name are required" }, { status: 400 });
-  }
 
   try {
     const { createLegalRole } = await import("~/lib/dal-crud");
@@ -143,14 +150,9 @@ export default function NewRole() {
                   value={formData.roleType}
                   onChange={(e) => setFormData({ ...formData, roleType: e.target.value })}
                   required
-                >
-                  <option value="">Select role type</option>
-                  {ROLE_TYPE_OPTIONS.map((option) => (
-                    <option key={option.value} value={option.value}>
-                      {option.label}
-                    </option>
-                  ))}
-                </Select>
+                  placeholder="Select role type"
+                  options={ROLE_TYPE_OPTIONS}
+                />
               </FormField>
 
               <FormField label="Person Name" required>
@@ -228,13 +230,9 @@ export default function NewRole() {
                     name="compensationType"
                     value={formData.compensationType}
                     onChange={(e) => setFormData({ ...formData, compensationType: e.target.value })}
-                  >
-                    {COMPENSATION_TYPE_OPTIONS.map((option) => (
-                      <option key={option.value} value={option.value}>
-                        {option.label}
-                      </option>
-                    ))}
-                  </Select>
+                    placeholder=""
+                    options={COMPENSATION_TYPE_OPTIONS}
+                  />
                 </FormField>
 
                 {formData.compensationType !== "none" &&

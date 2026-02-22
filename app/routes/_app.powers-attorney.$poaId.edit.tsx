@@ -10,6 +10,7 @@ import ArrowLeft from "lucide-react/dist/esm/icons/arrow-left";
 import { getPowerOfAttorneyById } from "~/lib/dal";
 import { updatePowerOfAttorney } from "~/lib/dal-crud";
 import { US_STATES } from "~/types/enums";
+import { z } from "zod";
 
 export async function loader({ params }: LoaderFunctionArgs) {
   const { poaId } = params;
@@ -28,31 +29,39 @@ export async function action({ request, params }: ActionFunctionArgs) {
   const formData = await request.formData();
 
   try {
-    updatePowerOfAttorney(poaId, {
-      documentName: formData.get("documentName") as string,
-      type: formData.get("type") as string,
-      principalName: formData.get("principalName") as string,
-      agentPrimary: formData.get("agentPrimary") as string,
-      agentSecondary: (formData.get("agentSecondary") as string) || null,
-      effectiveDate: (formData.get("effectiveDate") as string) || null,
-      terminationDate: (formData.get("terminationDate") as string) || null,
-      durable: formData.get("durable") === "true",
-      springCondition: (formData.get("springCondition") as string) || null,
-      powersGranted: (formData.get("powersGranted") as string) || null,
-      limitations: (formData.get("limitations") as string) || null,
-      healthcarePowers: (formData.get("healthcarePowers") as string) || null,
-      financialPowers: (formData.get("financialPowers") as string) || null,
-      specialInstructions: (formData.get("specialInstructions") as string) || null,
-      witness1Name: (formData.get("witness1Name") as string) || null,
-      witness2Name: (formData.get("witness2Name") as string) || null,
-      notaryName: (formData.get("notaryName") as string) || null,
-      notaryState: (formData.get("notaryState") as string) || null,
-      dateSigned: (formData.get("dateSigned") as string) || null,
-      status: formData.get("status") as string,
-      attorneyName: (formData.get("attorneyName") as string) || null,
-      lawFirm: (formData.get("lawFirm") as string) || null,
-      notes: (formData.get("notes") as string) || null,
+    const schema = z.object({
+      documentName: z.string().min(1, "Document name is required"),
+      type: z.enum(["FINANCIAL", "HEALTHCARE", "GENERAL", "LIMITED"]),
+      principalName: z.string().min(1, "Principal name is required"),
+      agentPrimary: z.string().min(1, "Primary agent is required"),
+      agentSecondary: z.string().optional().transform(v => v || null),
+      effectiveDate: z.string().optional().transform(v => v || null),
+      terminationDate: z.string().optional().transform(v => v || null),
+      durable: z.string().optional().transform(v => v === "true"),
+      springCondition: z.string().optional().transform(v => v || null),
+      powersGranted: z.string().optional().transform(v => v || null),
+      limitations: z.string().optional().transform(v => v || null),
+      healthcarePowers: z.string().optional().transform(v => v || null),
+      financialPowers: z.string().optional().transform(v => v || null),
+      specialInstructions: z.string().optional().transform(v => v || null),
+      witness1Name: z.string().optional().transform(v => v || null),
+      witness2Name: z.string().optional().transform(v => v || null),
+      notaryName: z.string().optional().transform(v => v || null),
+      notaryState: z.string().optional().transform(v => v || null),
+      dateSigned: z.string().optional().transform(v => v || null),
+      status: z.enum(["DRAFT", "ACTIVE", "REVOKED", "EXPIRED"]),
+      attorneyName: z.string().optional().transform(v => v || null),
+      lawFirm: z.string().optional().transform(v => v || null),
+      notes: z.string().optional().transform(v => v || null),
     });
+
+    const raw = Object.fromEntries(formData);
+    const result = schema.safeParse(raw);
+    if (!result.success) {
+      return json({ error: result.error.issues[0].message }, { status: 400 });
+    }
+
+    updatePowerOfAttorney(poaId, result.data);
 
     return redirect("/powers-attorney");
   } catch (error) {
@@ -93,22 +102,22 @@ export default function EditPowerOfAttorney() {
                 <Input name="documentName" defaultValue={poa.documentName} required />
               </FormField>
               <FormField label="Type" required>
-                <Select name="type" defaultValue={poa.type} required>
-                  <option value="FINANCIAL">Financial</option>
-                  <option value="HEALTHCARE">Healthcare</option>
-                  <option value="GENERAL">General</option>
-                  <option value="LIMITED">Limited</option>
-                </Select>
+                <Select name="type" defaultValue={poa.type} required placeholder="" options={[
+                  { value: "FINANCIAL", label: "Financial" },
+                  { value: "HEALTHCARE", label: "Healthcare" },
+                  { value: "GENERAL", label: "General" },
+                  { value: "LIMITED", label: "Limited" },
+                ]} />
               </FormField>
             </div>
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               <FormField label="Status">
-                <Select name="status" defaultValue={poa.status}>
-                  <option value="DRAFT">Draft</option>
-                  <option value="ACTIVE">Active</option>
-                  <option value="REVOKED">Revoked</option>
-                  <option value="EXPIRED">Expired</option>
-                </Select>
+                <Select name="status" defaultValue={poa.status} placeholder="" options={[
+                  { value: "DRAFT", label: "Draft" },
+                  { value: "ACTIVE", label: "Active" },
+                  { value: "REVOKED", label: "Revoked" },
+                  { value: "EXPIRED", label: "Expired" },
+                ]} />
               </FormField>
               <FormField label="Date Signed">
                 <Input name="dateSigned" type="date" defaultValue={poa.dateSigned?.split("T")[0] || ""} />
@@ -188,12 +197,7 @@ export default function EditPowerOfAttorney() {
                 <Input name="notaryName" defaultValue={poa.notaryName || ""} />
               </FormField>
               <FormField label="Notary State">
-                <Select name="notaryState" defaultValue={poa.notaryState || ""}>
-                  <option value="">Select state</option>
-                  {US_STATES.map((s) => (
-                    <option key={s.value} value={s.value}>{s.label}</option>
-                  ))}
-                </Select>
+                <Select name="notaryState" defaultValue={poa.notaryState || ""} placeholder="Select state" options={US_STATES.map(s => ({ value: s.value, label: s.label }))} />
               </FormField>
             </div>
           </CardContent>
@@ -224,3 +228,5 @@ export default function EditPowerOfAttorney() {
     </div>
   );
 }
+
+export { RouteErrorBoundary as ErrorBoundary } from "~/components/ui/error/route-error-boundary";

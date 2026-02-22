@@ -10,6 +10,7 @@ import ArrowLeft from "lucide-react/dist/esm/icons/arrow-left";
 import Shield from "lucide-react/dist/esm/icons/shield";
 import { getLegalRoleById } from "~/lib/dal";
 import { updateLegalRole } from "~/lib/dal-crud";
+import { z } from "zod";
 
 const COMPENSATION_TYPE_OPTIONS = [
   { value: "none", label: "No compensation" },
@@ -37,21 +38,32 @@ export async function action({ request, params }: ActionFunctionArgs) {
   const formData = await request.formData();
 
   try {
+    const schema = z.object({
+      personName: z.string().min(1, "Person name is required"),
+      isPrimary: z.string().optional().transform(v => v === "true"),
+      orderOfPrecedence: z.string().optional().transform(v => Number(v) || 1),
+      specificPowers: z.string().optional().default(""),
+      compensationType: z.string().optional().transform(v => v || undefined),
+      compensationAmount: z.string().optional().transform(v => Number(v) || undefined),
+      compensationDetails: z.string().optional().transform(v => v || undefined),
+      startDate: z.string().optional().transform(v => v || undefined),
+      endDate: z.string().optional().transform(v => v || undefined),
+      endConditions: z.string().optional().transform(v => v || undefined),
+      notes: z.string().optional().transform(v => v || undefined),
+    });
+
+    const raw = Object.fromEntries(formData);
+    const result = schema.safeParse(raw);
+    if (!result.success) {
+      return json({ error: result.error.issues[0].message }, { status: 400 });
+    }
+
     updateLegalRole(roleId, {
-      personName: formData.get("personName") as string,
-      isPrimary: formData.get("isPrimary") === "true",
-      orderOfPrecedence: Number(formData.get("orderOfPrecedence")) || 1,
-      specificPowers: ((formData.get("specificPowers") as string) || "")
+      ...result.data,
+      specificPowers: result.data.specificPowers
         .split(",")
         .map((s) => s.trim())
         .filter(Boolean),
-      compensationType: (formData.get("compensationType") as string) || undefined,
-      compensationAmount: Number(formData.get("compensationAmount")) || undefined,
-      compensationDetails: (formData.get("compensationDetails") as string) || undefined,
-      startDate: (formData.get("startDate") as string) || undefined,
-      endDate: (formData.get("endDate") as string) || undefined,
-      endConditions: (formData.get("endConditions") as string) || undefined,
-      notes: (formData.get("notes") as string) || undefined,
     });
 
     return redirect("/key-roles");
@@ -66,12 +78,17 @@ export default function EditKeyRole() {
   const actionData = useActionData<typeof action>();
   const navigate = useNavigate();
 
-  const specificPowers = role.specific_powers
-    ? (typeof role.specific_powers === "string"
+  let specificPowers = "";
+  if (role.specific_powers) {
+    try {
+      const parsed = typeof role.specific_powers === "string"
         ? JSON.parse(role.specific_powers)
-        : role.specific_powers
-      ).join(", ")
-    : "";
+        : role.specific_powers;
+      specificPowers = Array.isArray(parsed) ? parsed.join(", ") : String(parsed);
+    } catch {
+      specificPowers = String(role.specific_powers);
+    }
+  }
 
   return (
     <div className="space-y-6">
@@ -138,11 +155,7 @@ export default function EditKeyRole() {
           <CardContent className="space-y-4">
             <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
               <FormField label="Compensation Type">
-                <Select name="compensationType" defaultValue={role.compensation_type || "none"}>
-                  {COMPENSATION_TYPE_OPTIONS.map((opt) => (
-                    <option key={opt.value} value={opt.value}>{opt.label}</option>
-                  ))}
-                </Select>
+                <Select name="compensationType" defaultValue={role.compensation_type || "none"} placeholder="" options={COMPENSATION_TYPE_OPTIONS} />
               </FormField>
               <FormField label="Amount">
                 <Input name="compensationAmount" type="number" step="0.01" min="0" defaultValue={role.compensation_amount || 0} />
@@ -179,3 +192,5 @@ export default function EditKeyRole() {
     </div>
   );
 }
+
+export { RouteErrorBoundary as ErrorBoundary } from "~/components/ui/error/route-error-boundary";

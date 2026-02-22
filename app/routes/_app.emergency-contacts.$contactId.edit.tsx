@@ -9,6 +9,7 @@ import { FormField } from "~/components/ui/forms/form-field";
 import ArrowLeft from "lucide-react/dist/esm/icons/arrow-left";
 import { getEmergencyContactById } from "~/lib/dal";
 import { updateEmergencyContact } from "~/lib/dal-crud";
+import { z } from "zod";
 
 const CONTACT_TYPE_OPTIONS = [
   { value: "emergency", label: "Emergency" },
@@ -34,18 +35,26 @@ export async function action({ request, params }: ActionFunctionArgs) {
   const formData = await request.formData();
 
   try {
-    updateEmergencyContact(contactId, {
-      name: formData.get("name") as string,
-      contactType: formData.get("contactType") as string,
-      primaryPhone: formData.get("primaryPhone") as string,
-      secondaryPhone: (formData.get("secondaryPhone") as string) || undefined,
-      email: (formData.get("email") as string) || undefined,
-      preferredContact: (formData.get("preferredContact") as string) || undefined,
-      priority: Number(formData.get("priority")) || 1,
-      medicalAuthority: formData.get("medicalAuthority") === "true",
-      canMakeDecisions: formData.get("canMakeDecisions") === "true",
-      notes: (formData.get("notes") as string) || undefined,
+    const schema = z.object({
+      name: z.string().min(1, "Name is required"),
+      contactType: z.string().min(1, "Contact type is required"),
+      primaryPhone: z.string().min(1, "Primary phone is required"),
+      secondaryPhone: z.string().optional().transform(v => v || undefined),
+      email: z.string().optional().transform(v => v || undefined),
+      preferredContact: z.string().optional().transform(v => v || undefined),
+      priority: z.string().optional().transform(v => Number(v) || 1),
+      medicalAuthority: z.string().optional().transform(v => v === "true"),
+      canMakeDecisions: z.string().optional().transform(v => v === "true"),
+      notes: z.string().optional().transform(v => v || undefined),
     });
+
+    const raw = Object.fromEntries(formData);
+    const result = schema.safeParse(raw);
+    if (!result.success) {
+      return json({ error: result.error.issues[0].message }, { status: 400 });
+    }
+
+    updateEmergencyContact(contactId, result.data);
 
     return redirect("/emergency-contacts");
   } catch (error) {
@@ -86,11 +95,7 @@ export default function EditEmergencyContact() {
                 <Input name="name" defaultValue={contact.name} required />
               </FormField>
               <FormField label="Contact Type">
-                <Select name="contactType" defaultValue={contact.contact_type}>
-                  {CONTACT_TYPE_OPTIONS.map((opt) => (
-                    <option key={opt.value} value={opt.value}>{opt.label}</option>
-                  ))}
-                </Select>
+                <Select name="contactType" defaultValue={contact.contact_type} placeholder="" options={CONTACT_TYPE_OPTIONS} />
               </FormField>
             </div>
 
@@ -113,11 +118,11 @@ export default function EditEmergencyContact() {
             </div>
 
             <FormField label="Preferred Contact Method">
-              <Select name="preferredContact" defaultValue={contact.preferred_contact || "phone"}>
-                <option value="phone">Phone</option>
-                <option value="email">Email</option>
-                <option value="text">Text</option>
-              </Select>
+              <Select name="preferredContact" defaultValue={contact.preferred_contact || "phone"} placeholder="" options={[
+                { value: "phone", label: "Phone" },
+                { value: "email", label: "Email" },
+                { value: "text", label: "Text" },
+              ]} />
             </FormField>
 
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -149,3 +154,5 @@ export default function EditEmergencyContact() {
     </div>
   );
 }
+
+export { RouteErrorBoundary as ErrorBoundary } from "~/components/ui/error/route-error-boundary";

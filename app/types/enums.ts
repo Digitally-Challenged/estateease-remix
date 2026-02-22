@@ -538,6 +538,22 @@ export enum BusinessType {
 }
 
 /**
+ * Professional type options for estate planning professionals.
+ * Used in professionals create/edit forms.
+ */
+export const PROFESSIONAL_TYPE_OPTIONS = [
+  { value: "ATTORNEY", label: "Attorney" },
+  { value: "FINANCIAL_ADVISOR", label: "Financial Advisor" },
+  { value: "ACCOUNTANT", label: "Accountant/CPA" },
+  { value: "INSURANCE_AGENT", label: "Insurance Agent" },
+  { value: "REAL_ESTATE_AGENT", label: "Real Estate Agent" },
+  { value: "BANKER", label: "Banker" },
+  { value: "TRUSTEE", label: "Trustee" },
+  { value: "APPRAISER", label: "Appraiser" },
+  { value: "OTHER", label: "Other" },
+] as const;
+
+/**
  * Types of documents essential for estate planning and administration.
  * Used in document management system to categorize important papers.
  * Ensures all critical documents are organized and accessible when needed.

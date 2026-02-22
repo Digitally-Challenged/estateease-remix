@@ -14,7 +14,7 @@ import Phone from "lucide-react/dist/esm/icons/phone";
 import Mail from "lucide-react/dist/esm/icons/mail";
 import MapPin from "lucide-react/dist/esm/icons/map-pin";
 import Briefcase from "lucide-react/dist/esm/icons/briefcase";
-import { US_STATES } from "~/types/enums";
+import { US_STATES, PROFESSIONAL_TYPE_OPTIONS } from "~/types/enums";
 
 const professionalSchema = z.object({
   name: z.string().min(1, "Name is required").max(200),
@@ -99,18 +99,6 @@ export async function action({ request }: ActionFunctionArgs) {
   }
 }
 
-const PROFESSIONAL_TYPE_OPTIONS = [
-  { value: "ATTORNEY", label: "Attorney" },
-  { value: "FINANCIAL_ADVISOR", label: "Financial Advisor" },
-  { value: "ACCOUNTANT", label: "Accountant/CPA" },
-  { value: "INSURANCE_AGENT", label: "Insurance Agent" },
-  { value: "REAL_ESTATE_AGENT", label: "Real Estate Agent" },
-  { value: "BANKER", label: "Banker" },
-  { value: "TRUSTEE", label: "Trustee" },
-  { value: "APPRAISER", label: "Appraiser" },
-  { value: "OTHER", label: "Other" },
-];
-
 export default function NewProfessional() {
   const actionData = useActionData<typeof action>();
   const navigate = useNavigate();
@@ -187,14 +175,9 @@ export default function NewProfessional() {
                   value={formData.type}
                   onChange={(e) => setFormData({ ...formData, type: e.target.value })}
                   required
-                >
-                  <option value="">Select type</option>
-                  {PROFESSIONAL_TYPE_OPTIONS.map((option) => (
-                    <option key={option.value} value={option.value}>
-                      {option.label}
-                    </option>
-                  ))}
-                </Select>
+                  placeholder="Select type"
+                  options={[...PROFESSIONAL_TYPE_OPTIONS]}
+                />
               </FormField>
             </div>
 
@@ -280,14 +263,9 @@ export default function NewProfessional() {
                     name="state"
                     value={formData.state}
                     onChange={(e) => setFormData({ ...formData, state: e.target.value })}
-                  >
-                    <option value="">Select state</option>
-                    {US_STATES.map((state) => (
-                      <option key={state.value} value={state.value}>
-                        {state.label}
-                      </option>
-                    ))}
-                  </Select>
+                    placeholder="Select state"
+                    options={[...US_STATES]}
+                  />
                 </FormField>
 
                 <FormField label="ZIP Code">

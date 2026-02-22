@@ -8,7 +8,7 @@ import { Button } from "~/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "~/components/ui/card";
 import { Badge } from "~/components/ui/badge";
 import { getWillById } from "~/lib/dal";
-import { formatDate } from "~/lib/utils";
+import { formatDate, getStatusColor } from "~/lib/utils";
 
 export async function loader({ params }: LoaderFunctionArgs) {
   const { willId } = params;
@@ -22,16 +22,6 @@ export async function loader({ params }: LoaderFunctionArgs) {
 
 export default function WillDetail() {
   const { will } = useLoaderData<typeof loader>();
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "EXECUTED": return "text-green-600 bg-green-50";
-      case "SIGNED": return "text-blue-600 bg-blue-50";
-      case "DRAFT": return "text-yellow-600 bg-yellow-50";
-      case "REVOKED": return "text-red-600 bg-red-50";
-      default: return "text-gray-600 bg-gray-50";
-    }
-  };
 
   return (
     <div className="space-y-6">
@@ -216,3 +206,5 @@ export default function WillDetail() {
     </div>
   );
 }
+
+export { RouteErrorBoundary as ErrorBoundary } from "~/components/ui/error/route-error-boundary";

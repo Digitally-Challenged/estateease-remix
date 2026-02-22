@@ -10,6 +10,7 @@ import ArrowLeft from "lucide-react/dist/esm/icons/arrow-left";
 import { getWillById } from "~/lib/dal";
 import { updateWill } from "~/lib/dal-crud";
 import { US_STATES } from "~/types/enums";
+import { z } from "zod";
 
 export async function loader({ params }: LoaderFunctionArgs) {
   const { willId } = params;
@@ -28,26 +29,34 @@ export async function action({ request, params }: ActionFunctionArgs) {
   const formData = await request.formData();
 
   try {
-    updateWill(willId, {
-      documentName: formData.get("documentName") as string,
-      testatorName: formData.get("testatorName") as string,
-      dateSigned: (formData.get("dateSigned") as string) || null,
-      status: formData.get("status") as string,
-      executorPrimary: (formData.get("executorPrimary") as string) || null,
-      executorSecondary: (formData.get("executorSecondary") as string) || null,
-      witness1Name: (formData.get("witness1Name") as string) || null,
-      witness2Name: (formData.get("witness2Name") as string) || null,
-      notaryName: (formData.get("notaryName") as string) || null,
-      notaryState: (formData.get("notaryState") as string) || null,
-      specificBequests: (formData.get("specificBequests") as string) || null,
-      residuaryClause: (formData.get("residuaryClause") as string) || null,
-      guardianNominations: (formData.get("guardianNominations") as string) || null,
-      funeralWishes: (formData.get("funeralWishes") as string) || null,
-      otherProvisions: (formData.get("otherProvisions") as string) || null,
-      attorneyName: (formData.get("attorneyName") as string) || null,
-      lawFirm: (formData.get("lawFirm") as string) || null,
-      notes: (formData.get("notes") as string) || null,
+    const schema = z.object({
+      documentName: z.string().min(1, "Document name is required"),
+      testatorName: z.string().min(1, "Testator name is required"),
+      dateSigned: z.string().optional().transform(v => v || null),
+      status: z.enum(["DRAFT", "SIGNED", "EXECUTED", "REVOKED"]),
+      executorPrimary: z.string().optional().transform(v => v || null),
+      executorSecondary: z.string().optional().transform(v => v || null),
+      witness1Name: z.string().optional().transform(v => v || null),
+      witness2Name: z.string().optional().transform(v => v || null),
+      notaryName: z.string().optional().transform(v => v || null),
+      notaryState: z.string().optional().transform(v => v || null),
+      specificBequests: z.string().optional().transform(v => v || null),
+      residuaryClause: z.string().optional().transform(v => v || null),
+      guardianNominations: z.string().optional().transform(v => v || null),
+      funeralWishes: z.string().optional().transform(v => v || null),
+      otherProvisions: z.string().optional().transform(v => v || null),
+      attorneyName: z.string().optional().transform(v => v || null),
+      lawFirm: z.string().optional().transform(v => v || null),
+      notes: z.string().optional().transform(v => v || null),
     });
+
+    const raw = Object.fromEntries(formData);
+    const result = schema.safeParse(raw);
+    if (!result.success) {
+      return json({ error: result.error.issues[0].message }, { status: 400 });
+    }
+
+    updateWill(willId, result.data);
 
     return redirect("/wills");
   } catch (error) {
@@ -93,12 +102,12 @@ export default function EditWill() {
             </div>
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               <FormField label="Status">
-                <Select name="status" defaultValue={will.status}>
-                  <option value="DRAFT">Draft</option>
-                  <option value="SIGNED">Signed</option>
-                  <option value="EXECUTED">Executed</option>
-                  <option value="REVOKED">Revoked</option>
-                </Select>
+                <Select name="status" defaultValue={will.status} placeholder="" options={[
+                  { value: "DRAFT", label: "Draft" },
+                  { value: "SIGNED", label: "Signed" },
+                  { value: "EXECUTED", label: "Executed" },
+                  { value: "REVOKED", label: "Revoked" },
+                ]} />
               </FormField>
               <FormField label="Date Signed">
                 <Input name="dateSigned" type="date" defaultValue={will.dateSigned?.split("T")[0] || ""} />
@@ -137,12 +146,7 @@ export default function EditWill() {
                 <Input name="notaryName" defaultValue={will.notaryName || ""} />
               </FormField>
               <FormField label="Notary State">
-                <Select name="notaryState" defaultValue={will.notaryState || ""}>
-                  <option value="">Select state</option>
-                  {US_STATES.map((s) => (
-                    <option key={s.value} value={s.value}>{s.label}</option>
-                  ))}
-                </Select>
+                <Select name="notaryState" defaultValue={will.notaryState || ""} placeholder="Select state" options={US_STATES.map(s => ({ value: s.value, label: s.label }))} />
               </FormField>
             </div>
           </CardContent>
@@ -194,3 +198,5 @@ export default function EditWill() {
     </div>
   );
 }
+
+export { RouteErrorBoundary as ErrorBoundary } from "~/components/ui/error/route-error-boundary";

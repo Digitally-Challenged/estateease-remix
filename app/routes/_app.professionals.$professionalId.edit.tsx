@@ -9,19 +9,8 @@ import { FormField } from "~/components/ui/forms/form-field";
 import ArrowLeft from "lucide-react/dist/esm/icons/arrow-left";
 import { getProfessionalById } from "~/lib/dal";
 import { updateProfessional } from "~/lib/dal-crud";
-import { US_STATES } from "~/types/enums";
-
-const PROFESSIONAL_TYPE_OPTIONS = [
-  { value: "ATTORNEY", label: "Attorney" },
-  { value: "FINANCIAL_ADVISOR", label: "Financial Advisor" },
-  { value: "ACCOUNTANT", label: "Accountant/CPA" },
-  { value: "INSURANCE_AGENT", label: "Insurance Agent" },
-  { value: "REAL_ESTATE_AGENT", label: "Real Estate Agent" },
-  { value: "BANKER", label: "Banker" },
-  { value: "TRUSTEE", label: "Trustee" },
-  { value: "APPRAISER", label: "Appraiser" },
-  { value: "OTHER", label: "Other" },
-];
+import { US_STATES, PROFESSIONAL_TYPE_OPTIONS } from "~/types/enums";
+import { z } from "zod";
 
 export async function loader({ params }: LoaderFunctionArgs) {
   const { professionalId } = params;
@@ -40,28 +29,50 @@ export async function action({ request, params }: ActionFunctionArgs) {
   const formData = await request.formData();
 
   try {
-    const specializations = (formData.get("specializations") as string || "")
+    const schema = z.object({
+      name: z.string().min(1, "Name is required"),
+      type: z.string().optional(),
+      firm: z.string().optional().transform(v => v || undefined),
+      title: z.string().optional().transform(v => v || undefined),
+      email: z.string().optional().transform(v => v || undefined),
+      primaryPhone: z.string().optional().transform(v => v || undefined),
+      secondaryPhone: z.string().optional().transform(v => v || undefined),
+      street1: z.string().optional().default(""),
+      city: z.string().optional().default(""),
+      state: z.string().optional().default(""),
+      zipCode: z.string().optional().default(""),
+      specializations: z.string().optional().default(""),
+      notes: z.string().optional().transform(v => v || undefined),
+    });
+
+    const raw = Object.fromEntries(formData);
+    const result = schema.safeParse(raw);
+    if (!result.success) {
+      return json({ error: result.error.issues[0].message }, { status: 400 });
+    }
+
+    const specializations = result.data.specializations
       .split(",")
       .map((s) => s.trim())
       .filter(Boolean);
 
     updateProfessional(professionalId, {
-      name: formData.get("name") as string,
-      firm: (formData.get("firm") as string) || undefined,
-      title: (formData.get("title") as string) || undefined,
+      name: result.data.name,
+      firm: result.data.firm,
+      title: result.data.title,
       specializations,
       contactInfo: {
-        email: (formData.get("email") as string) || undefined,
-        primaryPhone: (formData.get("primaryPhone") as string) || undefined,
-        secondaryPhone: (formData.get("secondaryPhone") as string) || undefined,
+        email: result.data.email,
+        primaryPhone: result.data.primaryPhone,
+        secondaryPhone: result.data.secondaryPhone,
         address: {
-          street1: (formData.get("street1") as string) || "",
-          city: (formData.get("city") as string) || "",
-          state: (formData.get("state") as string) || "",
-          zipCode: (formData.get("zipCode") as string) || "",
+          street1: result.data.street1,
+          city: result.data.city,
+          state: result.data.state,
+          zipCode: result.data.zipCode,
         },
       },
-      notes: (formData.get("notes") as string) || undefined,
+      notes: result.data.notes,
     });
 
     return redirect("/professionals");
@@ -76,12 +87,17 @@ export default function EditProfessional() {
   const actionData = useActionData<typeof action>();
   const navigate = useNavigate();
 
-  const specializations = professional.specializations
-    ? (typeof professional.specializations === "string"
+  let specializations = "";
+  if (professional.specializations) {
+    try {
+      const parsed = typeof professional.specializations === "string"
         ? JSON.parse(professional.specializations)
-        : professional.specializations
-      ).join(", ")
-    : "";
+        : professional.specializations;
+      specializations = Array.isArray(parsed) ? parsed.join(", ") : String(parsed);
+    } catch {
+      specializations = String(professional.specializations);
+    }
+  }
 
   return (
     <div className="space-y-6">
@@ -110,11 +126,7 @@ export default function EditProfessional() {
                 <Input name="name" defaultValue={professional.name} required />
               </FormField>
               <FormField label="Professional Type">
-                <Select name="type" defaultValue={professional.professional_type_code || ""}>
-                  {PROFESSIONAL_TYPE_OPTIONS.map((opt) => (
-                    <option key={opt.value} value={opt.value}>{opt.label}</option>
-                  ))}
-                </Select>
+                <Select name="type" defaultValue={professional.professional_type_code || ""} placeholder="" options={PROFESSIONAL_TYPE_OPTIONS.map(o => ({ value: o.value, label: o.label }))} />
               </FormField>
             </div>
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -150,12 +162,7 @@ export default function EditProfessional() {
                 <Input name="city" defaultValue={professional.city || ""} />
               </FormField>
               <FormField label="State">
-                <Select name="state" defaultValue={professional.state || ""}>
-                  <option value="">Select state</option>
-                  {US_STATES.map((s) => (
-                    <option key={s.value} value={s.value}>{s.label}</option>
-                  ))}
-                </Select>
+                <Select name="state" defaultValue={professional.state || ""} placeholder="Select state" options={US_STATES.map(s => ({ value: s.value, label: s.label }))} />
               </FormField>
               <FormField label="ZIP Code">
                 <Input name="zipCode" defaultValue={professional.zip_code || ""} />
@@ -184,3 +191,5 @@ export default function EditProfessional() {
     </div>
   );
 }
+
+export { RouteErrorBoundary as ErrorBoundary } from "~/components/ui/error/route-error-boundary";
